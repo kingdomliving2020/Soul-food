@@ -504,11 +504,11 @@ const MixUpGame = () => {
         </div>
 
         {/* Money Ladder */}
-        <div className="grid grid-cols-5 gap-2 mb-6">
+        <div className="grid grid-cols-5 gap-1 mb-4">
           {moneyLadder.map((amount, index) => (
             <div
               key={index}
-              className={`text-center py-2 rounded ${
+              className={`text-center py-1 rounded text-xs sm:text-sm ${
                 index === currentQuestion
                   ? 'bg-amber-500 text-white font-bold'
                   : index < currentQuestion
@@ -522,17 +522,17 @@ const MixUpGame = () => {
         </div>
 
         {/* Question Card */}
-        <Card className="bg-white mb-6">
-          <CardHeader className="bg-gradient-to-r from-amber-100 to-orange-100">
-            <CardTitle className="text-2xl">
+        <Card className="bg-white mb-4">
+          <CardHeader className="bg-gradient-to-r from-amber-100 to-orange-100 py-3">
+            <CardTitle className="text-lg sm:text-xl">
               Question {currentQuestion + 1} of 15
-              <Badge className="ml-4 bg-purple-600 text-white">
+              <Badge className="ml-3 bg-purple-600 text-white text-xs">
                 {question.difficulty.toUpperCase()}
               </Badge>
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-8">
-            <p className="text-2xl text-slate-800 mb-8 font-semibold">
+          <CardContent className="p-4 sm:p-6">
+            <p className="text-lg sm:text-xl text-slate-800 mb-6 font-semibold">
               {question.question}
             </p>
 
