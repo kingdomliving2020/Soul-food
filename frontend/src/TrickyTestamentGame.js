@@ -15,14 +15,15 @@ const TrickyTestamentGame = () => {
   const [gameOver, setGameOver] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [answeredQuestions, setAnsweredQuestions] = useState([]);
-  const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [showBoard, setShowBoard] = useState(true);
   const [dailyDoubleRevealed, setDailyDoubleRevealed] = useState(false);
   const [dailyDoubleQuestion, setDailyDoubleQuestion] = useState(null);
+  const [dailyDoubleIndex, setDailyDoubleIndex] = useState(null);
   const [wager, setWager] = useState(0);
 
-  // Jeopardy board structure: 5 categories x 2 point values each
-  const pointValues = [100, 200];
+  // Jeopardy board structure: Point values for 10 questions
+  const pointValues = [100, 200, 300, 400, 500, 100, 200, 300, 400, 500];
 
   useEffect(() => {
     // Fetch questions from backend
