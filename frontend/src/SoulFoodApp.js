@@ -421,10 +421,10 @@ const SoulFoodLanding = () => {
                 <p className="text-slate-700 mb-4">
                   15-question progressive climb designed for ages 12-20! Test your Soul Food knowledge with lifelines and fun.
                 </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge className="bg-cyan-100 text-cyan-700 text-xs">Practice Mode</Badge>
-                  <Badge className="bg-cyan-100 text-cyan-700 text-xs">Youth Challenge</Badge>
-                  <Badge className="bg-cyan-100 text-cyan-700 text-xs">Fun Mode</Badge>
+                <div className="flex flex-col gap-2 mb-4">
+                  <Badge className="bg-cyan-100 text-cyan-700 text-xs w-fit">Practice Mode</Badge>
+                  <Badge className="bg-cyan-100 text-cyan-700 text-xs w-fit">Youth Challenge</Badge>
+                  <Badge className="bg-cyan-100 text-cyan-700 text-xs w-fit">Fun Mode</Badge>
                 </div>
                 <Button
                   onClick={() => window.location.href = '/gaming-central'}
