@@ -297,12 +297,10 @@ const GamingCentral = () => {
 
                 <CardHeader className="relative p-0">
                   {game.hasDemo && (
-                    <div className="absolute top-2 left-2 z-20">
-                      <img 
-                        src={game.demoIcon} 
-                        alt="Demo Available"
-                        className="w-16 h-16 drop-shadow-lg"
-                      />
+                    <div className="absolute top-3 left-3 z-20">
+                      <Badge className={`${game.id.includes('trivia') ? 'bg-blue-600' : 'bg-yellow-500'} text-white px-3 py-1 text-xs font-bold shadow-lg`}>
+                        DEMO
+                      </Badge>
                     </div>
                   )}
                   <div className="h-48 overflow-hidden flex items-center justify-center bg-white/90">
