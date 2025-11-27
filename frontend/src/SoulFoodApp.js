@@ -533,7 +533,7 @@ const SoulFoodLanding = () => {
                     <Badge className="bg-cyan-100 text-cyan-700 text-xs w-fit">Fun Mode</Badge>
                   </div>
                   <Button
-                    onClick={() => window.location.href = '/gaming-central'}
+                    onClick={() => window.location.href = '/game/mixup?edition=youth'}
                     className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-bold py-3 rounded-xl"
                   >
                     Play Now →
