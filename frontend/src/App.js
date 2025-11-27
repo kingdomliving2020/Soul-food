@@ -1800,6 +1800,8 @@ const Dashboard = () => {
 // Main App Component
 // Import the new Soul Food landing page
 import SoulFoodLanding from "./SoulFoodApp";
+import MixUpGame from './MixUpGame';
+import TrickyTestamentGame from './TrickyTestamentGame';
 
 function App() {
   return (
@@ -1811,6 +1813,8 @@ function App() {
           <Route path="/lesson/:id" element={<LessonViewer />} />
           <Route path="/lessons" element={<LessonsListPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/game/mixup" element={<MixUpGame />} />
+          <Route path="/game/tricky-testament" element={<TrickyTestamentGame />} />
         </Routes>
       </BrowserRouter>
     </div>
