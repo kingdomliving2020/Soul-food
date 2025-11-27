@@ -6,7 +6,7 @@ from datetime import datetime, timezone, timedelta
 import random
 import uuid
 
-router = APIRouter(prefix="/api/trivia", tags=["trivia"])
+router = APIRouter(prefix="/trivia", tags=["trivia"])
 
 # Game Access Tiers
 ACCESS_TIERS = {
