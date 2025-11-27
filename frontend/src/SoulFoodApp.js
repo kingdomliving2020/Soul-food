@@ -1092,10 +1092,55 @@ const SoulFoodLanding = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Adult Multimedia Showcase */}
+          <div className="mt-12 bg-gradient-to-br from-blue-50 via-cyan-50 to-slate-50 rounded-2xl p-8 border-2 border-blue-300 shadow-xl">
+            <div className="text-center mb-6">
+              <Badge className="bg-blue-600 text-white px-6 py-2 text-lg font-bold mb-4 inline-block">
+                🎓 Adult Edition Featured Content
+              </Badge>
+              <h4 className="text-3xl font-bold text-slate-800 mb-3">
+                Talent vs Gift Teaching
+              </h4>
+              <p className="text-slate-600 max-w-2xl mx-auto">
+                Understanding the difference between God-given talents and spiritual gifts
+              </p>
+            </div>
+            
+            <div className="max-w-2xl mx-auto">
+              <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border-4 border-white">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/l6a0CqmTEgQ"
+                  title="Talent vs Gift Teaching"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+              <div className="mt-6 text-center">
+                <p className="text-slate-700 mb-4">
+                  This powerful teaching explores the biblical distinction between natural talents and spiritual gifts, helping believers understand their unique calling.
+                </p>
+                <div className="flex justify-center gap-4 flex-wrap">
+                  <Badge className="bg-blue-100 text-blue-700 px-4 py-2">Doctrinal Teaching</Badge>
+                  <Badge className="bg-cyan-100 text-cyan-700 px-4 py-2">Adult Focused</Badge>
+                  <Badge className="bg-slate-100 text-slate-700 px-4 py-2">Spiritual Growth</Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mt-12">
+            {/* Instructor Edition */}
+            <Card className="border-2 border-amber-400 shadow-xl hover:shadow-2xl transition-all relative h-fit">
               <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-700 to-amber-600 text-white px-4 py-1 font-bold text-sm">
                 For Teachers & Leaders
               </Badge>
-              <CardHeader className="bg-gradient-to-br from-orange-50 to-amber-50 text-center p-6 pt-8">
+              <CardHeader className="bg-gradient-to-br from-amber-100 to-amber-200 text-center p-6 pt-8">
                 <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-amber-700 to-amber-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
                   📖
                 </div>
