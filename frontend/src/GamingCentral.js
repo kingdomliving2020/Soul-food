@@ -111,7 +111,7 @@ const GamingCentral = () => {
     
     // Free tier can only preview
     if (access_tier === "free") {
-      return game.id === "trivia_mixup"; // Allow preview of one game
+      return game.id === "trivia_mixup_adult"; // Allow preview of adult trivia game
     }
     
     // Check edition restrictions
