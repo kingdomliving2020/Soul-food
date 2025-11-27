@@ -491,9 +491,110 @@ const SoulFoodLanding = () => {
             </Badge>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            {/* Trivia Mix-up */}
-            <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-4 border-orange-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
+          {/* Youth Section */}
+          <div className="mb-16">
+            <div className="text-center mb-8">
+              <Badge className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 text-lg font-bold shadow-lg mb-4">
+                🎮 Youth Edition (Ages 12-20)
+              </Badge>
+              <h4 className="text-3xl font-bold text-white mb-2">Games for Young Believers</h4>
+              <p className="text-purple-300">Engage your youth group with fun, age-appropriate Bible trivia!</p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Trivia Mix-up Youth */}
+              <Card className="bg-gradient-to-br from-cyan-50 to-blue-50 border-4 border-cyan-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
+                <div className="absolute top-3 left-3 z-10">
+                  <Badge className="bg-blue-600 text-white px-3 py-1 text-xs font-bold shadow-lg">
+                    DEMO
+                  </Badge>
+                </div>
+                <CardHeader className="p-0">
+                  <div className="h-48 bg-white/90 flex items-center justify-center p-4">
+                    <img 
+                      src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/4jh8a4ad_Soul%20Food%20Trivia%20Mix-up%20Logo.png"
+                      alt="Trivia Mix-up Youth"
+                      className="max-h-44 w-auto object-contain"
+                    />
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-2xl font-bold text-slate-800">Trivia Mix-up</h4>
+                    <span className="text-3xl">🎮</span>
+                  </div>
+                  <p className="text-sm font-semibold text-cyan-600 mb-3">Youth Edition - Millionaire Style</p>
+                  <p className="text-slate-700 mb-4">
+                    15-question progressive climb designed for ages 12-20! Test your Soul Food knowledge with lifelines and fun.
+                  </p>
+                  <div className="flex flex-col gap-2 mb-4">
+                    <Badge className="bg-cyan-100 text-cyan-700 text-xs w-fit">Practice Mode</Badge>
+                    <Badge className="bg-cyan-100 text-cyan-700 text-xs w-fit">Youth Challenge</Badge>
+                    <Badge className="bg-cyan-100 text-cyan-700 text-xs w-fit">Fun Mode</Badge>
+                  </div>
+                  <Button
+                    onClick={() => window.location.href = '/gaming-central'}
+                    className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-bold py-3 rounded-xl"
+                  >
+                    Play Now →
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Tricky Testaments Youth */}
+              <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-4 border-purple-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
+                <div className="absolute top-3 left-3 z-10">
+                  <Badge className="bg-yellow-500 text-white px-3 py-1 text-xs font-bold shadow-lg">
+                    DEMO
+                  </Badge>
+                </div>
+                <CardHeader className="p-0">
+                  <div className="h-48 bg-white/90 flex items-center justify-center p-4">
+                    <img 
+                      src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/dgncbaxl_Soul%20Food%27s%20Tricky%20Testaments%20-%20Bold%20Modern%20%281%29.png"
+                      alt="Tricky Testaments Youth"
+                      className="max-h-44 w-auto object-contain"
+                    />
+                  </div>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <h4 className="text-2xl font-bold text-slate-800">Tricky Testaments</h4>
+                    <span className="text-3xl">🎮</span>
+                  </div>
+                  <p className="text-sm font-semibold text-purple-600 mb-3">Youth Edition - Jeopardy Style</p>
+                  <p className="text-slate-700 mb-4">
+                    Pick categories, answer in question form, and climb the board! Jeopardy-style fun for ages 12-20.
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    <Badge className="bg-purple-100 text-purple-700 text-xs">Single Player</Badge>
+                    <Badge className="bg-purple-100 text-purple-700 text-xs">Challenge Mode</Badge>
+                    <Badge className="bg-purple-100 text-purple-700 text-xs">Class Mode</Badge>
+                  </div>
+                  <Button
+                    onClick={() => window.location.href = '/gaming-central'}
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-xl"
+                  >
+                    Play Now →
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Adult Section */}
+          <div className="mb-10">
+            <div className="text-center mb-8">
+              <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-3 text-lg font-bold shadow-lg mb-4">
+                📚 Adult Edition (Ages 21+)
+              </Badge>
+              <h4 className="text-3xl font-bold text-white mb-2">Games for Mature Believers</h4>
+              <p className="text-purple-300">Challenge yourself with deeper theological questions and serious Bible scholarship!</p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Trivia Mix-up Adult */}
+              <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-4 border-orange-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
               <div className="absolute top-3 left-3 z-10">
                 <Badge className="bg-blue-600 text-white px-3 py-1 text-xs font-bold shadow-lg">
                   DEMO
