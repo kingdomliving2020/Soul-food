@@ -9,18 +9,20 @@ const TrickyTestamentGame = () => {
   const navigate = useNavigate();
   const edition = searchParams.get('edition') || 'adult'; // youth or adult
   
-  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [questions, setQuestions] = useState([]);
+  const [answeredQuestions, setAnsweredQuestions] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [showBoard, setShowBoard] = useState(true);
   const [dailyDoubleRevealed, setDailyDoubleRevealed] = useState(false);
-  const [dailyDoubleIndex, setDailyDoubleIndex] = useState(null);
+  const [dailyDoubleQuestion, setDailyDoubleQuestion] = useState(null);
   const [wager, setWager] = useState(0);
 
-  // Point values escalating
-  const pointValues = [100, 200, 300, 400, 500, 600, 800, 1000, 1500, 2000];
+  // Jeopardy board structure: 5 categories x 2 point values each
+  const pointValues = [100, 200];
 
   useEffect(() => {
     // Fetch questions from backend
