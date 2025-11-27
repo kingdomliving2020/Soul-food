@@ -978,6 +978,87 @@ const SoulFoodLanding = () => {
           </div>
         </div>
       </footer>
+
+      {/* Series Preview Modal */}
+      {showPreview && selectedSeries && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-300">
+            {/* Header with Gradient */}
+            <div className={`relative bg-gradient-to-br ${selectedSeries.gradient} p-8 text-white`}>
+              <button
+                onClick={() => setShowPreview(false)}
+                className="absolute top-4 right-4 w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white text-2xl font-bold backdrop-blur-sm transition-all hover:scale-110"
+              >
+                ×
+              </button>
+              <div className="flex items-center space-x-4 mb-4">
+                <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center text-4xl shadow-lg">
+                  {selectedSeries.icon}
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold mb-1">{selectedSeries.name}</h2>
+                  <p className="text-white/90 text-lg font-medium">{selectedSeries.theme}</p>
+                </div>
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30">
+                <p className="text-sm font-semibold text-white/80 mb-1">Foundation Theme:</p>
+                <p className="text-xl font-bold">{selectedSeries.foundationTheme}</p>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-8 overflow-y-auto max-h-[calc(90vh-280px)]">
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold text-slate-800 mb-2 flex items-center">
+                  <span className="mr-2">📚</span>
+                  Lesson Overview
+                </h3>
+                <p className="text-slate-600 leading-relaxed">{selectedSeries.description}</p>
+              </div>
+
+              {/* Lessons Table */}
+              <div className="space-y-3">
+                {selectedSeries.lessons && selectedSeries.lessons.map((lesson) => (
+                  <div
+                    key={lesson.number}
+                    className={`bg-gradient-to-r ${selectedSeries.bgColor} border-2 border-slate-200 rounded-xl p-5 hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer`}
+                  >
+                    <div className="flex items-start space-x-4">
+                      <div className={`flex-shrink-0 w-12 h-12 bg-gradient-to-br ${selectedSeries.gradient} rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md`}>
+                        {lesson.number}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-bold text-slate-800 mb-1">
+                          Lesson {lesson.number}: {lesson.title}
+                        </h4>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          {lesson.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Call to Action */}
+              <div className="mt-8 pt-6 border-t-2 border-slate-200">
+                <Button
+                  onClick={() => {
+                    setShowPreview(false);
+                    document.getElementById('pricing-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className={`w-full bg-gradient-to-r ${selectedSeries.gradient} hover:opacity-90 text-white font-bold py-4 rounded-xl text-lg shadow-xl hover:shadow-2xl transition-all`}
+                >
+                  Get Started with {selectedSeries.name} 🚀
+                </Button>
+                <p className="text-center text-sm text-slate-500 mt-3">
+                  Choose your preferred access option below
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
