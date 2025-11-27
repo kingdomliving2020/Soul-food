@@ -78,7 +78,6 @@ const SOUL_FOOD_SERIES = [
     id: "dinner",
     name: "Dinner",
     theme: "Finding Your Purpose",
-    foundationTheme: "Called for Such a Time",
     icon: "🌆",
     gradient: "from-purple-400 via-pink-500 to-rose-500",
     bgColor: "bg-gradient-to-br from-purple-50 to-pink-50",
@@ -86,11 +85,16 @@ const SOUL_FOOD_SERIES = [
     available: false,
     unlockDate: "Q2 2026",
     description: "Discover your unique calling and walk confidently in the purpose God has designed for you.",
-    lessons: [
-      { number: 1, title: "Esther", description: "Positioned for purpose by God" },
-      { number: 2, title: "Jeremiah", description: "Called before you were formed" },
-      { number: 3, title: "The Twelve Disciples", description: "Ordinary people, extraordinary calling" },
-      { number: 4, title: "Paul's Conversion", description: "Transformed for kingdom impact" }
+    themes: [
+      {
+        themeName: "Called for Such a Time",
+        lessons: [
+          { number: 1, title: "Esther", description: "Positioned for purpose by God" },
+          { number: 2, title: "Jeremiah", description: "Called before you were formed" },
+          { number: 3, title: "The Twelve Disciples", description: "Ordinary people, extraordinary calling" },
+          { number: 4, title: "Paul's Conversion", description: "Transformed for kingdom impact" }
+        ]
+      }
     ]
   },
   {
