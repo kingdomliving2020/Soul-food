@@ -578,16 +578,16 @@ const MixUpGame = () => {
 
             {/* Explanation */}
             {showResult && (
-              <div className={`mt-6 p-6 rounded-xl ${
+              <div className={`mt-4 p-4 rounded-lg ${
                 selectedAnswer === question.correct_answer
                   ? 'bg-green-50 border-2 border-green-500'
                   : 'bg-red-50 border-2 border-red-500'
               }`}>
-                <h4 className="font-bold text-lg mb-2">
+                <h4 className="font-bold text-base mb-1">
                   {selectedAnswer === question.correct_answer ? '✅ Correct!' : '❌ Incorrect!'}
                 </h4>
-                <p className="text-slate-700 mb-2">{question.explanation}</p>
-                <p className="text-sm text-slate-600">📖 {question.scripture_ref}</p>
+                <p className="text-sm text-slate-700 mb-1">{question.explanation}</p>
+                <p className="text-xs text-slate-600">📖 {question.scripture_ref}</p>
               </div>
             )}
           </CardContent>
