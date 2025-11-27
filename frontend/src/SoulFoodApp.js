@@ -624,7 +624,7 @@ const SoulFoodLanding = () => {
                   <Badge className="bg-orange-100 text-orange-700 text-xs">Millionaire Mode</Badge>
                 </div>
                 <Button
-                  onClick={() => window.location.href = '/gaming-central'}
+                  onClick={() => window.location.href = '/game/mixup?edition=adult'}
                   className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-3 rounded-xl"
                 >
                   Play Now →
