@@ -658,13 +658,13 @@ const MixUpGame = () => {
 
         {/* Next Button */}
         {showResult && !gameOver && (
-          <div className="text-center">
-            <Button
+          <div className="text-center mt-4">
+            <button
               onClick={nextQuestion}
-              className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold px-12 py-6 text-xl"
+              className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold px-8 py-3 rounded-lg text-base sm:text-lg shadow-lg transition-all hover:scale-105"
             >
               {currentQuestion < questions.length - 1 ? 'Next Question →' : 'See Results'}
-            </Button>
+            </button>
           </div>
         )}
       </div>
