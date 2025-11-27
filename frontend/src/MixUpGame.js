@@ -53,20 +53,318 @@ const MixUpGame = () => {
   };
 
   const generateMockQuestions = () => {
-    // Generate 15 questions with progressive difficulty
-    return difficulties.map((difficulty, index) => ({
-      id: index + 1,
-      difficulty,
-      question: `${edition === 'youth' ? 'Youth' : 'Adult'} Question ${index + 1} (${difficulty}): What does the Bible teach about faith?`,
-      options: [
-        'Faith is believing without seeing',
-        'Faith is trusting in God completely',
-        'Faith is the substance of things hoped for',
-        'Faith is demonstrated through actions'
+    // Generate 15 edition-specific questions with progressive difficulty
+    const youthQuestions = {
+      easy: [
+        {
+          question: "Who built the ark to save his family from the flood?",
+          options: ["Moses", "Noah", "Abraham", "David"],
+          correct_answer: "Noah",
+          explanation: "Noah built the ark according to God's instructions to save his family and the animals.",
+          scripture_ref: "Genesis 6-9"
+        },
+        {
+          question: "What did David use to defeat Goliath?",
+          options: ["A sword", "A spear", "A sling and stone", "His bare hands"],
+          correct_answer: "A sling and stone",
+          explanation: "David defeated the giant Goliath with just a sling and a stone, trusting in God.",
+          scripture_ref: "1 Samuel 17"
+        },
+        {
+          question: "How many disciples did Jesus have?",
+          options: ["10", "11", "12", "13"],
+          correct_answer: "12",
+          explanation: "Jesus chose 12 disciples to follow Him and learn from His teachings.",
+          scripture_ref: "Matthew 10:1-4"
+        },
+        {
+          question: "Who was swallowed by a big fish?",
+          options: ["Jonah", "Daniel", "Peter", "Paul"],
+          correct_answer: "Jonah",
+          explanation: "Jonah was swallowed by a great fish after trying to run from God's command.",
+          scripture_ref: "Jonah 1-2"
+        },
+        {
+          question: "What is the first book of the Bible?",
+          options: ["Exodus", "Genesis", "Matthew", "Psalms"],
+          correct_answer: "Genesis",
+          explanation: "Genesis is the first book of the Bible, meaning 'beginning'.",
+          scripture_ref: "Genesis 1:1"
+        }
       ],
-      correct_answer: 'Faith is the substance of things hoped for',
-      explanation: 'Hebrews 11:1 defines faith as the substance of things hoped for, the evidence of things not seen.',
-      scripture_ref: 'Hebrews 11:1'
+      medium: [
+        {
+          question: "Who was the wisest king in the Bible?",
+          options: ["David", "Saul", "Solomon", "Hezekiah"],
+          correct_answer: "Solomon",
+          explanation: "Solomon asked God for wisdom and became the wisest king.",
+          scripture_ref: "1 Kings 3"
+        },
+        {
+          question: "What did Jesus turn water into at the wedding?",
+          options: ["Wine", "Juice", "Oil", "Milk"],
+          correct_answer: "Wine",
+          explanation: "Jesus performed His first miracle by turning water into wine at a wedding in Cana.",
+          scripture_ref: "John 2:1-11"
+        },
+        {
+          question: "How many days was Jesus in the tomb before rising?",
+          options: ["1", "2", "3", "4"],
+          correct_answer: "3",
+          explanation: "Jesus rose from the dead on the third day, just as He prophesied.",
+          scripture_ref: "Matthew 12:40"
+        },
+        {
+          question: "Who betrayed Jesus for 30 pieces of silver?",
+          options: ["Peter", "Judas", "Thomas", "Matthew"],
+          correct_answer: "Judas",
+          explanation: "Judas Iscariot betrayed Jesus to the chief priests for thirty pieces of silver.",
+          scripture_ref: "Matthew 26:14-16"
+        },
+        {
+          question: "What was Moses' brother's name?",
+          options: ["Aaron", "Joshua", "Caleb", "Levi"],
+          correct_answer: "Aaron",
+          explanation: "Aaron was Moses' brother and became the first high priest of Israel.",
+          scripture_ref: "Exodus 4:14"
+        }
+      ],
+      hard: [
+        {
+          question: "How many years did the Israelites wander in the desert?",
+          options: ["30 years", "40 years", "50 years", "60 years"],
+          correct_answer: "40 years",
+          explanation: "The Israelites wandered 40 years in the wilderness due to their disobedience.",
+          scripture_ref: "Numbers 14:33-34"
+        },
+        {
+          question: "Who was the first king of Israel?",
+          options: ["David", "Solomon", "Saul", "Samuel"],
+          correct_answer: "Saul",
+          explanation: "Saul was anointed as the first king of Israel by the prophet Samuel.",
+          scripture_ref: "1 Samuel 10"
+        },
+        {
+          question: "What did Jesus say is the greatest commandment?",
+          options: ["Love your neighbor", "Love the Lord your God", "Do not steal", "Honor your parents"],
+          correct_answer: "Love the Lord your God",
+          explanation: "Jesus said the greatest commandment is to love the Lord your God with all your heart, soul, and mind.",
+          scripture_ref: "Matthew 22:37-38"
+        },
+        {
+          question: "Who wrote most of the New Testament letters?",
+          options: ["Peter", "John", "Paul", "James"],
+          correct_answer: "Paul",
+          explanation: "Paul (formerly Saul) wrote at least 13 letters that are part of the New Testament.",
+          scripture_ref: "Acts 9"
+        },
+        {
+          question: "What did God create on the seventh day?",
+          options: ["Humans", "Animals", "Light", "He rested"],
+          correct_answer: "He rested",
+          explanation: "On the seventh day, God rested from all His work of creation and made it holy.",
+          scripture_ref: "Genesis 2:2-3"
+        }
+      ]
+    };
+
+    const adultQuestions = {
+      easy: [
+        {
+          question: "In Hebrews 11:1, what is faith defined as?",
+          options: [
+            "The substance of things hoped for",
+            "Complete trust in God",
+            "Believing without proof",
+            "Following religious traditions"
+          ],
+          correct_answer: "The substance of things hoped for",
+          explanation: "Hebrews 11:1 defines faith as 'the substance of things hoped for, the evidence of things not seen.'",
+          scripture_ref: "Hebrews 11:1"
+        },
+        {
+          question: "What covenant did God make with Abraham?",
+          options: [
+            "To make him a great nation",
+            "To give him many cattle",
+            "To make him wealthy",
+            "To protect him from enemies"
+          ],
+          correct_answer: "To make him a great nation",
+          explanation: "God promised Abraham that he would be the father of many nations and that all peoples would be blessed through him.",
+          scripture_ref: "Genesis 12:2-3"
+        },
+        {
+          question: "Which prophet confronted King David about his sin with Bathsheba?",
+          options: ["Isaiah", "Nathan", "Elijah", "Jeremiah"],
+          correct_answer: "Nathan",
+          explanation: "The prophet Nathan confronted David with a parable, leading to David's repentance.",
+          scripture_ref: "2 Samuel 12"
+        },
+        {
+          question: "What did Paul describe as the 'armor of God' in Ephesians 6?",
+          options: [
+            "Physical weapons for battle",
+            "Spiritual protection for believers",
+            "Rules for church conduct",
+            "Guidelines for missionaries"
+          ],
+          correct_answer: "Spiritual protection for believers",
+          explanation: "Paul describes spiritual armor including truth, righteousness, faith, and salvation to protect believers in spiritual warfare.",
+          scripture_ref: "Ephesians 6:10-18"
+        },
+        {
+          question: "What is the central message of the Gospel?",
+          options: [
+            "Be a good person",
+            "Jesus died and rose for our salvation",
+            "Follow the Ten Commandments",
+            "Attend church regularly"
+          ],
+          correct_answer: "Jesus died and rose for our salvation",
+          explanation: "The Gospel (Good News) is that Jesus Christ died for our sins and rose again, offering salvation to all who believe.",
+          scripture_ref: "1 Corinthians 15:1-4"
+        }
+      ],
+      medium: [
+        {
+          question: "In Romans 12:2, what are believers instructed NOT to conform to?",
+          options: [
+            "This world",
+            "Church traditions",
+            "Family expectations",
+            "Cultural norms"
+          ],
+          correct_answer: "This world",
+          explanation: "Paul instructs believers not to conform to the pattern of this world, but to be transformed by renewing their minds.",
+          scripture_ref: "Romans 12:2"
+        },
+        {
+          question: "What did James say about faith without works?",
+          options: [
+            "It is sufficient",
+            "It is dead",
+            "It is growing",
+            "It is optional"
+          ],
+          correct_answer: "It is dead",
+          explanation: "James teaches that faith without works is dead, emphasizing that genuine faith produces action.",
+          scripture_ref: "James 2:26"
+        },
+        {
+          question: "What does 'Immanuel' mean?",
+          options: [
+            "God with us",
+            "Savior of the world",
+            "Prince of Peace",
+            "Mighty God"
+          ],
+          correct_answer: "God with us",
+          explanation: "Immanuel means 'God with us,' prophesying Jesus' coming to dwell among humanity.",
+          scripture_ref: "Matthew 1:23"
+        },
+        {
+          question: "According to Proverbs 3:5-6, what should we NOT lean on?",
+          options: [
+            "Our own understanding",
+            "Other people",
+            "Our wealth",
+            "Our abilities"
+          ],
+          correct_answer: "Our own understanding",
+          explanation: "Proverbs instructs us to trust in the Lord and not lean on our own understanding.",
+          scripture_ref: "Proverbs 3:5-6"
+        },
+        {
+          question: "What did Jesus say is required to enter the Kingdom of God?",
+          options: [
+            "Good works",
+            "Being born again",
+            "Church membership",
+            "Following the law"
+          ],
+          correct_answer: "Being born again",
+          explanation: "Jesus told Nicodemus that no one can see the kingdom of God unless they are born again.",
+          scripture_ref: "John 3:3"
+        }
+      ],
+      hard: [
+        {
+          question: "In Philippians 2:5-11, Paul describes Christ's humility. What did Christ empty Himself of?",
+          options: [
+            "His glory and divine privileges",
+            "His knowledge",
+            "His power",
+            "His love"
+          ],
+          correct_answer: "His glory and divine privileges",
+          explanation: "Christ emptied Himself of His divine privileges, taking on human form and humbling Himself to death on a cross.",
+          scripture_ref: "Philippians 2:5-11"
+        },
+        {
+          question: "What theological concept does Romans 8:29-30 describe as the 'golden chain of salvation'?",
+          options: [
+            "Foreknowledge, predestination, calling, justification, glorification",
+            "Faith, hope, love, joy, peace",
+            "Repentance, baptism, communion, prayer, worship",
+            "Creation, fall, redemption, restoration, consummation"
+          ],
+          correct_answer: "Foreknowledge, predestination, calling, justification, glorification",
+          explanation: "Romans 8:29-30 presents the unbreakable chain of God's sovereign work in salvation from foreknowledge to glorification.",
+          scripture_ref: "Romans 8:29-30"
+        },
+        {
+          question: "According to 1 Corinthians 13, what three things abide, and which is greatest?",
+          options: [
+            "Faith, hope, love - love is greatest",
+            "Truth, justice, mercy - mercy is greatest",
+            "Wisdom, knowledge, understanding - wisdom is greatest",
+            "Prayer, fasting, giving - prayer is greatest"
+          ],
+          correct_answer: "Faith, hope, love - love is greatest",
+          explanation: "Paul concludes his discourse on love by stating that faith, hope, and love abide, but the greatest of these is love.",
+          scripture_ref: "1 Corinthians 13:13"
+        },
+        {
+          question: "In Galatians, what does Paul argue is the true basis of justification?",
+          options: [
+            "Works of the law",
+            "Faith in Jesus Christ alone",
+            "Religious ceremonies",
+            "Moral perfection"
+          ],
+          correct_answer: "Faith in Jesus Christ alone",
+          explanation: "Paul strongly argues in Galatians that justification comes through faith in Christ alone, not by works of the law.",
+          scripture_ref: "Galatians 2:16"
+        },
+        {
+          question: "What does the theological term 'propitiation' mean in Romans 3:25?",
+          options: [
+            "Substitution",
+            "Atonement that satisfies God's wrath",
+            "Redemption price",
+            "Reconciliation"
+          ],
+          correct_answer: "Atonement that satisfies God's wrath",
+          explanation: "Propitiation refers to Jesus' sacrifice that satisfies God's righteous wrath against sin, making peace between God and humanity.",
+          scripture_ref: "Romans 3:25"
+        }
+      ]
+    };
+
+    const questionBank = edition === 'youth' ? youthQuestions : adultQuestions;
+    
+    // Select 5 easy, 5 medium, 5 hard
+    const selected = [
+      ...questionBank.easy.slice(0, 5),
+      ...questionBank.medium.slice(0, 5),
+      ...questionBank.hard.slice(0, 5)
+    ];
+
+    return selected.map((q, index) => ({
+      id: index + 1,
+      difficulty: difficulties[index],
+      ...q
     }));
   };
 
