@@ -115,22 +115,24 @@ const SoulFoodLanding = () => {
       <section className="relative py-16 sm:py-24 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div 
-            className="w-full h-full bg-cover bg-center opacity-40"
+            className="w-full h-full bg-cover bg-center opacity-60"
             style={{
               backgroundImage: "url('https://images.unsplash.com/photo-1759127481171-30a27de310ad?w=1200&h=800&fit=crop&crop=center')"
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-900/60 via-indigo-900/50 to-purple-900/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-900/70 via-indigo-900/60 to-purple-900/70" />
         </div>
         
         <div className="relative z-10 container mx-auto text-center max-w-5xl">
           {/* Soul Food Logo */}
           <div className="mb-6 flex justify-center">
-            <img 
-              src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/imgmtfsi_1764251568266.png"
-              alt="Soul Food Logo - Truth, Served Daily"
-              className="h-32 sm:h-40 lg:h-48 w-auto drop-shadow-2xl"
-            />
+            <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-6 shadow-2xl border-4 border-white/50">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/imgmtfsi_1764251568266.png"
+                alt="Soul Food Logo - Truth, Served Daily"
+                className="h-32 sm:h-40 lg:h-48 w-auto"
+              />
+            </div>
           </div>
 
           {/* Beta Badge */}
