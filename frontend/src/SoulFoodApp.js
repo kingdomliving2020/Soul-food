@@ -141,7 +141,7 @@ const SoulFoodLanding = () => {
           </Badge>
           
           <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-amber-700 via-amber-500 to-yellow-500 bg-clip-text text-transparent drop-shadow-lg">
+            <span className="bg-gradient-to-r from-amber-700 via-amber-600 to-amber-500 bg-clip-text text-transparent drop-shadow-lg">
               Soul Food
             </span>
             <br />
