@@ -244,6 +244,20 @@ const TrickyTestamentGame = () => {
     }));
   };
 
+  const selectQuestion = (questionId) => {
+    // Check if already answered
+    if (answeredQuestions.includes(questionId)) return;
+    
+    const question = questions.find(q => q.id === questionId);
+    setSelectedQuestion(question);
+    setShowBoard(false);
+    
+    // Check if it's a Daily Double
+    if (questionId === dailyDoubleIndex) {
+      setDailyDoubleRevealed(true);
+    }
+  };
+
   const handleDailyDoubleWager = (amount) => {
     setWager(amount);
     setDailyDoubleRevealed(false);
@@ -255,9 +269,9 @@ const TrickyTestamentGame = () => {
     setSelectedAnswer(answer);
     setShowResult(true);
     
-    const isCorrect = answer === questions[currentQuestion].correct_answer;
+    const isCorrect = answer === selectedQuestion.correct_answer;
     
-    if (currentQuestion === dailyDoubleIndex) {
+    if (selectedQuestion.id === dailyDoubleIndex && wager > 0) {
       // Daily Double scoring
       if (isCorrect) {
         setScore(score + wager);
@@ -267,32 +281,33 @@ const TrickyTestamentGame = () => {
     } else {
       // Regular scoring
       if (isCorrect) {
-        setScore(score + questions[currentQuestion].points);
+        setScore(score + selectedQuestion.points);
       }
     }
   };
 
-  const nextQuestion = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-      setSelectedAnswer(null);
-      setShowResult(false);
-      
-      // Check if next question is Daily Double
-      if (currentQuestion + 1 === dailyDoubleIndex) {
-        setDailyDoubleRevealed(true);
-      }
-    } else {
+  const returnToBoard = () => {
+    setAnsweredQuestions([...answeredQuestions, selectedQuestion.id]);
+    setSelectedQuestion(null);
+    setSelectedAnswer(null);
+    setShowResult(false);
+    setShowBoard(true);
+    setWager(0);
+    
+    // Check if all questions answered
+    if (answeredQuestions.length + 1 === questions.length) {
       setGameOver(true);
     }
   };
 
   const restartGame = () => {
-    setCurrentQuestion(0);
     setScore(0);
     setSelectedAnswer(null);
     setShowResult(false);
     setGameOver(false);
+    setAnsweredQuestions([]);
+    setSelectedQuestion(null);
+    setShowBoard(true);
     setDailyDoubleRevealed(false);
     setDailyDoubleIndex(null);
     setWager(0);
