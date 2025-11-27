@@ -146,12 +146,30 @@ const SOUL_FOOD_SERIES = [
     description: "Grow into spiritual maturity, developing wisdom and character that honors Christ.",
     themes: [
       {
-        themeName: "Growing in Christ-likeness",
+        themeName: "Persistent Pursuit",
         lessons: [
-          { number: 1, title: "Job's Perseverance", description: "Faith refined through trials" },
-          { number: 2, title: "Daniel's Integrity", description: "Standing firm in conviction" },
-          { number: 3, title: "Peter's Transformation", description: "From denier to rock" },
-          { number: 4, title: "The Armor of God", description: "Equipped for spiritual warfare" }
+          { number: 1, title: "Timeless Love - Jacob's Story", description: "Unwavering dedication through years of service" },
+          { number: 2, title: "Hosea's Hardship", description: "Loving faithfully despite betrayal" },
+          { number: 3, title: "Daniel's Commitment", description: "Steadfast devotion in adversity" },
+          { number: 4, title: "Job's Journey", description: "Enduring faith through suffering" }
+        ]
+      },
+      {
+        themeName: "Poisoned Pursuit",
+        lessons: [
+          { number: 1, title: "Fleeing Forward", description: "Running from God's calling" },
+          { number: 2, title: "The Running Man", description: "Escaping consequences and truth" },
+          { number: 3, title: "Nineveh", description: "Jonah's reluctant obedience" },
+          { number: 4, title: "Double Standards", description: "Hypocrisy and misguided motives" }
+        ]
+      },
+      {
+        themeName: "There's No \"Right Way\" to Grieve",
+        lessons: [
+          { number: 1, title: "The First Family - Abel", description: "Cain and Eve's loss and sorrow" },
+          { number: 2, title: "David (Bathsheba's First Son)", description: "A king's repentance and grief" },
+          { number: 3, title: "Shunammite Woman's Son", description: "Faith in the face of death" },
+          { number: 4, title: "Mary, Mother of Christ", description: "A mother's pain at the cross" }
         ]
       }
     ]
