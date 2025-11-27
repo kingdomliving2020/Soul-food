@@ -471,6 +471,22 @@ const SoulFoodLanding = () => {
         </div>
       </section>
 
+      {/* Gaming Central Section */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-10">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/k75fu34t_Gaming%20Central%20Test%20Your%20Knowledge%20Logo.png"
+              alt="Gaming Central"
+              className="h-24 mx-auto mb-6"
+            />
+            <h3 className="text-4xl sm:text-5xl font-bold mb-4 text-white">
+              Gaming Central
+            </h3>
+            <p className="text-xl text-purple-300 max-w-3xl mx-auto mb-4">
+              Test your Soul Food knowledge with three epic Bible trivia games!
+            </p>
+            <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 text-base font-bold">
               🎮 Mid-Year Review Games
             </Badge>
           </div>
