@@ -122,6 +122,15 @@ const SoulFoodLanding = () => {
         </div>
         
         <div className="relative z-10 container mx-auto text-center max-w-5xl">
+          {/* Soul Food Logo */}
+          <div className="mb-6 flex justify-center">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/imgmtfsi_1764251568266.png"
+              alt="Soul Food Logo - Truth, Served Daily"
+              className="h-32 sm:h-40 lg:h-48 w-auto drop-shadow-2xl"
+            />
+          </div>
+
           {/* Beta Badge */}
           <Badge className="mb-6 bg-gradient-to-r from-purple-600 to-indigo-700 text-white px-6 py-2 text-sm font-bold animate-pulse shadow-xl">
             🚀 BETA ACCESS - Launch Special
