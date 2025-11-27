@@ -391,7 +391,7 @@ const MixUpGame = () => {
   const useScriptureHint = () => {
     if (!lifelines.scriptureHint || showResult) return;
     
-    alert(`Scripture Hint: ${questions[currentQuestion].scripture_ref}\n\n${questions[currentQuestion].explanation}`);
+    alert(`📖 Scripture Hint:\n\n${questions[currentQuestion].scripture_ref}\n\nLook up this passage for guidance!`);
     setLifelines({...lifelines, scriptureHint: false});
   };
 
