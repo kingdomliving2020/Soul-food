@@ -356,7 +356,7 @@ const SoulFoodLanding = () => {
             </Badge>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-10">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             {/* Trivia Mix-up */}
             <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-4 border-orange-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
               <div className="absolute top-2 right-2 z-10">
