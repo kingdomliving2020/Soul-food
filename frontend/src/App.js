@@ -964,19 +964,17 @@ const FreeSampleLesson = () => {
             <CardContent className="p-4 sm:p-6">
               <p className="text-slate-600 mb-4">Fill in the crossword puzzle based on today's lesson. Use the clues below!</p>
               
-              {/* Visual Crossword Grid */}
-              <div className="bg-white p-4 rounded-lg border-2 border-slate-200 mb-6 overflow-x-auto">
-                <div className="inline-block min-w-full">
-                  <div className="grid grid-cols-10 gap-1" style={{width: 'fit-content'}}>
-                    {/* Row 1 */}
-                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-indigo-50 flex items-center justify-center text-xs font-bold text-indigo-700"><span className="absolute text-[8px] top-0 left-0 ml-0.5">1</span>F</div>
+              {/* Visual Crossword Grid - Hidden, users fill via inputs below */}
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-lg border-2 border-indigo-200 mb-6">
+                <div className="text-center">
+                  <svg className="w-16 h-16 mx-auto mb-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <h4 className="text-xl font-bold text-indigo-900 mb-2">Kingdom Crosses Puzzle</h4>
+                  <p className="text-indigo-700">Fill in your answers below using the clues provided!</p>
+                  <div className="mt-4 inline-block bg-white px-4 py-2 rounded-full border-2 border-indigo-300">
+                    <span className="text-sm font-semibold text-indigo-800">💡 Tip: All answers are in UPPERCASE</span>
+                  </div>
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
                     <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
                     
