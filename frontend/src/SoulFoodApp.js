@@ -1233,16 +1233,16 @@ const SoulFoodLanding = () => {
             </div>
 
             {/* Featured Multimedia Videos */}
-            <div className="mt-8 grid md:grid-cols-3 gap-6">
+            <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Youth Featured Song */}
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
                 <div className="flex items-center justify-center mb-3">
                   <Badge className="bg-purple-600 text-white px-3 py-1 text-xs font-bold">
-                    🎵 Youth Content
+                    🎵 Youth Music
                   </Badge>
                 </div>
                 <h5 className="text-lg font-bold text-center mb-3 text-slate-800">
-                  Inspirational Youth Music
+                  Inspirational Music
                 </h5>
                 <div className="aspect-video rounded-lg overflow-hidden shadow-xl">
                   <iframe
@@ -1261,6 +1261,33 @@ const SoulFoodLanding = () => {
                 </p>
               </div>
 
+              {/* Youth Relationships */}
+              <div className="bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl p-6 border-2 border-pink-200">
+                <div className="flex items-center justify-center mb-3">
+                  <Badge className="bg-pink-600 text-white px-3 py-1 text-xs font-bold">
+                    💕 Youth Relationships
+                  </Badge>
+                </div>
+                <h5 className="text-lg font-bold text-center mb-3 text-slate-800">
+                  Healthy Relationships
+                </h5>
+                <div className="aspect-video rounded-lg overflow-hidden shadow-xl">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src="https://www.youtube.com/embed/caDGKe4VpyA"
+                    title="Youth Relationships Teaching"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  ></iframe>
+                </div>
+                <p className="text-center text-xs text-slate-600 mt-3">
+                  Biblical guidance for relationships
+                </p>
+              </div>
+
               {/* Sowing & Reaping Teaching */}
               <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border-2 border-orange-200">
                 <div className="flex items-center justify-center mb-3">
@@ -1269,7 +1296,7 @@ const SoulFoodLanding = () => {
                   </Badge>
                 </div>
                 <h5 className="text-lg font-bold text-center mb-3 text-slate-800">
-                  Sowing & Reaping Principles
+                  Sowing & Reaping
                 </h5>
                 <div className="aspect-video rounded-lg overflow-hidden shadow-xl">
                   <iframe
@@ -1284,7 +1311,7 @@ const SoulFoodLanding = () => {
                   ></iframe>
                 </div>
                 <p className="text-center text-xs text-slate-600 mt-3">
-                  Biblical teaching on sowing and reaping
+                  Biblical teaching principles
                 </p>
               </div>
 
@@ -1292,11 +1319,11 @@ const SoulFoodLanding = () => {
               <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border-2 border-blue-200">
                 <div className="flex items-center justify-center mb-3">
                   <Badge className="bg-blue-600 text-white px-3 py-1 text-xs font-bold">
-                    🎓 Adult Content
+                    🎓 Adult Teaching
                   </Badge>
                 </div>
                 <h5 className="text-lg font-bold text-center mb-3 text-slate-800">
-                  Talent vs Gift Teaching
+                  Talent vs Gift
                 </h5>
                 <div className="aspect-video rounded-lg overflow-hidden shadow-xl">
                   <iframe
@@ -1311,7 +1338,7 @@ const SoulFoodLanding = () => {
                   ></iframe>
                 </div>
                 <p className="text-center text-xs text-slate-600 mt-3">
-                  Understanding talents and spiritual gifts
+                  Understanding talents and gifts
                 </p>
               </div>
             </div>
