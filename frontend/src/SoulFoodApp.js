@@ -358,11 +358,18 @@ const SoulFoodLanding = () => {
 
           <div className="grid md:grid-cols-3 gap-8 mb-10">
             {/* Trivia Mix-up */}
-            <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-4 border-orange-300 shadow-2xl overflow-hidden hover:scale-105 transition-all">
+            <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-4 border-orange-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
+              <div className="absolute top-2 right-2 z-10">
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/5gzs35hl_Trivia%20Mix-up%20Demo%20Icon%20%281%29.png"
+                  alt="Demo Available"
+                  className="w-20 h-20 drop-shadow-lg"
+                />
+              </div>
               <CardHeader className="p-0">
                 <div className="h-48 bg-white/90 flex items-center justify-center p-4">
                   <img 
-                    src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/ficy53gi_Soul%20Food%20Trivia%20Logo%20-%20Vintage%20Style%20%281%29.png"
+                    src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/bovn8pyf_Soul%20Food%20Trivia%20Logo%20-%20Vintage%20Style%20%282%29.png"
                     alt="Trivia Mix-up"
                     className="max-h-44 w-auto object-contain"
                   />
