@@ -94,6 +94,13 @@ const MixUpGame = () => {
       ],
       medium: [
         {
+          question: "True or False: Jesus turned water into wine at a wedding.",
+          options: ["True", "False"],
+          correct_answer: "True",
+          explanation: "Jesus performed His first miracle by turning water into wine at a wedding in Cana.",
+          scripture_ref: "John 2:1-11"
+        },
+        {
           question: "Who was the wisest king in the Bible?",
           options: ["David", "Saul", "Solomon", "Hezekiah"],
           correct_answer: "Solomon",
@@ -101,16 +108,9 @@ const MixUpGame = () => {
           scripture_ref: "1 Kings 3"
         },
         {
-          question: "What did Jesus turn water into at the wedding?",
-          options: ["Wine", "Juice", "Oil", "Milk"],
-          correct_answer: "Wine",
-          explanation: "Jesus performed His first miracle by turning water into wine at a wedding in Cana.",
-          scripture_ref: "John 2:1-11"
-        },
-        {
-          question: "How many days was Jesus in the tomb before rising?",
-          options: ["1", "2", "3", "4"],
-          correct_answer: "3",
+          question: "True or False: Jesus rose from the dead on the third day.",
+          options: ["True", "False"],
+          correct_answer: "True",
           explanation: "Jesus rose from the dead on the third day, just as He prophesied.",
           scripture_ref: "Matthew 12:40"
         },
