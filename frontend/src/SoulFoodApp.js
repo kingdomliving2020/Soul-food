@@ -15,48 +15,76 @@ const SOUL_FOOD_SERIES = [
     id: "breakfast",
     name: "Break*fast",
     theme: "Foundation in Christ",
+    foundationTheme: "Prayer, the First Resort",
     icon: "☀️",
     gradient: "from-amber-400 via-orange-500 to-red-500",
     bgColor: "bg-gradient-to-br from-amber-50 to-orange-50",
     bgImage: "https://images.unsplash.com/photo-1756367260219-b60e3cb90fa5?w=800&h=400&fit=crop&crop=center",
     available: true,
-    description: "Begin your spiritual journey with a rock-solid foundation in Christ. Perfect for new believers and those seeking renewal."
+    description: "Begin your spiritual journey with a rock-solid foundation in Christ. Perfect for new believers and those seeking renewal.",
+    lessons: [
+      { number: 1, title: "Esther", description: "Prayer as a weapon in spiritual warfare" },
+      { number: 2, title: "Solomon", description: "Wisdom through prayer and divine guidance" },
+      { number: 3, title: "Jesus in the Garden", description: "Submission and intimacy with God" },
+      { number: 4, title: "Paul & Silas", description: "Praise and prayer in persecution" }
+    ]
   },
   {
     id: "lunch",
     name: "Lunch",
     theme: "Kingdom Relationships",
+    foundationTheme: "Love & Unity in the Body",
     icon: "🌤️",
     gradient: "from-blue-400 via-cyan-500 to-teal-500",
     bgColor: "bg-gradient-to-br from-blue-50 to-cyan-50",
     bgImage: "https://images.pexels.com/photos/8513088/pexels-photo-8513088.jpeg?w=800&h=400&fit=crop&crop=center",
     available: false,
     unlockDate: "Q1 2026",
-    description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity."
+    description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity.",
+    lessons: [
+      { number: 1, title: "Ruth & Naomi", description: "Covenant loyalty and love" },
+      { number: 2, title: "David & Jonathan", description: "Godly friendship and loyalty" },
+      { number: 3, title: "The Early Church", description: "Unity in diversity and purpose" },
+      { number: 4, title: "Iron Sharpens Iron", description: "Accountability and growth together" }
+    ]
   },
   {
     id: "dinner",
     name: "Dinner",
     theme: "Finding Your Purpose",
+    foundationTheme: "Called for Such a Time",
     icon: "🌆",
     gradient: "from-purple-400 via-pink-500 to-rose-500",
     bgColor: "bg-gradient-to-br from-purple-50 to-pink-50",
     bgImage: "https://img.freepik.com/free-photo/high-angle-catholic-young-men-women-holding-each-other-hands-while-praying-together-around-table-with-christian-cross_662251-1120.jpg?w=800&h=400&fit=crop&crop=center",
     available: false,
     unlockDate: "Q2 2026",
-    description: "Discover your unique calling and walk confidently in the purpose God has designed for you."
+    description: "Discover your unique calling and walk confidently in the purpose God has designed for you.",
+    lessons: [
+      { number: 1, title: "Esther", description: "Positioned for purpose by God" },
+      { number: 2, title: "Jeremiah", description: "Called before you were formed" },
+      { number: 3, title: "The Twelve Disciples", description: "Ordinary people, extraordinary calling" },
+      { number: 4, title: "Paul's Conversion", description: "Transformed for kingdom impact" }
+    ]
   },
   {
     id: "supper",
     name: "Supper",
     theme: "Maturity in the Faith",
+    foundationTheme: "Growing in Christ-likeness",
     icon: "🌙",
     gradient: "from-indigo-500 via-purple-600 to-blue-700",
     bgColor: "bg-gradient-to-br from-indigo-50 to-purple-50",
     bgImage: "https://img.freepik.com/free-photo/side-view-people-reading-together_23-2150062161.jpg?w=800&h=400&fit=crop&crop=center",
     available: false,
     unlockDate: "Q3 2026",
-    description: "Grow into spiritual maturity, developing wisdom and character that honors Christ."
+    description: "Grow into spiritual maturity, developing wisdom and character that honors Christ.",
+    lessons: [
+      { number: 1, title: "Job's Perseverance", description: "Faith refined through trials" },
+      { number: 2, title: "Daniel's Integrity", description: "Standing firm in conviction" },
+      { number: 3, title: "Peter's Transformation", description: "From denier to rock" },
+      { number: 4, title: "The Armor of God", description: "Equipped for spiritual warfare" }
+    ]
   },
   {
     id: "holiday",
