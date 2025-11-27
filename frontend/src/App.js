@@ -1693,6 +1693,8 @@ const Dashboard = () => {
 // Import the new Soul Food landing page
 import SoulFoodLanding from "./SoulFoodApp";
 import GamingCentral from "./GamingCentral";
+import TriviaMixupGame from "./TriviaMixupGame";
+import TrickyTestamentsGame from "./TrickyTestamentsGame";
 
 function App() {
   return (
@@ -1703,6 +1705,8 @@ function App() {
           <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />
           <Route path="/lesson/:id" element={<div>Lesson viewer coming soon</div>} />
           <Route path="/gaming-central" element={<GamingCentral />} />
+          <Route path="/game/trivia-mixup" element={<TriviaMixupGame edition="demo" />} />
+          <Route path="/game/tricky-testaments" element={<TrickyTestamentsGame edition="demo" />} />
           <Route path="/dashboard" element={<div>Dashboard coming soon</div>} />
         </Routes>
       </BrowserRouter>
