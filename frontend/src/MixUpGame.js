@@ -57,6 +57,20 @@ const MixUpGame = () => {
     const youthQuestions = {
       easy: [
         {
+          question: "True or False: Jesus had 12 disciples.",
+          options: ["True", "False"],
+          correct_answer: "True",
+          explanation: "Jesus chose 12 disciples to follow Him and learn from His teachings.",
+          scripture_ref: "Matthew 10:1-4"
+        },
+        {
+          question: "True or False: Moses parted the Red Sea.",
+          options: ["True", "False"],
+          correct_answer: "True",
+          explanation: "God worked through Moses to part the Red Sea, allowing the Israelites to escape Egypt.",
+          scripture_ref: "Exodus 14:21-22"
+        },
+        {
           question: "Who built the ark to save his family from the flood?",
           options: ["Moses", "Noah", "Abraham", "David"],
           correct_answer: "Noah",
@@ -71,25 +85,11 @@ const MixUpGame = () => {
           scripture_ref: "1 Samuel 17"
         },
         {
-          question: "How many disciples did Jesus have?",
-          options: ["10", "11", "12", "13"],
-          correct_answer: "12",
-          explanation: "Jesus chose 12 disciples to follow Him and learn from His teachings.",
-          scripture_ref: "Matthew 10:1-4"
-        },
-        {
-          question: "Who was swallowed by a big fish?",
-          options: ["Jonah", "Daniel", "Peter", "Paul"],
-          correct_answer: "Jonah",
-          explanation: "Jonah was swallowed by a great fish after trying to run from God's command.",
+          question: "True or False: Jonah was swallowed by a whale.",
+          options: ["True", "False"],
+          correct_answer: "True",
+          explanation: "Jonah was swallowed by a great fish (often called a whale) after trying to run from God.",
           scripture_ref: "Jonah 1-2"
-        },
-        {
-          question: "What is the first book of the Bible?",
-          options: ["Exodus", "Genesis", "Matthew", "Psalms"],
-          correct_answer: "Genesis",
-          explanation: "Genesis is the first book of the Bible, meaning 'beginning'.",
-          scripture_ref: "Genesis 1:1"
         }
       ],
       medium: [
