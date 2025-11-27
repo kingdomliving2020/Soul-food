@@ -663,7 +663,7 @@ const SoulFoodLanding = () => {
                   <Badge className="bg-amber-100 text-amber-700 text-xs">Final Jeopardy</Badge>
                 </div>
                 <Button
-                  onClick={() => window.location.href = '/gaming-central'}
+                  onClick={() => window.location.href = '/game/tricky-testament?edition=adult'}
                   className="w-full bg-gradient-to-r from-amber-700 to-yellow-700 hover:from-amber-800 hover:to-yellow-800 text-white font-bold py-3 rounded-xl"
                 >
                   Play Now →
