@@ -124,18 +124,21 @@ const SoulFoodLanding = () => {
         </div>
         
         <div className="relative z-10 container mx-auto text-center max-w-5xl">
-          {/* Soul Food Logo */}
-          <div className="mb-6 flex justify-center">
-            <div className="relative">
-              {/* Brown shadow hue behind logo */}
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-800/40 via-amber-700/30 to-amber-900/40 rounded-3xl blur-2xl transform scale-105"></div>
-              {/* Logo container */}
-              <div className="relative bg-white/95 backdrop-blur-sm rounded-3xl p-6 shadow-2xl border-4 border-white/50">
-                <img 
-                  src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/imgmtfsi_1764251568266.png"
-                  alt="Soul Food Logo - Truth, Served Daily"
-                  className="h-32 sm:h-40 lg:h-48 w-auto"
-                />
+          {/* Soul Food Text Logo */}
+          <div className="mb-8 text-center">
+            <div className="relative inline-block">
+              {/* Brown shadow behind text */}
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-800/30 via-amber-700/20 to-amber-900/30 rounded-2xl blur-3xl transform scale-110"></div>
+              {/* Text container */}
+              <div className="relative bg-white/90 backdrop-blur-md rounded-2xl px-8 py-6 shadow-2xl border-4 border-white/40">
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-2" style={{ fontFamily: 'Georgia, serif' }}>
+                  <span className="bg-gradient-to-r from-amber-800 via-amber-700 to-amber-600 bg-clip-text text-transparent">
+                    Soul Food
+                  </span>
+                </h1>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-light text-amber-900 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
+                  Truth Served Daily
+                </p>
               </div>
             </div>
           </div>
