@@ -572,7 +572,7 @@ const SoulFoodLanding = () => {
                     <Badge className="bg-purple-100 text-purple-700 text-xs">Class Mode</Badge>
                   </div>
                   <Button
-                    onClick={() => window.location.href = '/gaming-central'}
+                    onClick={() => window.location.href = '/game/tricky-testament?edition=youth'}
                     className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-xl"
                   >
                     Play Now →
