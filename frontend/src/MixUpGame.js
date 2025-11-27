@@ -594,64 +594,64 @@ const MixUpGame = () => {
         </Card>
 
         {/* Lifelines */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
           <button
             onClick={use50_50}
             disabled={!lifelines.fiftyFifty || showResult}
-            className={`p-8 rounded-xl text-white font-bold transition-all shadow-lg ${
+            className={`p-4 rounded-lg text-white font-bold transition-all shadow-md ${
               lifelines.fiftyFifty
                 ? 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
                 : 'bg-slate-400 cursor-not-allowed opacity-60'
             }`}
           >
-            <div className="flex flex-col items-center justify-center h-full">
-              <div className="text-5xl mb-3">✂️</div>
-              <div className="text-base">50/50</div>
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-3xl mb-1">✂️</div>
+              <div className="text-sm">50/50</div>
             </div>
           </button>
 
           <button
             onClick={useAskCongregation}
             disabled={!lifelines.askCongregation || showResult}
-            className={`p-8 rounded-xl text-white font-bold transition-all shadow-lg ${
+            className={`p-4 rounded-lg text-white font-bold transition-all shadow-md ${
               lifelines.askCongregation
                 ? 'bg-green-600 hover:bg-green-700 hover:scale-105'
                 : 'bg-slate-400 cursor-not-allowed opacity-60'
             }`}
           >
-            <div className="flex flex-col items-center justify-center h-full">
-              <div className="text-5xl mb-3">👥</div>
-              <div className="text-base text-center leading-tight">Ask<br/>Congregation</div>
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-3xl mb-1">👥</div>
+              <div className="text-sm text-center leading-tight">Ask<br/>Congregation</div>
             </div>
           </button>
 
           <button
             onClick={useScriptureHint}
             disabled={!lifelines.scriptureHint || showResult}
-            className={`p-8 rounded-xl text-white font-bold transition-all shadow-lg ${
+            className={`p-4 rounded-lg text-white font-bold transition-all shadow-md ${
               lifelines.scriptureHint
                 ? 'bg-purple-600 hover:bg-purple-700 hover:scale-105'
                 : 'bg-slate-400 cursor-not-allowed opacity-60'
             }`}
           >
-            <div className="flex flex-col items-center justify-center h-full">
-              <div className="text-5xl mb-3">📖</div>
-              <div className="text-base text-center leading-tight">Scripture<br/>Hint</div>
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-3xl mb-1">📖</div>
+              <div className="text-sm text-center leading-tight">Scripture<br/>Hint</div>
             </div>
           </button>
 
           <button
             onClick={usePrayerPause}
             disabled={!lifelines.prayerPause || showResult}
-            className={`p-8 rounded-xl text-white font-bold transition-all shadow-lg ${
+            className={`p-4 rounded-lg text-white font-bold transition-all shadow-md ${
               lifelines.prayerPause
                 ? 'bg-amber-600 hover:bg-amber-700 hover:scale-105'
                 : 'bg-slate-400 cursor-not-allowed opacity-60'
             }`}
           >
-            <div className="flex flex-col items-center justify-center h-full">
-              <div className="text-5xl mb-3">🙏</div>
-              <div className="text-base text-center leading-tight">Prayer<br/>Pause</div>
+            <div className="flex flex-col items-center justify-center">
+              <div className="text-3xl mb-1">🙏</div>
+              <div className="text-sm text-center leading-tight">Prayer<br/>Pause</div>
             </div>
           </button>
         </div>
