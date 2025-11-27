@@ -42,23 +42,178 @@ const TrickyTestamentGame = () => {
   };
 
   const generateMockQuestions = () => {
-    const categories = ['Old Testament', 'New Testament', 'Prophets', 'Miracles', 'Parables'];
+    const youthQuestions = [
+      {
+        category: 'Creation Stories',
+        question: 'God created this on the first day',
+        options: ['What is light?', 'What is the sun?', 'What are plants?', 'What are animals?'],
+        correct_answer: 'What is light?',
+        explanation: "On the first day of creation, God said 'Let there be light,' and there was light.",
+        scripture_ref: 'Genesis 1:3'
+      },
+      {
+        category: 'Famous Miracles',
+        question: 'Jesus walked on this',
+        options: ['What is water?', 'What is sand?', 'What are clouds?', 'What is fire?'],
+        correct_answer: 'What is water?',
+        explanation: 'Jesus walked on water during a storm, demonstrating His power over nature.',
+        scripture_ref: 'Matthew 14:22-33'
+      },
+      {
+        category: 'Bible Heroes',
+        question: 'The strongest man in the Bible',
+        options: ['Who is Samson?', 'Who is David?', 'Who is Goliath?', 'Who is Joshua?'],
+        correct_answer: 'Who is Samson?',
+        explanation: 'Samson was given supernatural strength by God as long as he kept his Nazirite vow.',
+        scripture_ref: 'Judges 13-16'
+      },
+      {
+        category: 'Famous Prayers',
+        question: "This prayer starts with 'Our Father'",
+        options: ["What is the Lord's Prayer?", 'What is a blessing?', 'What is a psalm?', 'What is a hymn?'],
+        correct_answer: "What is the Lord's Prayer?",
+        explanation: "Jesus taught His disciples the Lord's Prayer, which begins with 'Our Father in heaven.'",
+        scripture_ref: 'Matthew 6:9-13'
+      },
+      {
+        category: 'Animals in the Bible',
+        question: 'This animal talked to Balaam',
+        options: ['What is a donkey?', 'What is a snake?', 'What is a lion?', 'What is a dove?'],
+        correct_answer: 'What is a donkey?',
+        explanation: "God opened the mouth of Balaam's donkey to speak and warn him.",
+        scripture_ref: 'Numbers 22:28'
+      },
+      {
+        category: 'Disciples',
+        question: 'The disciple who doubted Jesus rose from the dead',
+        options: ['Who is Thomas?', 'Who is Peter?', 'Who is John?', 'Who is James?'],
+        correct_answer: 'Who is Thomas?',
+        explanation: 'Thomas doubted until he saw Jesus and touched His wounds.',
+        scripture_ref: 'John 20:24-29'
+      },
+      {
+        category: 'Old Testament Kings',
+        question: 'He fought a giant with just a sling',
+        options: ['Who is David?', 'Who is Saul?', 'Who is Solomon?', 'Who is Joshua?'],
+        correct_answer: 'Who is David?',
+        explanation: 'Young David defeated the giant Goliath with a sling and a stone, trusting in God.',
+        scripture_ref: '1 Samuel 17'
+      },
+      {
+        category: 'Parables',
+        question: 'The story Jesus told about a son who left home and came back',
+        options: ['What is the Prodigal Son?', 'What is the Good Samaritan?', 'What is the Lost Sheep?', 'What is the Sower?'],
+        correct_answer: 'What is the Prodigal Son?',
+        explanation: 'The Parable of the Prodigal Son teaches about repentance and God\'s forgiveness.',
+        scripture_ref: 'Luke 15:11-32'
+      },
+      {
+        category: 'Ten Commandments',
+        question: 'The number of commandments God gave Moses',
+        options: ['What is ten?', 'What is seven?', 'What is twelve?', 'What is five?'],
+        correct_answer: 'What is ten?',
+        explanation: 'God gave Moses the Ten Commandments on Mount Sinai.',
+        scripture_ref: 'Exodus 20:1-17'
+      },
+      {
+        category: 'Easter Story',
+        question: 'The day Jesus rose from the dead',
+        options: ['What is the third day?', 'What is the first day?', 'What is the seventh day?', 'What is the fourth day?'],
+        correct_answer: 'What is the third day?',
+        explanation: 'Jesus rose from the dead on the third day, fulfilling prophecy and defeating death.',
+        scripture_ref: 'Luke 24:7'
+      }
+    ];
+
+    const adultQuestions = [
+      {
+        category: 'Pauline Theology',
+        question: 'Paul describes this as the "righteousness of God" revealed in the gospel',
+        options: ['What is justification by faith?', 'What is sanctification?', 'What is glorification?', 'What is propitiation?'],
+        correct_answer: 'What is justification by faith?',
+        explanation: 'In Romans, Paul reveals that the righteousness of God is made available through faith in Jesus Christ.',
+        scripture_ref: 'Romans 1:17, 3:21-22'
+      },
+      {
+        category: 'Messianic Prophecies',
+        question: 'Isaiah 53 prophesies about this aspect of the Messiah',
+        options: ['What is His suffering and death?', 'What is His royal reign?', 'What is His birth?', 'What is His miracles?'],
+        correct_answer: 'What is His suffering and death?',
+        explanation: 'Isaiah 53 vividly describes the Suffering Servant who would bear our sins and be pierced for our transgressions.',
+        scripture_ref: 'Isaiah 53'
+      },
+      {
+        category: 'Covenants',
+        question: 'The theological term for the new covenant replacing the old',
+        options: ['What is fulfillment?', 'What is substitution?', 'What is abolishment?', 'What is renovation?'],
+        correct_answer: 'What is fulfillment?',
+        explanation: 'Jesus came to fulfill the law and prophets, establishing a new covenant through His blood.',
+        scripture_ref: 'Matthew 5:17, Hebrews 8:13'
+      },
+      {
+        category: 'Systematic Theology',
+        question: 'The doctrine that God chose people for salvation before creation',
+        options: ['What is predestination?', 'What is foreknowledge?', 'What is providence?', 'What is sovereignty?'],
+        correct_answer: 'What is predestination?',
+        explanation: 'Predestination refers to God\'s eternal decree to choose some for salvation according to His will.',
+        scripture_ref: 'Ephesians 1:4-5, Romans 8:29-30'
+      },
+      {
+        category: 'Spiritual Gifts',
+        question: 'Paul lists these gifts in 1 Corinthians 12 as manifestations of the Spirit',
+        options: ['What are charismata?', 'What are fruits?', 'What are talents?', 'What are works?'],
+        correct_answer: 'What are charismata?',
+        explanation: 'Charismata (spiritual gifts) are given by the Holy Spirit for the common good of the church.',
+        scripture_ref: '1 Corinthians 12:4-11'
+      },
+      {
+        category: 'Biblical Hermeneutics',
+        question: 'The interpretation method considering historical and cultural context',
+        options: ['What is grammatical-historical?', 'What is allegorical?', 'What is literal?', 'What is mystical?'],
+        correct_answer: 'What is grammatical-historical?',
+        explanation: 'The grammatical-historical method interprets Scripture according to grammar and historical context.',
+        scripture_ref: '2 Timothy 2:15'
+      },
+      {
+        category: 'Early Church History',
+        question: 'The council that addressed the Arian heresy in 325 AD',
+        options: ['What is Nicaea?', 'What is Chalcedon?', 'What is Constantinople?', 'What is Ephesus?'],
+        correct_answer: 'What is Nicaea?',
+        explanation: 'The Council of Nicaea affirmed the deity of Christ against Arianism, producing the Nicene Creed.',
+        scripture_ref: 'John 1:1, Colossians 1:15-20'
+      },
+      {
+        category: 'Eschatology',
+        question: 'The theological term for the study of last things',
+        options: ['What is eschatology?', 'What is soteriology?', 'What is pneumatology?', 'What is ecclesiology?'],
+        correct_answer: 'What is eschatology?',
+        explanation: 'Eschatology is the study of end times, including Christ\'s return, resurrection, and final judgment.',
+        scripture_ref: 'Revelation 1:19, 1 Thessalonians 4:13-18'
+      },
+      {
+        category: 'Atonement Theories',
+        question: 'The view that Christ\'s death satisfied God\'s justice and wrath',
+        options: ['What is penal substitution?', 'What is moral influence?', 'What is Christus Victor?', 'What is governmental?'],
+        correct_answer: 'What is penal substitution?',
+        explanation: 'Penal substitutionary atonement teaches that Christ bore the penalty for sin in our place, satisfying God\'s justice.',
+        scripture_ref: 'Isaiah 53:5, Romans 3:25, 2 Corinthians 5:21'
+      },
+      {
+        category: 'Trinity Doctrine',
+        question: 'The Latin term meaning "three persons, one essence"',
+        options: ['What is Tres Personae, Una Substantia?', 'What is Sola Scriptura?', 'What is Imago Dei?', 'What is Ex Nihilo?'],
+        correct_answer: 'What is Tres Personae, Una Substantia?',
+        explanation: 'This formulation expresses the orthodox doctrine of the Trinity: three distinct persons sharing one divine essence.',
+        scripture_ref: 'Matthew 28:19, 2 Corinthians 13:14'
+      }
+    ];
+
+    const questionBank = edition === 'youth' ? youthQuestions : adultQuestions;
     
-    return Array(10).fill(null).map((_, index) => ({
+    return questionBank.map((q, index) => ({
       id: index + 1,
-      category: categories[Math.floor(Math.random() * categories.length)],
       points: pointValues[index],
-      question: `${edition === 'youth' ? 'Youth' : 'Adult'} Jeopardy Question ${index + 1}`,
-      answer: `What is ${edition === 'youth' ? 'a youth answer' : 'an adult answer'}?`,
-      options: [
-        `What is ${edition === 'youth' ? 'option A' : 'advanced option A'}?`,
-        `Who is ${edition === 'youth' ? 'option B' : 'advanced option B'}?`,
-        `What are ${edition === 'youth' ? 'option C' : 'advanced option C'}?`,
-        `Where is ${edition === 'youth' ? 'option D' : 'advanced option D'}?`
-      ],
-      correct_answer: `What is ${edition === 'youth' ? 'a youth answer' : 'an adult answer'}?`,
-      explanation: 'This demonstrates biblical knowledge in Jeopardy format.',
-      scripture_ref: 'Sample Scripture'
+      ...q
     }));
   };
 
