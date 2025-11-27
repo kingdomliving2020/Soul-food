@@ -368,7 +368,7 @@ const TrickyTestamentGame = () => {
   }
 
   const question = questions[currentQuestion];
-  const isDaily Double = currentQuestion === dailyDoubleIndex && !dailyDoubleRevealed;
+  const isDailyDouble = currentQuestion === dailyDoubleIndex && !dailyDoubleRevealed;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4 sm:p-8">
