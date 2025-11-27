@@ -398,12 +398,10 @@ const SoulFoodLanding = () => {
 
             {/* Trivia Mix-up Youth */}
             <Card className="bg-gradient-to-br from-cyan-50 to-blue-50 border-4 border-cyan-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
-              <div className="absolute top-2 right-2 z-10">
-                <img 
-                  src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/5gzs35hl_Trivia%20Mix-up%20Demo%20Icon%20%281%29.png"
-                  alt="Demo Available"
-                  className="w-20 h-20 drop-shadow-lg"
-                />
+              <div className="absolute top-3 left-3 z-10">
+                <Badge className="bg-blue-600 text-white px-3 py-1 text-xs font-bold shadow-lg">
+                  DEMO
+                </Badge>
               </div>
               <CardHeader className="p-0">
                 <div className="h-48 bg-white/90 flex items-center justify-center p-4">
