@@ -183,15 +183,17 @@ const SOUL_FOOD_SERIES = [
     bgColor: "bg-gradient-to-br from-emerald-50 to-green-50",
     bgImage: "https://images.pexels.com/photos/8815225/pexels-photo-8815225.jpeg?w=800&h=400&fit=crop&crop=center",
     available: true,
-    description: "The Covenant, The Cradle, The Cross, and The Comforter - celebrating faith through the seasons.",
+    description: "The Covenant, The Cradle, The Cross, and The Comforter - celebrating faith through the seasons, plus bonus lessons.",
     themes: [
       {
-        themeName: "Celebrating the Seasons of Faith",
+        themeName: "The 4 C's of Christianity + Bonus Lessons",
         lessons: [
-          { number: 1, title: "The Covenant", description: "God's promise to Abraham" },
-          { number: 2, title: "The Cradle", description: "The birth of our Savior" },
-          { number: 3, title: "The Cross", description: "The ultimate sacrifice for our sins" },
-          { number: 4, title: "The Comforter", description: "The gift of the Holy Spirit" }
+          { number: 1, title: "The Covenant", description: "God's eternal promise to His people" },
+          { number: 2, title: "The Cradle", description: "The birth of our Savior and King" },
+          { number: 3, title: "The Cross", description: "The ultimate sacrifice for our redemption" },
+          { number: 4, title: "The Comforter", description: "The gift of the Holy Spirit to believers" },
+          { number: 5, title: "Bonus Lesson - The Names of God", description: "Discovering God's character through His names" },
+          { number: 6, title: "Bonus Lesson - Times & Seasons", description: "God's perfect timing in our lives" }
         ]
       }
     ]
