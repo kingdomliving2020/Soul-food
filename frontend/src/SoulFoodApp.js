@@ -20,12 +20,7 @@ const SOUL_FOOD_SERIES = [
     bgColor: "bg-gradient-to-br from-amber-50 to-orange-50",
     bgImage: "https://images.unsplash.com/photo-1756367260219-b60e3cb90fa5?w=800&h=400&fit=crop&crop=center",
     available: true,
-    description: "Begin your spiritual journey with a rock-solid foundation in Christ. Perfect for new believers and those seeking renewal.",
-    months: [
-      { num: 1, title: "Names of God" },
-      { num: 2, title: "Books of the Bible" },
-      { num: 3, title: "Hebrews 11 (Faith Heroes)" }
-    ]
+    description: "Begin your spiritual journey with a rock-solid foundation in Christ. Perfect for new believers and those seeking renewal."
   },
   {
     id: "lunch",
@@ -37,12 +32,7 @@ const SOUL_FOOD_SERIES = [
     bgImage: "https://images.pexels.com/photos/8513088/pexels-photo-8513088.jpeg?w=800&h=400&fit=crop&crop=center",
     available: false,
     unlockDate: "Q1 2026",
-    description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity.",
-    months: [
-      { num: 4, title: "Body of Christ" },
-      { num: 5, title: "Marriage & Family" },
-      { num: 6, title: "Church Leadership" }
-    ]
+    description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity."
   },
   {
     id: "dinner",
@@ -54,12 +44,7 @@ const SOUL_FOOD_SERIES = [
     bgImage: "https://img.freepik.com/free-photo/high-angle-catholic-young-men-women-holding-each-other-hands-while-praying-together-around-table-with-christian-cross_662251-1120.jpg?w=800&h=400&fit=crop&crop=center",
     available: false,
     unlockDate: "Q2 2026",
-    description: "Discover your unique calling and walk confidently in the purpose God has designed for you.",
-    months: [
-      { num: 7, title: "Spiritual Gifts" },
-      { num: 8, title: "Ministry & Service" },
-      { num: 9, title: "Evangelism" }
-    ]
+    description: "Discover your unique calling and walk confidently in the purpose God has designed for you."
   },
   {
     id: "supper",
@@ -71,12 +56,7 @@ const SOUL_FOOD_SERIES = [
     bgImage: "https://img.freepik.com/free-photo/side-view-people-reading-together_23-2150062161.jpg?w=800&h=400&fit=crop&crop=center",
     available: false,
     unlockDate: "Q3 2026",
-    description: "Grow into spiritual maturity, developing wisdom and character that honors Christ.",
-    months: [
-      { num: 10, title: "Prophecy" },
-      { num: 11, title: "Book of Revelation" },
-      { num: 12, title: "Judgment & Rewards" }
-    ]
+    description: "Grow into spiritual maturity, developing wisdom and character that honors Christ."
   },
   {
     id: "holiday",
@@ -241,20 +221,6 @@ const SoulFoodLanding = () => {
                 
                 <CardContent className="relative space-y-4 p-6">
                   <p className="text-slate-700 leading-relaxed">{s.description}</p>
-                  
-                  {/* Monthly Topics */}
-                  {s.months && (
-                    <div className="bg-amber-50 border-l-4 border-amber-600 rounded p-4">
-                      <h5 className="font-bold text-slate-800 mb-2 text-sm">📚 Monthly Topics:</h5>
-                      <ul className="space-y-1">
-                        {s.months.map((month) => (
-                          <li key={month.num} className="text-sm text-slate-700">
-                            <span className="font-semibold text-amber-800">Month {month.num}:</span> {month.title}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
                   
                   {s.available ? (
                     <div className="pt-4">
@@ -907,9 +873,9 @@ const SoulFoodLanding = () => {
                 </Button>
               </CardContent>
             </Card>
+          </div>
 
-            {/* Youth Edition */}
-            <Card className="border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all">
+          {/* Adult Multimedia Showcase */}
           <div className="mt-12 bg-gradient-to-br from-blue-50 via-cyan-50 to-slate-50 rounded-2xl p-8 border-2 border-blue-300 shadow-xl">
             <div className="text-center mb-6">
               <Badge className="bg-blue-600 text-white px-6 py-2 text-lg font-bold mb-4 inline-block">
@@ -947,6 +913,11 @@ const SoulFoodLanding = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Youth Edition */}
+            <Card className="border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all">
               <CardHeader className="bg-gradient-to-br from-purple-50 to-pink-50 text-center p-6">
                 <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
                   🎓
@@ -996,9 +967,9 @@ const SoulFoodLanding = () => {
                 </Button>
               </CardContent>
             </Card>
+          </div>
 
-            {/* Instructor Edition */}
-            <Card className="border-2 border-amber-400 shadow-xl hover:shadow-2xl transition-all relative">
+          {/* Youth Multimedia Showcase */}
           <div className="mt-12 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 rounded-2xl p-8 border-2 border-purple-300 shadow-xl">
             <div className="text-center mb-6">
               <Badge className="bg-purple-600 text-white px-6 py-2 text-lg font-bold mb-4 inline-block">
@@ -1076,7 +1047,12 @@ const SoulFoodLanding = () => {
                 </div>
               </div>
             </div>
-              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-700 to-amber-800 text-white px-4 py-1 font-bold text-sm">
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Instructor Edition */}
+            <Card className="border-2 border-orange-300 shadow-xl hover:shadow-2xl transition-all relative">
+              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-orange-500 to-amber-600 text-white px-4 py-1 font-bold text-sm">
                 For Teachers & Leaders
               </Badge>
               <CardHeader className="bg-gradient-to-br from-orange-50 to-amber-50 text-center p-6 pt-8">
@@ -1135,86 +1111,6 @@ const SoulFoodLanding = () => {
                 </Button>
               </CardContent>
             </Card>
-          </div>
-
-          {/* Adult Multimedia Showcase */}
-          <div className="mt-12 bg-gradient-to-br from-blue-50 via-cyan-50 to-slate-50 rounded-2xl p-8 border-2 border-blue-300 shadow-xl">
-            <div className="text-center mb-6">
-              <Badge className="bg-blue-600 text-white px-6 py-2 text-lg font-bold mb-4 inline-block">
-                🎓 Adult Edition Featured Content
-              </Badge>
-              <h4 className="text-3xl font-bold text-slate-800 mb-3">
-                Talent vs Gift Teaching
-              </h4>
-              <p className="text-slate-600 max-w-2xl mx-auto">
-                Understanding the difference between God-given talents and spiritual gifts
-              </p>
-            </div>
-            
-            <div className="max-w-2xl mx-auto">
-              <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border-4 border-white">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/l6a0CqmTEgQ"
-                  title="Talent vs Gift Teaching"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                ></iframe>
-              </div>
-              <div className="mt-6 text-center">
-                <p className="text-slate-700 mb-4">
-                  This powerful teaching explores the biblical distinction between natural talents and spiritual gifts, helping believers understand their unique calling.
-                </p>
-                <div className="flex justify-center gap-4 flex-wrap">
-                  <Badge className="bg-blue-100 text-blue-700 px-4 py-2">Doctrinal Teaching</Badge>
-                  <Badge className="bg-cyan-100 text-cyan-700 px-4 py-2">Adult Focused</Badge>
-                  <Badge className="bg-slate-100 text-slate-700 px-4 py-2">Spiritual Growth</Badge>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Youth Multimedia Showcase */}
-          <div className="mt-12 bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 rounded-2xl p-8 border-2 border-purple-300 shadow-xl">
-            <div className="text-center mb-6">
-              <Badge className="bg-purple-600 text-white px-6 py-2 text-lg font-bold mb-4 inline-block">
-                🎵 Youth Edition Featured Content
-              </Badge>
-              <h4 className="text-3xl font-bold text-slate-800 mb-3">
-                Inspirational Youth Music & Media
-              </h4>
-              <p className="text-slate-600 max-w-2xl mx-auto">
-                Experience uplifting content designed specifically for young believers ages 12-20
-              </p>
-            </div>
-            
-            <div className="max-w-2xl mx-auto">
-              <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border-4 border-white">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/l14zW1FsFsQ"
-                  title="Youth Inspirational Song"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                ></iframe>
-              </div>
-              <div className="mt-6 text-center">
-                <p className="text-slate-700 mb-4">
-                  This powerful song embodies the spirit of Soul Food's Youth Edition - encouraging young believers to stay strong in their faith journey.
-                </p>
-                <div className="flex justify-center gap-4 flex-wrap">
-                  <Badge className="bg-purple-100 text-purple-700 px-4 py-2">Faith Building</Badge>
-                  <Badge className="bg-pink-100 text-pink-700 px-4 py-2">Youth Focused</Badge>
-                  <Badge className="bg-blue-100 text-blue-700 px-4 py-2">Inspirational</Badge>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Subscription vs eBook Comparison */}
