@@ -54,7 +54,12 @@ const SOUL_FOOD_SERIES = [
     bgImage: "https://img.freepik.com/free-photo/high-angle-catholic-young-men-women-holding-each-other-hands-while-praying-together-around-table-with-christian-cross_662251-1120.jpg?w=800&h=400&fit=crop&crop=center",
     available: false,
     unlockDate: "Q2 2026",
-    description: "Discover your unique calling and walk confidently in the purpose God has designed for you."
+    description: "Discover your unique calling and walk confidently in the purpose God has designed for you.",
+    months: [
+      { num: 7, title: "Spiritual Gifts" },
+      { num: 8, title: "Ministry & Service" },
+      { num: 9, title: "Evangelism" }
+    ]
   },
   {
     id: "supper",
