@@ -15,18 +15,40 @@ const SOUL_FOOD_SERIES = [
     id: "breakfast",
     name: "Break*fast",
     theme: "Foundation in Christ",
-    foundationTheme: "Prayer, the First Resort",
     icon: "☀️",
     gradient: "from-amber-400 via-orange-500 to-red-500",
     bgColor: "bg-gradient-to-br from-amber-50 to-orange-50",
     bgImage: "https://images.unsplash.com/photo-1756367260219-b60e3cb90fa5?w=800&h=400&fit=crop&crop=center",
     available: true,
     description: "Begin your spiritual journey with a rock-solid foundation in Christ. Perfect for new believers and those seeking renewal.",
-    lessons: [
-      { number: 1, title: "Esther", description: "Prayer as a weapon in spiritual warfare" },
-      { number: 2, title: "Solomon", description: "Wisdom through prayer and divine guidance" },
-      { number: 3, title: "Jesus in the Garden", description: "Submission and intimacy with God" },
-      { number: 4, title: "Paul & Silas", description: "Praise and prayer in persecution" }
+    themes: [
+      {
+        themeName: "Prayer, the First Resort",
+        lessons: [
+          { number: 1, title: "Esther", description: "Prayer as a weapon in spiritual warfare" },
+          { number: 2, title: "Solomon", description: "Wisdom through prayer and divine guidance" },
+          { number: 3, title: "Jesus in the Garden", description: "Submission and intimacy with God" },
+          { number: 4, title: "Paul & Silas", description: "Praise and prayer in persecution" }
+        ]
+      },
+      {
+        themeName: "The Art of Through",
+        lessons: [
+          { number: 1, title: "Joseph", description: "Young Dreamer" },
+          { number: 2, title: "Hannah", description: "Barren but Not Lifeless" },
+          { number: 3, title: "Abram", description: "No Heir, Wait Here" },
+          { number: 4, title: "Victory Through the Blood", description: "Overcoming by the blood of the Lamb" }
+        ]
+      },
+      {
+        themeName: "Faith & Foresight",
+        lessons: [
+          { number: 1, title: "Rahab", description: "Bold faith in uncertain times" },
+          { number: 2, title: "Abigail", description: "Wisdom and discernment in action" },
+          { number: 3, title: "The Centurion", description: "Authority and humble faith" },
+          { number: 4, title: "Joseph of Arimathea", description: "Courage to stand for Christ" }
+        ]
+      }
     ]
   },
   {
