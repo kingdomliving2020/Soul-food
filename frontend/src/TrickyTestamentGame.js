@@ -448,23 +448,23 @@ const TrickyTestamentGame = () => {
                   } else if (isSelected) {
                     buttonClass += 'bg-red-500 text-white border-4 border-red-700';
                   } else {
-                    buttonClass += 'bg-slate-100 text-slate-700';
+                    buttonClass += 'bg-slate-100 text-slate-800';
                   }
                 } else if (isSelected) {
-                  buttonClass += 'bg-purple-200 border-4 border-purple-500';
+                  buttonClass += 'bg-purple-200 text-slate-900 border-4 border-purple-500';
                 } else {
-                  buttonClass += 'bg-slate-100 hover:bg-purple-100 hover:scale-105 border-2 border-slate-300';
+                  buttonClass += 'bg-slate-100 text-slate-900 hover:bg-purple-100 hover:scale-105 border-2 border-slate-300';
                 }
 
                 return (
-                  <Button
+                  <button
                     key={index}
                     onClick={() => handleAnswer(option)}
                     disabled={showResult}
                     className={buttonClass}
                   >
                     {option}
-                  </Button>
+                  </button>
                 );
               })}
             </div>
