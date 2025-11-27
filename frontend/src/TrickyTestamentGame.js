@@ -270,6 +270,7 @@ const TrickyTestamentGame = () => {
     setShowResult(false);
     setGameOver(false);
     setDailyDoubleRevealed(false);
+    setDailyDoubleIndex(null);
     setWager(0);
     fetchQuestions();
   };
