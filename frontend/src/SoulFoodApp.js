@@ -1132,10 +1132,14 @@ const SoulFoodLanding = () => {
                   }}
                   className={`w-full bg-gradient-to-r ${selectedSeries.gradient} hover:opacity-90 text-white font-bold py-4 rounded-xl text-lg shadow-xl hover:shadow-2xl transition-all`}
                 >
-                  Get Started with {selectedSeries.name} 🚀
+                  {selectedSeries.available 
+                    ? `Get Started with ${selectedSeries.name} 🚀` 
+                    : `Pre-Order ${selectedSeries.name} Now 🎯`}
                 </Button>
                 <p className="text-center text-sm text-slate-500 mt-3">
-                  Choose your preferred access option below
+                  {selectedSeries.available 
+                    ? 'Choose your preferred access option below'
+                    : `Available ${selectedSeries.unlockDate} - Reserve your spot today!`}
                 </p>
               </div>
             </div>
