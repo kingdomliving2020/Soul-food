@@ -88,9 +88,11 @@ const SoulFoodLanding = () => {
         <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-2xl">🍽️</span>
-              </div>
+              <img 
+                src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/imgmtfsi_1764251568266.png"
+                alt="Soul Food Logo"
+                className="h-12 w-12 object-contain"
+              />
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
                   Soul Food
