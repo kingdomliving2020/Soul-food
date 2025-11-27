@@ -941,7 +941,7 @@ const SoulFoodLanding = () => {
               </p>
             </div>
             
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-2xl mx-auto">
               <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border-4 border-white">
                 <iframe
                   width="100%"
