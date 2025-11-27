@@ -94,8 +94,8 @@ const SoulFoodLanding = () => {
                 className="h-12 w-12 object-contain"
               />
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-800 to-amber-600 bg-clip-text text-transparent">
-                  Soul Food
+                <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-amber-800 to-amber-600 bg-clip-text text-transparent">
+                  Soul Food : Truth Served Daily
                 </h1>
                 <p className="text-xs text-slate-700 font-bold">Kingdom Living Project</p>
               </div>
