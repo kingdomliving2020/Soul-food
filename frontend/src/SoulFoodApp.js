@@ -126,12 +126,17 @@ const SoulFoodLanding = () => {
         <div className="relative z-10 container mx-auto text-center max-w-5xl">
           {/* Soul Food Logo */}
           <div className="mb-6 flex justify-center">
-            <div className="bg-white/95 backdrop-blur-sm rounded-3xl p-6 shadow-2xl border-4 border-white/50">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/imgmtfsi_1764251568266.png"
-                alt="Soul Food Logo - Truth, Served Daily"
-                className="h-32 sm:h-40 lg:h-48 w-auto"
-              />
+            <div className="relative">
+              {/* Brown shadow hue behind logo */}
+              <div className="absolute inset-0 bg-gradient-to-br from-amber-800/40 via-amber-700/30 to-amber-900/40 rounded-3xl blur-2xl transform scale-105"></div>
+              {/* Logo container */}
+              <div className="relative bg-white/95 backdrop-blur-sm rounded-3xl p-6 shadow-2xl border-4 border-white/50">
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/imgmtfsi_1764251568266.png"
+                  alt="Soul Food Logo - Truth, Served Daily"
+                  className="h-32 sm:h-40 lg:h-48 w-auto"
+                />
+              </div>
             </div>
           </div>
 
