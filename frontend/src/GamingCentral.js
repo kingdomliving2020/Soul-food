@@ -20,12 +20,14 @@ const GamingCentral = () => {
       name: "Trivia Mix-up",
       subtitle: "Who Wants to Be a Millionaire Style",
       description: "15-question progressive climb with lifelines! Test your Soul Food knowledge.",
-      logo: "https://customer-assets.emergentagent.com/job_book-website-help/artifacts/ficy53gi_Soul%20Food%20Trivia%20Logo%20-%20Vintage%20Style%20%281%29.png",
+      logo: "https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/bovn8pyf_Soul%20Food%20Trivia%20Logo%20-%20Vintage%20Style%20%282%29.png",
+      demoIcon: "https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/5gzs35hl_Trivia%20Mix-up%20Demo%20Icon%20%281%29.png",
       edition_available: "adult", // Vintage logo = Adult only
       gradient: "from-amber-600 via-orange-600 to-red-600",
       bgColor: "bg-gradient-to-br from-amber-50 to-orange-50",
       icon: "🎯",
-      modes: ["Practice", "Quarter Challenge", "Millionaire Mode"]
+      modes: ["Practice", "Quarter Challenge", "Millionaire Mode"],
+      hasDemo: true
     },
     {
       id: "tricky_testaments_youth",
@@ -33,11 +35,13 @@ const GamingCentral = () => {
       subtitle: "Youth Edition - Jeopardy Style",
       description: "Pick categories, answer in question form, and climb the board!",
       logo: "https://customer-assets.emergentagent.com/job_book-website-help/artifacts/c5c1ujck_Soul%20Food%27s%20Tricky%20Testaments%20-%20Bold%20Modern%20%281%29.png",
+      demoIcon: "https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/xts56w3w_Tricky%20Testaments%20Demo%20Icon.png",
       edition_available: "youth",
       gradient: "from-blue-600 via-purple-600 to-pink-600",
       bgColor: "bg-gradient-to-br from-blue-50 to-purple-50",
       icon: "🎮",
-      modes: ["Single Player", "Challenge Mode", "Class Mode"]
+      modes: ["Single Player", "Challenge Mode", "Class Mode"],
+      hasDemo: true
     },
     {
       id: "tricky_testaments_adult",
