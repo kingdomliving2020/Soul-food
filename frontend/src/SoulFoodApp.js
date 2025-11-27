@@ -90,17 +90,26 @@ const SOUL_FOOD_SERIES = [
     id: "holiday",
     name: "Holiday Series",
     theme: "4 C's of Christianity",
+    foundationTheme: "Celebrating the Seasons of Faith",
     icon: "✡️",
     gradient: "from-emerald-400 via-green-500 to-lime-500",
     bgColor: "bg-gradient-to-br from-emerald-50 to-green-50",
     bgImage: "https://images.pexels.com/photos/8815225/pexels-photo-8815225.jpeg?w=800&h=400&fit=crop&crop=center",
     available: true,
-    description: "The Covenant, The Cradle, The Cross, and The Comforter - celebrating faith through the seasons."
+    description: "The Covenant, The Cradle, The Cross, and The Comforter - celebrating faith through the seasons.",
+    lessons: [
+      { number: 1, title: "The Covenant", description: "God's promise to Abraham" },
+      { number: 2, title: "The Cradle", description: "The birth of our Savior" },
+      { number: 3, title: "The Cross", description: "The ultimate sacrifice for our sins" },
+      { number: 4, title: "The Comforter", description: "The gift of the Holy Spirit" }
+    ]
   }
 ];
 
 const SoulFoodLanding = () => {
   const [series, setSeries] = useState(SOUL_FOOD_SERIES);
+  const [selectedSeries, setSelectedSeries] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
   
   const handleLogin = () => {
     const redirectUrl = `${window.location.origin}/dashboard`;
