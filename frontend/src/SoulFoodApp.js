@@ -242,6 +242,20 @@ const SoulFoodLanding = () => {
                 <CardContent className="relative space-y-4 p-6">
                   <p className="text-slate-700 leading-relaxed">{s.description}</p>
                   
+                  {/* Monthly Topics */}
+                  {s.months && (
+                    <div className="bg-amber-50 border-l-4 border-amber-600 rounded p-4">
+                      <h5 className="font-bold text-slate-800 mb-2 text-sm">📚 Monthly Topics:</h5>
+                      <ul className="space-y-1">
+                        {s.months.map((month) => (
+                          <li key={month.num} className="text-sm text-slate-700">
+                            <span className="font-semibold text-amber-800">Month {month.num}:</span> {month.title}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
                   {s.available ? (
                     <div className="pt-4">
                       <Badge className="bg-emerald-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
