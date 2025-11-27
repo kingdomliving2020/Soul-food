@@ -105,12 +105,30 @@ const SOUL_FOOD_SERIES = [
     description: "Discover your unique calling and walk confidently in the purpose God has designed for you.",
     themes: [
       {
-        themeName: "Called for Such a Time",
+        themeName: "ID in Christ - Talents vs Gifts",
         lessons: [
-          { number: 1, title: "Esther", description: "Positioned for purpose by God" },
-          { number: 2, title: "Jeremiah", description: "Called before you were formed" },
-          { number: 3, title: "The Twelve Disciples", description: "Ordinary people, extraordinary calling" },
-          { number: 4, title: "Paul's Conversion", description: "Transformed for kingdom impact" }
+          { number: 1, title: "Young and Gifted", description: "Recognizing God-given abilities early" },
+          { number: 2, title: "Saul/Paul admin influence", description: "From persecutor to apostle - transformation of gifts" },
+          { number: 3, title: "Callings in the faith", description: "Discovering your unique kingdom purpose" },
+          { number: 4, title: "Time to represent", description: "Living out your calling boldly" }
+        ]
+      },
+      {
+        themeName: "Good leaders are Great Followers",
+        lessons: [
+          { number: 1, title: "The Great Commission", description: "Following Christ's final instructions" },
+          { number: 2, title: "Fishers' of Men", description: "Answering the call to discipleship" },
+          { number: 3, title: "Follow me", description: "The cost and reward of following Jesus" },
+          { number: 4, title: "Servitude", description: "Leadership through humble service" }
+        ]
+      },
+      {
+        themeName: "Sowing & Reaping",
+        lessons: [
+          { number: 1, title: "Deut 28", description: "Blessings and consequences of obedience" },
+          { number: 2, title: "Joel 2", description: "Restoration and abundant harvest" },
+          { number: 3, title: "Matt 25:14-30; Matt 20:1-16", description: "Faithful stewardship and kingdom rewards" },
+          { number: 4, title: "2 Cor 9:6-8", description: "Generous giving and cheerful hearts" }
         ]
       }
     ]
