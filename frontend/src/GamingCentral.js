@@ -256,7 +256,7 @@ const GamingCentral = () => {
         <div className="mb-8">
           <h2 className="text-4xl font-bold text-white text-center mb-4">Choose Your Challenge</h2>
           <p className="text-center text-purple-300 mb-8">
-            Three epic games. One mission: Master Soul Food Scripture!
+            Four epic games. One mission: Master Soul Food Scripture!
           </p>
         </div>
 
