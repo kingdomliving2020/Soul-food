@@ -63,11 +63,13 @@ const GamingCentral = () => {
       subtitle: "Adult Edition - Jeopardy Style",
       description: "Classic Jeopardy with deeper theological questions and higher stakes!",
       logo: "https://customer-assets.emergentagent.com/job_book-website-help/artifacts/29d8ivo6_Soul%20Food%27s%20Tricky%20Testaments%20Logo%20%281%29.png",
+      demoIcon: "https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/xts56w3w_Tricky%20Testaments%20Demo%20Icon.png",
       edition_available: "adult",
       gradient: "from-amber-700 via-yellow-700 to-orange-700",
       bgColor: "bg-gradient-to-br from-yellow-50 to-amber-50",
       icon: "📚",
-      modes: ["Single Player", "Daily Double", "Final Jeopardy"]
+      modes: ["Single Player", "Daily Double", "Final Jeopardy"],
+      hasDemo: true
     }
   ];
 
