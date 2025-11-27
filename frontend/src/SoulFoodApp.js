@@ -101,7 +101,6 @@ const SOUL_FOOD_SERIES = [
     id: "supper",
     name: "Supper",
     theme: "Maturity in the Faith",
-    foundationTheme: "Growing in Christ-likeness",
     icon: "🌙",
     gradient: "from-indigo-500 via-purple-600 to-blue-700",
     bgColor: "bg-gradient-to-br from-indigo-50 to-purple-50",
@@ -109,11 +108,16 @@ const SOUL_FOOD_SERIES = [
     available: false,
     unlockDate: "Q3 2026",
     description: "Grow into spiritual maturity, developing wisdom and character that honors Christ.",
-    lessons: [
-      { number: 1, title: "Job's Perseverance", description: "Faith refined through trials" },
-      { number: 2, title: "Daniel's Integrity", description: "Standing firm in conviction" },
-      { number: 3, title: "Peter's Transformation", description: "From denier to rock" },
-      { number: 4, title: "The Armor of God", description: "Equipped for spiritual warfare" }
+    themes: [
+      {
+        themeName: "Growing in Christ-likeness",
+        lessons: [
+          { number: 1, title: "Job's Perseverance", description: "Faith refined through trials" },
+          { number: 2, title: "Daniel's Integrity", description: "Standing firm in conviction" },
+          { number: 3, title: "Peter's Transformation", description: "From denier to rock" },
+          { number: 4, title: "The Armor of God", description: "Equipped for spiritual warfare" }
+        ]
+      }
     ]
   },
   {
