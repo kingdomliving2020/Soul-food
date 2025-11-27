@@ -90,12 +90,15 @@ const LandingPage = () => {
         <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-purple-700 rounded-xl flex items-center justify-center shadow-lg">
-                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+              <img 
+                src="/soul-food-logo.png" 
+                alt="Soul Food Logo" 
+                className="w-10 h-10 object-contain"
+              />
+              <div>
+                <h1 className="text-lg sm:text-xl font-bold text-slate-800">Soul Food</h1>
+                <p className="text-xs text-slate-600">Kingdom Living Project</p>
               </div>
-              <h1 className="text-xl sm:text-2xl font-bold text-slate-800">Kingdom Living Project</h1>
             </div>
             <Button
               onClick={handleLogin}
