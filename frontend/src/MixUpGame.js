@@ -595,65 +595,65 @@ const MixUpGame = () => {
 
         {/* Lifelines */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <Button
+          <button
             onClick={use50_50}
             disabled={!lifelines.fiftyFifty || showResult}
-            className={`p-6 ${
+            className={`p-8 rounded-xl text-white font-bold transition-all shadow-lg ${
               lifelines.fiftyFifty
-                ? 'bg-blue-600 hover:bg-blue-700'
-                : 'bg-slate-400 cursor-not-allowed'
+                ? 'bg-blue-600 hover:bg-blue-700 hover:scale-105'
+                : 'bg-slate-400 cursor-not-allowed opacity-60'
             }`}
           >
-            <div className="text-center">
-              <div className="text-3xl mb-2">✂️</div>
-              <div className="font-bold">50/50</div>
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="text-5xl mb-3">✂️</div>
+              <div className="text-base">50/50</div>
             </div>
-          </Button>
+          </button>
 
-          <Button
+          <button
             onClick={useAskCongregation}
             disabled={!lifelines.askCongregation || showResult}
-            className={`p-6 ${
+            className={`p-8 rounded-xl text-white font-bold transition-all shadow-lg ${
               lifelines.askCongregation
-                ? 'bg-green-600 hover:bg-green-700'
-                : 'bg-slate-400 cursor-not-allowed'
+                ? 'bg-green-600 hover:bg-green-700 hover:scale-105'
+                : 'bg-slate-400 cursor-not-allowed opacity-60'
             }`}
           >
-            <div className="text-center">
-              <div className="text-3xl mb-2">👥</div>
-              <div className="font-bold">Ask Congregation</div>
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="text-5xl mb-3">👥</div>
+              <div className="text-base text-center leading-tight">Ask<br/>Congregation</div>
             </div>
-          </Button>
+          </button>
 
-          <Button
+          <button
             onClick={useScriptureHint}
             disabled={!lifelines.scriptureHint || showResult}
-            className={`p-6 ${
+            className={`p-8 rounded-xl text-white font-bold transition-all shadow-lg ${
               lifelines.scriptureHint
-                ? 'bg-purple-600 hover:bg-purple-700'
-                : 'bg-slate-400 cursor-not-allowed'
+                ? 'bg-purple-600 hover:bg-purple-700 hover:scale-105'
+                : 'bg-slate-400 cursor-not-allowed opacity-60'
             }`}
           >
-            <div className="text-center">
-              <div className="text-3xl mb-2">📖</div>
-              <div className="font-bold">Scripture Hint</div>
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="text-5xl mb-3">📖</div>
+              <div className="text-base text-center leading-tight">Scripture<br/>Hint</div>
             </div>
-          </Button>
+          </button>
 
-          <Button
+          <button
             onClick={usePrayerPause}
             disabled={!lifelines.prayerPause || showResult}
-            className={`p-6 ${
+            className={`p-8 rounded-xl text-white font-bold transition-all shadow-lg ${
               lifelines.prayerPause
-                ? 'bg-amber-600 hover:bg-amber-700'
-                : 'bg-slate-400 cursor-not-allowed'
+                ? 'bg-amber-600 hover:bg-amber-700 hover:scale-105'
+                : 'bg-slate-400 cursor-not-allowed opacity-60'
             }`}
           >
-            <div className="text-center">
-              <div className="text-3xl mb-2">🙏</div>
-              <div className="font-bold">Prayer Pause</div>
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="text-5xl mb-3">🙏</div>
+              <div className="text-base text-center leading-tight">Prayer<br/>Pause</div>
             </div>
-          </Button>
+          </button>
         </div>
 
         {/* Next Button */}
