@@ -1692,6 +1692,7 @@ const Dashboard = () => {
 // Main App Component
 // Import the new Soul Food landing page
 import SoulFoodLanding from "./SoulFoodApp";
+import GamingCentral from "./GamingCentral";
 
 function App() {
   return (
@@ -1699,7 +1700,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<SoulFoodLanding />} />
+          <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />
           <Route path="/lesson/:id" element={<div>Lesson viewer coming soon</div>} />
+          <Route path="/gaming-central" element={<GamingCentral />} />
           <Route path="/dashboard" element={<div>Dashboard coming soon</div>} />
         </Routes>
       </BrowserRouter>
