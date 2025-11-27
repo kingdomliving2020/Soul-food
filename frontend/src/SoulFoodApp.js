@@ -398,6 +398,47 @@ const SoulFoodLanding = () => {
               </CardContent>
             </Card>
 
+            {/* Trivia Mix-up Youth */}
+            <Card className="bg-gradient-to-br from-cyan-50 to-blue-50 border-4 border-cyan-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
+              <div className="absolute top-2 right-2 z-10">
+                <img 
+                  src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/5gzs35hl_Trivia%20Mix-up%20Demo%20Icon%20%281%29.png"
+                  alt="Demo Available"
+                  className="w-20 h-20 drop-shadow-lg"
+                />
+              </div>
+              <CardHeader className="p-0">
+                <div className="h-48 bg-white/90 flex items-center justify-center p-4">
+                  <img 
+                    src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/4jh8a4ad_Soul%20Food%20Trivia%20Mix-up%20Logo.png"
+                    alt="Trivia Mix-up Youth"
+                    className="max-h-44 w-auto object-contain"
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-2xl font-bold text-slate-800">Trivia Mix-up</h4>
+                  <span className="text-3xl">🎮</span>
+                </div>
+                <p className="text-sm font-semibold text-cyan-600 mb-3">Youth Edition</p>
+                <p className="text-slate-700 mb-4">
+                  Millionaire-style fun for ages 12-20! Climb to the top with age-appropriate questions and lifelines.
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <Badge className="bg-cyan-100 text-cyan-700 text-xs">Practice Mode</Badge>
+                  <Badge className="bg-cyan-100 text-cyan-700 text-xs">Youth Challenge</Badge>
+                  <Badge className="bg-cyan-100 text-cyan-700 text-xs">Fun Mode</Badge>
+                </div>
+                <Button
+                  onClick={() => window.location.href = '/gaming-central'}
+                  className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-bold py-3 rounded-xl"
+                >
+                  Play Now →
+                </Button>
+              </CardContent>
+            </Card>
+
             {/* Tricky Testaments Youth */}
             <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-4 border-purple-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
               <div className="absolute top-2 right-2 z-10">
