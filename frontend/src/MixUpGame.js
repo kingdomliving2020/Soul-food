@@ -495,12 +495,22 @@ const MixUpGame = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 sm:p-8">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
-        <div className="text-center mb-8">
-          <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-2 text-lg mb-4">
-            {edition === 'youth' ? '🎮 Youth Edition' : '📚 Adult Edition'}
-          </Badge>
-          <h1 className="text-4xl font-bold text-white mb-2">Trivia Mix-Up</h1>
-          <p className="text-purple-300">Millionaire Style Challenge</p>
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <button
+              onClick={() => navigate('/')}
+              className="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-2"
+            >
+              ← Back to Home
+            </button>
+            <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-2 text-lg">
+              {edition === 'youth' ? '🎮 Youth Edition' : '📚 Adult Edition'}
+            </Badge>
+          </div>
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-white mb-2">Trivia Mix-Up</h1>
+            <p className="text-purple-300">Millionaire Style Challenge</p>
+          </div>
         </div>
 
         {/* Money Ladder */}
