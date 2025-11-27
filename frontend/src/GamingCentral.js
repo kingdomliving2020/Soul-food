@@ -16,17 +16,31 @@ const GamingCentral = () => {
 
   const games = [
     {
-      id: "trivia_mixup",
+      id: "trivia_mixup_adult",
       name: "Trivia Mix-up",
-      subtitle: "Who Wants to Be a Millionaire Style",
+      subtitle: "Adult Edition - Millionaire Style",
       description: "15-question progressive climb with lifelines! Test your Soul Food knowledge.",
       logo: "https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/bovn8pyf_Soul%20Food%20Trivia%20Logo%20-%20Vintage%20Style%20%282%29.png",
       demoIcon: "https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/5gzs35hl_Trivia%20Mix-up%20Demo%20Icon%20%281%29.png",
-      edition_available: "adult", // Vintage logo = Adult only
+      edition_available: "adult",
       gradient: "from-amber-600 via-orange-600 to-red-600",
       bgColor: "bg-gradient-to-br from-amber-50 to-orange-50",
       icon: "🎯",
       modes: ["Practice", "Quarter Challenge", "Millionaire Mode"],
+      hasDemo: true
+    },
+    {
+      id: "trivia_mixup_youth",
+      name: "Trivia Mix-up",
+      subtitle: "Youth Edition - Millionaire Style",
+      description: "Millionaire-style fun for ages 12-20! Age-appropriate questions with lifelines.",
+      logo: "https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/4jh8a4ad_Soul%20Food%20Trivia%20Mix-up%20Logo.png",
+      demoIcon: "https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/5gzs35hl_Trivia%20Mix-up%20Demo%20Icon%20%281%29.png",
+      edition_available: "youth",
+      gradient: "from-cyan-600 via-blue-600 to-indigo-600",
+      bgColor: "bg-gradient-to-br from-cyan-50 to-blue-50",
+      icon: "🎮",
+      modes: ["Practice", "Youth Challenge", "Fun Mode"],
       hasDemo: true
     },
     {
@@ -39,7 +53,7 @@ const GamingCentral = () => {
       edition_available: "youth",
       gradient: "from-blue-600 via-purple-600 to-pink-600",
       bgColor: "bg-gradient-to-br from-blue-50 to-purple-50",
-      icon: "🎮",
+      icon: "📚",
       modes: ["Single Player", "Challenge Mode", "Class Mode"],
       hasDemo: true
     },
