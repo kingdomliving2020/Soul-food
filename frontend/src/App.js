@@ -964,16 +964,325 @@ const FreeSampleLesson = () => {
             <CardContent className="p-4 sm:p-6">
               <p className="text-slate-600 mb-4">Fill in the crossword puzzle based on today's lesson. Use the clues below!</p>
               
-              {/* Visual Crossword Grid - Hidden, users fill via inputs below */}
-              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-lg border-2 border-indigo-200 mb-6">
-                <div className="text-center">
-                  <svg className="w-16 h-16 mx-auto mb-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
+              {/* Dynamic Visual Crossword Grid */}
+              <div className="bg-white p-4 rounded-lg border-2 border-slate-200 mb-6 overflow-x-auto">
+                <div className="text-center mb-4">
                   <h4 className="text-xl font-bold text-indigo-900 mb-2">Kingdom Crosses Puzzle</h4>
-                  <p className="text-indigo-700">Fill in your answers below using the clues provided!</p>
-                  <div className="mt-4 inline-block bg-white px-4 py-2 rounded-full border-2 border-indigo-300">
-                    <span className="text-sm font-semibold text-indigo-800">💡 Tip: All answers are in UPPERCASE</span>
+                  <p className="text-sm text-indigo-700">Type your answers below and watch the grid fill in!</p>
+                </div>
+                <div className="inline-block min-w-full">
+                  <div className="grid grid-cols-10 gap-1" style={{width: 'fit-content', margin: '0 auto'}}>
+                    {/* Row 1 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-indigo-50 flex items-center justify-center text-lg font-bold text-slate-700 relative">
+                      <span className="absolute text-[8px] top-0 left-0 ml-0.5 text-indigo-600 font-bold">1</span>
+                      {answers.crossword_1?.[0] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 2 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-indigo-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_1?.[1] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 3 - EXCELLENT (3 Across) and CAIN (2 Down) intersect */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-indigo-50 flex items-center justify-center text-lg font-bold text-slate-700 relative">
+                      <span className="absolute text-[8px] top-0 left-0 ml-0.5 text-indigo-600 font-bold">2</span>
+                      {answers.crossword_2?.[0] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-amber-400 bg-amber-50 flex items-center justify-center text-lg font-bold text-slate-700 relative">
+                      <span className="absolute text-[8px] top-0 left-0 ml-0.5 text-amber-600 font-bold">3</span>
+                      {answers.crossword_3?.[0] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-amber-400 bg-amber-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_3?.[1] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-amber-400 bg-amber-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_3?.[2] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-amber-400 bg-amber-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_3?.[3] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-amber-400 bg-amber-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_3?.[4] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-amber-400 bg-amber-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_3?.[5] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-amber-400 bg-amber-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_3?.[6] || ''}
+                    </div>
+                    
+                    {/* Row 4 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-indigo-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_2?.[1] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-indigo-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_1?.[2] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 5 - SACRIFICE (4 Across) */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-indigo-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_2?.[2] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-green-400 bg-green-50 flex items-center justify-center text-lg font-bold text-slate-700 relative">
+                      <span className="absolute text-[8px] top-0 left-0 ml-0.5 text-green-600 font-bold">4</span>
+                      {answers.crossword_4?.[0] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-green-400 bg-green-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_4?.[1] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-green-400 bg-green-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_4?.[2] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-green-400 bg-green-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_4?.[3] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-green-400 bg-green-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_4?.[4] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-green-400 bg-green-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_4?.[5] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-green-400 bg-green-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_4?.[6] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-green-400 bg-green-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_4?.[7] || ''}
+                    </div>
+                    
+                    {/* Row 6 - TRANSLATED (5 Down) and KEEPER (6 Across) intersect */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-indigo-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_2?.[3] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-purple-400 bg-purple-50 flex items-center justify-center text-lg font-bold text-slate-700 relative">
+                      <span className="absolute text-[8px] top-0 left-0 ml-0.5 text-purple-600 font-bold">5</span>
+                      {answers.crossword_5?.[0] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-indigo-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_1?.[3] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 7 - KEEPER (6 Across) */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-rose-400 bg-rose-50 flex items-center justify-center text-lg font-bold text-slate-700 relative">
+                      <span className="absolute text-[8px] top-0 left-0 ml-0.5 text-rose-600 font-bold">6</span>
+                      {answers.crossword_6?.[0] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-rose-400 bg-rose-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_6?.[1] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-rose-400 bg-rose-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_6?.[2] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-rose-400 bg-rose-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_6?.[3] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-rose-400 bg-rose-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_6?.[4] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-rose-400 bg-rose-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_6?.[5] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 8 - WALKED (7 Across) */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-purple-400 bg-purple-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_5?.[1] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-indigo-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_1?.[4] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 9 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-cyan-400 bg-cyan-50 flex items-center justify-center text-lg font-bold text-slate-700 relative">
+                      <span className="absolute text-[8px] top-0 left-0 ml-0.5 text-cyan-600 font-bold">7</span>
+                      {answers.crossword_7?.[0] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-cyan-400 bg-cyan-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_7?.[1] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-cyan-400 bg-cyan-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_7?.[2] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-cyan-400 bg-cyan-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_7?.[3] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-cyan-400 bg-cyan-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_7?.[4] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-cyan-400 bg-cyan-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_7?.[5] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-pink-50 flex items-center justify-center text-lg font-bold text-slate-700 relative">
+                      <span className="absolute text-[8px] top-0 left-0 ml-0.5 text-pink-600 font-bold">8</span>
+                      {answers.crossword_8?.[0] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 10 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-purple-400 bg-purple-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_5?.[2] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-pink-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_8?.[1] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 11 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-purple-400 bg-purple-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_5?.[3] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-pink-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_8?.[2] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 12 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-purple-400 bg-purple-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_5?.[4] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-indigo-400 bg-pink-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_8?.[3] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 13 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-purple-400 bg-purple-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_5?.[5] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 14 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-purple-400 bg-purple-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_5?.[6] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 15 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-purple-400 bg-purple-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_5?.[7] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 16 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-purple-400 bg-purple-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_5?.[8] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    
+                    {/* Row 17 */}
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 border-2 border-purple-400 bg-purple-50 flex items-center justify-center text-lg font-bold text-slate-700">
+                      {answers.crossword_5?.[9] || ''}
+                    </div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
                   </div>
                 </div>
               </div>
