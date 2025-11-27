@@ -543,7 +543,7 @@ const MixUpGame = () => {
                 const isSelected = selectedAnswer === option;
                 const isCorrect = option === question.correct_answer;
                 
-                let buttonClass = 'w-full text-left p-6 text-lg font-semibold rounded-xl transition-all ';
+                let buttonClass = 'w-full justify-start items-center text-left p-6 text-lg font-semibold rounded-xl transition-all ';
                 
                 if (isEliminated) {
                   buttonClass += 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-50';
@@ -556,21 +556,22 @@ const MixUpGame = () => {
                     buttonClass += 'bg-slate-100 text-slate-700';
                   }
                 } else if (isSelected) {
-                  buttonClass += 'bg-amber-200 border-4 border-amber-500';
+                  buttonClass += 'bg-amber-200 text-slate-900 border-4 border-amber-500';
                 } else {
-                  buttonClass += 'bg-slate-100 hover:bg-amber-100 hover:scale-105 border-2 border-slate-300';
+                  buttonClass += 'bg-slate-100 text-slate-900 hover:bg-amber-100 hover:scale-105 border-2 border-slate-300';
                 }
 
                 return (
-                  <Button
+                  <button
                     key={index}
                     onClick={() => handleAnswer(option)}
                     disabled={isEliminated || showResult}
                     className={buttonClass}
+                    style={{ display: 'flex', alignItems: 'center' }}
                   >
-                    <span className="font-bold mr-4">{String.fromCharCode(65 + index)}.</span>
-                    {option}
-                  </Button>
+                    <span className="font-bold mr-4 text-slate-700">{String.fromCharCode(65 + index)}.</span>
+                    <span className="flex-1">{option}</span>
+                  </button>
                 );
               })}
             </div>
