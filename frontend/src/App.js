@@ -975,7 +975,8 @@ const FreeSampleLesson = () => {
                   <div className="mt-4 inline-block bg-white px-4 py-2 rounded-full border-2 border-indigo-300">
                     <span className="text-sm font-semibold text-indigo-800">💡 Tip: All answers are in UPPERCASE</span>
                   </div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                </div>
+              </div>
               
               <div className="bg-indigo-50 p-4 rounded-lg mb-6">
                 <h4 className="font-semibold text-indigo-900 mb-3">Across:</h4>
