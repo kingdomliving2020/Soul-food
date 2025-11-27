@@ -1193,7 +1193,7 @@ const SoulFoodLanding = () => {
             </div>
 
             {/* Featured Multimedia Videos */}
-            <div className="mt-8 grid md:grid-cols-2 gap-6">
+            <div className="mt-8 grid md:grid-cols-3 gap-6">
               {/* Youth Featured Song */}
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
                 <div className="flex items-center justify-center mb-3">
@@ -1245,6 +1245,33 @@ const SoulFoodLanding = () => {
                 </div>
                 <p className="text-center text-xs text-slate-600 mt-3">
                   Biblical teaching on sowing and reaping
+                </p>
+              </div>
+
+              {/* Talent vs Gift Teaching */}
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-6 border-2 border-blue-200">
+                <div className="flex items-center justify-center mb-3">
+                  <Badge className="bg-blue-600 text-white px-3 py-1 text-xs font-bold">
+                    🎓 Adult Content
+                  </Badge>
+                </div>
+                <h5 className="text-lg font-bold text-center mb-3 text-slate-800">
+                  Talent vs Gift Teaching
+                </h5>
+                <div className="aspect-video rounded-lg overflow-hidden shadow-xl">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src="https://www.youtube.com/embed/l6a0CqmTEgQ"
+                    title="Talent vs Gift Teaching"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  ></iframe>
+                </div>
+                <p className="text-center text-xs text-slate-600 mt-3">
+                  Understanding talents and spiritual gifts
                 </p>
               </div>
             </div>
