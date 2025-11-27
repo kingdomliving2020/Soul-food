@@ -1352,14 +1352,16 @@ const SoulFoodLanding = () => {
       <footer className="bg-slate-900 text-white py-12 px-4 sm:px-6">
         <div className="container mx-auto text-center max-w-4xl">
           <div className="flex items-center justify-center space-x-3 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-2xl">🍽️</span>
-            </div>
+            <img 
+              src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/1e0m8jm2_Soul%20Food%20-%20Truth%20Served%20Daily%20-%20Fun%20Purple%20Sacred.png"
+              alt="Soul Food Logo"
+              className="h-12 w-auto object-contain"
+            />
             <div className="text-left">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
-                Soul Food
+              <h3 className="text-2xl font-bold bg-gradient-to-r from-amber-800 to-amber-600 bg-clip-text text-transparent">
+                Soul Food : Truth Served Daily
               </h3>
-              <p className="text-sm text-slate-400">Kingdom Living Project</p>
+              <p className="text-sm text-slate-400 font-bold">Kingdom Living Project</p>
             </div>
           </div>
           <p className="text-slate-400 mb-6 text-lg">
