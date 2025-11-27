@@ -16,8 +16,8 @@ const SOUL_FOOD_SERIES = [
     name: "Break*fast",
     theme: "Foundation in Christ",
     icon: "☀️",
-    gradient: "from-amber-400 via-amber-1000 to-red-500",
-    bgColor: "bg-gradient-to-br from-amber-50 to-amber-200",
+    gradient: "from-amber-400 via-orange-500 to-red-500",
+    bgColor: "bg-gradient-to-br from-amber-50 to-orange-50",
     bgImage: "https://images.unsplash.com/photo-1756367260219-b60e3cb90fa5?w=800&h=400&fit=crop&crop=center",
     available: true,
     description: "Begin your spiritual journey with a rock-solid foundation in Christ. Perfect for new believers and those seeking renewal."
@@ -80,30 +80,28 @@ const SoulFoodLanding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-amber-100 to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-orange-50 to-amber-50">
       <Toaster position="top-right" />
       
       {/* Header */}
-      <header className="bg-white/95 backdrop-blur-md border-b border-amber-300 sticky top-0 z-50 shadow-lg">
+      <header className="bg-white/95 backdrop-blur-md border-b border-orange-200 sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/imgmtfsi_1764251568266.png"
-                alt="Soul Food Logo"
-                className="h-12 w-12 object-contain"
-              />
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-2xl">🍽️</span>
+              </div>
               <div>
-                <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-amber-800 to-amber-600 bg-clip-text text-transparent">
-                  Soul Food : Truth Served Daily
+                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+                  Soul Food
                 </h1>
-                <p className="text-xs text-slate-700 font-bold">Kingdom Living Project</p>
+                <p className="text-xs text-slate-600">Kingdom Living Project</p>
               </div>
             </div>
             <Button
               onClick={handleLogin}
               data-testid="login-button"
-              className="bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-800 hover:to-amber-700 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+              className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
             >
               Sign In
             </Button>
@@ -115,12 +113,12 @@ const SoulFoodLanding = () => {
       <section className="relative py-16 sm:py-24 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div 
-            className="w-full h-full bg-cover bg-center opacity-60"
+            className="w-full h-full bg-cover bg-center opacity-40"
             style={{
               backgroundImage: "url('https://images.unsplash.com/photo-1759127481171-30a27de310ad?w=1200&h=800&fit=crop&crop=center')"
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-900/70 via-indigo-900/60 to-purple-900/70" />
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-900/60 via-indigo-900/50 to-purple-900/60" />
         </div>
         
         <div className="relative z-10 container mx-auto text-center max-w-5xl">
@@ -130,7 +128,7 @@ const SoulFoodLanding = () => {
           </Badge>
           
           <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-amber-700 via-amber-600 to-amber-500 bg-clip-text text-transparent drop-shadow-lg">
+            <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 bg-clip-text text-transparent drop-shadow-lg">
               Soul Food
             </span>
             <br />
@@ -147,7 +145,7 @@ const SoulFoodLanding = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button
               onClick={() => document.getElementById('series')?.scrollIntoView({ behavior: 'smooth' })}
-              className="w-full sm:w-auto bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-800 hover:to-amber-700 text-white px-10 py-4 rounded-xl text-lg font-bold shadow-2xl hover:shadow-amber-500 transform hover:scale-105 transition-all"
+              className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-10 py-4 rounded-xl text-lg font-bold shadow-2xl hover:shadow-orange-300 transform hover:scale-105 transition-all"
             >
               Explore Series
             </Button>
@@ -170,74 +168,11 @@ const SoulFoodLanding = () => {
         </div>
       </section>
 
-      {/* Free Sample Section */}
-      <section id="free-sample" className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-amber-50 to-amber-200">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-10">
-            <Badge className="mb-4 bg-gradient-to-r from-amber-500 to-amber-800 text-white px-6 py-2 text-sm font-bold">
-              FREE SAMPLE
-            </Badge>
-            <h3 className="text-4xl font-bold mb-4 text-slate-800">
-              Try Leap of Faith - Free Mini-Series
-            </h3>
-            <p className="text-xl text-slate-600">
-              Experience our teaching style with this platform-exclusive sample lesson
-            </p>
-          </div>
-
-          <Card className="shadow-2xl border-2 border-amber-300 overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-amber-100 to-amber-200 text-center p-8">
-              <CardTitle className="text-2xl font-bold text-slate-800 mb-2">
-                My Brother's Keeper & Consistency Pays
-              </CardTitle>
-              <p className="text-slate-600 italic">
-                "Now faith is the substance of things hoped for, the evidence of things not seen." - Hebrews 11:1
-              </p>
-            </CardHeader>
-            <CardContent className="p-8">
-              <div className="space-y-6">
-                <div>
-                  <h4 className="font-bold text-lg mb-3 text-slate-800">What You'll Learn:</h4>
-                  <ul className="space-y-2">
-                    {[
-                      "Abel's faithful sacrifice and what it teaches us",
-                      "Enoch's remarkable consistency with God",
-                      "The meaning of being your brother's keeper",
-                      "How faith pleases God and brings rewards"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-center space-x-3">
-                        <span className="w-6 h-6 bg-gradient-to-br from-amber-500 to-amber-800 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                          ✓
-                        </span>
-                        <span className="text-slate-700">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded">
-                  <p className="text-sm text-amber-900">
-                    <strong>Bonus:</strong> Includes interactive crossword puzzle and reflection questions!
-                  </p>
-                </div>
-
-                <Button
-                  onClick={() => window.location.href = '/lesson/free-sample'}
-                  className="w-full bg-gradient-to-r from-amber-500 to-amber-800 hover:from-amber-600 hover:to-amber-900 text-white font-bold py-4 rounded-xl text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all"
-                >
-                  Start Free Lesson Now →
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
       {/* Soul Food Series Section */}
       <section id="series" className="py-16 sm:py-20 px-4 sm:px-6 bg-white">
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
-            <h3 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-amber-800 to-amber-600 bg-clip-text text-transparent">
+            <h3 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
               The Soul Food Series
             </h3>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
@@ -338,6 +273,69 @@ const SoulFoodLanding = () => {
         </div>
       </section>
 
+      {/* Free Sample Section */}
+      <section id="free-sample" className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-amber-50 to-orange-50">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-10">
+            <Badge className="mb-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-2 text-sm font-bold">
+              FREE SAMPLE
+            </Badge>
+            <h3 className="text-4xl font-bold mb-4 text-slate-800">
+              Try Leap of Faith - Free Mini-Series
+            </h3>
+            <p className="text-xl text-slate-600">
+              Experience our teaching style with this platform-exclusive sample lesson
+            </p>
+          </div>
+
+          <Card className="shadow-2xl border-2 border-amber-300 overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-amber-100 to-orange-100 text-center p-8">
+              <CardTitle className="text-2xl font-bold text-slate-800 mb-2">
+                My Brother's Keeper & Consistency Pays
+              </CardTitle>
+              <p className="text-slate-600 italic">
+                "Now faith is the substance of things hoped for, the evidence of things not seen." - Hebrews 11:1
+              </p>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="space-y-6">
+                <div>
+                  <h4 className="font-bold text-lg mb-3 text-slate-800">What You'll Learn:</h4>
+                  <ul className="space-y-2">
+                    {[
+                      "Abel's faithful sacrifice and what it teaches us",
+                      "Enoch's remarkable consistency with God",
+                      "The meaning of being your brother's keeper",
+                      "How faith pleases God and brings rewards"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center space-x-3">
+                        <span className="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                          ✓
+                        </span>
+                        <span className="text-slate-700">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded">
+                  <p className="text-sm text-amber-900">
+                    <strong>Bonus:</strong> Includes interactive crossword puzzle and reflection questions!
+                  </p>
+                </div>
+
+                <Button
+                  onClick={() => window.location.href = '/lesson/free-sample'}
+                  className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all"
+                >
+                  Start Free Lesson Now →
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
       {/* Gaming Central Section */}
       <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="container mx-auto max-w-6xl">
@@ -360,7 +358,7 @@ const SoulFoodLanding = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
             {/* Trivia Mix-up */}
-            <Card className="bg-gradient-to-br from-amber-50 to-amber-200 border-4 border-amber-400 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
+            <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-4 border-orange-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
               <div className="absolute top-3 left-3 z-10">
                 <Badge className="bg-blue-600 text-white px-3 py-1 text-xs font-bold shadow-lg">
                   DEMO
@@ -380,18 +378,18 @@ const SoulFoodLanding = () => {
                   <h4 className="text-2xl font-bold text-slate-800">Trivia Mix-up</h4>
                   <span className="text-3xl">🎯</span>
                 </div>
-                <p className="text-sm font-semibold text-amber-800 mb-3">Millionaire Style</p>
+                <p className="text-sm font-semibold text-orange-600 mb-3">Millionaire Style</p>
                 <p className="text-slate-700 mb-4">
                   15-question progressive climb with lifelines! Test your Soul Food knowledge like "Who Wants to Be a Millionaire."
                 </p>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  <Badge className="bg-amber-200 text-amber-900 text-xs">Practice Mode</Badge>
-                  <Badge className="bg-amber-200 text-amber-900 text-xs">Quarter Challenge</Badge>
-                  <Badge className="bg-amber-200 text-amber-900 text-xs">Millionaire Mode</Badge>
+                  <Badge className="bg-orange-100 text-orange-700 text-xs">Practice Mode</Badge>
+                  <Badge className="bg-orange-100 text-orange-700 text-xs">Quarter Challenge</Badge>
+                  <Badge className="bg-orange-100 text-orange-700 text-xs">Millionaire Mode</Badge>
                 </div>
                 <Button
                   onClick={() => window.location.href = '/gaming-central'}
-                  className="w-full bg-gradient-to-r from-amber-600 to-amber-800 hover:from-amber-700 hover:to-amber-900 text-white font-bold py-3 rounded-xl"
+                  className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-3 rounded-xl"
                 >
                   Play Now →
                 </Button>
@@ -537,21 +535,12 @@ const SoulFoodLanding = () => {
                   <div className="text-sm text-purple-300">Full access • Leaderboards • Badges</div>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row gap-4 mt-8">
-                <Button
-                  onClick={() => window.location.href = '/gaming-central'}
-                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold px-8 py-4 rounded-xl text-lg shadow-2xl"
-                >
-                  Enter Gaming Central →
-                </Button>
-                <Button
-                  onClick={() => window.location.href = '/game/trivia-mixup'}
-                  variant="outline"
-                  className="flex-1 border-2 border-purple-400 text-purple-300 hover:bg-purple-800/30 font-bold px-8 py-4 rounded-xl text-lg shadow-2xl"
-                >
-                  Try Free Preview 🎮
-                </Button>
-              </div>
+              <Button
+                onClick={() => window.location.href = '/gaming-central'}
+                className="mt-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold px-12 py-4 rounded-xl text-lg shadow-2xl"
+              >
+                Enter Gaming Central →
+              </Button>
             </div>
           </div>
         </div>
@@ -632,11 +621,11 @@ const SoulFoodLanding = () => {
             </Card>
 
             {/* Instructor Box Set */}
-            <Card className="border-4 border-amber-400 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
-              <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-800 to-amber-600 text-white px-4 py-2 text-sm font-bold z-10 shadow-xl rotate-12">
+            <Card className="border-4 border-orange-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
+              <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-orange-600 to-amber-600 text-white px-4 py-2 text-sm font-bold z-10 shadow-xl rotate-12">
                 For Teachers!
               </Badge>
-              <CardHeader className="bg-gradient-to-br from-amber-100 to-amber-100 p-6">
+              <CardHeader className="bg-gradient-to-br from-orange-100 to-amber-100 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <CardTitle className="text-2xl font-bold text-slate-800">
                     Instructor Box Set
@@ -670,7 +659,7 @@ const SoulFoodLanding = () => {
 
                 <div className="text-center py-4">
                   <p className="text-lg text-slate-500 line-through mb-1">Reg. $99.99</p>
-                  <div className="text-4xl font-bold text-amber-800 mb-2">
+                  <div className="text-4xl font-bold text-orange-600 mb-2">
                     $79.99
                   </div>
                   <Badge className="bg-amber-500 text-white text-xs px-3 py-1 mt-2">
@@ -685,7 +674,7 @@ const SoulFoodLanding = () => {
 
                 <Button 
                   onClick={() => toast.success("Pre-order page opening soon!")}
-                  className="w-full bg-gradient-to-r from-amber-800 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-bold py-4 rounded-xl text-lg shadow-2xl transform hover:scale-105 transition-all"
+                  className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-bold py-4 rounded-xl text-lg shadow-2xl transform hover:scale-105 transition-all"
                 >
                   Pre-Order Instructor Set →
                 </Button>
@@ -758,25 +747,25 @@ const SoulFoodLanding = () => {
                 </div>
 
                 {/* Mega Bulk Order */}
-                <div className="bg-white rounded-xl p-6 border-2 border-amber-400 shadow-lg">
+                <div className="bg-white rounded-xl p-6 border-2 border-orange-300 shadow-lg">
                   <div className="text-center mb-4">
-                    <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-amber-700 to-amber-600 rounded-full flex items-center justify-center text-2xl">
+                    <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full flex items-center justify-center text-2xl">
                       🏢
                     </div>
                     <h5 className="text-xl font-bold text-slate-800 mb-1">Mega Bulk Order</h5>
                     <p className="text-sm text-slate-600">25+ Sets</p>
                   </div>
-                  <div className="text-center py-4 bg-amber-100 rounded-lg mb-4">
-                    <div className="text-3xl font-bold text-amber-800">20% OFF</div>
+                  <div className="text-center py-4 bg-orange-50 rounded-lg mb-4">
+                    <div className="text-3xl font-bold text-orange-600">20% OFF</div>
                     <p className="text-sm text-slate-600 mt-1">$31.99 per set</p>
                   </div>
                   <ul className="text-sm text-slate-700 space-y-2">
                     <li className="flex items-center space-x-2">
-                      <span className="text-amber-700">✓</span>
+                      <span className="text-orange-500">✓</span>
                       <span>Schools & organizations</span>
                     </li>
                     <li className="flex items-center space-x-2">
-                      <span className="text-amber-700">✓</span>
+                      <span className="text-orange-500">✓</span>
                       <span><strong>FREE SHIPPING!</strong></span>
                     </li>
                   </ul>
@@ -803,7 +792,7 @@ const SoulFoodLanding = () => {
       <section className="py-16 sm:py-20 px-4 sm:px-6 bg-white">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
-            <h3 className="text-4xl font-bold mb-4 bg-gradient-to-r from-amber-800 to-amber-600 bg-clip-text text-transparent">
+            <h3 className="text-4xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
               Three-Track Learning System
             </h3>
             <p className="text-xl text-slate-600 mb-4">
@@ -835,7 +824,7 @@ const SoulFoodLanding = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Adult Edition */}
-            <Card className="border-2 border-blue-200 shadow-xl hover:shadow-2xl transition-all h-fit">
+            <Card className="border-2 border-blue-200 shadow-xl hover:shadow-2xl transition-all">
               <CardHeader className="bg-gradient-to-br from-blue-50 to-cyan-50 text-center p-6">
                 <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
                   👤
@@ -884,9 +873,9 @@ const SoulFoodLanding = () => {
                 </Button>
               </CardContent>
             </Card>
+          </div>
 
-            {/* Youth Edition */}
-            <Card className="border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all h-fit">
+          {/* Adult Multimedia Showcase */}
           <div className="mt-12 bg-gradient-to-br from-blue-50 via-cyan-50 to-slate-50 rounded-2xl p-8 border-2 border-blue-300 shadow-xl">
             <div className="text-center mb-6">
               <Badge className="bg-blue-600 text-white px-6 py-2 text-lg font-bold mb-4 inline-block">
@@ -924,6 +913,11 @@ const SoulFoodLanding = () => {
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Youth Edition */}
+            <Card className="border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all">
               <CardHeader className="bg-gradient-to-br from-purple-50 to-pink-50 text-center p-6">
                 <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
                   🎓
@@ -973,45 +967,6 @@ const SoulFoodLanding = () => {
                 </Button>
               </CardContent>
             </Card>
-
-            {/* Instructor Edition */}
-            <Card className="border-2 border-amber-400 shadow-xl hover:shadow-2xl transition-all relative h-fit">
-            <div className="text-center mb-6">
-              <Badge className="bg-purple-600 text-white px-6 py-2 text-lg font-bold mb-4 inline-block">
-                🎵 Youth Edition Featured Content
-              </Badge>
-              <h4 className="text-3xl font-bold text-slate-800 mb-3">
-                Inspirational Youth Music & Media
-              </h4>
-              <p className="text-slate-600 max-w-2xl mx-auto">
-                Experience uplifting content designed specifically for young believers ages 12-20
-              </p>
-            </div>
-            
-            <div className="max-w-2xl mx-auto">
-              <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border-4 border-white">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/l14zW1FsFsQ"
-                  title="Youth Inspirational Song"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                ></iframe>
-              </div>
-              <div className="mt-6 text-center">
-                <p className="text-slate-700 mb-4">
-                  This powerful song embodies the spirit of Soul Food's Youth Edition - encouraging young believers to stay strong in their faith journey.
-                </p>
-                <div className="flex justify-center gap-4 flex-wrap">
-                  <Badge className="bg-purple-100 text-purple-700 px-4 py-2">Faith Building</Badge>
-                  <Badge className="bg-pink-100 text-pink-700 px-4 py-2">Youth Focused</Badge>
-                  <Badge className="bg-blue-100 text-blue-700 px-4 py-2">Inspirational</Badge>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Youth Multimedia Showcase */}
@@ -1094,60 +1049,20 @@ const SoulFoodLanding = () => {
             </div>
           </div>
 
-          {/* Adult Multimedia Showcase */}
-          <div className="mt-12 bg-gradient-to-br from-blue-50 via-cyan-50 to-slate-50 rounded-2xl p-8 border-2 border-blue-300 shadow-xl">
-            <div className="text-center mb-6">
-              <Badge className="bg-blue-600 text-white px-6 py-2 text-lg font-bold mb-4 inline-block">
-                🎓 Adult Edition Featured Content
-              </Badge>
-              <h4 className="text-3xl font-bold text-slate-800 mb-3">
-                Talent vs Gift Teaching
-              </h4>
-              <p className="text-slate-600 max-w-2xl mx-auto">
-                Understanding the difference between God-given talents and spiritual gifts
-              </p>
-            </div>
-            
-            <div className="max-w-2xl mx-auto">
-              <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border-4 border-white">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/l6a0CqmTEgQ"
-                  title="Talent vs Gift Teaching"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                ></iframe>
-              </div>
-              <div className="mt-6 text-center">
-                <p className="text-slate-700 mb-4">
-                  This powerful teaching explores the biblical distinction between natural talents and spiritual gifts, helping believers understand their unique calling.
-                </p>
-                <div className="flex justify-center gap-4 flex-wrap">
-                  <Badge className="bg-blue-100 text-blue-700 px-4 py-2">Doctrinal Teaching</Badge>
-                  <Badge className="bg-cyan-100 text-cyan-700 px-4 py-2">Adult Focused</Badge>
-                  <Badge className="bg-slate-100 text-slate-700 px-4 py-2">Spiritual Growth</Badge>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 mt-12">
+          <div className="grid md:grid-cols-3 gap-8">
             {/* Instructor Edition */}
-            <Card className="border-2 border-amber-400 shadow-xl hover:shadow-2xl transition-all relative h-fit">
-              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-700 to-amber-600 text-white px-4 py-1 font-bold text-sm">
+            <Card className="border-2 border-orange-300 shadow-xl hover:shadow-2xl transition-all relative">
+              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-orange-500 to-amber-600 text-white px-4 py-1 font-bold text-sm">
                 For Teachers & Leaders
               </Badge>
-              <CardHeader className="bg-gradient-to-br from-amber-100 to-amber-200 text-center p-6 pt-8">
-                <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-amber-700 to-amber-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+              <CardHeader className="bg-gradient-to-br from-orange-50 to-amber-50 text-center p-6 pt-8">
+                <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-orange-500 to-amber-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
                   📖
                 </div>
                 <CardTitle className="text-2xl font-bold text-slate-800 mb-2">
                   Instructor Edition (IE)
                 </CardTitle>
-                <div className="text-3xl font-bold text-amber-800 mb-2">
+                <div className="text-3xl font-bold text-orange-600 mb-2">
                   $14.99<span className="text-lg text-slate-600">/mo</span>
                 </div>
                 <Badge className="bg-emerald-500 text-white text-xs px-3 py-1 mb-2">All quarterly releases included</Badge>
@@ -1159,39 +1074,39 @@ const SoulFoodLanding = () => {
                 </p>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-start space-x-2">
-                    <span className="text-amber-700 mt-0.5">✓</span>
+                    <span className="text-orange-500 mt-0.5">✓</span>
                     <span className="text-slate-700 text-sm">All AE & YE content included</span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <span className="text-amber-700 mt-0.5">✓</span>
+                    <span className="text-orange-500 mt-0.5">✓</span>
                     <span className="text-slate-700 text-sm"><strong>Math connections</strong> to biblical concepts</span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <span className="text-amber-700 mt-0.5">✓</span>
+                    <span className="text-orange-500 mt-0.5">✓</span>
                     <span className="text-slate-700 text-sm"><strong>Dual scripture view</strong> for comparison</span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <span className="text-amber-700 mt-0.5">✓</span>
+                    <span className="text-orange-500 mt-0.5">✓</span>
                     <span className="text-slate-700 text-sm"><strong>Historical references</strong> for rich context</span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <span className="text-amber-700 mt-0.5">✓</span>
+                    <span className="text-orange-500 mt-0.5">✓</span>
                     <span className="text-slate-700 text-sm">Teaching guides & answer keys</span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <span className="text-amber-700 mt-0.5">✓</span>
+                    <span className="text-orange-500 mt-0.5">✓</span>
                     <span className="text-slate-700 text-sm">Discussion prompts & facilitation tips</span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <span className="text-amber-700 mt-0.5">✓</span>
+                    <span className="text-orange-500 mt-0.5">✓</span>
                     <span className="text-slate-700 text-sm">All multimedia content (audio & video)</span>
                   </li>
                   <li className="flex items-start space-x-2">
-                    <span className="text-amber-700 mt-0.5">✓</span>
+                    <span className="text-orange-500 mt-0.5">✓</span>
                     <span className="text-slate-700 text-sm">Downloadable teaching materials</span>
                   </li>
                 </ul>
-                <Button onClick={handleLogin} className="w-full bg-gradient-to-r from-amber-700 to-amber-600 hover:from-amber-800 hover:to-amber-700">
+                <Button onClick={handleLogin} className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700">
                   Get Started
                 </Button>
               </CardContent>
@@ -1283,7 +1198,7 @@ const SoulFoodLanding = () => {
           </div>
 
           {/* Multimedia Content Explanation */}
-          <div className="mt-12 bg-gradient-to-br from-amber-50 to-amber-200 rounded-2xl p-8 border-2 border-amber-300">
+          <div className="mt-12 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8 border-2 border-orange-200">
             <h4 className="text-2xl font-bold text-center mb-6 text-slate-800">
               📱 Rich Multimedia Learning Experience
             </h4>
@@ -1307,7 +1222,7 @@ const SoulFoodLanding = () => {
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-amber-700 to-amber-600 rounded-xl flex items-center justify-center text-2xl shadow-lg">
+                <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center text-2xl shadow-lg">
                   🎥
                 </div>
                 <h5 className="font-bold text-slate-800 mb-2">Teaching Videos</h5>
@@ -1374,7 +1289,7 @@ const SoulFoodLanding = () => {
               </div>
 
               {/* Sowing & Reaping Teaching */}
-              <div className="bg-gradient-to-br from-amber-50 to-amber-200 rounded-xl p-6 border-2 border-amber-300">
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border-2 border-orange-200">
                 <div className="flex items-center justify-center mb-3">
                   <Badge className="bg-orange-600 text-white px-3 py-1 text-xs font-bold">
                     📚 Youth & Instructor
@@ -1435,11 +1350,9 @@ const SoulFoodLanding = () => {
       <footer className="bg-slate-900 text-white py-12 px-4 sm:px-6">
         <div className="container mx-auto text-center max-w-4xl">
           <div className="flex items-center justify-center space-x-3 mb-6">
-            <img 
-              src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/1e0m8jm2_Soul%20Food%20-%20Truth%20Served%20Daily%20-%20Fun%20Purple%20Sacred.png"
-              alt="Soul Food Logo"
-              className="h-16 w-auto object-contain"
-            />
+            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
+              <span className="text-2xl">🍽️</span>
+            </div>
             <div className="text-left">
               <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
                 Soul Food
