@@ -708,7 +708,17 @@ const LandingPage = () => {
       {/* Footer */}
       <footer className="bg-slate-800 text-white py-8 sm:py-12 px-4 sm:px-6">
         <div className="container mx-auto text-center">
-          <h3 className="text-2xl font-bold mb-4">Kingdom Living Project</h3>
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <img 
+              src="/soul-food-logo.png" 
+              alt="Soul Food Logo" 
+              className="w-12 h-12 object-contain"
+            />
+            <div>
+              <h3 className="text-2xl font-bold">Soul Food</h3>
+              <p className="text-sm text-slate-400">Kingdom Living Project</p>
+            </div>
+          </div>
           <p className="text-slate-400 mb-6">
             Putting on the whole armor of God and transforming lives through Kingdom principles for ALL nations
           </p>
