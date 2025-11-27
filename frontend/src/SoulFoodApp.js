@@ -835,7 +835,7 @@ const SoulFoodLanding = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Adult Edition */}
-            <Card className="border-2 border-blue-200 shadow-xl hover:shadow-2xl transition-all">
+            <Card className="border-2 border-blue-200 shadow-xl hover:shadow-2xl transition-all h-fit">
               <CardHeader className="bg-gradient-to-br from-blue-50 to-cyan-50 text-center p-6">
                 <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
                   👤
