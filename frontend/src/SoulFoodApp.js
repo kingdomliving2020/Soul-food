@@ -713,6 +713,177 @@ const SoulFoodLanding = () => {
         </div>
       </section>
 
+      {/* Trivia Game Section */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 text-sm font-bold shadow-lg">
+              🎮 GAMIFIED LEARNING
+            </Badge>
+            <h3 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              Soul Food Trivia Mix-Up
+            </h3>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              Test your biblical knowledge with engaging game modes, lifelines, and challenges!
+            </p>
+          </div>
+
+          {/* Game Modes Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {/* Practice Mode */}
+            <Card className="border-2 border-purple-200 hover:shadow-xl transition-all hover:scale-105">
+              <CardContent className="p-6 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg">
+                  🎯
+                </div>
+                <h4 className="text-xl font-bold text-slate-800 mb-2">Practice Mode</h4>
+                <p className="text-sm text-slate-600 mb-3">Casual play with 10 random questions</p>
+                <Badge className="bg-green-500 text-white text-xs">FREE</Badge>
+              </CardContent>
+            </Card>
+
+            {/* Quarter Challenge */}
+            <Card className="border-2 border-purple-200 hover:shadow-xl transition-all hover:scale-105">
+              <CardContent className="p-6 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg">
+                  📅
+                </div>
+                <h4 className="text-xl font-bold text-slate-800 mb-2">Quarter Challenge</h4>
+                <p className="text-sm text-slate-600 mb-3">Master all lessons from one quarter</p>
+                <Badge className="bg-amber-500 text-white text-xs">SUBSCRIBERS</Badge>
+              </CardContent>
+            </Card>
+
+            {/* Series Challenge */}
+            <Card className="border-2 border-purple-200 hover:shadow-xl transition-all hover:scale-105">
+              <CardContent className="p-6 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg">
+                  🔥
+                </div>
+                <h4 className="text-xl font-bold text-slate-800 mb-2">Series Challenge</h4>
+                <p className="text-sm text-slate-600 mb-3">Complete a full series challenge</p>
+                <Badge className="bg-amber-500 text-white text-xs">SUBSCRIBERS</Badge>
+              </CardContent>
+            </Card>
+
+            {/* Millionaire Mode */}
+            <Card className="border-2 border-purple-200 hover:shadow-xl transition-all hover:scale-105">
+              <CardContent className="p-6 text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-amber-600 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-lg">
+                  💎
+                </div>
+                <h4 className="text-xl font-bold text-slate-800 mb-2">Millionaire Mode</h4>
+                <p className="text-sm text-slate-600 mb-3">Who wants to be a Biblical millionaire?</p>
+                <Badge className="bg-purple-500 text-white text-xs">PREMIUM</Badge>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Features Showcase */}
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {/* Lifelines */}
+            <Card className="bg-gradient-to-br from-purple-50 to-indigo-50 border-2 border-purple-200">
+              <CardContent className="p-8">
+                <h4 className="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                  <span className="text-3xl mr-3">🆘</span>
+                  Game Lifelines
+                </h4>
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">✂️</span>
+                    <div>
+                      <h5 className="font-bold text-slate-800">50/50</h5>
+                      <p className="text-sm text-slate-600">Eliminate two wrong answers</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">👥</span>
+                    <div>
+                      <h5 className="font-bold text-slate-800">Ask the Congregation</h5>
+                      <p className="text-sm text-slate-600">See what others chose</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">📖</span>
+                    <div>
+                      <h5 className="font-bold text-slate-800">Scripture Hint</h5>
+                      <p className="text-sm text-slate-600">Get a biblical clue</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">🙏</span>
+                    <div>
+                      <h5 className="font-bold text-slate-800">Prayer Pause</h5>
+                      <p className="text-sm text-slate-600">Extra time to think</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Rewards */}
+            <Card className="bg-gradient-to-br from-amber-50 to-yellow-50 border-2 border-amber-200">
+              <CardContent className="p-8">
+                <h4 className="text-2xl font-bold text-slate-800 mb-6 flex items-center">
+                  <span className="text-3xl mr-3">🏆</span>
+                  Rewards & Badges
+                </h4>
+                <div className="space-y-4">
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">📊</span>
+                    <div>
+                      <h5 className="font-bold text-slate-800">Leaderboards</h5>
+                      <p className="text-sm text-slate-600">Compete with other believers</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">🎖️</span>
+                    <div>
+                      <h5 className="font-bold text-slate-800">Achievement Badges</h5>
+                      <p className="text-sm text-slate-600">Earn badges for milestones</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">⭐</span>
+                    <div>
+                      <h5 className="font-bold text-slate-800">Progress Tracking</h5>
+                      <p className="text-sm text-slate-600">Monitor your growth</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">📈</span>
+                    <div>
+                      <h5 className="font-bold text-slate-800">Performance Stats</h5>
+                      <p className="text-sm text-slate-600">Detailed analytics</p>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center">
+            <Card className="bg-gradient-to-r from-purple-600 to-pink-600 border-0 shadow-2xl inline-block">
+              <CardContent className="p-8">
+                <h4 className="text-2xl font-bold text-white mb-4">
+                  Ready to Test Your Knowledge?
+                </h4>
+                <p className="text-purple-100 mb-6">
+                  Join thousands of believers making Bible study fun and engaging!
+                </p>
+                <Button
+                  onClick={() => toast.info("Trivia games available with subscription!")}
+                  className="bg-white text-purple-600 hover:bg-purple-50 font-bold py-4 px-8 rounded-xl text-lg shadow-xl hover:shadow-2xl transition-all"
+                >
+                  Start Playing Now 🎮
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Editions Section */}
       <section className="py-16 sm:py-20 px-4 sm:px-6 bg-white">
         <div className="container mx-auto max-w-6xl">
