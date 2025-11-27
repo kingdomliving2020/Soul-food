@@ -34,7 +34,7 @@ const GamingCentral = () => {
       name: "Tricky Testaments",
       subtitle: "Youth Edition - Jeopardy Style",
       description: "Pick categories, answer in question form, and climb the board!",
-      logo: "https://customer-assets.emergentagent.com/job_book-website-help/artifacts/c5c1ujck_Soul%20Food%27s%20Tricky%20Testaments%20-%20Bold%20Modern%20%281%29.png",
+      logo: "https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/4jh8a4ad_Soul%20Food%20Trivia%20Mix-up%20Logo.png",
       demoIcon: "https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/xts56w3w_Tricky%20Testaments%20Demo%20Icon.png",
       edition_available: "youth",
       gradient: "from-blue-600 via-purple-600 to-pink-600",
