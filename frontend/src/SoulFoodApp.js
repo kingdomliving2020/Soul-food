@@ -124,25 +124,6 @@ const SoulFoodLanding = () => {
         </div>
         
         <div className="relative z-10 container mx-auto text-center max-w-5xl">
-          {/* Soul Food Text Logo */}
-          <div className="mb-8 text-center">
-            <div className="relative inline-block">
-              {/* Brown shadow behind text */}
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-800/30 via-amber-700/20 to-amber-900/30 rounded-2xl blur-3xl transform scale-110"></div>
-              {/* Text container */}
-              <div className="relative bg-white/90 backdrop-blur-md rounded-2xl px-8 py-6 shadow-2xl border-4 border-white/40">
-                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-2" style={{ fontFamily: 'Georgia, serif' }}>
-                  <span className="bg-gradient-to-r from-amber-800 via-amber-700 to-amber-600 bg-clip-text text-transparent">
-                    Soul Food
-                  </span>
-                </h1>
-                <p className="text-xl sm:text-2xl lg:text-3xl font-light text-amber-900 tracking-wide" style={{ fontFamily: 'Georgia, serif' }}>
-                  Truth Served Daily
-                </p>
-              </div>
-            </div>
-          </div>
-
           {/* Beta Badge */}
           <Badge className="mb-6 bg-gradient-to-r from-purple-600 to-indigo-700 text-white px-6 py-2 text-sm font-bold animate-pulse shadow-xl">
             🚀 BETA ACCESS - Launch Special
