@@ -145,9 +145,12 @@ const GamingCentral = () => {
       return;
     }
     
-    // Navigate to game
-    toast.success(`Launching ${game.name}...`);
-    // In production: navigate to game page
+    // Navigate to appropriate game
+    if (game.id.includes('trivia_mixup')) {
+      window.location.href = '/game/trivia-mixup';
+    } else if (game.id.includes('tricky_testaments')) {
+      window.location.href = '/game/tricky-testaments';
+    }
   };
 
   const handleEditionChange = (newEdition) => {
