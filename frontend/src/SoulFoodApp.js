@@ -451,7 +451,7 @@ const SoulFoodLanding = () => {
               <CardHeader className="p-0">
                 <div className="h-48 bg-white/90 flex items-center justify-center p-4">
                   <img 
-                    src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/4jh8a4ad_Soul%20Food%20Trivia%20Mix-up%20Logo.png"
+                    src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/dgncbaxl_Soul%20Food%27s%20Tricky%20Testaments%20-%20Bold%20Modern%20%281%29.png"
                     alt="Tricky Testaments Youth"
                     className="max-h-44 w-auto object-contain"
                   />
