@@ -1039,40 +1039,59 @@ const SoulFoodLanding = () => {
                 </div>
               </div>
               <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                <p className="text-sm font-semibold text-white/80 mb-1">Foundation Theme:</p>
-                <p className="text-xl font-bold">{selectedSeries.foundationTheme}</p>
+                <p className="text-sm font-semibold text-white/80 mb-1">📖 Series Overview</p>
+                <p className="text-lg">{selectedSeries.description}</p>
               </div>
             </div>
 
-            {/* Content */}
+            {/* Content - Multiple Themes */}
             <div className="p-8 overflow-y-auto max-h-[calc(90vh-280px)]">
               <div className="mb-6">
-                <h3 className="text-2xl font-bold text-slate-800 mb-2 flex items-center">
+                <h3 className="text-2xl font-bold text-slate-800 mb-3 flex items-center">
                   <span className="mr-2">📚</span>
-                  Lesson Overview
+                  {selectedSeries.themes?.length > 1 ? 'Themes & Lessons' : 'Lesson Overview'}
                 </h3>
-                <p className="text-slate-600 leading-relaxed">{selectedSeries.description}</p>
+                {selectedSeries.themes?.length > 1 && (
+                  <p className="text-slate-600 mb-4">
+                    This series includes {selectedSeries.themes.length} powerful themes with {selectedSeries.themes.reduce((acc, theme) => acc + theme.lessons.length, 0)} total lessons.
+                  </p>
+                )}
               </div>
 
-              {/* Lessons Table */}
-              <div className="space-y-3">
-                {selectedSeries.lessons && selectedSeries.lessons.map((lesson) => (
-                  <div
-                    key={lesson.number}
-                    className={`bg-gradient-to-r ${selectedSeries.bgColor} border-2 border-slate-200 rounded-xl p-5 hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer`}
-                  >
-                    <div className="flex items-start space-x-4">
-                      <div className={`flex-shrink-0 w-12 h-12 bg-gradient-to-br ${selectedSeries.gradient} rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md`}>
-                        {lesson.number}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-lg font-bold text-slate-800 mb-1">
-                          Lesson {lesson.number}: {lesson.title}
-                        </h4>
-                        <p className="text-sm text-slate-600 leading-relaxed">
-                          {lesson.description}
-                        </p>
-                      </div>
+              {/* Themes and Lessons */}
+              <div className="space-y-8">
+                {selectedSeries.themes && selectedSeries.themes.map((theme, themeIndex) => (
+                  <div key={themeIndex} className="space-y-3">
+                    {/* Theme Header */}
+                    <div className={`bg-gradient-to-r ${selectedSeries.gradient} p-4 rounded-xl shadow-lg`}>
+                      <h4 className="text-xl font-bold text-white flex items-center">
+                        <span className="mr-2">✨</span>
+                        Theme: {theme.themeName}
+                      </h4>
+                    </div>
+
+                    {/* Lessons for this theme */}
+                    <div className="space-y-3 pl-2">
+                      {theme.lessons.map((lesson) => (
+                        <div
+                          key={`${themeIndex}-${lesson.number}`}
+                          className={`bg-gradient-to-r ${selectedSeries.bgColor} border-2 border-slate-200 rounded-xl p-5 hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer`}
+                        >
+                          <div className="flex items-start space-x-4">
+                            <div className={`flex-shrink-0 w-12 h-12 bg-gradient-to-br ${selectedSeries.gradient} rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md`}>
+                              {lesson.number}
+                            </div>
+                            <div className="flex-1">
+                              <h5 className="text-lg font-bold text-slate-800 mb-1">
+                                Lesson {lesson.number}: {lesson.title}
+                              </h5>
+                              <p className="text-sm text-slate-600 leading-relaxed">
+                                {lesson.description}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}
