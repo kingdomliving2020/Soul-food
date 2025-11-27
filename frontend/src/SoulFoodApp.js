@@ -907,9 +907,11 @@ const SoulFoodLanding = () => {
       <footer className="bg-slate-900 text-white py-12 px-4 sm:px-6">
         <div className="container mx-auto text-center max-w-4xl">
           <div className="flex items-center justify-center space-x-3 mb-6">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-2xl">🍽️</span>
-            </div>
+            <img 
+              src="/soul-food-logo.png" 
+              alt="Soul Food Logo" 
+              className="w-12 h-12 object-contain"
+            />
             <div className="text-left">
               <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
                 Soul Food
