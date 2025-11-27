@@ -336,6 +336,162 @@ const SoulFoodLanding = () => {
         </div>
       </section>
 
+      {/* Gaming Central Section */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-10">
+            <img 
+              src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/k75fu34t_Gaming%20Central%20Test%20Your%20Knowledge%20Logo.png"
+              alt="Gaming Central"
+              className="h-24 mx-auto mb-6"
+            />
+            <h3 className="text-4xl sm:text-5xl font-bold mb-4 text-white">
+              Gaming Central
+            </h3>
+            <p className="text-xl text-purple-300 max-w-3xl mx-auto mb-4">
+              Test your Soul Food knowledge with three epic Bible trivia games!
+            </p>
+            <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-6 py-2 text-base font-bold">
+              🎮 Mid-Year Review Games
+            </Badge>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-10">
+            {/* Trivia Mix-up */}
+            <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-4 border-orange-300 shadow-2xl overflow-hidden hover:scale-105 transition-all">
+              <CardHeader className="p-0">
+                <div className="h-48 bg-white/90 flex items-center justify-center p-4">
+                  <img 
+                    src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/ficy53gi_Soul%20Food%20Trivia%20Logo%20-%20Vintage%20Style%20%281%29.png"
+                    alt="Trivia Mix-up"
+                    className="max-h-44 w-auto object-contain"
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-2xl font-bold text-slate-800">Trivia Mix-up</h4>
+                  <span className="text-3xl">🎯</span>
+                </div>
+                <p className="text-sm font-semibold text-orange-600 mb-3">Millionaire Style</p>
+                <p className="text-slate-700 mb-4">
+                  15-question progressive climb with lifelines! Test your Soul Food knowledge like "Who Wants to Be a Millionaire."
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <Badge className="bg-orange-100 text-orange-700 text-xs">Practice Mode</Badge>
+                  <Badge className="bg-orange-100 text-orange-700 text-xs">Quarter Challenge</Badge>
+                  <Badge className="bg-orange-100 text-orange-700 text-xs">Millionaire Mode</Badge>
+                </div>
+                <Button
+                  onClick={() => window.location.href = '/gaming-central'}
+                  className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-3 rounded-xl"
+                >
+                  Play Now →
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Tricky Testaments Youth */}
+            <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-4 border-purple-300 shadow-2xl overflow-hidden hover:scale-105 transition-all">
+              <CardHeader className="p-0">
+                <div className="h-48 bg-white/90 flex items-center justify-center p-4">
+                  <img 
+                    src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/c5c1ujck_Soul%20Food%27s%20Tricky%20Testaments%20-%20Bold%20Modern%20%281%29.png"
+                    alt="Tricky Testaments Youth"
+                    className="max-h-44 w-auto object-contain"
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-2xl font-bold text-slate-800">Tricky Testaments</h4>
+                  <span className="text-3xl">🎮</span>
+                </div>
+                <p className="text-sm font-semibold text-purple-600 mb-3">Youth Edition - Jeopardy Style</p>
+                <p className="text-slate-700 mb-4">
+                  Pick categories, answer in question form, and climb the board! Jeopardy-style fun for ages 12-20.
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <Badge className="bg-purple-100 text-purple-700 text-xs">Single Player</Badge>
+                  <Badge className="bg-purple-100 text-purple-700 text-xs">Challenge Mode</Badge>
+                  <Badge className="bg-purple-100 text-purple-700 text-xs">Class Mode</Badge>
+                </div>
+                <Button
+                  onClick={() => window.location.href = '/gaming-central'}
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-xl"
+                >
+                  Play Now →
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Tricky Testaments Adult */}
+            <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-4 border-amber-300 shadow-2xl overflow-hidden hover:scale-105 transition-all">
+              <CardHeader className="p-0">
+                <div className="h-48 bg-white/90 flex items-center justify-center p-4">
+                  <img 
+                    src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/29d8ivo6_Soul%20Food%27s%20Tricky%20Testaments%20Logo%20%281%29.png"
+                    alt="Tricky Testaments Adult"
+                    className="max-h-44 w-auto object-contain"
+                  />
+                </div>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-2xl font-bold text-slate-800">Tricky Testaments</h4>
+                  <span className="text-3xl">📚</span>
+                </div>
+                <p className="text-sm font-semibold text-amber-700 mb-3">Adult Edition - Jeopardy Style</p>
+                <p className="text-slate-700 mb-4">
+                  Classic Jeopardy with deeper theological questions and higher stakes! For serious Bible scholars.
+                </p>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <Badge className="bg-amber-100 text-amber-700 text-xs">Single Player</Badge>
+                  <Badge className="bg-amber-100 text-amber-700 text-xs">Daily Double</Badge>
+                  <Badge className="bg-amber-100 text-amber-700 text-xs">Final Jeopardy</Badge>
+                </div>
+                <Button
+                  onClick={() => window.location.href = '/gaming-central'}
+                  className="w-full bg-gradient-to-r from-amber-700 to-yellow-700 hover:from-amber-800 hover:to-yellow-800 text-white font-bold py-3 rounded-xl"
+                >
+                  Play Now →
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Gaming Access Info */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border-2 border-purple-400">
+            <div className="text-center">
+              <h4 className="text-2xl font-bold text-white mb-4">🎯 Game Access Options</h4>
+              <div className="grid md:grid-cols-3 gap-6 text-white">
+                <div>
+                  <div className="text-4xl mb-2">👀</div>
+                  <div className="font-bold text-lg mb-1">Free Preview</div>
+                  <div className="text-sm text-purple-300">5 questions • 1 game</div>
+                </div>
+                <div>
+                  <div className="text-4xl mb-2">🎟️</div>
+                  <div className="font-bold text-lg mb-1">Day Pass - $40</div>
+                  <div className="text-sm text-purple-300">24 hours • All games • Unlimited</div>
+                </div>
+                <div>
+                  <div className="text-4xl mb-2">👑</div>
+                  <div className="font-bold text-lg mb-1">Subscription</div>
+                  <div className="text-sm text-purple-300">Full access • Leaderboards • Badges</div>
+                </div>
+              </div>
+              <Button
+                onClick={() => window.location.href = '/gaming-central'}
+                className="mt-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold px-12 py-4 rounded-xl text-lg shadow-2xl"
+              >
+                Enter Gaming Central →
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Holiday Box Set Pre-Order Section */}
       <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-red-50 via-green-50 to-emerald-50">
         <div className="container mx-auto max-w-6xl">
