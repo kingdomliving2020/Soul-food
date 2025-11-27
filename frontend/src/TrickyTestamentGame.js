@@ -414,41 +414,100 @@ const TrickyTestamentGame = () => {
   if (showBoard) {
 
   return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4 sm:p-8">
+        <div className="container mx-auto max-w-7xl">
+          {/* Header */}
+          <div className="mb-6">
+            <div className="flex justify-between items-center mb-4">
+              <button
+                onClick={() => navigate('/')}
+                className="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-2"
+              >
+                ← Back to Home
+              </button>
+              <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 text-lg">
+                {edition === 'youth' ? '🎮 Youth Edition' : '📚 Adult Edition'}
+              </Badge>
+            </div>
+            <div className="text-center">
+              <h1 className="text-4xl font-bold text-white mb-2">Tricky Testaments</h1>
+              <p className="text-purple-300">Pick a category and point value!</p>
+            </div>
+          </div>
+
+          {/* Score Display */}
+          <div className="text-center mb-6">
+            <div className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl">
+              <div className="text-sm text-blue-100">Your Score</div>
+              <div className="text-4xl font-bold">{score} Points</div>
+              <div className="text-sm text-blue-100">{answeredQuestions.length}/10 Answered</div>
+            </div>
+          </div>
+
+          {/* Jeopardy Board */}
+          <div className="bg-blue-950 p-6 rounded-xl shadow-2xl border-4 border-yellow-400">
+            <div className="grid grid-cols-5 gap-3">
+              {/* Category Headers */}
+              {categories.map((category, catIndex) => (
+                <div
+                  key={`cat-${catIndex}`}
+                  className="bg-blue-800 text-white p-4 rounded-lg text-center font-bold text-lg border-2 border-blue-600"
+                >
+                  {category}
+                </div>
+              ))}
+
+              {/* Question Tiles */}
+              {pointValues.map((points, pointIndex) => (
+                categories.map((category, catIndex) => {
+                  const question = questions.find(
+                    q => q.categoryIndex === catIndex && q.pointIndex === pointIndex
+                  );
+                  const isAnswered = answeredQuestions.includes(question?.id);
+
+                  return (
+                    <button
+                      key={`q-${catIndex}-${pointIndex}`}
+                      onClick={() => !isAnswered && selectQuestion(question.id)}
+                      disabled={isAnswered}
+                      className={`
+                        p-8 rounded-lg text-3xl font-bold transition-all
+                        ${isAnswered 
+                          ? 'bg-blue-950 text-blue-900 cursor-not-allowed border-2 border-blue-900' 
+                          : 'bg-blue-600 text-yellow-400 hover:bg-blue-500 hover:scale-105 cursor-pointer border-2 border-yellow-500 shadow-lg'
+                        }
+                      `}
+                    >
+                      {isAnswered ? '✓' : points}
+                    </button>
+                  );
+                })
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Question View
+  return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4 sm:p-8">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-6">
           <div className="flex justify-between items-center mb-4">
-            <button
-              onClick={() => navigate('/')}
-              className="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-2"
-            >
-              ← Back to Home
-            </button>
             <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 text-lg">
               {edition === 'youth' ? '🎮 Youth Edition' : '📚 Adult Edition'}
             </Badge>
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg">
+              <div className="text-2xl font-bold">{score} Points</div>
+            </div>
           </div>
           <div className="text-center">
             <h1 className="text-4xl font-bold text-white mb-2">Tricky Testaments</h1>
-            <p className="text-purple-300">Jeopardy Style Challenge</p>
+            <p className="text-purple-300">Answer in Question Form!</p>
           </div>
-        </div>
-
-        {/* Score Board */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold">{score}</div>
-              <div className="text-sm">Total Points</div>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-r from-purple-600 to-pink-600 text-white">
-            <CardContent className="p-6 text-center">
-              <div className="text-3xl font-bold">{currentQuestion + 1}/10</div>
-              <div className="text-sm">Questions</div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* Question Card */}
@@ -456,32 +515,32 @@ const TrickyTestamentGame = () => {
           <CardHeader className="bg-gradient-to-r from-blue-100 to-purple-100">
             <div className="flex justify-between items-center">
               <CardTitle className="text-2xl">
-                {question.category}
-                {currentQuestion === dailyDoubleIndex && wager > 0 && (
+                {selectedQuestion.category}
+                {selectedQuestion.id === dailyDoubleIndex && wager > 0 && (
                   <Badge className="ml-4 bg-yellow-500 text-white">
-                    💰 DAILY DOUBLE - Wager: ${wager}
+                    💰 DAILY DOUBLE - Wager: {wager}
                   </Badge>
                 )}
               </CardTitle>
               <Badge className="bg-purple-600 text-white text-lg">
-                {currentQuestion === dailyDoubleIndex && wager > 0 
+                {selectedQuestion.id === dailyDoubleIndex && wager > 0 
                   ? `Wager: ${wager}` 
-                  : `${question.points} Points`}
+                  : `${selectedQuestion.points} Points`}
               </Badge>
             </div>
           </CardHeader>
           <CardContent className="p-8">
             <div className="bg-blue-900 text-white p-6 rounded-lg mb-8 text-center">
               <p className="text-2xl font-semibold">
-                {question.question}
+                {selectedQuestion.question}
               </p>
             </div>
 
             {/* Answer Options (in Jeopardy format) */}
             <div className="grid gap-4">
-              {question.options.map((option, index) => {
+              {selectedQuestion.options.map((option, index) => {
                 const isSelected = selectedAnswer === option;
-                const isCorrect = option === question.correct_answer;
+                const isCorrect = option === selectedQuestion.correct_answer;
                 
                 let buttonClass = 'w-full text-left p-6 text-lg font-semibold rounded-xl transition-all ';
                 
@@ -515,31 +574,31 @@ const TrickyTestamentGame = () => {
             {/* Explanation */}
             {showResult && (
               <div className={`mt-6 p-6 rounded-xl ${
-                selectedAnswer === question.correct_answer
+                selectedAnswer === selectedQuestion.correct_answer
                   ? 'bg-green-50 border-2 border-green-500'
                   : 'bg-red-50 border-2 border-red-500'
               }`}>
                 <h4 className="font-bold text-lg mb-2">
-                  {selectedAnswer === question.correct_answer 
-                    ? `✅ Correct! +${currentQuestion === dailyDoubleIndex ? wager : question.points} points` 
-                    : `❌ Incorrect! ${currentQuestion === dailyDoubleIndex ? `-${wager} points` : 'No points'}`}
+                  {selectedAnswer === selectedQuestion.correct_answer 
+                    ? `✅ Correct! +${selectedQuestion.id === dailyDoubleIndex && wager > 0 ? wager : selectedQuestion.points} points` 
+                    : `❌ Incorrect! ${selectedQuestion.id === dailyDoubleIndex && wager > 0 ? `-${wager} points` : 'No points'}`}
                 </h4>
-                <p className="text-slate-700 mb-2"><strong>Correct Answer:</strong> {question.correct_answer}</p>
-                <p className="text-slate-700 mb-2">{question.explanation}</p>
-                <p className="text-sm text-slate-600">📖 {question.scripture_ref}</p>
+                <p className="text-slate-700 mb-2"><strong>Correct Answer:</strong> {selectedQuestion.correct_answer}</p>
+                <p className="text-slate-700 mb-2">{selectedQuestion.explanation}</p>
+                <p className="text-sm text-slate-600">📖 {selectedQuestion.scripture_ref}</p>
               </div>
             )}
           </CardContent>
         </Card>
 
-        {/* Next Button */}
-        {showResult && !gameOver && (
+        {/* Return to Board Button */}
+        {showResult && (
           <div className="text-center">
             <Button
-              onClick={nextQuestion}
+              onClick={returnToBoard}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-12 py-6 text-xl"
             >
-              {currentQuestion < questions.length - 1 ? 'Next Question →' : 'See Results'}
+              Return to Board →
             </Button>
           </div>
         )}
