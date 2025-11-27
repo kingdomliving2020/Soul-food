@@ -537,13 +537,13 @@ const MixUpGame = () => {
             </p>
 
             {/* Answer Options */}
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               {question.options.map((option, index) => {
                 const isEliminated = eliminatedOptions.includes(option);
                 const isSelected = selectedAnswer === option;
                 const isCorrect = option === question.correct_answer;
                 
-                let buttonClass = 'w-full justify-start items-center text-left p-6 text-lg font-semibold rounded-xl transition-all ';
+                let buttonClass = 'w-full justify-start items-center text-left p-4 text-base sm:text-lg font-semibold rounded-lg transition-all ';
                 
                 if (isEliminated) {
                   buttonClass += 'bg-slate-200 text-slate-400 cursor-not-allowed opacity-50';
