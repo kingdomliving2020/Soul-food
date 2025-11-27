@@ -1078,7 +1078,7 @@ const SoulFoodLanding = () => {
             <h4 className="text-2xl font-bold text-center mb-6 text-slate-800">
               📱 Rich Multimedia Learning Experience
             </h4>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
               <div className="text-center">
                 <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center text-2xl shadow-lg">
                   🎧
@@ -1106,6 +1106,33 @@ const SoulFoodLanding = () => {
                   Separate videos for Adult and Youth editions that complement each month's theme with visual teaching
                 </p>
               </div>
+            </div>
+
+            {/* Featured Youth Song */}
+            <div className="mt-8 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
+              <div className="flex items-center justify-center mb-4">
+                <Badge className="bg-purple-600 text-white px-4 py-2 text-sm font-bold">
+                  🎵 Featured Youth Content
+                </Badge>
+              </div>
+              <h5 className="text-xl font-bold text-center mb-4 text-slate-800">
+                Inspirational Youth Music
+              </h5>
+              <div className="aspect-video rounded-lg overflow-hidden shadow-xl">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/l14zW1FsFsQ"
+                  title="Youth Inspirational Song"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                ></iframe>
+              </div>
+              <p className="text-center text-sm text-slate-600 mt-4">
+                Experience uplifting music designed to inspire and encourage young believers in their faith journey
+              </p>
             </div>
           </div>
         </div>
