@@ -670,6 +670,7 @@ const SoulFoodLanding = () => {
                 </Button>
               </CardContent>
             </Card>
+            </div>
           </div>
 
           {/* Gaming Access Info */}
