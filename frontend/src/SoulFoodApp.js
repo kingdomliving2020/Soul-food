@@ -1059,6 +1059,19 @@ const SoulFoodLanding = () => {
 
             {/* Content - Multiple Themes */}
             <div className="p-8 overflow-y-auto max-h-[calc(90vh-280px)]">
+              {/* Coming Soon Badge for Locked Series */}
+              {!selectedSeries.available && (
+                <div className="mb-6 bg-gradient-to-r from-amber-100 to-orange-100 border-2 border-amber-400 rounded-xl p-4">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-3xl">🔒</span>
+                    <div>
+                      <h4 className="text-lg font-bold text-amber-900">Coming {selectedSeries.unlockDate}</h4>
+                      <p className="text-sm text-amber-800">Get excited! This incredible series will be available soon.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="mb-6">
                 <h3 className="text-2xl font-bold text-slate-800 mb-3 flex items-center">
                   <span className="mr-2">📚</span>
