@@ -1001,7 +1001,6 @@ const SoulFoodLanding = () => {
 
             {/* Instructor Edition */}
             <Card className="border-2 border-amber-400 shadow-xl hover:shadow-2xl transition-all relative">
-            <div className="text-center mb-6">
               <Badge className="bg-purple-600 text-white px-6 py-2 text-lg font-bold mb-4 inline-block">
                 🎵 Youth Edition Featured Content
               </Badge>
