@@ -55,7 +55,6 @@ const SOUL_FOOD_SERIES = [
     id: "lunch",
     name: "Lunch",
     theme: "Kingdom Relationships",
-    foundationTheme: "Love & Unity in the Body",
     icon: "🌤️",
     gradient: "from-blue-400 via-cyan-500 to-teal-500",
     bgColor: "bg-gradient-to-br from-blue-50 to-cyan-50",
@@ -63,11 +62,16 @@ const SOUL_FOOD_SERIES = [
     available: false,
     unlockDate: "Q1 2026",
     description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity.",
-    lessons: [
-      { number: 1, title: "Ruth & Naomi", description: "Covenant loyalty and love" },
-      { number: 2, title: "David & Jonathan", description: "Godly friendship and loyalty" },
-      { number: 3, title: "The Early Church", description: "Unity in diversity and purpose" },
-      { number: 4, title: "Iron Sharpens Iron", description: "Accountability and growth together" }
+    themes: [
+      {
+        themeName: "Love & Unity in the Body",
+        lessons: [
+          { number: 1, title: "Ruth & Naomi", description: "Covenant loyalty and love" },
+          { number: 2, title: "David & Jonathan", description: "Godly friendship and loyalty" },
+          { number: 3, title: "The Early Church", description: "Unity in diversity and purpose" },
+          { number: 4, title: "Iron Sharpens Iron", description: "Accountability and growth together" }
+        ]
+      }
     ]
   },
   {
