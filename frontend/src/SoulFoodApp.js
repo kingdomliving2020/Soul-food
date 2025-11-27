@@ -1076,12 +1076,7 @@ const SoulFoodLanding = () => {
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Instructor Edition */}
-            <Card className="border-2 border-orange-300 shadow-xl hover:shadow-2xl transition-all relative">
-              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-orange-500 to-amber-600 text-white px-4 py-1 font-bold text-sm">
+              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-amber-700 to-amber-800 text-white px-4 py-1 font-bold text-sm">
                 For Teachers & Leaders
               </Badge>
               <CardHeader className="bg-gradient-to-br from-orange-50 to-amber-50 text-center p-6 pt-8">
