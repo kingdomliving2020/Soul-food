@@ -276,11 +276,18 @@ const SoulFoodLanding = () => {
                   )}
                   
                   <Button
-                    onClick={() => s.available ? toast.success(`${s.name} series is available!`) : toast.info(`${s.name} unlocks ${s.unlockDate}`)}
+                    onClick={() => {
+                      if (s.available) {
+                        setSelectedSeries(s);
+                        setShowPreview(true);
+                      } else {
+                        toast.info(`${s.name} unlocks ${s.unlockDate}`);
+                      }
+                    }}
                     disabled={!s.available}
                     className={`w-full ${s.available ? `bg-gradient-to-r ${s.gradient} hover:opacity-90 shadow-lg` : 'bg-slate-400 cursor-not-allowed'} text-white font-semibold py-3 rounded-xl transition-all`}
                   >
-                    {s.available ? `Explore ${s.name}` : `Locked Until ${s.unlockDate}`}
+                    {s.available ? `View Lessons Preview 📖` : `Locked Until ${s.unlockDate}`}
                   </Button>
                 </CardContent>
               </Card>
