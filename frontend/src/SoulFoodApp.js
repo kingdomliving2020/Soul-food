@@ -37,7 +37,12 @@ const SOUL_FOOD_SERIES = [
     bgImage: "https://images.pexels.com/photos/8513088/pexels-photo-8513088.jpeg?w=800&h=400&fit=crop&crop=center",
     available: false,
     unlockDate: "Q1 2026",
-    description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity."
+    description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity.",
+    months: [
+      { num: 4, title: "Body of Christ" },
+      { num: 5, title: "Marriage & Family" },
+      { num: 6, title: "Church Leadership" }
+    ]
   },
   {
     id: "dinner",
