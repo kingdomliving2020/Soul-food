@@ -260,7 +260,7 @@ const GamingCentral = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {games.map((game) => {
             const hasAccess = canAccessGame(game);
             
