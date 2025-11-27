@@ -71,7 +71,12 @@ const SOUL_FOOD_SERIES = [
     bgImage: "https://img.freepik.com/free-photo/side-view-people-reading-together_23-2150062161.jpg?w=800&h=400&fit=crop&crop=center",
     available: false,
     unlockDate: "Q3 2026",
-    description: "Grow into spiritual maturity, developing wisdom and character that honors Christ."
+    description: "Grow into spiritual maturity, developing wisdom and character that honors Christ.",
+    months: [
+      { num: 10, title: "Prophecy" },
+      { num: 11, title: "Book of Revelation" },
+      { num: 12, title: "Judgment & Rewards" }
+    ]
   },
   {
     id: "holiday",
