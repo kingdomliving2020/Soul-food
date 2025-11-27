@@ -263,6 +263,9 @@ const GamingCentral = () => {
                     <div className="text-center">
                       <div className="text-6xl mb-4">🔒</div>
                       <p className="text-white font-bold text-lg">Upgrade to Access</p>
+                      {game.hasDemo && (
+                        <p className="text-purple-300 text-sm mt-2 mb-2">Try Demo Mode First!</p>
+                      )}
                       <Button 
                         onClick={(e) => {
                           e.stopPropagation();
@@ -277,6 +280,15 @@ const GamingCentral = () => {
                 )}
 
                 <CardHeader className="relative p-0">
+                  {game.hasDemo && (
+                    <div className="absolute top-2 left-2 z-20">
+                      <img 
+                        src={game.demoIcon} 
+                        alt="Demo Available"
+                        className="w-16 h-16 drop-shadow-lg"
+                      />
+                    </div>
+                  )}
                   <div className="h-48 overflow-hidden flex items-center justify-center bg-white/90">
                     <img 
                       src={game.logo} 
