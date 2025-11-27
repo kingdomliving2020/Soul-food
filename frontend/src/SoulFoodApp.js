@@ -64,12 +64,30 @@ const SOUL_FOOD_SERIES = [
     description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity.",
     themes: [
       {
-        themeName: "Love & Unity in the Body",
+        themeName: "Friends & Friction is OK",
         lessons: [
-          { number: 1, title: "Ruth & Naomi", description: "Covenant loyalty and love" },
-          { number: 2, title: "David & Jonathan", description: "Godly friendship and loyalty" },
-          { number: 3, title: "The Early Church", description: "Unity in diversity and purpose" },
-          { number: 4, title: "Iron Sharpens Iron", description: "Accountability and growth together" }
+          { number: 1, title: "Ruth & Naomi", description: "Loyalty through seasons of loss and hope" },
+          { number: 2, title: "David & Jonathan", description: "Friendship that transcends rivalry" },
+          { number: 3, title: "Jesus & Lazarus", description: "Love that weeps and resurrects" },
+          { number: 4, title: "Jesus & Peter", description: "Restoration after betrayal" }
+        ]
+      },
+      {
+        themeName: "Relation-ship",
+        lessons: [
+          { number: 1, title: "Mary & Jesus - 1st Miracle", description: "Trusting in divine timing" },
+          { number: 2, title: "Jesus & Followers", description: "Navigating discipleship together" },
+          { number: 3, title: "Ananias & Sapphira", description: "The cost of deception in community" },
+          { number: 4, title: "Samaritan Woman at The Well", description: "Breaking barriers through grace" }
+        ]
+      },
+      {
+        themeName: "Alone is Not Lonely",
+        lessons: [
+          { number: 1, title: "Elijah flees From Jezebel", description: "Finding God in the wilderness" },
+          { number: 2, title: "David Family Captured", description: "Strengthening yourself in the Lord" },
+          { number: 3, title: "Paul on Singleness", description: "Contentment in every season" },
+          { number: 4, title: "Jesus on Oneness in God", description: "Complete in divine relationship" }
         ]
       }
     ]
