@@ -325,7 +325,7 @@ const SoulFoodLanding = () => {
                 </div>
 
                 <Button
-                  onClick={() => toast.success("Free sample lesson opening soon!")}
+                  onClick={() => window.location.href = '/lesson/free-sample'}
                   className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all"
                 >
                   Start Free Lesson Now →
