@@ -108,17 +108,17 @@ const SOUL_FOOD_SERIES = [
         themeName: "ID in Christ - Talents vs Gifts",
         lessons: [
           { number: 1, title: "Young and Gifted", description: "Recognizing God-given abilities early" },
-          { number: 2, title: "Saul/Paul admin influence", description: "From persecutor to apostle - transformation of gifts" },
-          { number: 3, title: "Callings in the faith", description: "Discovering your unique kingdom purpose" },
-          { number: 4, title: "Time to represent", description: "Living out your calling boldly" }
+          { number: 2, title: "Saul/Paul Admin Influence", description: "From persecutor to apostle - transformation of gifts" },
+          { number: 3, title: "Callings in the Faith", description: "Discovering your unique kingdom purpose" },
+          { number: 4, title: "Time to Represent", description: "Living out your calling boldly" }
         ]
       },
       {
-        themeName: "Good leaders are Great Followers",
+        themeName: "Good Leaders Are Great Followers",
         lessons: [
           { number: 1, title: "The Great Commission", description: "Following Christ's final instructions" },
           { number: 2, title: "Fishers' of Men", description: "Answering the call to discipleship" },
-          { number: 3, title: "Follow me", description: "The cost and reward of following Jesus" },
+          { number: 3, title: "Follow Me", description: "The cost and reward of following Jesus" },
           { number: 4, title: "Servitude", description: "Leadership through humble service" }
         ]
       },
