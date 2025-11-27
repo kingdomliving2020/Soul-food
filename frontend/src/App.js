@@ -1712,8 +1712,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<SoulFoodLanding />} />
-          <Route path="/lesson/:id" element={<div>Lesson viewer coming soon</div>} />
-          <Route path="/dashboard" element={<div>Dashboard coming soon</div>} />
+          <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />
+          <Route path="/lesson/:id" element={<LessonViewer />} />
+          <Route path="/lessons" element={<LessonsListPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </div>
