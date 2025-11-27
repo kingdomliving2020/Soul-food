@@ -329,7 +329,7 @@ const TrickyTestamentGame = () => {
           <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-4 border-purple-300">
             <CardContent className="p-12 text-center">
               <h2 className="text-5xl font-bold text-slate-800 mb-4">
-                {score >= 5000 ? '🏆 Champion! 🏆' : 'Game Complete!'}
+                {score >= 800 ? '🏆 Champion! 🏆' : 'Game Complete!'}
               </h2>
               <div className="text-6xl font-bold text-purple-600 mb-6">
                 {score} Points
@@ -360,7 +360,7 @@ const TrickyTestamentGame = () => {
 
   // Daily Double modal
   if (dailyDoubleRevealed && !showResult && wager === 0) {
-    const maxWager = Math.max(score, 1000);
+    const maxWager = Math.max(score, 500);
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-8 flex items-center justify-center">
         <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-4 border-yellow-400 max-w-2xl">
@@ -379,16 +379,16 @@ const TrickyTestamentGame = () => {
             </p>
             <div className="grid grid-cols-2 gap-4">
               <Button
-                onClick={() => handleDailyDoubleWager(500)}
+                onClick={() => handleDailyDoubleWager(100)}
                 className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-4 text-lg"
               >
-                Wager $500
+                Wager 100
               </Button>
               <Button
-                onClick={() => handleDailyDoubleWager(1000)}
+                onClick={() => handleDailyDoubleWager(200)}
                 className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-4 text-lg"
               >
-                Wager $1,000
+                Wager 200
               </Button>
               <Button
                 onClick={() => handleDailyDoubleWager(Math.floor(score / 2))}
@@ -410,8 +410,8 @@ const TrickyTestamentGame = () => {
     );
   }
 
-  const question = questions[currentQuestion];
-  const isDailyDouble = currentQuestion === dailyDoubleIndex && !dailyDoubleRevealed;
+  // Jeopardy Board View
+  if (showBoard) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4 sm:p-8">
