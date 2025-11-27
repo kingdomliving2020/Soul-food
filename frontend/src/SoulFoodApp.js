@@ -546,12 +546,21 @@ const SoulFoodLanding = () => {
                   <div className="text-sm text-purple-300">Full access • Leaderboards • Badges</div>
                 </div>
               </div>
-              <Button
-                onClick={() => window.location.href = '/gaming-central'}
-                className="mt-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold px-12 py-4 rounded-xl text-lg shadow-2xl"
-              >
-                Enter Gaming Central →
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-4 mt-8">
+                <Button
+                  onClick={() => window.location.href = '/gaming-central'}
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold px-8 py-4 rounded-xl text-lg shadow-2xl"
+                >
+                  Enter Gaming Central →
+                </Button>
+                <Button
+                  onClick={() => window.location.href = '/game/trivia-mixup'}
+                  variant="outline"
+                  className="flex-1 border-2 border-purple-400 text-purple-300 hover:bg-purple-800/30 font-bold px-8 py-4 rounded-xl text-lg shadow-2xl"
+                >
+                  Try Free Preview 🎮
+                </Button>
+              </div>
             </div>
           </div>
         </div>
