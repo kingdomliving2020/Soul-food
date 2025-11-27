@@ -965,16 +965,17 @@ const FreeSampleLesson = () => {
               <p className="text-slate-600 mb-4">Fill in the crossword puzzle based on today's lesson. Use the clues below!</p>
               
               {/* Dynamic Visual Crossword Grid */}
-              <div className="bg-white p-4 rounded-lg border-2 border-slate-200 mb-6 overflow-x-auto">
+              <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-6 rounded-xl border-4 border-slate-300 shadow-xl mb-6 overflow-x-auto">
                 <div className="text-center mb-4">
-                  <h4 className="text-xl font-bold text-indigo-900 mb-2">Kingdom Crosses Puzzle</h4>
-                  <p className="text-sm text-indigo-700">Type your answers below and watch the grid fill in!</p>
+                  <h4 className="text-2xl font-bold text-indigo-900 mb-2">🧩 Kingdom Crosses Puzzle</h4>
+                  <p className="text-sm text-slate-600">Type your answers below and watch the grid fill in!</p>
                 </div>
-                <div className="inline-block min-w-full">
-                  <div className="grid grid-cols-10 gap-1" style={{width: 'fit-content', margin: '0 auto'}}>
-                    {/* Row 1 */}
-                    <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
+                <div className="flex justify-center">
+                  <div className="inline-block bg-white p-3 rounded-lg shadow-lg border-2 border-slate-400">
+                    <div className="grid gap-0.5" style={{gridTemplateColumns: 'repeat(10, 1fr)', width: 'fit-content'}}>
+                      {/* Row 1 */}
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-transparent"></div>
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-800"></div>
                     <div className="w-10 h-10 sm:w-12 sm:h-12"></div>
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900"></div>
