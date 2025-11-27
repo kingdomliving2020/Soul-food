@@ -20,7 +20,12 @@ const SOUL_FOOD_SERIES = [
     bgColor: "bg-gradient-to-br from-amber-50 to-orange-50",
     bgImage: "https://images.unsplash.com/photo-1756367260219-b60e3cb90fa5?w=800&h=400&fit=crop&crop=center",
     available: true,
-    description: "Begin your spiritual journey with a rock-solid foundation in Christ. Perfect for new believers and those seeking renewal."
+    description: "Begin your spiritual journey with a rock-solid foundation in Christ. Perfect for new believers and those seeking renewal.",
+    months: [
+      { num: 1, title: "Names of God" },
+      { num: 2, title: "Books of the Bible" },
+      { num: 3, title: "Hebrews 11 (Faith Heroes)" }
+    ]
   },
   {
     id: "lunch",
