@@ -1150,31 +1150,61 @@ const SoulFoodLanding = () => {
               </div>
             </div>
 
-            {/* Featured Youth Song */}
-            <div className="mt-8 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
-              <div className="flex items-center justify-center mb-4">
-                <Badge className="bg-purple-600 text-white px-4 py-2 text-sm font-bold">
-                  🎵 Featured Youth Content
-                </Badge>
+            {/* Featured Multimedia Videos */}
+            <div className="mt-8 grid md:grid-cols-2 gap-6">
+              {/* Youth Featured Song */}
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border-2 border-purple-200">
+                <div className="flex items-center justify-center mb-3">
+                  <Badge className="bg-purple-600 text-white px-3 py-1 text-xs font-bold">
+                    🎵 Youth Content
+                  </Badge>
+                </div>
+                <h5 className="text-lg font-bold text-center mb-3 text-slate-800">
+                  Inspirational Youth Music
+                </h5>
+                <div className="aspect-video rounded-lg overflow-hidden shadow-xl">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src="https://www.youtube.com/embed/l14zW1FsFsQ"
+                    title="Youth Inspirational Song"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  ></iframe>
+                </div>
+                <p className="text-center text-xs text-slate-600 mt-3">
+                  Uplifting music for young believers
+                </p>
               </div>
-              <h5 className="text-xl font-bold text-center mb-4 text-slate-800">
-                Inspirational Youth Music
-              </h5>
-              <div className="aspect-video rounded-lg overflow-hidden shadow-xl">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/l14zW1FsFsQ"
-                  title="Youth Inspirational Song"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full"
-                ></iframe>
+
+              {/* Sowing & Reaping Teaching */}
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border-2 border-orange-200">
+                <div className="flex items-center justify-center mb-3">
+                  <Badge className="bg-orange-600 text-white px-3 py-1 text-xs font-bold">
+                    📚 Youth & Instructor
+                  </Badge>
+                </div>
+                <h5 className="text-lg font-bold text-center mb-3 text-slate-800">
+                  Sowing & Reaping Principles
+                </h5>
+                <div className="aspect-video rounded-lg overflow-hidden shadow-xl">
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    src="https://www.youtube.com/embed/CFjtY-qtpd0?start=55"
+                    title="Sowing and Reaping Teaching"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full"
+                  ></iframe>
+                </div>
+                <p className="text-center text-xs text-slate-600 mt-3">
+                  Biblical teaching on sowing and reaping
+                </p>
               </div>
-              <p className="text-center text-sm text-slate-600 mt-4">
-                Experience uplifting music designed to inspire and encourage young believers in their faith journey
-              </p>
             </div>
           </div>
         </div>
