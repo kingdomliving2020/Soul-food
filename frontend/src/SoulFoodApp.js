@@ -202,6 +202,20 @@ const SOUL_FOOD_SERIES = [
   }
 ];
 
+// Helper component for Add to Cart button
+const GameAddToCartButton = () => {
+  const { addToCart } = useCart();
+  
+  return (
+    <Button
+      onClick={() => addToCart('gaming_day_pass', 1)}
+      className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-gray-900 font-bold"
+    >
+      🛒 Add to Cart
+    </Button>
+  );
+};
+
 const SoulFoodLanding = () => {
   const [series, setSeries] = useState(SOUL_FOOD_SERIES);
   const [selectedSeries, setSelectedSeries] = useState(null);
