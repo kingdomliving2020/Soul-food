@@ -730,12 +730,14 @@ const SoulFoodLanding = () => {
                   </Button>
                 </div>
               </div>
-              <Button
-                onClick={() => window.location.href = '/gaming-central'}
-                className="mt-8 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold px-12 py-4 rounded-xl text-lg shadow-2xl"
-              >
-                Enter Gaming Central →
-              </Button>
+              <div className="mt-8 text-center">
+                <Button
+                  onClick={() => window.location.href = '/gaming-central'}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold px-12 py-4 rounded-xl text-lg shadow-2xl transform hover:scale-105 transition-all"
+                >
+                  Enter Gaming Central →
+                </Button>
+              </div>
             </div>
           </div>
         </div>
