@@ -19,6 +19,52 @@ const CheckoutPage = () => {
   const discount = couponApplied ? (subtotal * couponApplied.discount_percent / 100) : 0;
   const total = subtotal - discount;
 
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError('Please enter a coupon code');
+      return;
+    }
+
+    setCouponLoading(true);
+    setCouponError('');
+
+    try {
+      const productIds = cartItems.map(item => item.productId);
+      
+      const response = await fetch(`${BACKEND_URL}/api/coupons/validate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: couponCode,
+          product_ids: productIds
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.valid) {
+        setCouponApplied(data);
+        setCouponError('');
+      } else {
+        setCouponError(data.message);
+        setCouponApplied(null);
+      }
+    } catch (err) {
+      console.error('Coupon validation error:', err);
+      setCouponError('Failed to validate coupon. Please try again.');
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponApplied(null);
+    setCouponCode('');
+    setCouponError('');
+  };
+
   const handleCheckout = async () => {
     if (cartItems.length === 0) {
       setError('Your cart is empty');
@@ -32,6 +78,12 @@ const CheckoutPage = () => {
       // For simplicity, we'll checkout with the first item
       // In a real scenario, you might want to handle multiple items differently
       const firstItem = cartItems[0];
+      
+      // Calculate discounted amount if coupon applied
+      let itemAmount = firstItem.salePrice * firstItem.quantity;
+      if (couponApplied) {
+        itemAmount = itemAmount - (itemAmount * couponApplied.discount_percent / 100);
+      }
       
       const response = await fetch(`${BACKEND_URL}/api/payments/checkout/session`, {
         method: 'POST',
@@ -51,6 +103,11 @@ const CheckoutPage = () => {
       }
 
       const data = await response.json();
+      
+      // Store coupon in session storage for later application
+      if (couponApplied) {
+        sessionStorage.setItem('appliedCoupon', JSON.stringify(couponApplied));
+      }
       
       // Redirect to Stripe Checkout
       window.location.href = data.url;
