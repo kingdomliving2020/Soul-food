@@ -492,68 +492,68 @@ const TrickyTestamentGame = () => {
 
   // Question View
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4 sm:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4 sm:p-6 lg:p-8">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
-        <div className="mb-6">
-          <div className="flex justify-between items-center mb-4">
-            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 text-lg">
+        <div className="mb-4 sm:mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
+            <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 sm:px-6 py-2 text-base sm:text-lg">
               {edition === 'youth' ? '🎮 Youth Edition' : '📚 Adult Edition'}
             </Badge>
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg">
-              <div className="text-2xl font-bold">{score} Points</div>
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg">
+              <div className="text-xl sm:text-2xl font-bold">{score} Points</div>
             </div>
           </div>
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-white mb-2">Tricky Testaments</h1>
-            <p className="text-purple-300">Answer in Question Form!</p>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">Tricky Testaments</h1>
+            <p className="text-sm sm:text-base text-purple-300">Answer in Question Form!</p>
           </div>
         </div>
 
         {/* Question Card */}
-        <Card className="bg-white mb-6">
+        <Card className="bg-white mb-4 sm:mb-6">
           <CardHeader className="bg-gradient-to-r from-blue-100 to-purple-100">
-            <div className="flex justify-between items-center">
-              <CardTitle className="text-2xl">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <CardTitle className="text-lg sm:text-xl lg:text-2xl">
                 {selectedQuestion.category}
                 {selectedQuestion.id === dailyDoubleIndex && wager > 0 && (
-                  <Badge className="ml-4 bg-yellow-500 text-white">
+                  <Badge className="ml-0 sm:ml-4 mt-2 sm:mt-0 bg-yellow-500 text-white text-xs sm:text-sm">
                     💰 DAILY DOUBLE - Wager: {wager}
                   </Badge>
                 )}
               </CardTitle>
-              <Badge className="bg-purple-600 text-white text-lg">
+              <Badge className="bg-purple-600 text-white text-sm sm:text-base lg:text-lg whitespace-nowrap">
                 {selectedQuestion.id === dailyDoubleIndex && wager > 0 
                   ? `Wager: ${wager}` 
                   : `${selectedQuestion.points} Points`}
               </Badge>
             </div>
           </CardHeader>
-          <CardContent className="p-8">
-            <div className="bg-blue-900 text-white p-6 rounded-lg mb-8 text-center">
-              <p className="text-2xl font-semibold">
+          <CardContent className="p-4 sm:p-6 lg:p-8">
+            <div className="bg-blue-900 text-white p-4 sm:p-6 rounded-lg mb-6 sm:mb-8 text-center">
+              <p className="text-base sm:text-xl lg:text-2xl font-semibold">
                 {selectedQuestion.question}
               </p>
             </div>
 
             {/* Answer Options (in Jeopardy format) */}
-            <div className="grid gap-4">
+            <div className="grid gap-3 sm:gap-4">
               {selectedQuestion.options.map((option, index) => {
                 const isSelected = selectedAnswer === option;
                 const isCorrect = option === selectedQuestion.correct_answer;
                 
-                let buttonClass = 'w-full text-left p-6 text-lg font-semibold rounded-xl transition-all ';
+                let buttonClass = 'w-full text-left p-4 sm:p-6 text-sm sm:text-base lg:text-lg font-semibold rounded-xl transition-all ';
                 
                 if (showResult) {
                   if (isCorrect) {
-                    buttonClass += 'bg-green-500 text-white border-4 border-green-700';
+                    buttonClass += 'bg-green-500 text-white border-2 sm:border-4 border-green-700';
                   } else if (isSelected) {
-                    buttonClass += 'bg-red-500 text-white border-4 border-red-700';
+                    buttonClass += 'bg-red-500 text-white border-2 sm:border-4 border-red-700';
                   } else {
                     buttonClass += 'bg-slate-100 text-slate-800';
                   }
                 } else if (isSelected) {
-                  buttonClass += 'bg-purple-200 text-slate-900 border-4 border-purple-500';
+                  buttonClass += 'bg-purple-200 text-slate-900 border-2 sm:border-4 border-purple-500';
                 } else {
                   buttonClass += 'bg-slate-100 text-slate-900 hover:bg-purple-100 hover:scale-105 border-2 border-slate-300';
                 }
@@ -573,19 +573,19 @@ const TrickyTestamentGame = () => {
 
             {/* Explanation */}
             {showResult && (
-              <div className={`mt-6 p-6 rounded-xl ${
+              <div className={`mt-4 sm:mt-6 p-4 sm:p-6 rounded-xl ${
                 selectedAnswer === selectedQuestion.correct_answer
                   ? 'bg-green-50 border-2 border-green-500'
                   : 'bg-red-50 border-2 border-red-500'
               }`}>
-                <h4 className="font-bold text-lg mb-2">
+                <h4 className="font-bold text-base sm:text-lg mb-2">
                   {selectedAnswer === selectedQuestion.correct_answer 
                     ? `✅ Correct! +${selectedQuestion.id === dailyDoubleIndex && wager > 0 ? wager : selectedQuestion.points} points` 
                     : `❌ Incorrect! ${selectedQuestion.id === dailyDoubleIndex && wager > 0 ? `-${wager} points` : 'No points'}`}
                 </h4>
-                <p className="text-slate-700 mb-2"><strong>Correct Answer:</strong> {selectedQuestion.correct_answer}</p>
-                <p className="text-slate-700 mb-2">{selectedQuestion.explanation}</p>
-                <p className="text-sm text-slate-600">📖 {selectedQuestion.scripture_ref}</p>
+                <p className="text-sm sm:text-base text-slate-700 mb-2"><strong>Correct Answer:</strong> {selectedQuestion.correct_answer}</p>
+                <p className="text-sm sm:text-base text-slate-700 mb-2">{selectedQuestion.explanation}</p>
+                <p className="text-xs sm:text-sm text-slate-600">📖 {selectedQuestion.scripture_ref}</p>
               </div>
             )}
           </CardContent>
@@ -596,7 +596,7 @@ const TrickyTestamentGame = () => {
           <div className="text-center">
             <Button
               onClick={returnToBoard}
-              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-12 py-6 text-xl"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-8 sm:px-12 py-4 sm:py-6 text-base sm:text-lg lg:text-xl w-full sm:w-auto"
             >
               Return to Board →
             </Button>
