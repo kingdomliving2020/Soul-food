@@ -233,13 +233,18 @@ const SoulFoodLanding = () => {
                 <p className="text-xs text-slate-600">Kingdom Living Project</p>
               </div>
             </div>
-            <Button
-              onClick={handleLogin}
-              data-testid="login-button"
-              className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
-            >
-              Sign In
-            </Button>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-full p-1">
+                <ShoppingCart />
+              </div>
+              <Button
+                onClick={handleLogin}
+                data-testid="login-button"
+                className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-4 sm:px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+              >
+                Sign In
+              </Button>
+            </div>
           </div>
         </div>
       </header>
