@@ -38,6 +38,14 @@ try:
     print("✅ Payment routes loaded")
 except Exception as e:
     print(f"⚠️ Could not load payment routes: {e}")
+
+# Import coupon routes
+try:
+    from coupon_routes import router as coupon_router
+    app.include_router(coupon_router)
+    print("✅ Coupon routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load coupon routes: {e}")
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
