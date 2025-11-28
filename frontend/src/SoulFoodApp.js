@@ -232,29 +232,29 @@ const SoulFoodLanding = () => {
       
       {/* Header */}
       <header className="bg-white/95 backdrop-blur-md border-b border-orange-200 sticky top-0 z-50 shadow-lg">
-        <div className="container mx-auto px-4 sm:px-6 py-4">
+        <div className="container mx-auto px-4 sm:px-6 py-5 sm:py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4 sm:space-x-5">
               <img 
                 src="/soul-food-logo.png" 
                 alt="Soul Food Logo" 
-                className="w-12 h-12 object-contain"
+                className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
               />
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
                   Soul Food
                 </h1>
-                <p className="text-xs text-slate-600">Kingdom Living Project</p>
+                <p className="text-xs sm:text-sm lg:text-base text-slate-600 font-medium">Kingdom Living Project</p>
               </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
+            <div className="flex items-center gap-3 sm:gap-5">
               <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-full p-1">
                 <ShoppingCart />
               </div>
               <Button
                 onClick={handleLogin}
                 data-testid="login-button"
-                className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-4 sm:px-6 py-2.5 rounded-xl font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+                className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl font-semibold text-sm sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
               >
                 Sign In
               </Button>
