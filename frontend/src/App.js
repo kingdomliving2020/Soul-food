@@ -1811,17 +1811,22 @@ import TrickyTestamentGame from './TrickyTestamentGame';
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<SoulFoodLanding />} />
-          <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />
-          <Route path="/lesson/:id" element={<LessonViewer />} />
-          <Route path="/lessons" element={<LessonsListPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/game/mixup" element={<MixUpGame />} />
-          <Route path="/game/tricky-testament" element={<TrickyTestamentGame />} />
-        </Routes>
-      </BrowserRouter>
+      <CartProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<SoulFoodLanding />} />
+            <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />
+            <Route path="/lesson/:id" element={<LessonViewer />} />
+            <Route path="/lessons" element={<LessonsListPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/game/mixup" element={<MixUpGame />} />
+            <Route path="/game/tricky-testament" element={<TrickyTestamentGame />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/payment-cancel" element={<PaymentCancel />} />
+          </Routes>
+        </BrowserRouter>
+      </CartProvider>
     </div>
   );
 }
