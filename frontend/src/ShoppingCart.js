@@ -59,56 +59,56 @@ const ShoppingCart = () => {
 
       {/* Dropdown Menu */}
       {isCartOpen && (
-        <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-lg shadow-2xl border border-gray-200 z-50 max-h-[80vh] overflow-hidden flex flex-col">
+        <div className="absolute right-0 top-full mt-2 w-96 sm:w-[480px] bg-white rounded-lg shadow-2xl border border-gray-200 z-50 flex flex-col">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-3 rounded-t-lg">
-            <h3 className="font-bold text-lg flex items-center gap-2">
-              <CartIcon className="w-5 h-5" />
+          <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-4 rounded-t-lg">
+            <h3 className="font-bold text-xl flex items-center gap-2">
+              <CartIcon className="w-6 h-6" />
               Shopping Cart ({cartCount})
             </h3>
           </div>
 
           {/* Cart Items */}
           {cartItems.length === 0 ? (
-            <div className="p-8 text-center">
-              <CartIcon className="w-12 h-12 mx-auto text-gray-300 mb-3" />
-              <p className="text-gray-600 font-medium">There are no items in your cart.</p>
+            <div className="p-10 text-center">
+              <CartIcon className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+              <p className="text-gray-600 font-medium text-lg">There are no items in your cart.</p>
             </div>
           ) : (
             <>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 max-h-96">
+              <div className={`p-5 space-y-4 ${cartItems.length > 5 ? 'max-h-[600px] overflow-y-auto' : ''}`}>
                 {cartItems.map((item) => (
                   <div
                     key={item.productId}
-                    className="bg-gray-50 rounded-lg p-3 border border-gray-200"
+                    className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-purple-300 transition-colors"
                   >
-                    <div className="flex justify-between items-start mb-2">
-                      <div className="flex-1 pr-2">
-                        <h4 className="font-semibold text-gray-900 text-sm">{item.name}</h4>
-                        <p className="text-xs text-gray-500 mt-1">{item.description}</p>
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex-1 pr-3">
+                        <h4 className="font-bold text-gray-900 text-base">{item.name}</h4>
+                        <p className="text-sm text-gray-600 mt-1 leading-relaxed">{item.description}</p>
                       </div>
                       <button
                         onClick={() => removeFromCart(item.productId)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
                         aria-label="Remove item"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-5 h-5" />
                       </button>
                     </div>
 
                     <div className="flex items-center justify-between">
                       {/* Quantity */}
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-3">
                         <button
                           onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                          className="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-gray-700 font-bold"
+                          className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-gray-700 font-bold text-lg transition-colors"
                         >
                           -
                         </button>
-                        <span className="w-6 text-center font-semibold text-sm">{item.quantity}</span>
+                        <span className="w-8 text-center font-bold text-base">{item.quantity}</span>
                         <button
                           onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                          className="w-6 h-6 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-gray-700 font-bold"
+                          className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-gray-700 font-bold text-lg transition-colors"
                         >
                           +
                         </button>
@@ -117,11 +117,11 @@ const ShoppingCart = () => {
                       {/* Price */}
                       <div className="text-right">
                         {item.listPrice > item.salePrice && (
-                          <div className="text-xs text-gray-400 line-through">
+                          <div className="text-sm text-gray-400 line-through">
                             ${item.listPrice.toFixed(2)}
                           </div>
                         )}
-                        <div className="text-base font-bold text-purple-600">
+                        <div className="text-lg font-bold text-purple-600">
                           ${(item.salePrice * item.quantity).toFixed(2)}
                         </div>
                       </div>
@@ -131,20 +131,20 @@ const ShoppingCart = () => {
               </div>
 
               {/* Footer */}
-              <div className="border-t bg-gray-50 p-4 space-y-3 rounded-b-lg">
-                <div className="flex justify-between items-center">
-                  <span className="font-semibold text-gray-700">Total:</span>
-                  <span className="text-2xl font-bold text-purple-600">${total.toFixed(2)}</span>
+              <div className="border-t bg-gray-50 p-5 space-y-3 rounded-b-lg">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-bold text-gray-800 text-lg">Total:</span>
+                  <span className="text-3xl font-bold text-purple-600">${total.toFixed(2)}</span>
                 </div>
                 <button
                   onClick={handleCheckout}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-lg transition-all shadow-lg"
+                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 rounded-lg transition-all shadow-lg text-base"
                 >
                   Proceed to Checkout
                 </button>
                 <button
                   onClick={() => setIsCartOpen(false)}
-                  className="w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-2 rounded-lg border border-gray-300 transition-colors"
+                  className="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 rounded-lg border border-gray-300 transition-colors text-base"
                 >
                   Continue Shopping
                 </button>
