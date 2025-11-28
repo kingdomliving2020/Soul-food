@@ -190,19 +190,19 @@ const CheckoutPage = () => {
                   Have a coupon code?
                 </label>
                 {!couponApplied ? (
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-stretch">
                     <input
                       type="text"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                       placeholder="Enter code"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                      className="flex-1 px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                       disabled={couponLoading}
                     />
                     <button
                       onClick={handleApplyCoupon}
                       disabled={couponLoading}
-                      className="bg-gray-800 hover:bg-gray-900 text-white font-semibold px-4 py-2 rounded-lg text-sm transition-colors disabled:opacity-50"
+                      className="bg-gray-800 hover:bg-gray-900 text-white font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors disabled:opacity-50 whitespace-nowrap"
                     >
                       {couponLoading ? 'Checking...' : 'Apply'}
                     </button>
