@@ -414,44 +414,44 @@ const TrickyTestamentGame = () => {
   if (showBoard) {
 
   return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4 sm:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4 sm:p-6 lg:p-8">
         <div className="container mx-auto max-w-7xl">
           {/* Header */}
-          <div className="mb-6">
-            <div className="flex justify-between items-center mb-4">
+          <div className="mb-4 sm:mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
               <button
                 onClick={() => navigate('/')}
-                className="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-2"
+                className="bg-slate-700 hover:bg-slate-600 text-white font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-2 text-sm sm:text-base"
               >
                 ← Back to Home
               </button>
-              <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 text-lg">
+              <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 sm:px-6 py-2 text-base sm:text-lg">
                 {edition === 'youth' ? '🎮 Youth Edition' : '📚 Adult Edition'}
               </Badge>
             </div>
             <div className="text-center">
-              <h1 className="text-4xl font-bold text-white mb-2">Tricky Testaments</h1>
-              <p className="text-purple-300">Pick a category and point value!</p>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">Tricky Testaments</h1>
+              <p className="text-sm sm:text-base text-purple-300">Pick a category and point value!</p>
             </div>
           </div>
 
           {/* Score Display */}
-          <div className="text-center mb-6">
-            <div className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-xl">
-              <div className="text-sm text-blue-100">Your Score</div>
-              <div className="text-4xl font-bold">{score} Points</div>
-              <div className="text-sm text-blue-100">{answeredQuestions.length}/10 Answered</div>
+          <div className="text-center mb-4 sm:mb-6">
+            <div className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl">
+              <div className="text-xs sm:text-sm text-blue-100">Your Score</div>
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold">{score} Points</div>
+              <div className="text-xs sm:text-sm text-blue-100">{answeredQuestions.length}/10 Answered</div>
             </div>
           </div>
 
           {/* Jeopardy Board */}
-          <div className="bg-blue-950 p-6 rounded-xl shadow-2xl border-4 border-yellow-400">
-            <div className="grid grid-cols-5 gap-3">
+          <div className="bg-blue-950 p-3 sm:p-4 lg:p-6 rounded-xl shadow-2xl border-2 sm:border-4 border-yellow-400">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3">
               {/* Category Headers */}
               {categories.map((category, catIndex) => (
                 <div
                   key={`cat-${catIndex}`}
-                  className="bg-blue-800 text-white p-4 rounded-lg text-center font-bold text-lg border-2 border-blue-600"
+                  className="bg-blue-800 text-white p-3 sm:p-4 rounded-lg text-center font-bold text-sm sm:text-base lg:text-lg border-2 border-blue-600"
                 >
                   {category}
                 </div>
@@ -471,7 +471,7 @@ const TrickyTestamentGame = () => {
                       onClick={() => !isAnswered && selectQuestion(question.id)}
                       disabled={isAnswered}
                       className={`
-                        p-8 rounded-lg text-3xl font-bold transition-all
+                        p-4 sm:p-6 lg:p-8 rounded-lg text-2xl sm:text-3xl font-bold transition-all
                         ${isAnswered 
                           ? 'bg-blue-950 text-blue-900 cursor-not-allowed border-2 border-blue-900' 
                           : 'bg-blue-600 text-yellow-400 hover:bg-blue-500 hover:scale-105 cursor-pointer border-2 border-yellow-500 shadow-lg'
