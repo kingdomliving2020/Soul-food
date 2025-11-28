@@ -970,14 +970,14 @@ const SoulFoodLanding = () => {
                 </div>
               </div>
 
-              <div className="mt-8 text-center">
+              <div className="mt-8 flex flex-col items-center">
                 <Button 
                   onClick={() => toast.success("Bulk order form opening soon!")}
-                  className="bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-white font-bold px-12 py-4 rounded-xl text-lg shadow-2xl"
+                  className="bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 text-white font-bold px-6 sm:px-10 lg:px-12 py-3 sm:py-4 rounded-xl text-base sm:text-lg shadow-2xl transform hover:scale-105 transition-all w-full sm:w-auto max-w-md"
                 >
                   Request Bulk Quote →
                 </Button>
-                <p className="text-sm text-slate-600 mt-3">
+                <p className="text-sm text-slate-600 mt-3 text-center">
                   Need more than 25 sets? <a href="#" className="text-purple-600 font-semibold hover:underline">Contact us for custom pricing</a>
                 </p>
               </div>
