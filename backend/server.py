@@ -30,6 +30,14 @@ try:
     print("✅ Trivia game routes loaded")
 except Exception as e:
     print(f"⚠️ Could not load trivia game routes: {e}")
+
+# Import payment routes
+try:
+    from payment_routes import router as payment_router
+    app.include_router(payment_router)
+    print("✅ Payment routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load payment routes: {e}")
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
