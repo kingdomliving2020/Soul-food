@@ -447,41 +447,39 @@ const TrickyTestamentGame = () => {
           {/* Jeopardy Board */}
           <div className="bg-blue-950 p-3 sm:p-4 lg:p-6 rounded-xl shadow-2xl border-2 sm:border-4 border-yellow-400">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3">
-              {/* Category Headers */}
+              {/* For each category, create a column with header + questions */}
               {categories.map((category, catIndex) => (
-                <div
-                  key={`cat-${catIndex}`}
-                  className="bg-blue-800 text-white p-3 sm:p-4 rounded-lg text-center font-bold text-sm sm:text-base lg:text-lg border-2 border-blue-600"
-                >
-                  {category}
+                <div key={`col-${catIndex}`} className="flex flex-col gap-2 sm:gap-3">
+                  {/* Category Header */}
+                  <div className="bg-blue-800 text-white p-3 sm:p-4 rounded-lg text-center font-bold text-sm sm:text-base lg:text-lg border-2 border-blue-600 min-h-[80px] sm:min-h-[100px] flex items-center justify-center">
+                    {category}
+                  </div>
+                  
+                  {/* Question Tiles for this category */}
+                  {pointValues.map((points, pointIndex) => {
+                    const question = questions.find(
+                      q => q.categoryIndex === catIndex && q.pointIndex === pointIndex
+                    );
+                    const isAnswered = answeredQuestions.includes(question?.id);
+
+                    return (
+                      <button
+                        key={`q-${catIndex}-${pointIndex}`}
+                        onClick={() => !isAnswered && selectQuestion(question.id)}
+                        disabled={isAnswered}
+                        className={`
+                          p-4 sm:p-6 lg:p-8 rounded-lg text-2xl sm:text-3xl font-bold transition-all
+                          ${isAnswered 
+                            ? 'bg-blue-950 text-blue-900 cursor-not-allowed border-2 border-blue-900' 
+                            : 'bg-blue-600 text-yellow-400 hover:bg-blue-500 hover:scale-105 cursor-pointer border-2 border-yellow-500 shadow-lg'
+                          }
+                        `}
+                      >
+                        {isAnswered ? '✓' : points}
+                      </button>
+                    );
+                  })}
                 </div>
-              ))}
-
-              {/* Question Tiles */}
-              {pointValues.map((points, pointIndex) => (
-                categories.map((category, catIndex) => {
-                  const question = questions.find(
-                    q => q.categoryIndex === catIndex && q.pointIndex === pointIndex
-                  );
-                  const isAnswered = answeredQuestions.includes(question?.id);
-
-                  return (
-                    <button
-                      key={`q-${catIndex}-${pointIndex}`}
-                      onClick={() => !isAnswered && selectQuestion(question.id)}
-                      disabled={isAnswered}
-                      className={`
-                        p-4 sm:p-6 lg:p-8 rounded-lg text-2xl sm:text-3xl font-bold transition-all
-                        ${isAnswered 
-                          ? 'bg-blue-950 text-blue-900 cursor-not-allowed border-2 border-blue-900' 
-                          : 'bg-blue-600 text-yellow-400 hover:bg-blue-500 hover:scale-105 cursor-pointer border-2 border-yellow-500 shadow-lg'
-                        }
-                      `}
-                    >
-                      {isAnswered ? '✓' : points}
-                    </button>
-                  );
-                })
               ))}
             </div>
           </div>
