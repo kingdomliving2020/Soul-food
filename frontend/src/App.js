@@ -11,6 +11,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { CartProvider } from './CartContext';
+import ShoppingCart from './ShoppingCart';
+import CheckoutPage from './CheckoutPage';
+import PaymentSuccess from './PaymentSuccess';
+import PaymentCancel from './PaymentCancel';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
