@@ -324,29 +324,29 @@ const TrickyTestamentGame = () => {
 
   if (gameOver) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4 sm:p-6 lg:p-8">
         <div className="container mx-auto max-w-4xl">
-          <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-4 border-purple-300">
-            <CardContent className="p-12 text-center">
-              <h2 className="text-5xl font-bold text-slate-800 mb-4">
+          <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 sm:border-4 border-purple-300">
+            <CardContent className="p-6 sm:p-8 lg:p-12 text-center">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-4">
                 {score >= 800 ? '🏆 Champion! 🏆' : 'Game Complete!'}
               </h2>
-              <div className="text-6xl font-bold text-purple-600 mb-6">
+              <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-purple-600 mb-4 sm:mb-6">
                 {score} Points
               </div>
-              <p className="text-2xl text-slate-700 mb-8">
+              <p className="text-lg sm:text-xl lg:text-2xl text-slate-700 mb-6 sm:mb-8">
                 You completed all 10 Jeopardy-style questions!
               </p>
-              <div className="flex gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                 <Button
                   onClick={restartGame}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-8 py-4 text-lg"
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg w-full sm:w-auto"
                 >
                   Play Again
                 </Button>
                 <Button
                   onClick={() => navigate('/')}
-                  className="bg-slate-600 hover:bg-slate-700 text-white font-bold px-8 py-4 text-lg"
+                  className="bg-slate-600 hover:bg-slate-700 text-white font-bold px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg w-full sm:w-auto"
                 >
                   Back to Home
                 </Button>
