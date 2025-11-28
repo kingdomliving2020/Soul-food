@@ -10,8 +10,14 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [couponCode, setCouponCode] = useState('');
+  const [couponApplied, setCouponApplied] = useState(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState('');
   
-  const total = getCartTotal();
+  const subtotal = getCartTotal();
+  const discount = couponApplied ? (subtotal * couponApplied.discount_percent / 100) : 0;
+  const total = subtotal - discount;
 
   const handleCheckout = async () => {
     if (cartItems.length === 0) {
