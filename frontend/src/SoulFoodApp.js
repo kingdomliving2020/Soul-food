@@ -685,20 +685,35 @@ const SoulFoodLanding = () => {
             <div className="text-center">
               <h4 className="text-2xl font-bold text-white mb-4">🎯 Game Access Options</h4>
               <div className="grid md:grid-cols-3 gap-6 text-white">
-                <div>
+                <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
                   <div className="text-4xl mb-2">👀</div>
                   <div className="font-bold text-lg mb-1">Free Preview</div>
-                  <div className="text-sm text-purple-300">5 questions • 1 game</div>
+                  <div className="text-sm text-purple-200 mb-4">5 questions • 1 game</div>
+                  <Button
+                    onClick={() => window.location.href = '/game/mixup?edition=youth'}
+                    className="w-full bg-white/20 hover:bg-white/30 text-white"
+                  >
+                    Try Now
+                  </Button>
                 </div>
-                <div>
+                <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm border-2 border-yellow-400">
                   <div className="text-4xl mb-2">🎟️</div>
-                  <div className="font-bold text-lg mb-1">Day Pass - $40</div>
-                  <div className="text-sm text-purple-300">24 hours • All games • Unlimited</div>
+                  <div className="font-bold text-lg mb-1">Gaming Day Pass</div>
+                  <div className="text-xs line-through text-purple-200">$40.00</div>
+                  <div className="text-2xl font-bold text-yellow-400 mb-2">$29.99</div>
+                  <div className="text-sm text-purple-200 mb-4">24 hours • All games • Unlimited</div>
+                  <GameAddToCartButton />
                 </div>
-                <div>
+                <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
                   <div className="text-4xl mb-2">👑</div>
-                  <div className="font-bold text-lg mb-1">Subscription</div>
-                  <div className="text-sm text-purple-300">Full access • Leaderboards • Badges</div>
+                  <div className="font-bold text-lg mb-1">Coming Soon</div>
+                  <div className="text-sm text-purple-200 mb-4">Full access • Leaderboards • Badges</div>
+                  <Button
+                    disabled
+                    className="w-full bg-white/10 text-white opacity-50 cursor-not-allowed"
+                  >
+                    Notify Me
+                  </Button>
                 </div>
               </div>
               <Button
