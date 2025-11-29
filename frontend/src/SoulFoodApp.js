@@ -435,6 +435,20 @@ const SoulFoodLanding = () => {
               <p className="mt-4 text-slate-700">
                 Celebrate your faith through the seasons with special lessons on <strong>The Covenant</strong>, <strong>The Cradle</strong>, <strong>The Cross</strong>, and <strong>The Comforter</strong>.
               </p>
+              <div className="flex justify-end mt-6">
+                <Button
+                  onClick={() => {
+                    const holidaySeries = SOUL_FOOD_SERIES.find(s => s.id === 'holiday');
+                    if (holidaySeries) {
+                      setSelectedSeries(holidaySeries);
+                      setShowPreview(true);
+                    }
+                  }}
+                  className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white px-6 py-2.5 rounded-lg font-semibold shadow-lg"
+                >
+                  View Lessons 📖
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
