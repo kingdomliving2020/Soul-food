@@ -376,19 +376,30 @@ const SoulFoodLanding = () => {
                 <CardContent className="relative space-y-4 p-6">
                   <p className="text-slate-700 leading-relaxed">{s.description}</p>
                   
-                  {s.available ? (
-                    <div className="pt-4">
+                  <div className="flex items-center justify-between pt-4">
+                    {s.available ? (
                       <Badge className="bg-emerald-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
                         ✅ Available Now
                       </Badge>
-                    </div>
-                  ) : (
-                    <div className="pt-4">
+                    ) : (
                       <Badge className="bg-slate-500 text-white px-3 py-1 text-sm font-semibold">
                         🔒 Unlocks {s.unlockDate}
                       </Badge>
-                    </div>
-                  )}
+                    )}
+                    
+                    {s.available && s.id === 'breakfast' && (
+                      <Button
+                        onClick={() => {
+                          setSelectedSeries(s);
+                          setShowPreview(true);
+                        }}
+                        size="sm"
+                        className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg"
+                      >
+                        View Lessons 📖
+                      </Button>
+                    )}
+                  </div>
                   
                   <Button
                     onClick={() => {
@@ -397,7 +408,7 @@ const SoulFoodLanding = () => {
                     }}
                     className={`w-full bg-gradient-to-r ${s.gradient} hover:opacity-90 shadow-lg text-white font-semibold py-3 rounded-xl transition-all`}
                   >
-                    {s.available ? `View Lessons Preview 📖` : `Preview Coming Lessons 📖`}
+                    {s.available ? `Explore Full Series 📚` : `Preview Coming Lessons 📖`}
                   </Button>
                 </CardContent>
               </Card>
