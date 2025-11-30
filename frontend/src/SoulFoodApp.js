@@ -390,16 +390,24 @@ const SoulFoodLanding = () => {
                     
                     {s.available && s.id === 'breakfast' && (
                       <Button
-                        onClick={() => {
-                          setSelectedSeries(s);
-                          setShowPreview(true);
-                        }}
+                        onClick={() => addToCart('mealtime_bundle', 1, { series: s.id, seriesName: s.name })}
                         size="sm"
-                        className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg"
+                        className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg"
                       >
-                        View Lessons 📖
+                        🛒 Add to Cart
                       </Button>
                     )}
+                  </div>
+                  
+                  {/* Add to Cart Button for Pre-Orders - Above Explore Button */}
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => addToCart('mealtime_bundle', 1, { series: s.id, seriesName: s.name })}
+                      variant="outline"
+                      className="border-2 border-slate-400 hover:border-slate-600 text-slate-700 hover:bg-slate-50 font-semibold px-6 py-2.5 rounded-lg transition-all shadow-md"
+                    >
+                      🛒 Pre-Order Book
+                    </Button>
                   </div>
                   
                   <Button
@@ -411,17 +419,6 @@ const SoulFoodLanding = () => {
                   >
                     {s.available ? `Explore Full Series 📚` : `Preview Coming Lessons 📖`}
                   </Button>
-                  
-                  {/* Add to Cart Button for Pre-Orders - Lower Right */}
-                  <div className="flex justify-end">
-                    <Button
-                      onClick={() => addToCart('mealtime_bundle', 1, { series: s.id, seriesName: s.name })}
-                      variant="outline"
-                      className="border-2 border-slate-400 hover:border-slate-600 text-slate-700 hover:bg-slate-50 font-semibold px-6 py-2.5 rounded-lg transition-all shadow-md"
-                    >
-                      🛒 Pre-Order Book
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
             ))}
