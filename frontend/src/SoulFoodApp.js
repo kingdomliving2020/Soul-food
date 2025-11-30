@@ -410,6 +410,15 @@ const SoulFoodLanding = () => {
                   >
                     {s.available ? `Explore Full Series 📚` : `Preview Coming Lessons 📖`}
                   </Button>
+                  
+                  {/* Add to Cart Button for Pre-Orders */}
+                  <Button
+                    onClick={() => addToCart('mealtime_bundle', 1, { series: s.id, seriesName: s.name })}
+                    variant="outline"
+                    className="w-full border-2 border-slate-300 hover:border-slate-400 text-slate-700 hover:bg-slate-50 font-semibold py-3 rounded-xl transition-all"
+                  >
+                    🛒 Pre-Order Physical Book
+                  </Button>
                 </CardContent>
               </Card>
             ))}
