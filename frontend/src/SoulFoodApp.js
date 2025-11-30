@@ -912,10 +912,10 @@ const SoulFoodLanding = () => {
                 </div>
 
                 <Button 
-                  onClick={() => toast.success("Pre-order page opening soon!")}
+                  onClick={() => addToCart('instructor_set', 1, { productName: 'Instructor Set (Box Set)' })}
                   className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-bold py-4 rounded-xl text-lg shadow-2xl transform hover:scale-105 transition-all"
                 >
-                  Pre-Order Instructor Set →
+                  🛒 Pre-Order Instructor Set →
                 </Button>
               </CardContent>
             </Card>
