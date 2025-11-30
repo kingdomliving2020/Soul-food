@@ -399,14 +399,14 @@ const SoulFoodLanding = () => {
                     )}
                   </div>
                   
-                  {/* Add to Cart Button for Pre-Orders - Above Explore Button */}
+                  {/* Add to Cart Button - Above Explore Button */}
                   <div className="flex justify-end">
                     <Button
                       onClick={() => addToCart('mealtime_bundle', 1, { series: s.id, seriesName: s.name })}
                       variant="outline"
                       className="border-2 border-slate-400 hover:border-slate-600 text-slate-700 hover:bg-slate-50 font-semibold px-6 py-2.5 rounded-lg transition-all shadow-md"
                     >
-                      🛒 Pre-Order Book
+                      🛒 {(s.id === 'breakfast' || s.id === 'holiday') ? 'Add to Cart' : 'Pre-Order Book'}
                     </Button>
                   </div>
                   
