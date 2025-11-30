@@ -64,6 +64,36 @@ PRODUCTS = {
         "list_price": 40.00,
         "sale_price": 29.99,
         "currency": "usd"
+    },
+    "subscription_adult": {
+        "name": "Adult Edition Subscription",
+        "description": "Monthly subscription with all Soul Food series lessons",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "type": "subscription",
+        "billing_cycle": "monthly",
+        "coupon_eligible": False  # Subscriptions cannot use coupons
+    },
+    "subscription_youth": {
+        "name": "Youth Edition Subscription",
+        "description": "Monthly subscription for ages 12-20",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "type": "subscription",
+        "billing_cycle": "monthly",
+        "coupon_eligible": False  # Subscriptions cannot use coupons
+    },
+    "subscription_instructor": {
+        "name": "Instructor Edition Subscription",
+        "description": "Monthly subscription with teaching toolkit",
+        "list_price": 14.99,
+        "sale_price": 14.99,
+        "currency": "usd",
+        "type": "subscription",
+        "billing_cycle": "monthly",
+        "coupon_eligible": False  # Subscriptions cannot use coupons
     }
 }
 
