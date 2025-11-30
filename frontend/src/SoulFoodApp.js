@@ -377,6 +377,7 @@ const SoulFoodLanding = () => {
                 <CardContent className="relative space-y-4 p-6">
                   <p className="text-slate-700 leading-relaxed">{s.description}</p>
                   
+                  {/* Badge and Cart Button - Same Row for Symmetry */}
                   <div className="flex items-center justify-between pt-4">
                     {s.available ? (
                       <Badge className="bg-emerald-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
@@ -388,23 +389,10 @@ const SoulFoodLanding = () => {
                       </Badge>
                     )}
                     
-                    {s.available && s.id === 'breakfast' && (
-                      <Button
-                        onClick={() => addToCart('mealtime_bundle', 1, { series: s.id, seriesName: s.name })}
-                        size="sm"
-                        className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white px-4 py-2 rounded-lg text-sm font-semibold shadow-lg"
-                      >
-                        🛒 Add to Cart
-                      </Button>
-                    )}
-                  </div>
-                  
-                  {/* Add to Cart Button - Above Explore Button */}
-                  <div className="flex justify-end">
                     <Button
                       onClick={() => addToCart('mealtime_bundle', 1, { series: s.id, seriesName: s.name })}
                       variant="outline"
-                      className="border-2 border-slate-400 hover:border-slate-600 text-slate-700 hover:bg-slate-50 font-semibold px-6 py-2.5 rounded-lg transition-all shadow-md"
+                      className="border-2 border-slate-400 hover:border-slate-600 text-slate-700 hover:bg-slate-50 font-semibold px-4 py-2 rounded-lg transition-all shadow-md"
                     >
                       🛒 {(s.id === 'breakfast' || s.id === 'holiday') ? 'Add to Cart' : 'Pre-Order Book'}
                     </Button>
