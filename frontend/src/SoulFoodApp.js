@@ -461,7 +461,7 @@ const SoulFoodLanding = () => {
                   onClick={() => addToCart('mealtime_bundle', 1, { series: 'holiday', seriesName: 'Holiday Series' })}
                   className="bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white px-6 py-2.5 rounded-lg font-semibold shadow-lg"
                 >
-                  🛒 Pre-Order Book
+                  🛒 Add to Cart
                 </Button>
               </div>
             </CardContent>
