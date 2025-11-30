@@ -220,6 +220,7 @@ const SoulFoodLanding = () => {
   const [series, setSeries] = useState(SOUL_FOOD_SERIES);
   const [selectedSeries, setSelectedSeries] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
+  const { addToCart } = useCart();
   
   const handleLogin = () => {
     const redirectUrl = `${window.location.origin}/dashboard`;
