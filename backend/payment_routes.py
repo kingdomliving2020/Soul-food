@@ -22,48 +22,93 @@ client = AsyncIOMotorClient(MONGO_URL)
 db = client.soul_food_db
 
 # Product catalog with list and sale prices
+# Cost = wholesale/production cost, List Price = MSRP, Sale Price = current selling price
 PRODUCTS = {
-    "single_lesson": {
-        "name": "Single Lesson",
-        "description": "Download or online access to one lesson",
+    "nibble": {
+        "name": "Nibble (Single Lesson)",
+        "description": "One lesson - choose your mealtime, edition, and format",
+        "cost": 1.09,
         "list_price": 4.99,
         "sale_price": 1.99,
-        "currency": "usd"
+        "currency": "usd",
+        "unit": "ea",
+        "options": {
+            "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
+            "edition": ["adult", "youth", "instructor"],
+            "medium": ["ebook", "paperback"]
+        }
     },
-    "monthly_pack": {
-        "name": "Monthly Pack (4 Lessons)",
-        "description": "Download or online access to 4 lessons",
+    "snack_pack": {
+        "name": "Snack Pack (4 Lessons)",
+        "description": "Monthly pack of 4 lessons - choose your mealtime, edition, and format",
+        "cost": 3.99,
         "list_price": 6.75,
         "sale_price": 5.99,
-        "currency": "usd"
+        "currency": "usd",
+        "unit": "set",
+        "options": {
+            "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
+            "edition": ["adult", "youth", "instructor"],
+            "medium": ["ebook", "paperback", "online"]
+        },
+        "medium_rules": {
+            "online": "Monthly subscribers only",
+            "print": "Available for monthly and mealtime bundles"
+        }
     },
     "mealtime_bundle": {
         "name": "Mealtime Bundle (12 Lessons)",
-        "description": "One of each edition per mealtime package",
+        "description": "Complete mealtime series - choose your mealtime, edition, and format",
+        "cost": 11.99,
         "list_price": 13.99,
         "sale_price": 12.99,
-        "currency": "usd"
+        "currency": "usd",
+        "unit": "set",
+        "options": {
+            "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
+            "edition": ["adult", "youth", "instructor"],
+            "medium": ["ebook", "paperback", "online"]
+        },
+        "medium_rules": {
+            "online": "Monthly subscribers only",
+            "print": "Available"
+        }
     },
     "combo_bundle": {
         "name": "Combo Bundle (24 Lessons)",
-        "description": "Multiple books of a single type",
+        "description": "Two complete mealtime series - choose your mealtimes, edition, and format",
+        "cost": 19.99,
         "list_price": 24.99,
         "sale_price": 22.99,
-        "currency": "usd"
+        "currency": "usd",
+        "unit": "set",
+        "options": {
+            "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
+            "edition": ["adult", "youth", "instructor"],
+            "medium": ["ebook", "paperback"]
+        }
     },
     "instructor_set": {
         "name": "Instructor Set (36 Lessons)",
-        "description": "Box set: Breakfast, Lunch, Dinner, Supper (Youth, Adult, Instructor)",
+        "description": "Box set: Breakfast, Lunch, Dinner, Supper (all editions available)",
+        "cost": 36.99,
         "list_price": 44.99,
         "sale_price": 39.99,
-        "currency": "usd"
+        "currency": "usd",
+        "unit": "set",
+        "options": {
+            "edition": ["adult", "youth", "instructor"],
+            "medium": ["ebook", "paperback"]
+        }
     },
     "gaming_day_pass": {
         "name": "Gaming Day Pass",
         "description": "24-hour access to all game modes",
+        "cost": 25.00,
         "list_price": 40.00,
         "sale_price": 29.99,
-        "currency": "usd"
+        "currency": "usd",
+        "unit": "set"
     },
     "subscription_adult": {
         "name": "Adult Edition Subscription",
