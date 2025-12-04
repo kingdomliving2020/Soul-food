@@ -79,7 +79,7 @@ const ShoppingCart = () => {
               <div className={`p-5 space-y-4 ${cartItems.length > 5 ? 'max-h-[600px] overflow-y-auto' : ''}`}>
                 {cartItems.map((item) => (
                   <div
-                    key={item.productId}
+                    key={item.uniqueKey || item.productId}
                     className="bg-white rounded-lg p-4 border-2 border-gray-200 hover:border-purple-300 transition-colors shadow-sm"
                   >
                     <div className="flex justify-between items-start mb-3">
@@ -138,7 +138,7 @@ const ShoppingCart = () => {
                       </div>
                       
                       <button
-                        onClick={() => removeFromCart(item.productId)}
+                        onClick={() => removeFromCart(item.uniqueKey || item.productId)}
                         className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded transition-colors ml-2"
                         aria-label="Remove item"
                       >
@@ -151,14 +151,14 @@ const ShoppingCart = () => {
                       <div className="flex items-center gap-3">
                         <span className="text-sm text-gray-600 font-medium mr-2">Qty:</span>
                         <button
-                          onClick={() => updateQuantity(item.productId, item.quantity - 1)}
+                          onClick={() => updateQuantity(item.uniqueKey || item.productId, item.quantity - 1)}
                           className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-gray-700 font-bold text-lg transition-colors"
                         >
                           -
                         </button>
                         <span className="w-10 text-center font-bold text-lg">{item.quantity}</span>
                         <button
-                          onClick={() => updateQuantity(item.productId, item.quantity + 1)}
+                          onClick={() => updateQuantity(item.uniqueKey || item.productId, item.quantity + 1)}
                           className="w-8 h-8 flex items-center justify-center bg-gray-200 hover:bg-gray-300 rounded text-gray-700 font-bold text-lg transition-colors"
                         >
                           +
