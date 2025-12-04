@@ -144,7 +144,6 @@ PRODUCTS = {
         "currency": "usd",
         "unit": "set"
     },
-    }
     "subscription_adult": {
         "name": "Adult Edition Subscription",
         "description": "Monthly subscription with all Soul Food series lessons",
