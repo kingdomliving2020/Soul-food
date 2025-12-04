@@ -197,34 +197,38 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
             )}
           </div>
 
-          {/* Quantity Counter */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Quantity
-            </label>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="bg-gray-200 hover:bg-gray-300 rounded-lg p-3 transition-colors"
-              >
-                <Minus size={20} />
-              </button>
-              <input
-                type="number"
-                value={quantity}
-                onChange={(e) => setQuantity(Math.max(1, Math.min(99, parseInt(e.target.value) || 1)))}
-                className="w-20 text-center border-2 border-gray-300 rounded-lg p-3 text-lg font-semibold focus:border-blue-500 focus:outline-none"
-                min="1"
-                max="99"
-              />
-              <button
-                onClick={() => setQuantity(Math.min(99, quantity + 1))}
-                className="bg-gray-200 hover:bg-gray-300 rounded-lg p-3 transition-colors"
-              >
-                <Plus size={20} />
-              </button>
+          {/* Quantity Counter - Hide for free bonus */}
+          {selectedBundle !== 'bonus_free' && (
+            <div>
+              <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
+                Quantity
+              </label>
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="bg-gray-200 hover:bg-gray-300 rounded-lg p-2 sm:p-3 transition-colors"
+                >
+                  <Minus size={16} className="sm:hidden" />
+                  <Minus size={20} className="hidden sm:block" />
+                </button>
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Math.max(1, Math.min(99, parseInt(e.target.value) || 1)))}
+                  className="w-16 sm:w-20 text-center border-2 border-gray-300 rounded-lg p-2 sm:p-3 text-base sm:text-lg font-semibold focus:border-blue-500 focus:outline-none"
+                  min="1"
+                  max="99"
+                />
+                <button
+                  onClick={() => setQuantity(Math.min(99, quantity + 1))}
+                  className="bg-gray-200 hover:bg-gray-300 rounded-lg p-2 sm:p-3 transition-colors"
+                >
+                  <Plus size={16} className="sm:hidden" />
+                  <Plus size={20} className="hidden sm:block" />
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Large Order Alert */}
           {showLargeOrderAlert && (
