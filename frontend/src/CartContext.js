@@ -83,29 +83,40 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('soulFoodCart', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (productId, quantity = 1) => {
+  const addToCart = (productId, quantity = 1, metadata = {}) => {
     const product = PRODUCTS[productId];
     if (!product) {
       console.error('Product not found:', productId);
       return;
     }
 
+    // Create unique key based on product + metadata for different configurations
+    const uniqueKey = `${productId}_${metadata.series}_${metadata.edition}_${metadata.medium}`;
+
     setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.productId === productId);
+      const existingItem = prevItems.find(item => item.uniqueKey === uniqueKey);
       
       if (existingItem) {
-        // Update quantity if item already in cart
+        // Update quantity if same configuration already in cart
         return prevItems.map(item =>
-          item.productId === productId
+          item.uniqueKey === uniqueKey
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       } else {
-        // Add new item to cart
+        // Add new item to cart with full metadata
         return [...prevItems, { 
-          productId, 
+          productId,
+          uniqueKey,
           ...product,
-          quantity 
+          quantity,
+          metadata: {
+            series: metadata.series || null,
+            seriesName: metadata.seriesName || null,
+            edition: metadata.edition || 'adult',
+            medium: metadata.medium || 'pdf',
+            unit_price: metadata.unit_price || product.salePrice
+          }
         }];
       }
     });
