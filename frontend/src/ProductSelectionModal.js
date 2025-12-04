@@ -140,7 +140,7 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
               onChange={(e) => setSelectedEdition(e.target.value)}
               className="w-full border-2 border-gray-300 rounded-lg p-3 text-base focus:border-blue-500 focus:outline-none"
             >
-              {currentProduct.options.edition.map(edition => (
+              {(currentProduct.options?.edition || ['adult', 'youth', 'instructor']).map(edition => (
                 <option key={edition} value={edition}>
                   {editionLabels[edition]}
                 </option>
