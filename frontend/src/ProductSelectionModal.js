@@ -8,15 +8,26 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
   const [quantity, setQuantity] = useState(1);
   const [showLargeOrderAlert, setShowLargeOrderAlert] = useState(false);
 
+  // Calculate price based on medium
+  const getPrice = (priceObj, medium) => {
+    if (!priceObj) return 0;
+    if (typeof priceObj === 'number') return priceObj;
+    return priceObj[medium] || priceObj.pdf || priceObj;
+  };
+
   const currentProduct = products?.[selectedBundle];
-  
+  const listPrice = currentProduct ? getPrice(currentProduct.list_price, selectedMedium) : 0;
+  const salePrice = currentProduct ? getPrice(currentProduct.sale_price, selectedMedium) : 0;
+  const totalPrice = (salePrice * quantity).toFixed(2);
+  const totalListPrice = (listPrice * quantity).toFixed(2);
+  const savings = ((listPrice - salePrice) * quantity).toFixed(2);
+
   // Check for large print orders
   useEffect(() => {
     if (!currentProduct || !isOpen) return;
     
     if (selectedMedium === 'paperback' && quantity >= 25) {
       setShowLargeOrderAlert(true);
-      // Send notification to backend
       fetch('http://localhost:8001/api/payments/notify-large-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -35,36 +46,9 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
     }
   }, [quantity, selectedMedium, selectedEdition, seriesData?.id, currentProduct?.name, isOpen]);
 
-  // Early return AFTER all hooks - this is crucial for React
-  if (!isOpen || !seriesData || !products || Object.keys(products).length === 0) {
-    return null;
-  }
-
-  // Safety check - if product doesn't exist yet, return loading state
-  if (!currentProduct) {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-2xl p-8 shadow-2xl">
-          <p className="text-gray-700">Loading products...</p>
-        </div>
-      </div>
-    );
-  }
-  
-  // Calculate price based on medium
-  const getPrice = (priceObj, medium) => {
-    if (!priceObj) return 0;
-    if (typeof priceObj === 'number') return priceObj;
-    return priceObj[medium] || priceObj.pdf || priceObj;
-  };
-
-  const listPrice = getPrice(currentProduct.list_price, selectedMedium);
-  const salePrice = getPrice(currentProduct.sale_price, selectedMedium);
-  const totalPrice = (salePrice * quantity).toFixed(2);
-  const totalListPrice = (listPrice * quantity).toFixed(2);
-  const savings = ((listPrice - salePrice) * quantity).toFixed(2);
-
   const handleAddToCart = () => {
+    if (!currentProduct) return;
+    
     const cartItem = {
       product_id: selectedBundle,
       product_name: currentProduct.name,
@@ -92,6 +76,19 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
     paperback: 'Paperback (Print on Demand)',
     online: 'Online Access (Subscribers Only)'
   };
+
+  // Early returns AFTER all hooks
+  if (!isOpen) return null;
+
+  if (!seriesData || !products || Object.keys(products).length === 0 || !currentProduct) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-2xl p-8 shadow-2xl">
+          <p className="text-gray-700">Loading products...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
