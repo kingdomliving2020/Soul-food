@@ -222,11 +222,26 @@ const SoulFoodLanding = () => {
   const [series, setSeries] = useState(SOUL_FOOD_SERIES);
   const [selectedSeries, setSelectedSeries] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [showProductModal, setShowProductModal] = useState(false);
+  const [products, setProducts] = useState({});
   const { addToCart } = useCart();
+  
+  // Fetch products from backend
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/api/payments/products`)
+      .then(res => res.json())
+      .then(data => setProducts(data.products))
+      .catch(err => console.error('Failed to load products:', err));
+  }, []);
   
   const handleLogin = () => {
     const redirectUrl = `${window.location.origin}/dashboard`;
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+  };
+  
+  const openProductModal = (seriesData) => {
+    setSelectedSeries(seriesData);
+    setShowProductModal(true);
   };
 
   return (
