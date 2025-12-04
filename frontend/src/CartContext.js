@@ -125,19 +125,19 @@ export const CartProvider = ({ children }) => {
     setIsCartOpen(true);
   };
 
-  const removeFromCart = (productId) => {
-    setCartItems(prevItems => prevItems.filter(item => item.productId !== productId));
+  const removeFromCart = (uniqueKey) => {
+    setCartItems(prevItems => prevItems.filter(item => item.uniqueKey !== uniqueKey));
   };
 
-  const updateQuantity = (productId, quantity) => {
+  const updateQuantity = (uniqueKey, quantity) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(uniqueKey);
       return;
     }
     
     setCartItems(prevItems =>
       prevItems.map(item =>
-        item.productId === productId
+        item.uniqueKey === uniqueKey
           ? { ...item, quantity }
           : item
       )
