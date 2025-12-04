@@ -46,6 +46,14 @@ try:
     print("✅ Coupon routes loaded")
 except Exception as e:
     print(f"⚠️ Could not load coupon routes: {e}")
+
+# Import contact routes
+try:
+    from contact_routes import router as contact_router
+    app.include_router(contact_router)
+    print("✅ Contact routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load contact routes: {e}")
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
