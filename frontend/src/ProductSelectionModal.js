@@ -10,6 +10,47 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
 
   const currentProduct = products?.[selectedBundle];
   
+  // Check for large print orders
+  useEffect(() => {
+    if (!currentProduct || !isOpen) return;
+    
+    if (selectedMedium === 'paperback' && quantity >= 25) {
+      setShowLargeOrderAlert(true);
+      // Send notification to backend
+      fetch('http://localhost:8001/api/payments/notify-large-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          quantity,
+          product_name: currentProduct.name,
+          selections: {
+            mealtime: seriesData?.id,
+            edition: selectedEdition,
+            medium: selectedMedium
+          }
+        })
+      }).catch(err => console.error('Failed to send large order notification:', err));
+    } else {
+      setShowLargeOrderAlert(false);
+    }
+  }, [quantity, selectedMedium, selectedEdition, seriesData?.id, currentProduct?.name, isOpen]);
+
+  // Early return AFTER all hooks - this is crucial for React
+  if (!isOpen || !seriesData || !products || Object.keys(products).length === 0) {
+    return null;
+  }
+
+  // Safety check - if product doesn't exist yet, return loading state
+  if (!currentProduct) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-2xl p-8 shadow-2xl">
+          <p className="text-gray-700">Loading products...</p>
+        </div>
+      </div>
+    );
+  }
+  
   // Calculate price based on medium
   const getPrice = (priceObj, medium) => {
     if (!priceObj) return 0;
@@ -22,31 +63,6 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
   const totalPrice = (salePrice * quantity).toFixed(2);
   const totalListPrice = (listPrice * quantity).toFixed(2);
   const savings = ((listPrice - salePrice) * quantity).toFixed(2);
-
-  // Check for large print orders
-  useEffect(() => {
-    if (!currentProduct) return;
-    
-    if (selectedMedium === 'paperback' && quantity >= 25) {
-      setShowLargeOrderAlert(true);
-      // Send notification to backend
-      fetch('http://localhost:8001/api/payments/notify-large-order', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          quantity,
-          product_name: currentProduct.name,
-          selections: {
-            mealtime: seriesData.id,
-            edition: selectedEdition,
-            medium: selectedMedium
-          }
-        })
-      }).catch(err => console.error('Failed to send large order notification:', err));
-    } else {
-      setShowLargeOrderAlert(false);
-    }
-  }, [quantity, selectedMedium, selectedEdition, seriesData?.id, currentProduct?.name]);
 
   const handleAddToCart = () => {
     const cartItem = {
