@@ -139,8 +139,8 @@ PRODUCTS = {
         "name": "Gaming Day Pass",
         "description": "24-hour access to all game modes",
         "cost": 25.00,
-        "list_price": 40.00,
-        "sale_price": 29.99,
+        "list_price": {"day_pass": 40.00},
+        "sale_price": {"day_pass": 29.99},
         "currency": "usd",
         "unit": "set"
     },
