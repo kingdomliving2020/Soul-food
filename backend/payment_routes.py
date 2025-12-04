@@ -35,43 +35,56 @@ PRODUCTS = {
         "options": {
             "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
             "edition": ["adult", "youth", "instructor"],
-            "medium": ["ebook", "paperback"]
-        }
+            "medium": ["pdf"]  # Only PDF download for Nibble - no print logistics
+        },
+        "note": "PDF download only - no print available for single lessons"
     },
     "snack_pack": {
         "name": "Snack Pack (4 Lessons)",
         "description": "Monthly pack of 4 lessons - choose your mealtime, edition, and format",
         "cost": 3.99,
-        "list_price": 6.75,
-        "sale_price": 5.99,
+        "list_price": {
+            "pdf": 6.75,
+            "paperback": 8.75  # List price + $2 for paperback
+        },
+        "sale_price": {
+            "pdf": 5.99,
+            "paperback": 7.99  # Sale price + $2 for paperback
+        },
         "currency": "usd",
         "unit": "set",
         "options": {
             "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
             "edition": ["adult", "youth", "instructor"],
-            "medium": ["ebook", "paperback", "online"]
+            "medium": ["pdf", "paperback", "online"]
         },
         "medium_rules": {
             "online": "Monthly subscribers only",
-            "print": "Available for monthly and mealtime bundles"
+            "paperback": "Print available - POD fulfillment"
         }
     },
     "mealtime_bundle": {
         "name": "Mealtime Bundle (12 Lessons)",
         "description": "Complete mealtime series - choose your mealtime, edition, and format",
         "cost": 11.99,
-        "list_price": 13.99,
-        "sale_price": 12.99,
+        "list_price": {
+            "pdf": 13.99,
+            "paperback": 15.99  # List price + $2 for paperback
+        },
+        "sale_price": {
+            "pdf": 12.99,
+            "paperback": 14.99  # Sale price + $2 for paperback
+        },
         "currency": "usd",
         "unit": "set",
         "options": {
             "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
             "edition": ["adult", "youth", "instructor"],
-            "medium": ["ebook", "paperback", "online"]
+            "medium": ["pdf", "paperback", "online"]
         },
         "medium_rules": {
             "online": "Monthly subscribers only",
-            "print": "Available"
+            "paperback": "Print available - POD fulfillment"
         }
     },
     "combo_bundle": {
