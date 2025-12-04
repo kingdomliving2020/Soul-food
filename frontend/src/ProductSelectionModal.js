@@ -241,25 +241,36 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
           )}
 
           {/* Price Summary */}
-          <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">List Price:</span>
-              <span className="text-gray-500 line-through">${totalListPrice}</span>
+          {selectedBundle !== 'bonus_free' ? (
+            <div className="bg-gray-50 rounded-lg p-3 sm:p-4 space-y-2">
+              <div className="flex justify-between items-center text-sm sm:text-base">
+                <span className="text-gray-600">List Price:</span>
+                <span className="text-gray-500 line-through">${totalListPrice}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm sm:text-base">
+                <span className="text-gray-600">Sale Price:</span>
+                <span className="text-green-600 font-semibold">${totalPrice}</span>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t border-gray-200 text-sm sm:text-base">
+                <span className="text-gray-700 font-semibold">You Save:</span>
+                <span className="text-green-600 font-bold">${savings}</span>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Sale Price:</span>
-              <span className="text-green-600 font-semibold">${totalPrice}</span>
+          ) : (
+            <div className="bg-green-50 rounded-lg p-3 sm:p-4 border-2 border-green-300">
+              <p className="text-green-800 font-bold text-base sm:text-lg text-center">
+                🎁 100% FREE - Names of God & Times and Seasons
+              </p>
+              <p className="text-green-700 text-xs sm:text-sm text-center mt-2">
+                No restrictions on distribution - share the Word freely!
+              </p>
             </div>
-            <div className="flex justify-between items-center pt-2 border-t border-gray-200">
-              <span className="text-gray-700 font-semibold">You Save:</span>
-              <span className="text-green-600 font-bold">${savings}</span>
-            </div>
-          </div>
+          )}
 
           {/* License Protection Notice */}
-          {selectedMedium === 'pdf' && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <p className="text-blue-800 text-sm">
+          {selectedMedium === 'pdf' && selectedBundle !== 'bonus_free' && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3">
+              <p className="text-blue-800 text-xs sm:text-sm leading-relaxed">
                 🔒 <strong>License Protected:</strong> Downloads are for personal use only. 
                 Redistribution is prohibited and violates copyright law.
               </p>
@@ -269,10 +280,13 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
           {/* Add to Cart Button */}
           <button
             onClick={handleAddToCart}
-            className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-bold py-4 rounded-xl text-lg shadow-lg flex items-center justify-center space-x-2 transition-all"
+            className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-bold py-3 sm:py-4 rounded-xl text-base sm:text-lg shadow-lg flex items-center justify-center space-x-2 transition-all"
           >
-            <ShoppingCart size={24} />
-            <span>Add to Cart - ${totalPrice}</span>
+            <ShoppingCart size={20} className="sm:hidden" />
+            <ShoppingCart size={24} className="hidden sm:block" />
+            <span>
+              {selectedBundle === 'bonus_free' ? 'Download FREE Lessons' : `Add to Cart - $${totalPrice}`}
+            </span>
           </button>
         </div>
       </div>
