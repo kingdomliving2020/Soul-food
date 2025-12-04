@@ -106,21 +106,22 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold">{seriesData.name}</h2>
-            <p className="text-blue-100 text-sm">{seriesData.theme}</p>
+        <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 sm:p-6 rounded-t-xl sm:rounded-t-2xl flex justify-between items-center">
+          <div className="flex-1 pr-2">
+            <h2 className="text-lg sm:text-2xl font-bold leading-tight">{seriesData.name}</h2>
+            <p className="text-blue-100 text-xs sm:text-sm mt-1">{seriesData.theme}</p>
           </div>
-          <button onClick={onClose} className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2">
-            <X size={24} />
+          <button onClick={onClose} className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-1.5 sm:p-2 flex-shrink-0">
+            <X size={20} className="sm:hidden" />
+            <X size={24} className="hidden sm:block" />
           </button>
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-6">
+        <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           {/* Bundle Selection */}
           <div>
             <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
