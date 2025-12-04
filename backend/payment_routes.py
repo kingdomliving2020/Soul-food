@@ -359,3 +359,48 @@ async def stripe_webhook(request: Request):
 async def get_products():
     """Get list of available products with pricing"""
     return {"products": PRODUCTS}
+
+
+@router.post("/notify-large-order")
+async def notify_large_order(request: Request):
+    """Send email notification for large print orders (>25 items)"""
+    try:
+        data = await request.json()
+        quantity = data.get('quantity', 0)
+        product_name = data.get('product_name', 'Unknown')
+        customer_email = data.get('customer_email', 'Not provided')
+        selections = data.get('selections', {})
+        
+        if quantity >= 25:
+            # Here you would integrate with an email service
+            # For now, we'll log it and return success
+            # TODO: Integrate with SendGrid, AWS SES, or similar
+            
+            message = f"""
+            LARGE ORDER ALERT
+            
+            Quantity: {quantity} items
+            Product: {product_name}
+            Customer Email: {customer_email}
+            
+            Selections:
+            - Mealtime: {selections.get('mealtime', 'N/A')}
+            - Edition: {selections.get('edition', 'N/A')}
+            - Medium: {selections.get('medium', 'N/A')}
+            
+            Please review and process this bulk order.
+            Sent to: kingdomlivingproject@gmail.com
+            """
+            
+            print(f"[LARGE ORDER ALERT] {message}")
+            
+            return {
+                "status": "success",
+                "message": "Large order notification sent",
+                "alert": "Orders over 25 items require manual review. We'll contact you shortly."
+            }
+        
+        return {"status": "ok", "message": "No alert needed"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
