@@ -152,13 +152,13 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
 
           {/* Edition Selection */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
               Select Edition
             </label>
             <select
               value={selectedEdition}
               onChange={(e) => setSelectedEdition(e.target.value)}
-              className="w-full border-2 border-gray-300 rounded-lg p-3 text-base focus:border-blue-500 focus:outline-none"
+              className="w-full border-2 border-gray-300 rounded-lg p-2 sm:p-3 text-sm sm:text-base focus:border-blue-500 focus:outline-none"
             >
               {(currentProduct.options?.edition || ['adult', 'youth', 'instructor']).map(edition => (
                 <option key={edition} value={edition}>
@@ -170,24 +170,29 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
 
           {/* Medium Selection */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
               Select Format
             </label>
             <select
               value={selectedMedium}
               onChange={(e) => setSelectedMedium(e.target.value)}
-              className="w-full border-2 border-gray-300 rounded-lg p-3 text-base focus:border-blue-500 focus:outline-none"
-              disabled={selectedBundle === 'nibble'}
+              className="w-full border-2 border-gray-300 rounded-lg p-2 sm:p-3 text-sm sm:text-base focus:border-blue-500 focus:outline-none"
+              disabled={selectedBundle === 'nibble' || selectedBundle === 'snack_pack' || selectedBundle === 'bonus_free'}
             >
-              {(currentProduct.options?.medium || ['pdf', 'paperback']).map(medium => (
+              {(currentProduct.options?.medium || ['pdf']).map(medium => (
                 <option key={medium} value={medium}>
                   {mediumLabels[medium]}
                 </option>
               ))}
             </select>
-            {selectedBundle === 'nibble' && (
-              <p className="text-sm text-amber-600 mt-1">
-                ℹ️ Single lessons (Nibble) are only available as PDF downloads
+            {(selectedBundle === 'nibble' || selectedBundle === 'snack_pack') && (
+              <p className="text-xs sm:text-sm text-amber-600 mt-1 leading-relaxed">
+                ℹ️ PDF download only - no print available for single lessons or snack packs
+              </p>
+            )}
+            {selectedBundle === 'bonus_free' && (
+              <p className="text-xs sm:text-sm text-green-600 mt-1 leading-relaxed">
+                ✨ FREE download - no restrictions on distribution!
               </p>
             )}
           </div>
