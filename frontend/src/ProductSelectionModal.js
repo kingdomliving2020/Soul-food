@@ -123,7 +123,7 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
         <div className="p-6 space-y-6">
           {/* Bundle Selection */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
               Select Package Size
             </label>
             <select
@@ -131,15 +131,22 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
               onChange={(e) => {
                 setSelectedBundle(e.target.value);
                 if (e.target.value === 'nibble') setSelectedMedium('pdf');
+                if (e.target.value === 'snack_pack' || e.target.value === 'holiday_bundle') setSelectedMedium('pdf');
               }}
-              className="w-full border-2 border-gray-300 rounded-lg p-3 text-base focus:border-blue-500 focus:outline-none"
+              className="w-full border-2 border-gray-300 rounded-lg p-2 sm:p-3 text-sm sm:text-base focus:border-blue-500 focus:outline-none"
             >
               <option value="nibble">Nibble - Single Lesson (PDF only)</option>
-              <option value="snack_pack">Snack Pack - 4 Lessons</option>
-              <option value="mealtime_bundle">Mealtime Bundle - 12 Lessons (Complete Series)</option>
+              <option value="snack_pack">Snack Pack - 4 Lessons (PDF only)</option>
+              {seriesData?.id === 'holiday' && (
+                <option value="holiday_bundle">Holiday Bundle - 6 Lessons (The 4 C's)</option>
+              )}
+              {seriesData?.id !== 'holiday' && (
+                <option value="mealtime_bundle">Mealtime Bundle - 12 Lessons (Print Available)</option>
+              )}
               <option value="combo_bundle">Combo Bundle - 24 Lessons</option>
+              <option value="bonus_free">Bonus Lessons - FREE (Names of God, Times & Seasons)</option>
             </select>
-            <p className="text-sm text-gray-600 mt-1">{currentProduct.description}</p>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1 leading-relaxed">{currentProduct.description}</p>
           </div>
 
           {/* Edition Selection */}
