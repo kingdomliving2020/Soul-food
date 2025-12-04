@@ -2,11 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { X, Plus, Minus, ShoppingCart } from 'lucide-react';
 
 const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToCart }) => {
-  const [selectedBundle, setSelectedBundle] = useState('snack_pack');
+  // Determine default bundle based on series
+  const getDefaultBundle = () => {
+    if (seriesData?.id === 'holiday') return 'holiday_bundle';
+    return 'snack_pack';
+  };
+  
+  const [selectedBundle, setSelectedBundle] = useState(getDefaultBundle());
   const [selectedEdition, setSelectedEdition] = useState('adult');
   const [selectedMedium, setSelectedMedium] = useState('pdf');
   const [quantity, setQuantity] = useState(1);
   const [showLargeOrderAlert, setShowLargeOrderAlert] = useState(false);
+  
+  // Update bundle when series changes
+  useEffect(() => {
+    if (seriesData?.id === 'holiday') {
+      setSelectedBundle('holiday_bundle');
+    } else {
+      setSelectedBundle('snack_pack');
+    }
+  }, [seriesData?.id]);
 
   // Calculate price based on medium
   const getPrice = (priceObj, medium) => {
