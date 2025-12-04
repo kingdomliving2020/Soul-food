@@ -44,22 +44,43 @@ PRODUCTS = {
         "description": "Monthly pack of 4 lessons - choose your mealtime, edition, and format",
         "cost": 3.99,
         "list_price": {
-            "pdf": 6.75,
-            "paperback": 8.75  # List price + $2 for paperback
+            "pdf": 6.75
         },
         "sale_price": {
-            "pdf": 5.99,
-            "paperback": 7.99  # Sale price + $2 for paperback
+            "pdf": 5.99
         },
         "currency": "usd",
         "unit": "set",
         "options": {
-            "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
+            "mealtime": ["breakfast", "lunch", "dinner", "supper"],
             "edition": ["adult", "youth", "instructor"],
-            "medium": ["pdf", "paperback", "online"]
+            "medium": ["pdf", "online"]
         },
         "medium_rules": {
             "online": "Monthly subscribers only",
+            "note": "PDF download only - no print for Snack Pack"
+        }
+    },
+    "holiday_bundle": {
+        "name": "Holiday Bundle (6 Lessons)",
+        "description": "Holiday Series: The 4 C's of Christianity - Covenant, Cradle, Cross, Comforter",
+        "cost": 3.99,
+        "list_price": {
+            "pdf": 6.75,
+            "paperback": 8.75
+        },
+        "sale_price": {
+            "pdf": 5.99,
+            "paperback": 7.99
+        },
+        "currency": "usd",
+        "unit": "set",
+        "options": {
+            "mealtime": ["holiday"],
+            "edition": ["adult", "youth", "instructor"],
+            "medium": ["pdf", "paperback"]
+        },
+        "medium_rules": {
             "paperback": "Print available - POD fulfillment"
         }
     },
@@ -78,13 +99,13 @@ PRODUCTS = {
         "currency": "usd",
         "unit": "set",
         "options": {
-            "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
+            "mealtime": ["breakfast", "lunch", "dinner", "supper"],
             "edition": ["adult", "youth", "instructor"],
             "medium": ["pdf", "paperback", "online"]
         },
         "medium_rules": {
             "online": "Monthly subscribers only",
-            "paperback": "Print available - POD fulfillment"
+            "paperback": "Print available - POD fulfillment for complete series"
         }
     },
     "combo_bundle": {
@@ -123,6 +144,24 @@ PRODUCTS = {
         "currency": "usd",
         "unit": "set"
     },
+    "bonus_free": {
+        "name": "Bonus Lessons (Free)",
+        "description": "Names of God & Times and Seasons - Free download with no restrictions",
+        "cost": 0.00,
+        "list_price": {
+            "pdf": 0.00
+        },
+        "sale_price": {
+            "pdf": 0.00
+        },
+        "currency": "usd",
+        "unit": "set",
+        "options": {
+            "edition": ["adult", "youth", "instructor"],
+            "medium": ["pdf"]
+        },
+        "note": "Free to download and distribute - no restrictions"
+    }
     "subscription_adult": {
         "name": "Adult Edition Subscription",
         "description": "Monthly subscription with all Soul Food series lessons",
