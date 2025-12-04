@@ -159,7 +159,7 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
               className="w-full border-2 border-gray-300 rounded-lg p-3 text-base focus:border-blue-500 focus:outline-none"
               disabled={selectedBundle === 'nibble'}
             >
-              {currentProduct.options.medium.map(medium => (
+              {(currentProduct.options?.medium || ['pdf', 'paperback']).map(medium => (
                 <option key={medium} value={medium}>
                   {mediumLabels[medium]}
                 </option>
