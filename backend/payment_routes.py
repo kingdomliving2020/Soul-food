@@ -144,23 +144,6 @@ PRODUCTS = {
         "currency": "usd",
         "unit": "set"
     },
-    "bonus_free": {
-        "name": "Bonus Lessons (Free)",
-        "description": "Names of God & Times and Seasons - Free download with no restrictions",
-        "cost": 0.00,
-        "list_price": {
-            "pdf": 0.00
-        },
-        "sale_price": {
-            "pdf": 0.00
-        },
-        "currency": "usd",
-        "unit": "set",
-        "options": {
-            "edition": ["adult", "youth", "instructor"],
-            "medium": ["pdf"]
-        },
-        "note": "Free to download and distribute - no restrictions"
     }
     "subscription_adult": {
         "name": "Adult Edition Subscription",
