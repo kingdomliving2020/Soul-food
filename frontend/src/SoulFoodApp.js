@@ -407,7 +407,7 @@ const SoulFoodLanding = () => {
                     )}
                     
                     <Button
-                      onClick={() => addToCart('mealtime_bundle', 1, { series: s.id, seriesName: s.name })}
+                      onClick={() => openProductModal(s)}
                       variant="outline"
                       className="border-2 border-slate-400 hover:border-slate-600 text-slate-700 hover:bg-slate-50 font-semibold px-4 py-2 rounded-lg transition-all shadow-md"
                     >
