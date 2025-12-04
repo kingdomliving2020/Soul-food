@@ -68,7 +68,7 @@ const SOUL_FOOD_SERIES = {
   holiday: {
     name: "Holiday Series",
     theme: "4 C's of Christianity",
-    icon: "🎄",
+    icon: "🎀",
     color: "from-emerald-500 to-green-600",
     bgColor: "bg-emerald-50",
     borderColor: "border-emerald-200",
