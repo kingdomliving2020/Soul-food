@@ -8,23 +8,7 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
   const [quantity, setQuantity] = useState(1);
   const [showLargeOrderAlert, setShowLargeOrderAlert] = useState(false);
 
-  // Early return if modal is not open or data not loaded
-  if (!isOpen || !seriesData || !products || Object.keys(products).length === 0) {
-    return null;
-  }
-
-  const currentProduct = products[selectedBundle];
-  
-  // Safety check - if product doesn't exist yet, return loading state
-  if (!currentProduct) {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-2xl p-8 shadow-2xl">
-          <p className="text-gray-700">Loading products...</p>
-        </div>
-      </div>
-    );
-  }
+  const currentProduct = products?.[selectedBundle];
   
   // Calculate price based on medium
   const getPrice = (priceObj, medium) => {
