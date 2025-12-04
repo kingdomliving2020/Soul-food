@@ -35,7 +35,7 @@ PRODUCTS = {
         "options": {
             "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
             "edition": ["adult", "youth", "instructor"],
-            "medium": ["pdf"]  # Only PDF download for Nibble - no print logistics
+            "medium": ["pdf"]
         },
         "note": "PDF download only - no print available for single lessons"
     },
@@ -90,11 +90,11 @@ PRODUCTS = {
         "cost": 11.99,
         "list_price": {
             "pdf": 13.99,
-            "paperback": 15.99  # List price + $2 for paperback
+            "paperback": 15.99
         },
         "sale_price": {
             "pdf": 12.99,
-            "paperback": 14.99  # Sale price + $2 for paperback
+            "paperback": 14.99
         },
         "currency": "usd",
         "unit": "set",
@@ -170,7 +170,7 @@ PRODUCTS = {
         "currency": "usd",
         "type": "subscription",
         "billing_cycle": "monthly",
-        "coupon_eligible": False  # Subscriptions cannot use coupons
+        "coupon_eligible": False
     },
     "subscription_youth": {
         "name": "Youth Edition Subscription",
@@ -180,7 +180,7 @@ PRODUCTS = {
         "currency": "usd",
         "type": "subscription",
         "billing_cycle": "monthly",
-        "coupon_eligible": False  # Subscriptions cannot use coupons
+        "coupon_eligible": False
     },
     "subscription_instructor": {
         "name": "Instructor Edition Subscription",
@@ -190,7 +190,7 @@ PRODUCTS = {
         "currency": "usd",
         "type": "subscription",
         "billing_cycle": "monthly",
-        "coupon_eligible": False  # Subscriptions cannot use coupons
+        "coupon_eligible": False
     }
 }
 
