@@ -41,6 +41,8 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
 
   // Check for large print orders
   useEffect(() => {
+    if (!currentProduct) return;
+    
     if (selectedMedium === 'paperback' && quantity >= 25) {
       setShowLargeOrderAlert(true);
       // Send notification to backend
@@ -56,11 +58,11 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
             medium: selectedMedium
           }
         })
-      });
+      }).catch(err => console.error('Failed to send large order notification:', err));
     } else {
       setShowLargeOrderAlert(false);
     }
-  }, [quantity, selectedMedium, selectedEdition, seriesData.id, currentProduct.name]);
+  }, [quantity, selectedMedium, selectedEdition, seriesData?.id, currentProduct?.name]);
 
   const handleAddToCart = () => {
     const cartItem = {
