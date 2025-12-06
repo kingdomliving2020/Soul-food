@@ -352,15 +352,13 @@ const SoulFoodLanding = () => {
             </p>
             
             {/* Music Player - A Friend by Kossi Bruno */}
-            <div className="mt-8 flex justify-center">
-              <div className="bg-white rounded-xl shadow-lg p-4 max-w-lg w-full">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center space-x-2">
-                    <span className="text-2xl">🎵</span>
-                    <div>
-                      <p className="text-sm font-semibold text-gray-800">"A Friend" by Kossi Bruno 🇨🇩</p>
-                      <p className="text-xs text-gray-500">2020 | YouTube</p>
-                    </div>
+            <div className="mt-6 flex justify-center">
+              <div className="bg-white rounded-lg shadow-md p-3 max-w-md w-full">
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="text-lg">🎵</span>
+                  <div>
+                    <p className="text-xs font-semibold text-gray-800">"A Friend" by Kossi Bruno 🇨🇩</p>
+                    <p className="text-xs text-gray-500">2020 | Used with permission</p>
                   </div>
                 </div>
                 <div className="relative" style={{paddingBottom: '56.25%', height: 0, overflow: 'hidden'}}>
