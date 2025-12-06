@@ -350,6 +350,31 @@ const SoulFoodLanding = () => {
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Four transformative courses designed to nourish your spirit throughout the year
             </p>
+            
+            {/* Music Player - A Friend by Kossi Bruno */}
+            <div className="mt-8 flex justify-center">
+              <div className="bg-white rounded-xl shadow-lg p-4 max-w-lg w-full">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-2xl">🎵</span>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">"A Friend" by Kossi Bruno 🇨🇩</p>
+                      <p className="text-xs text-gray-500">2020 | YouTube</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="relative" style={{paddingBottom: '56.25%', height: 0, overflow: 'hidden'}}>
+                  <iframe
+                    style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
+                    src="https://www.youtube.com/embed/mNgYAMFbze0?si=ZAl2fwvmqvk4HDC5&rel=0&modestbranding=1"
+                    title="A Friend by Kossi Bruno"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
