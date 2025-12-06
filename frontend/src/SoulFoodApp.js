@@ -474,14 +474,28 @@ const SoulFoodLanding = () => {
               <p className="mt-4 text-slate-700">
                 Celebrate your faith through the seasons with special lessons on <strong>The Covenant</strong>, <strong>The Cradle</strong>, <strong>The Cross</strong>, and <strong>The Comforter</strong>.
               </p>
-              <div className="mt-4 bg-amber-50 border-2 border-amber-300 rounded-lg p-4">
-                <p className="text-amber-900 font-semibold flex items-center">
-                  <span className="text-2xl mr-2">🎁</span>
-                  <span>Includes Gift Certificate for 8-Hour Game Pass!</span>
-                </p>
-                <p className="text-sm text-amber-700 mt-1 ml-9">
-                  Perfect for testing your knowledge while celebrating the season
-                </p>
+              <div className="mt-4 space-y-3">
+                {/* Gift Certificate */}
+                <div className="bg-amber-50 border-2 border-amber-300 rounded-lg p-4">
+                  <p className="text-amber-900 font-semibold flex items-center">
+                    <span className="text-2xl mr-2">🎁</span>
+                    <span>Includes Gift Certificate for 8-Hour Game Pass!</span>
+                  </p>
+                  <p className="text-sm text-amber-700 mt-1 ml-9">
+                    Perfect for testing your knowledge while celebrating the season
+                  </p>
+                </div>
+                
+                {/* Delivery Notice */}
+                <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4">
+                  <p className="text-blue-900 font-semibold flex items-center">
+                    <span className="text-xl mr-2">📦</span>
+                    <span>Holiday Delivery: Order by December 15th</span>
+                  </p>
+                  <p className="text-sm text-blue-700 mt-1 ml-8">
+                    Delivery between December 23-30th for US locations (timing depends on shipping option selected)
+                  </p>
+                </div>
               </div>
               <div className="flex gap-4 justify-end mt-6">
                 <Button
