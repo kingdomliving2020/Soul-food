@@ -727,7 +727,7 @@ const LandingPage = () => {
           <p className="text-slate-400 mb-6">
             Putting on the whole armor of God and transforming lives through Kingdom principles for ALL nations
           </p>
-          <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm">
+          <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm mb-4">
             <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
               Privacy Policy
             </a>
@@ -736,6 +736,23 @@ const LandingPage = () => {
             </a>
             <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
               Contact
+            </a>
+          </div>
+          
+          {/* Emergent Badge */}
+          <div className="flex justify-center pt-4 border-t border-slate-700">
+            <a
+              href="https://app.emergent.sh/?utm_source=emergent-badge"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 text-slate-400 hover:text-white transition-colors duration-200 text-xs"
+            >
+              <img
+                src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4"
+                alt="Emergent"
+                className="w-5 h-5"
+              />
+              <span>Made with Emergent</span>
             </a>
           </div>
         </div>
