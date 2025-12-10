@@ -1432,6 +1432,23 @@ const SoulFoodLanding = () => {
               © 2025 Kingdom Living Project. All rights reserved. | Launching Christmas 2025
             </p>
           </div>
+          
+          {/* Emergent Badge */}
+          <div className="mt-6 flex justify-center">
+            <a
+              href="https://app.emergent.sh/?utm_source=emergent-badge"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 text-slate-500 hover:text-slate-300 transition-colors duration-200 text-xs"
+            >
+              <img
+                src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4"
+                alt="Emergent"
+                className="w-4 h-4 rounded"
+              />
+              <span>Made with Emergent</span>
+            </a>
+          </div>
         </div>
       </footer>
 
