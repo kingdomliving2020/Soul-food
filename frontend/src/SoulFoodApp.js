@@ -224,6 +224,7 @@ const SoulFoodLanding = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [showProductModal, setShowProductModal] = useState(false);
   const [products, setProducts] = useState({});
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { addToCart } = useCart();
   
   // Fetch products from backend
@@ -252,6 +253,7 @@ const SoulFoodLanding = () => {
       <header className="bg-white/95 backdrop-blur-md border-b border-orange-200 sticky top-0 z-50 shadow-lg">
         <div className="container mx-auto px-3 sm:px-6 py-3 sm:py-6">
           <div className="flex items-center justify-between">
+            {/* Left side - Logo */}
             <div className="flex items-center space-x-2 sm:space-x-5">
               <img 
                 src="/soul-food-logo.png" 
