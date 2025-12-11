@@ -48,10 +48,10 @@ const QuickOrder = () => {
       available: true,
       frontCover: '/covers/holiday-adult-front.jpg',
       badge: 'FREE Bookmark',
-      editions: ['adult-youth-bundle'],
+      editions: ['bundle'],
       formats: ['physical'],
       prices: {
-        'adult-youth-bundle': { physical: 39.99 }
+        bundle: { physical: 39.99 }
       }
     },
     {
