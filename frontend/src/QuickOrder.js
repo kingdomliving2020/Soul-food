@@ -1,12 +1,13 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CartContext } from './CartContext';
+import { useCart } from './CartContext';
 import { toast } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
 
 const QuickOrder = () => {
-  const { addToCart } = useContext(CartContext);
+  const { addToCart } = useCart();
   
   // Product catalog
   const products = [
