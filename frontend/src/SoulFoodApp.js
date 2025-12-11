@@ -271,7 +271,10 @@ const SoulFoodLanding = () => {
                 <Button
                   onClick={() => window.location.href = '/quick-order'}
                   variant="outline"
-                  className="flex items-center gap-2 border-2 border-orange-500 text-orange-600 hover:bg-orange-50 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all shadow-md hover:shadow-lg"
+                  className="flex items-center gap-2 border-2 border-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-padding hover:from-blue-600 hover:to-purple-700 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all shadow-md hover:shadow-lg"
+                  style={{
+                    borderImage: 'linear-gradient(to right, rgb(59, 130, 246), rgb(147, 51, 234)) 1'
+                  }}
                   title="Know what you want? Quick order here!"
                 >
                   {/* Plate with Fork and Spoon Icon */}
