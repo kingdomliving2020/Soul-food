@@ -261,86 +261,90 @@ const QuickOrder = () => {
                         <h3 className="text-lg font-bold text-slate-800">{product.name}</h3>
                         <p className="text-sm text-slate-600">{product.subtitle}</p>
                       </div>
-                  {/* Edition Selector */}
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium mb-1">Edition:</label>
-                    <select
-                      className="w-full p-2 border border-slate-300 rounded-lg"
-                      value={selections[product.id]?.edition || product.editions[0]}
-                      onChange={(e) => updateSelection(product.id, 'edition', e.target.value)}
-                    >
-                      {product.editions.map(ed => (
-                        <option key={ed} value={ed}>
-                          {ed === 'adult' ? 'Adult Edition (AE)' :
-                           ed === 'youth' ? 'Youth Edition (YE)' :
-                           ed === 'instructor' ? 'Instructor Edition (IE)' :
-                           ed === 'bundle' ? 'Complete Bundle Set' : ed}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      {/* Edition Selector */}
+                      <div className="mb-2">
+                        <label className="block text-xs font-medium mb-1">Edition:</label>
+                        <select
+                          className="w-full p-2 border border-slate-300 rounded-lg text-sm"
+                          value={selections[product.id]?.edition || product.editions[0]}
+                          onChange={(e) => updateSelection(product.id, 'edition', e.target.value)}
+                        >
+                          {product.editions.map(ed => (
+                            <option key={ed} value={ed}>
+                              {ed === 'adult' ? 'Adult Edition (AE)' :
+                               ed === 'youth' ? 'Youth Edition (YE)' :
+                               ed === 'instructor' ? 'Instructor Edition (IE)' :
+                               ed === 'bundle' ? 'Complete Bundle Set' : ed}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-                  {/* Format Selector */}
-                  <div className="mb-3">
-                    <label className="block text-sm font-medium mb-1">Format:</label>
-                    <select
-                      className="w-full p-2 border border-slate-300 rounded-lg"
-                      value={selections[product.id]?.format || product.formats[0]}
-                      onChange={(e) => updateSelection(product.id, 'format', e.target.value)}
-                    >
-                      {product.formats.map(fmt => (
-                        <option key={fmt} value={fmt}>
-                          {fmt === 'subscription_monthly' ? 'Monthly Subscription' :
-                           fmt === 'subscription_annual' ? 'Annual Subscription (Save 1 Month!)' :
-                           fmt === 'ebook' ? 'Digital eBook' :
-                           fmt === 'physical' ? 'Physical Book' : fmt}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                      {/* Format Selector */}
+                      <div className="mb-2">
+                        <label className="block text-xs font-medium mb-1">Format:</label>
+                        <select
+                          className="w-full p-2 border border-slate-300 rounded-lg text-sm"
+                          value={selections[product.id]?.format || product.formats[0]}
+                          onChange={(e) => updateSelection(product.id, 'format', e.target.value)}
+                        >
+                          {product.formats.map(fmt => (
+                            <option key={fmt} value={fmt}>
+                              {fmt === 'subscription_monthly' ? 'Monthly Subscription' :
+                               fmt === 'subscription_annual' ? 'Annual Subscription (Save 1 Month!)' :
+                               fmt === 'ebook' ? 'Digital eBook' :
+                               fmt === 'physical' ? 'Physical Book' : fmt}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-                  {/* Quantity Selector */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Quantity:</label>
-                    <div className="flex items-center space-x-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => updateSelection(product.id, 'quantity', Math.max(1, (selections[product.id]?.quantity || 1) - 1))}
-                      >
-                        -
-                      </Button>
-                      <span className="w-12 text-center font-semibold">
-                        {selections[product.id]?.quantity || 1}
-                      </span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => updateSelection(product.id, 'quantity', (selections[product.id]?.quantity || 1) + 1)}
-                      >
-                        +
-                      </Button>
+                      {/* Quantity Selector */}
+                      <div className="mb-3">
+                        <label className="block text-xs font-medium mb-1">Qty:</label>
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => updateSelection(product.id, 'quantity', Math.max(1, (selections[product.id]?.quantity || 1) - 1))}
+                            className="h-8 w-8 p-0"
+                          >
+                            -
+                          </Button>
+                          <span className="w-10 text-center font-semibold text-sm">
+                            {selections[product.id]?.quantity || 1}
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => updateSelection(product.id, 'quantity', (selections[product.id]?.quantity || 1) + 1)}
+                            className="h-8 w-8 p-0"
+                          >
+                            +
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Price & Add to Cart */}
+                      <div className="flex items-center justify-between mt-auto pt-2 border-t">
+                        <div className="text-xl font-bold text-purple-600">
+                          ${getPrice(product).toFixed(2)}
+                          {(selections[product.id]?.format || product.formats[0]) === 'subscription_monthly' && (
+                            <span className="text-xs text-slate-600">/mo</span>
+                          )}
+                          {(selections[product.id]?.format || product.formats[0]) === 'subscription_annual' && (
+                            <span className="text-xs text-slate-600">/year</span>
+                          )}
+                        </div>
+                        <Button
+                          onClick={() => handleAddToCart(product)}
+                          className="bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700"
+                          disabled={!product.available}
+                        >
+                          {product.available ? 'Add to Cart' : 'Coming Soon'}
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-
-                  {/* Price & Add to Cart */}
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold text-purple-600">
-                      ${getPrice(product).toFixed(2)}
-                      {(selections[product.id]?.format || product.formats[0]) === 'subscription_monthly' && (
-                        <span className="text-sm text-slate-600">/mo</span>
-                      )}
-                      {(selections[product.id]?.format || product.formats[0]) === 'subscription_annual' && (
-                        <span className="text-sm text-slate-600">/year</span>
-                      )}
-                    </div>
-                    <Button
-                      onClick={() => handleAddToCart(product)}
-                      className="bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700"
-                      disabled={!product.available}
-                    >
-                      {product.available ? 'Add to Cart' : 'Coming Soon'}
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
