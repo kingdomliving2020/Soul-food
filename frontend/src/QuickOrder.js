@@ -232,26 +232,35 @@ const QuickOrder = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map(product => (
               <Card key={product.id} className="shadow-lg hover:shadow-xl transition-shadow">
-                <CardHeader className="relative">
-                  {!product.available && (
-                    <Badge className="absolute top-4 right-4 bg-amber-500">
-                      Pre-Order {product.comingSoon}
-                    </Badge>
-                  )}
-                  {product.badge && (
-                    <Badge className="absolute top-4 right-4 bg-emerald-500">
-                      {product.badge}
-                    </Badge>
-                  )}
-                  <img 
-                    src={product.frontCover} 
-                    alt={product.name}
-                    className="w-full h-64 object-cover rounded-lg mb-4"
-                  />
-                  <CardTitle className="text-lg">{product.name}</CardTitle>
-                  <p className="text-sm text-slate-600">{product.subtitle}</p>
-                </CardHeader>
-                <CardContent>
+                <CardContent className="p-4">
+                  {/* Amazon-style horizontal layout */}
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    {/* Left: Thumbnail Image */}
+                    <div className="relative flex-shrink-0">
+                      {!product.available && (
+                        <Badge className="absolute top-2 left-2 bg-amber-500 z-10">
+                          Pre-Order {product.comingSoon}
+                        </Badge>
+                      )}
+                      {product.badge && (
+                        <Badge className="absolute top-2 left-2 bg-emerald-500 z-10">
+                          {product.badge}
+                        </Badge>
+                      )}
+                      <img 
+                        src={product.frontCover} 
+                        alt={product.name}
+                        className="w-32 h-48 object-cover rounded-lg border border-slate-200"
+                        style={{ width: '128px', height: '192px' }}
+                      />
+                    </div>
+                    
+                    {/* Right: Product Info & Controls */}
+                    <div className="flex-1 flex flex-col">
+                      <div className="mb-3">
+                        <h3 className="text-lg font-bold text-slate-800">{product.name}</h3>
+                        <p className="text-sm text-slate-600">{product.subtitle}</p>
+                      </div>
                   {/* Edition Selector */}
                   <div className="mb-3">
                     <label className="block text-sm font-medium mb-1">Edition:</label>
