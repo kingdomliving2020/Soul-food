@@ -274,9 +274,9 @@ const SoulFoodLanding = () => {
                     className="flex items-center gap-2 bg-purple-200 hover:bg-purple-300 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-0"
                     title="Know what you want? Quick order here!"
                   >
-                    {/* Clean plate/book/utensils icon */}
+                    {/* Clean plate/book/utensils icon with transparent background */}
                     <img 
-                      src="/quick-order-clean-48.png" 
+                      src="/quick-order-trans-48.png" 
                       alt="Quick Order" 
                       className="h-8 sm:h-10 w-auto"
                     />
