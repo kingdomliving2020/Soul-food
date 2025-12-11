@@ -419,13 +419,22 @@ const QuickOrder = () => {
                     )}
                   </div>
 
-                  {/* Add to Cart */}
-                  <Button
-                    onClick={() => handleMerchandiseAdd(item)}
-                    className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800"
-                  >
-                    Add to Cart
-                  </Button>
+                  {/* Add to Cart or Go to Gift Certificates */}
+                  {item.isGiftCertificate ? (
+                    <Button
+                      onClick={() => window.location.href = item.link}
+                      className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700"
+                    >
+                      Create Gift Certificate →
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => handleMerchandiseAdd(item)}
+                      className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800"
+                    >
+                      Add to Cart
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ))}
