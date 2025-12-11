@@ -76,7 +76,8 @@ const QuickOrder = () => {
       subtitle: 'Finding Your Purpose',
       available: false,
       comingSoon: 'Q1 2026',
-      frontCover: '/covers/breakfast-adult-front.jpg', // Placeholder
+      frontCover: '/soul-food-logo.png',
+      isPlaceholder: true,
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
