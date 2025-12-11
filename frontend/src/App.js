@@ -1824,6 +1824,7 @@ const Dashboard = () => {
 import SoulFoodLanding from "./SoulFoodApp";
 import MixUpGame from './MixUpGame';
 import TrickyTestamentGame from './TrickyTestamentGame';
+import QuickOrder from './QuickOrder';
 
 function App() {
   return (
@@ -1832,6 +1833,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<SoulFoodLanding />} />
+            <Route path="/quick-order" element={<QuickOrder />} />
             <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />
             <Route path="/lesson/:id" element={<LessonViewer />} />
             <Route path="/lessons" element={<LessonsListPage />} />
