@@ -146,7 +146,7 @@ const QuickOrder = () => {
   const getPrice = (product) => {
     const selection = selections[product.id] || {};
     const edition = selection.edition || product.editions[0];
-    const format = selection.format || 'ebook';
+    const format = selection.format || product.formats[0];
     return product.prices[edition]?.[format] || 0;
   };
 
