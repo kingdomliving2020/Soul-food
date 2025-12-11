@@ -118,7 +118,7 @@ const QuickOrder = () => {
       id: 'leather-bookmark',
       name: 'Bygone Leather Bookmark',
       subtitle: 'Personalized with your initial (includes pen holder)',
-      image: 'https://m.media-amazon.com/images/I/71xRvB7qZNL._AC_SL1500_.jpg',
+      image: 'https://m.media-amazon.com/images/I/817cNKnpiYL._AC_SY355_.jpg',
       price: 1.50,
       bundlePrice: { qty: 3, price: 3.00 }
     },
@@ -126,7 +126,7 @@ const QuickOrder = () => {
       id: 'metal-bookmark',
       name: 'Metal Artistic Bookmark',
       subtitle: 'Decorative design',
-      image: 'https://m.media-amazon.com/images/I/71J8gYvJQ2L._AC_SL1500_.jpg',
+      image: 'https://m.media-amazon.com/images/I/71Hv1nTyAtL._AC_SY355_.jpg',
       price: 1.50,
       bundlePrice: { qty: 3, price: 3.00 }
     },
