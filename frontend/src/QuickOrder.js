@@ -19,11 +19,11 @@ const QuickOrder = () => {
       frontCover: '/covers/breakfast-adult-front.jpg',
       backCover: '/covers/breakfast-adult-back.jpg',
       editions: ['adult', 'youth', 'instructor'],
-      formats: ['subscription', 'ebook', 'physical'],
+      formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
-        adult: { subscription: 9.99, ebook: 31.99, physical: 39.99 },
-        youth: { subscription: 9.99, ebook: 31.99, physical: 39.99 },
-        instructor: { subscription: 14.99, ebook: 68.99, physical: 79.99 }
+        adult: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
+        youth: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
+        instructor: { subscription_monthly: 14.99, subscription_annual: 164.89, ebook: 68.99, physical: 79.99 }
       }
     },
     {
@@ -34,11 +34,11 @@ const QuickOrder = () => {
       frontCover: '/covers/holiday-adult-front.jpg',
       backCover: '/covers/holiday-adult-back.jpg',
       editions: ['adult', 'youth', 'instructor'],
-      formats: ['subscription', 'ebook', 'physical'],
+      formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
-        adult: { subscription: 9.99, ebook: 31.99, physical: 39.99 },
-        youth: { subscription: 9.99, ebook: 31.99, physical: 39.99 },
-        instructor: { subscription: 14.99, ebook: 68.99, physical: 79.99 }
+        adult: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
+        youth: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
+        instructor: { subscription_monthly: 14.99, subscription_annual: 164.89, ebook: 68.99, physical: 79.99 }
       }
     },
     {
@@ -62,11 +62,11 @@ const QuickOrder = () => {
       comingSoon: 'Q1 2026',
       frontCover: '/covers/holiday-adult-front.jpg', // Placeholder
       editions: ['adult', 'youth', 'instructor'],
-      formats: ['subscription', 'ebook', 'physical'],
+      formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
-        adult: { subscription: 9.99, ebook: 31.99, physical: 39.99 },
-        youth: { subscription: 9.99, ebook: 31.99, physical: 39.99 },
-        instructor: { subscription: 14.99, ebook: 68.99, physical: 79.99 }
+        adult: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
+        youth: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
+        instructor: { subscription_monthly: 14.99, subscription_annual: 164.89, ebook: 68.99, physical: 79.99 }
       }
     },
     {
@@ -77,11 +77,11 @@ const QuickOrder = () => {
       comingSoon: 'Q1 2026',
       frontCover: '/covers/breakfast-adult-front.jpg', // Placeholder
       editions: ['adult', 'youth', 'instructor'],
-      formats: ['subscription', 'ebook', 'physical'],
+      formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
-        adult: { subscription: 9.99, ebook: 31.99, physical: 39.99 },
-        youth: { subscription: 9.99, ebook: 31.99, physical: 39.99 },
-        instructor: { subscription: 14.99, ebook: 68.99, physical: 79.99 }
+        adult: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
+        youth: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
+        instructor: { subscription_monthly: 14.99, subscription_annual: 164.89, ebook: 68.99, physical: 79.99 }
       }
     },
     {
@@ -92,11 +92,11 @@ const QuickOrder = () => {
       comingSoon: 'Q2 2026',
       frontCover: '/covers/breakfast-adult-front.jpg', // Placeholder
       editions: ['adult', 'youth', 'instructor'],
-      formats: ['subscription', 'ebook', 'physical'],
+      formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
-        adult: { subscription: 9.99, ebook: 31.99, physical: 39.99 },
-        youth: { subscription: 9.99, ebook: 31.99, physical: 39.99 },
-        instructor: { subscription: 14.99, ebook: 68.99, physical: 79.99 }
+        adult: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
+        youth: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
+        instructor: { subscription_monthly: 14.99, subscription_annual: 164.89, ebook: 68.99, physical: 79.99 }
       }
     }
   ];
