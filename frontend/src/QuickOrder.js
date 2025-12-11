@@ -153,7 +153,7 @@ const QuickOrder = () => {
   const handleAddToCart = (product) => {
     const selection = selections[product.id] || {};
     const edition = selection.edition || product.editions[0];
-    const format = selection.format || 'ebook';
+    const format = selection.format || product.formats[0];
     const quantity = selection.quantity || 1;
     const price = getPrice(product);
 
