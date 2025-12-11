@@ -256,7 +256,7 @@ const QuickOrder = () => {
                           {ed === 'adult' ? 'Adult Edition (AE)' :
                            ed === 'youth' ? 'Youth Edition (YE)' :
                            ed === 'instructor' ? 'Instructor Edition (IE)' :
-                           ed === 'adult-youth-bundle' ? 'Adult + Youth Bundle' : ed}
+                           ed === 'bundle' ? 'Complete Bundle Set' : ed}
                         </option>
                       ))}
                     </select>
