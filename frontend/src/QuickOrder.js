@@ -250,12 +250,32 @@ const QuickOrder = () => {
                           {product.badge}
                         </Badge>
                       )}
-                      <img 
-                        src={product.frontCover} 
-                        alt={product.name}
-                        className="w-32 h-48 object-cover rounded-lg border border-slate-200"
-                        style={{ width: '128px', height: '192px' }}
-                      />
+                      
+                      {/* Image with Coming Soon overlay for placeholders */}
+                      {product.isPlaceholder ? (
+                        <div className="w-32 h-48 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center relative overflow-hidden" style={{ width: '128px', height: '192px' }}>
+                          {/* Faded Soul Food logo background */}
+                          <img 
+                            src={product.frontCover} 
+                            alt={product.name}
+                            className="absolute inset-0 w-full h-full object-contain opacity-20"
+                            style={{ filter: 'grayscale(50%) brightness(150%)' }}
+                          />
+                          {/* COMING SOON watermark */}
+                          <div className="absolute inset-0 flex items-center justify-center z-10">
+                            <span className="text-slate-400 font-bold text-lg transform -rotate-12 whitespace-nowrap" style={{ textShadow: '0 0 10px white' }}>
+                              COMING SOON
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <img 
+                          src={product.frontCover} 
+                          alt={product.name}
+                          className="w-32 h-48 object-cover rounded-lg border border-slate-200"
+                          style={{ width: '128px', height: '192px' }}
+                        />
+                      )}
                     </div>
                     
                     {/* Right: Product Info & Controls */}
