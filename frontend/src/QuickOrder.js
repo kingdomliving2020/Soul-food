@@ -273,7 +273,7 @@ const QuickOrder = () => {
                       {product.formats.map(fmt => (
                         <option key={fmt} value={fmt}>
                           {fmt === 'subscription_monthly' ? 'Monthly Subscription' :
-                           fmt === 'subscription_annual' ? 'Annual Subscription' :
+                           fmt === 'subscription_annual' ? 'Annual Subscription (Save 1 Month!)' :
                            fmt === 'ebook' ? 'Digital eBook' :
                            fmt === 'physical' ? 'Physical Book' : fmt}
                         </option>
