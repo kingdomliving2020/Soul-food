@@ -274,11 +274,22 @@ const SoulFoodLanding = () => {
                   className="flex items-center gap-2 border-2 border-orange-500 text-orange-600 hover:bg-orange-50 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all shadow-md hover:shadow-lg"
                   title="Know what you want? Quick order here!"
                 >
-                  {/* Serving Dish Icon */}
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-                    <path d="M12 6c-3.31 0-6 2.69-6 6h12c0-3.31-2.69-6-6-6z"/>
-                    <circle cx="12" cy="12" r="1.5"/>
+                  {/* Plate with Fork and Spoon Icon */}
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    {/* Plate (Circle) */}
+                    <circle cx="12" cy="13" r="6" strokeWidth="1.5" fill="none" />
+                    <circle cx="12" cy="13" r="4.5" strokeWidth="0.8" fill="none" opacity="0.5" />
+                    
+                    {/* Fork (Left side) */}
+                    <path d="M4 6 L4 11" strokeWidth="1" strokeLinecap="round"/>
+                    <path d="M3 6 L3 9" strokeWidth="1" strokeLinecap="round"/>
+                    <path d="M5 6 L5 9" strokeWidth="1" strokeLinecap="round"/>
+                    <path d="M3 11 L5 11" strokeWidth="1" strokeLinecap="round"/>
+                    <path d="M4 11 L4 14" strokeWidth="1.2" strokeLinecap="round"/>
+                    
+                    {/* Spoon (Right side) */}
+                    <ellipse cx="20" cy="7.5" rx="1.2" ry="2" strokeWidth="1" fill="currentColor" opacity="0.3"/>
+                    <path d="M20 9.5 L20 14" strokeWidth="1.2" strokeLinecap="round"/>
                   </svg>
                   <span className="hidden sm:inline">Quick Order</span>
                   <span className="sm:hidden">Order</span>
