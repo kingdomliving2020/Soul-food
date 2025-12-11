@@ -292,9 +292,10 @@ const SoulFoodLanding = () => {
                     <ellipse cx="20" cy="7.5" rx="1.2" ry="2" strokeWidth="1" fill="currentColor" opacity="0.3"/>
                     <path d="M20 9.5 L20 14" strokeWidth="1.2" strokeLinecap="round"/>
                   </svg>
-                  <span className="hidden sm:inline">Quick Order</span>
-                  <span className="sm:hidden">Order</span>
-                </Button>
+                    <span className="hidden sm:inline bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Quick Order</span>
+                    <span className="sm:hidden bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Order</span>
+                  </Button>
+                </div>
                 {/* Tooltip on hover */}
                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-slate-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50 shadow-xl">
                   Truth Served Here ✨
