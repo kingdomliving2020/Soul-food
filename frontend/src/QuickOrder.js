@@ -92,7 +92,8 @@ const QuickOrder = () => {
       subtitle: 'Maturity in Faith',
       available: false,
       comingSoon: 'Q2 2026',
-      frontCover: '/covers/breakfast-adult-front.jpg', // Placeholder
+      frontCover: '/soul-food-logo.png',
+      isPlaceholder: true,
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
