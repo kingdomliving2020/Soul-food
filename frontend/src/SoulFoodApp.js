@@ -268,10 +268,10 @@ const SoulFoodLanding = () => {
             <div className="flex items-center gap-2 sm:gap-5">
               {/* Quick Order Button - Truth Served Daily icon */}
               <div className="relative group">
-                <div className="relative rounded-xl shadow-md hover:shadow-lg transition-all border border-slate-200">
+                <div className="relative rounded-xl shadow-md hover:shadow-lg transition-all">
                   <Button
                     onClick={() => window.location.href = '/quick-order'}
-                    className="flex items-center gap-1 sm:gap-2 bg-slate-100 hover:bg-slate-200 px-2 sm:px-4 py-1.5 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-0"
+                    className="flex items-center gap-1 sm:gap-2 bg-slate-100 hover:bg-slate-200 px-2 sm:px-4 py-1.5 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-2 border-black"
                     title="Truth, Served Daily - Quick order here!"
                   >
                     {/* Truth Served Daily icon */}
