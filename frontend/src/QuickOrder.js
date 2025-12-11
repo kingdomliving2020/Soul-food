@@ -6,9 +6,135 @@ import { useCart } from './CartContext';
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 
+// Back Cover Preview Modal Component
+const BackCoverModal = ({ isOpen, onClose, frontCover, backCover, productName }) => {
+  const [showBack, setShowBack] = useState(false);
+  const [zoom, setZoom] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+
+  if (!isOpen) return null;
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setMousePos({ x, y });
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <h3 className="text-lg font-bold text-slate-800">{productName}</h3>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        {/* Cover Toggle */}
+        <div className="flex justify-center gap-4 p-3 bg-slate-50">
+          <button
+            onClick={() => setShowBack(false)}
+            className={`px-4 py-2 rounded-lg font-medium transition-all ${!showBack ? 'bg-purple-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+          >
+            Front Cover
+          </button>
+          <button
+            onClick={() => setShowBack(true)}
+            className={`px-4 py-2 rounded-lg font-medium transition-all ${showBack ? 'bg-purple-600 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+          >
+            Back Cover
+          </button>
+        </div>
+
+        {/* Image with Magnify */}
+        <div className="p-6 flex justify-center">
+          <div 
+            className="relative cursor-zoom-in overflow-hidden rounded-lg shadow-lg"
+            style={{ maxWidth: '350px' }}
+            onMouseEnter={() => setZoom(true)}
+            onMouseLeave={() => setZoom(false)}
+            onMouseMove={handleMouseMove}
+          >
+            <img 
+              src={showBack ? backCover : frontCover} 
+              alt={showBack ? 'Back Cover' : 'Front Cover'}
+              className="w-full h-auto transition-transform duration-200"
+              style={zoom ? {
+                transform: 'scale(2)',
+                transformOrigin: `${mousePos.x}% ${mousePos.y}%`
+              } : {}}
+            />
+            {/* Magnify hint */}
+            {!zoom && (
+              <div className="absolute bottom-3 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                </svg>
+                Hover to zoom
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const QuickOrder = () => {
   const { addToCart } = useCart();
+  const [previewModal, setPreviewModal] = useState({ isOpen: false, frontCover: '', backCover: '', productName: '' });
   
+  // Cover images mapping by edition and format
+  const coverImages = {
+    breakfast: {
+      adult: {
+        physical: { front: '/covers/breakfast-adult-front.jpg', back: '/covers/breakfast-adult-back.jpg' },
+        ebook: { front: '/covers/breakfast-adult-front.jpg', back: '/covers/breakfast-adult-back.jpg' },
+        subscription_monthly: { front: '/covers/breakfast-adult-front.jpg', back: '/covers/breakfast-adult-back.jpg' },
+        subscription_annual: { front: '/covers/breakfast-adult-front.jpg', back: '/covers/breakfast-adult-back.jpg' }
+      },
+      youth: {
+        physical: { front: '/covers/breakfast-youth-front.jpg', back: '/covers/breakfast-youth-back.jpg' },
+        ebook: { front: '/covers/breakfast-youth-ebook-front.jpg', back: '/covers/breakfast-youth-ebook-back.jpg' },
+        subscription_monthly: { front: '/covers/breakfast-youth-front.jpg', back: '/covers/breakfast-youth-back.jpg' },
+        subscription_annual: { front: '/covers/breakfast-youth-front.jpg', back: '/covers/breakfast-youth-back.jpg' }
+      },
+      instructor: {
+        physical: { front: '/covers/breakfast-instructor-front.jpg', back: '/covers/breakfast-instructor-back.jpg' },
+        ebook: { front: '/covers/breakfast-instructor-front.jpg', back: '/covers/breakfast-instructor-back.jpg' },
+        subscription_monthly: { front: '/covers/breakfast-instructor-front.jpg', back: '/covers/breakfast-instructor-back.jpg' },
+        subscription_annual: { front: '/covers/breakfast-instructor-front.jpg', back: '/covers/breakfast-instructor-back.jpg' }
+      }
+    },
+    holiday: {
+      adult: {
+        physical: { front: '/covers/holiday-adult-front.jpg', back: '/covers/holiday-adult-back.jpg' },
+        ebook: { front: '/covers/holiday-adult-ebook-front.jpg', back: '/covers/holiday-adult-back.jpg' },
+        subscription_monthly: { front: '/covers/holiday-adult-front.jpg', back: '/covers/holiday-adult-back.jpg' },
+        subscription_annual: { front: '/covers/holiday-adult-front.jpg', back: '/covers/holiday-adult-back.jpg' }
+      },
+      youth: {
+        physical: { front: '/covers/holiday-adult-front.jpg', back: '/covers/holiday-youth-back.jpg' },
+        ebook: { front: '/covers/holiday-adult-front.jpg', back: '/covers/holiday-youth-ebook-back.jpg' },
+        subscription_monthly: { front: '/covers/holiday-adult-front.jpg', back: '/covers/holiday-youth-back.jpg' },
+        subscription_annual: { front: '/covers/holiday-adult-front.jpg', back: '/covers/holiday-youth-back.jpg' }
+      },
+      instructor: {
+        physical: { front: '/covers/holiday-instructor-front.jpg', back: '/covers/holiday-adult-back.jpg' },
+        ebook: { front: '/covers/holiday-instructor-front.jpg', back: '/covers/holiday-instructor-ebook-back.jpg' },
+        subscription_monthly: { front: '/covers/holiday-instructor-front.jpg', back: '/covers/holiday-adult-back.jpg' },
+        subscription_annual: { front: '/covers/holiday-instructor-front.jpg', back: '/covers/holiday-adult-back.jpg' }
+      },
+      bundle: {
+        physical: { front: '/covers/holiday-adult-front.jpg', back: '/covers/holiday-adult-back.jpg' }
+      }
+    }
+  };
+
   // Product catalog
   const products = [
     {
@@ -16,8 +142,6 @@ const QuickOrder = () => {
       name: 'Break*fast Series',
       subtitle: 'Foundation in Christ',
       available: true,
-      frontCover: '/covers/breakfast-adult-front.jpg',
-      backCover: '/covers/breakfast-adult-back.jpg',
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
@@ -31,8 +155,6 @@ const QuickOrder = () => {
       name: 'Holiday Series',
       subtitle: '4 C\'s of Christianity',
       available: true,
-      frontCover: '/covers/holiday-adult-front.jpg',
-      backCover: '/covers/holiday-adult-back.jpg',
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
@@ -46,13 +168,13 @@ const QuickOrder = () => {
       name: 'Holiday Box Set',
       subtitle: 'Holiday + Break*fast Series Bundle',
       available: true,
-      frontCover: '/covers/holiday-adult-front.jpg',
       badge: 'FREE Bookmark',
       editions: ['bundle'],
       formats: ['physical'],
       prices: {
         bundle: { physical: 39.99 }
-      }
+      },
+      useHolidayCovers: true
     },
     {
       id: 'lunch',
@@ -60,7 +182,6 @@ const QuickOrder = () => {
       subtitle: 'Kingdom Relationships',
       available: false,
       comingSoon: 'Q1 2026',
-      frontCover: '/soul-food-logo.png',
       isPlaceholder: true,
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
@@ -76,7 +197,6 @@ const QuickOrder = () => {
       subtitle: 'Finding Your Purpose',
       available: false,
       comingSoon: 'Q1 2026',
-      frontCover: '/soul-food-logo.png',
       isPlaceholder: true,
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
@@ -92,7 +212,6 @@ const QuickOrder = () => {
       subtitle: 'Maturity in Faith',
       available: false,
       comingSoon: 'Q2 2026',
-      frontCover: '/soul-food-logo.png',
       isPlaceholder: true,
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
@@ -118,7 +237,7 @@ const QuickOrder = () => {
       id: 'leather-bookmark',
       name: 'Bygone Leather Bookmark',
       subtitle: 'Personalized with your initial (includes pen holder)',
-      image: 'https://m.media-amazon.com/images/I/817cNKnpiYL._AC_SY355_.jpg',
+      image: '/covers/leather-bookmark.png',
       price: 1.50,
       bundlePrice: { qty: 3, price: 3.00 }
     },
@@ -126,7 +245,7 @@ const QuickOrder = () => {
       id: 'metal-bookmark',
       name: 'Metal Artistic Bookmark',
       subtitle: 'Decorative design',
-      image: 'https://m.media-amazon.com/images/I/71Hv1nTyAtL._AC_SY355_.jpg',
+      image: '/covers/metal-bookmark.png',
       price: 1.50,
       bundlePrice: { qty: 3, price: 3.00 }
     },
@@ -134,7 +253,7 @@ const QuickOrder = () => {
       id: 'soul-food-pen',
       name: 'Soul Food "Truth Served Daily" Pen',
       subtitle: 'Medium tip with stylus (Black or Blue ink)',
-      image: 'https://m.media-amazon.com/images/I/71kXBnL+YzL._AC_SL1500_.jpg',
+      image: '/covers/pen.png',
       price: 4.00,
       bundlePrice: { qty: 6, price: 20.00 },
       bulkBonus: 'FREE with book orders: 2 pens (10+ books), 5 pens (25+ books), 10 pens (50+ books)'
@@ -156,6 +275,32 @@ const QuickOrder = () => {
     }));
   };
 
+  // Get the correct cover image based on product, edition, and format
+  const getCoverImage = (product, type = 'front') => {
+    const selection = selections[product.id] || {};
+    const edition = selection.edition || product.editions[0];
+    const format = selection.format || product.formats[0];
+    
+    // Handle box set
+    if (product.useHolidayCovers) {
+      return coverImages.holiday?.bundle?.physical?.[type] || '/covers/holiday-adult-front.jpg';
+    }
+    
+    // Handle placeholder products
+    if (product.isPlaceholder) {
+      return '/soul-food-logo.png';
+    }
+    
+    // Get cover from mapping
+    const productCovers = coverImages[product.id];
+    if (productCovers && productCovers[edition] && productCovers[edition][format]) {
+      return productCovers[edition][format][type];
+    }
+    
+    // Fallback
+    return type === 'front' ? '/covers/breakfast-adult-front.jpg' : '/covers/breakfast-adult-back.jpg';
+  };
+
   const getPrice = (product) => {
     const selection = selections[product.id] || {};
     const edition = selection.edition || product.editions[0];
@@ -175,7 +320,7 @@ const QuickOrder = () => {
       name: `${product.name} - ${edition.toUpperCase()} - ${format.toUpperCase()}`,
       price: price,
       quantity: quantity,
-      image: product.frontCover
+      image: getCoverImage(product, 'front')
     });
 
     toast.success(`Added ${quantity}x ${product.name} to cart!`);
@@ -197,10 +342,30 @@ const QuickOrder = () => {
     toast.success(`Added ${quantity}x ${item.name} to cart!`);
   };
 
+  const openPreview = (product) => {
+    setPreviewModal({
+      isOpen: true,
+      frontCover: getCoverImage(product, 'front'),
+      backCover: getCoverImage(product, 'back'),
+      productName: product.name
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50">
+      <Toaster position="top-right" />
+      
+      {/* Back Cover Preview Modal */}
+      <BackCoverModal 
+        isOpen={previewModal.isOpen}
+        onClose={() => setPreviewModal({ ...previewModal, isOpen: false })}
+        frontCover={previewModal.frontCover}
+        backCover={previewModal.backCover}
+        productName={previewModal.productName}
+      />
+
       {/* Header */}
-      <header className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+      <header className="bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm">
         <div className="container mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center justify-between">
             <Button
@@ -238,67 +403,79 @@ const QuickOrder = () => {
               <Card key={product.id} className="shadow-lg hover:shadow-xl transition-shadow">
                 <CardContent className="p-4">
                   {/* Amazon-style horizontal layout */}
-                  <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="flex gap-4">
                     {/* Left: Thumbnail Image */}
                     <div className="relative flex-shrink-0">
                       {!product.available && (
-                        <Badge className="absolute top-2 left-2 bg-amber-500 z-10">
+                        <Badge className="absolute top-2 left-2 bg-amber-500 z-10 text-xs">
                           Pre-Order {product.comingSoon}
                         </Badge>
                       )}
                       {product.badge && (
-                        <Badge className="absolute top-2 left-2 bg-emerald-500 z-10">
+                        <Badge className="absolute top-2 left-2 bg-emerald-500 z-10 text-xs">
                           {product.badge}
                         </Badge>
                       )}
                       
                       {/* Image with Coming Soon overlay for placeholders */}
                       {product.isPlaceholder ? (
-                        <div className="w-32 h-48 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center relative overflow-hidden" style={{ width: '128px', height: '192px' }}>
+                        <div className="w-24 h-36 bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center relative overflow-hidden">
                           {/* Faded Soul Food logo background */}
                           <img 
-                            src={product.frontCover} 
+                            src="/soul-food-logo.png" 
                             alt={product.name}
                             className="absolute inset-0 w-full h-full object-contain opacity-20"
                             style={{ filter: 'grayscale(50%) brightness(150%)' }}
                           />
                           {/* COMING SOON watermark */}
                           <div className="absolute inset-0 flex items-center justify-center z-10">
-                            <span className="text-slate-400 font-bold text-lg transform -rotate-12 whitespace-nowrap" style={{ textShadow: '0 0 10px white' }}>
+                            <span className="text-slate-400 font-bold text-xs transform -rotate-12 whitespace-nowrap" style={{ textShadow: '0 0 10px white' }}>
                               COMING SOON
                             </span>
                           </div>
                         </div>
                       ) : (
-                        <img 
-                          src={product.frontCover} 
-                          alt={product.name}
-                          className="w-32 h-48 object-cover rounded-lg border border-slate-200"
-                          style={{ width: '128px', height: '192px' }}
-                        />
+                        <div className="relative group">
+                          <img 
+                            src={getCoverImage(product, 'front')} 
+                            alt={product.name}
+                            className="w-24 h-36 object-cover rounded-lg border border-slate-200"
+                          />
+                          {/* Magnifying glass button */}
+                          <button
+                            onClick={() => openPreview(product)}
+                            className="absolute bottom-1 right-1 bg-black/60 hover:bg-black/80 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            title="View covers"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+                            </svg>
+                          </button>
+                        </div>
                       )}
                     </div>
                     
                     {/* Right: Product Info & Controls */}
-                    <div className="flex-1 flex flex-col">
-                      <div className="mb-3">
-                        <h3 className="text-lg font-bold text-slate-800">{product.name}</h3>
-                        <p className="text-sm text-slate-600">{product.subtitle}</p>
+                    <div className="flex-1 flex flex-col min-w-0">
+                      <div className="mb-2">
+                        <h3 className="text-base font-bold text-slate-800 truncate">{product.name}</h3>
+                        <p className="text-xs text-slate-600">{product.subtitle}</p>
                       </div>
+                      
                       {/* Edition Selector */}
                       <div className="mb-2">
-                        <label className="block text-xs font-medium mb-1">Edition:</label>
+                        <label className="block text-xs font-medium mb-1 text-slate-700">Edition:</label>
                         <select
-                          className="w-full p-2 border border-slate-300 rounded-lg text-sm"
+                          className="w-full p-1.5 border border-slate-300 rounded text-xs"
                           value={selections[product.id]?.edition || product.editions[0]}
                           onChange={(e) => updateSelection(product.id, 'edition', e.target.value)}
                         >
                           {product.editions.map(ed => (
                             <option key={ed} value={ed}>
-                              {ed === 'adult' ? 'Adult Edition (AE)' :
-                               ed === 'youth' ? 'Youth Edition (YE)' :
-                               ed === 'instructor' ? 'Instructor Edition (IE)' :
-                               ed === 'bundle' ? 'Complete Bundle Set' : ed}
+                              {ed === 'adult' ? 'Adult (AE)' :
+                               ed === 'youth' ? 'Youth (YE)' :
+                               ed === 'instructor' ? 'Instructor (IE)' :
+                               ed === 'bundle' ? 'Bundle Set' : ed}
                             </option>
                           ))}
                         </select>
@@ -306,43 +483,43 @@ const QuickOrder = () => {
 
                       {/* Format Selector */}
                       <div className="mb-2">
-                        <label className="block text-xs font-medium mb-1">Format:</label>
+                        <label className="block text-xs font-medium mb-1 text-slate-700">Format:</label>
                         <select
-                          className="w-full p-2 border border-slate-300 rounded-lg text-sm"
+                          className="w-full p-1.5 border border-slate-300 rounded text-xs"
                           value={selections[product.id]?.format || product.formats[0]}
                           onChange={(e) => updateSelection(product.id, 'format', e.target.value)}
                         >
                           {product.formats.map(fmt => (
                             <option key={fmt} value={fmt}>
-                              {fmt === 'subscription_monthly' ? 'Monthly Subscription' :
-                               fmt === 'subscription_annual' ? 'Annual Subscription (Save 1 Month!)' :
-                               fmt === 'ebook' ? 'Digital eBook' :
-                               fmt === 'physical' ? 'Physical Book' : fmt}
+                              {fmt === 'subscription_monthly' ? 'Monthly Sub' :
+                               fmt === 'subscription_annual' ? 'Annual Sub' :
+                               fmt === 'ebook' ? 'eBook' :
+                               fmt === 'physical' ? 'Physical' : fmt}
                             </option>
                           ))}
                         </select>
                       </div>
 
                       {/* Quantity Selector */}
-                      <div className="mb-3">
-                        <label className="block text-xs font-medium mb-1">Qty:</label>
-                        <div className="flex items-center space-x-2">
+                      <div className="mb-2">
+                        <label className="block text-xs font-medium mb-1 text-slate-700">Qty:</label>
+                        <div className="flex items-center space-x-1">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => updateSelection(product.id, 'quantity', Math.max(1, (selections[product.id]?.quantity || 1) - 1))}
-                            className="h-8 w-8 p-0"
+                            className="h-6 w-6 p-0 text-xs"
                           >
                             -
                           </Button>
-                          <span className="w-10 text-center font-semibold text-sm">
+                          <span className="w-8 text-center font-semibold text-sm">
                             {selections[product.id]?.quantity || 1}
                           </span>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => updateSelection(product.id, 'quantity', (selections[product.id]?.quantity || 1) + 1)}
-                            className="h-8 w-8 p-0"
+                            className="h-6 w-6 p-0 text-xs"
                           >
                             +
                           </Button>
@@ -350,22 +527,23 @@ const QuickOrder = () => {
                       </div>
 
                       {/* Price & Add to Cart */}
-                      <div className="flex items-center justify-between mt-auto pt-2 border-t">
-                        <div className="text-xl font-bold text-purple-600">
+                      <div className="flex items-center justify-between mt-auto pt-2 border-t border-slate-100">
+                        <div className="text-lg font-bold text-purple-600">
                           ${getPrice(product).toFixed(2)}
                           {(selections[product.id]?.format || product.formats[0]) === 'subscription_monthly' && (
-                            <span className="text-xs text-slate-600">/mo</span>
+                            <span className="text-xs text-slate-500">/mo</span>
                           )}
                           {(selections[product.id]?.format || product.formats[0]) === 'subscription_annual' && (
-                            <span className="text-xs text-slate-600">/year</span>
+                            <span className="text-xs text-slate-500">/yr</span>
                           )}
                         </div>
                         <Button
                           onClick={() => handleAddToCart(product)}
-                          className="bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700"
+                          size="sm"
+                          className="bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700 text-xs px-3"
                           disabled={!product.available}
                         >
-                          {product.available ? 'Add to Cart' : 'Coming Soon'}
+                          {product.available ? 'Add' : 'Soon'}
                         </Button>
                       </div>
                     </div>
@@ -379,25 +557,24 @@ const QuickOrder = () => {
         {/* Merchandise Section */}
         <section>
           <h3 className="text-2xl font-bold mb-6 text-slate-800">🎁 Merchandise</h3>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {merchandise.map(item => (
               <Card key={item.id} className="shadow-lg hover:shadow-xl transition-shadow">
-                <CardHeader>
+                <CardContent className="p-4">
                   <img 
                     src={item.image} 
                     alt={item.name}
-                    className="w-full h-48 object-contain rounded-lg mb-4 bg-white"
+                    className="w-full h-32 object-contain rounded-lg mb-3 bg-white"
                   />
-                  <CardTitle className="text-lg">{item.name}</CardTitle>
-                  <p className="text-sm text-slate-600">{item.subtitle}</p>
-                </CardHeader>
-                <CardContent>
+                  <h4 className="text-sm font-bold text-slate-800 mb-1">{item.name}</h4>
+                  <p className="text-xs text-slate-600 mb-3">{item.subtitle}</p>
+                  
                   {/* Pen Color Selector */}
                   {item.id === 'soul-food-pen' && (
-                    <div className="mb-3">
-                      <label className="block text-sm font-medium mb-1">Ink Color:</label>
+                    <div className="mb-2">
+                      <label className="block text-xs font-medium mb-1">Ink Color:</label>
                       <select
-                        className="w-full p-2 border border-slate-300 rounded-lg"
+                        className="w-full p-1.5 border border-slate-300 rounded text-xs"
                         value={selections[item.id]?.inkColor || 'black'}
                         onChange={(e) => updateSelection(item.id, 'inkColor', e.target.value)}
                       >
@@ -409,13 +586,13 @@ const QuickOrder = () => {
 
                   {/* Leather Bookmark Initial */}
                   {item.id === 'leather-bookmark' && (
-                    <div className="mb-3">
-                      <label className="block text-sm font-medium mb-1">Your Initial:</label>
+                    <div className="mb-2">
+                      <label className="block text-xs font-medium mb-1">Your Initial:</label>
                       <input
                         type="text"
                         maxLength="1"
                         placeholder="A"
-                        className="w-full p-2 border border-slate-300 rounded-lg uppercase"
+                        className="w-full p-1.5 border border-slate-300 rounded text-xs uppercase"
                         value={selections[item.id]?.initial || ''}
                         onChange={(e) => updateSelection(item.id, 'initial', e.target.value.toUpperCase())}
                       />
@@ -423,23 +600,25 @@ const QuickOrder = () => {
                   )}
 
                   {/* Quantity */}
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Quantity:</label>
-                    <div className="flex items-center space-x-2">
+                  <div className="mb-2">
+                    <label className="block text-xs font-medium mb-1">Quantity:</label>
+                    <div className="flex items-center space-x-1">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => updateSelection(item.id, 'quantity', Math.max(1, (selections[item.id]?.quantity || 1) - 1))}
+                        className="h-6 w-6 p-0 text-xs"
                       >
                         -
                       </Button>
-                      <span className="w-12 text-center font-semibold">
+                      <span className="w-8 text-center font-semibold text-sm">
                         {selections[item.id]?.quantity || 1}
                       </span>
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => updateSelection(item.id, 'quantity', (selections[item.id]?.quantity || 1) + 1)}
+                        className="h-6 w-6 p-0 text-xs"
                       >
                         +
                       </Button>
@@ -447,8 +626,8 @@ const QuickOrder = () => {
                   </div>
 
                   {/* Price Info */}
-                  <div className="mb-3 text-sm text-slate-600">
-                    <div>${item.price.toFixed(2)} each</div>
+                  <div className="mb-3 text-xs text-slate-600">
+                    <div className="font-semibold">${item.price.toFixed(2)} each</div>
                     {item.bundlePrice && (
                       <div className="text-emerald-600 font-semibold">
                         {item.bundlePrice.qty} for ${item.bundlePrice.price.toFixed(2)}
@@ -460,14 +639,16 @@ const QuickOrder = () => {
                   {item.isGiftCertificate ? (
                     <Button
                       onClick={() => window.location.href = item.link}
-                      className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700"
+                      size="sm"
+                      className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-xs"
                     >
                       Create Gift Certificate →
                     </Button>
                   ) : (
                     <Button
                       onClick={() => handleMerchandiseAdd(item)}
-                      className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800"
+                      size="sm"
+                      className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-xs"
                     >
                       Add to Cart
                     </Button>
@@ -478,28 +659,33 @@ const QuickOrder = () => {
           </div>
         </section>
 
-        {/* Bulk Order Info */}
+        {/* Bulk Order Info - ALL THREE TIERS */}
         <section className="mt-12">
           <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200">
             <CardHeader>
               <CardTitle className="text-2xl text-purple-900">🎉 Bulk Order Bonuses!</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-3 gap-6 text-center">
-                <div className="bg-white p-6 rounded-xl shadow">
-                  <div className="text-4xl mb-2">📦</div>
-                  <div className="font-bold text-lg mb-2">10+ Books</div>
-                  <div className="text-emerald-600 font-semibold">2 FREE Pens</div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+                <div className="bg-white p-4 rounded-xl shadow">
+                  <div className="text-3xl mb-2">📦</div>
+                  <div className="font-bold text-base mb-1">10+ Books</div>
+                  <div className="text-emerald-600 font-semibold text-sm">2 FREE Pens</div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow">
-                  <div className="text-4xl mb-2">📚</div>
-                  <div className="font-bold text-lg mb-2">50+ Books</div>
-                  <div className="text-emerald-600 font-semibold">10 FREE Pens</div>
+                <div className="bg-white p-4 rounded-xl shadow">
+                  <div className="text-3xl mb-2">📚</div>
+                  <div className="font-bold text-base mb-1">25+ Books</div>
+                  <div className="text-emerald-600 font-semibold text-sm">5 FREE Pens</div>
                 </div>
-                <div className="bg-white p-6 rounded-xl shadow">
-                  <div className="text-4xl mb-2">🎁</div>
-                  <div className="font-bold text-lg mb-2">Holiday Box Set</div>
-                  <div className="text-emerald-600 font-semibold">1 FREE Bookmark</div>
+                <div className="bg-white p-4 rounded-xl shadow">
+                  <div className="text-3xl mb-2">🏢</div>
+                  <div className="font-bold text-base mb-1">50+ Books</div>
+                  <div className="text-emerald-600 font-semibold text-sm">10 FREE Pens</div>
+                </div>
+                <div className="bg-white p-4 rounded-xl shadow">
+                  <div className="text-3xl mb-2">🎁</div>
+                  <div className="font-bold text-base mb-1">Holiday Box Set</div>
+                  <div className="text-emerald-600 font-semibold text-sm">1 FREE Bookmark</div>
                 </div>
               </div>
             </CardContent>
