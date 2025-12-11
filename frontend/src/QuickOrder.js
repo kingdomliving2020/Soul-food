@@ -60,7 +60,8 @@ const QuickOrder = () => {
       subtitle: 'Kingdom Relationships',
       available: false,
       comingSoon: 'Q1 2026',
-      frontCover: '/covers/holiday-adult-front.jpg', // Placeholder
+      frontCover: '/soul-food-logo.png',
+      isPlaceholder: true,
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
