@@ -275,22 +275,22 @@ const SoulFoodLanding = () => {
                     className="flex items-center gap-2 bg-white hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-0"
                     title="Know what you want? Quick order here!"
                   >
-                    {/* Plate with Fork and Spoon Icon */}
-                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    {/* Plate with Fork and Spoon Icon - 15% larger */}
+                    <svg className="w-6 h-6 sm:w-7 sm:h-7 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     {/* Plate (Circle) */}
-                    <circle cx="12" cy="13" r="6" strokeWidth="1.5" fill="none" />
-                    <circle cx="12" cy="13" r="4.5" strokeWidth="0.8" fill="none" opacity="0.5" />
+                    <circle cx="12" cy="13" r="5" strokeWidth="1.5" fill="none" />
+                    <circle cx="12" cy="13" r="3.5" strokeWidth="0.8" fill="none" opacity="0.5" />
                     
-                    {/* Fork (Left side) */}
-                    <path d="M4 6 L4 11" strokeWidth="1" strokeLinecap="round"/>
-                    <path d="M3 6 L3 9" strokeWidth="1" strokeLinecap="round"/>
-                    <path d="M5 6 L5 9" strokeWidth="1" strokeLinecap="round"/>
-                    <path d="M3 11 L5 11" strokeWidth="1" strokeLinecap="round"/>
-                    <path d="M4 11 L4 14" strokeWidth="1.2" strokeLinecap="round"/>
+                    {/* Fork (Left side) - Much larger and more visible */}
+                    <path d="M4 4 L4 12" strokeWidth="1.5" strokeLinecap="round"/>
+                    <path d="M2.5 4 L2.5 9" strokeWidth="1.5" strokeLinecap="round"/>
+                    <path d="M5.5 4 L5.5 9" strokeWidth="1.5" strokeLinecap="round"/>
+                    <path d="M2.5 12 L5.5 12" strokeWidth="1.5" strokeLinecap="round"/>
+                    <path d="M4 12 L4 16" strokeWidth="1.8" strokeLinecap="round"/>
                     
-                    {/* Spoon (Right side) */}
-                    <ellipse cx="20" cy="7.5" rx="1.2" ry="2" strokeWidth="1" fill="currentColor" opacity="0.3"/>
-                    <path d="M20 9.5 L20 14" strokeWidth="1.2" strokeLinecap="round"/>
+                    {/* Spoon (Right side) - Much larger and more visible */}
+                    <ellipse cx="20" cy="6" rx="1.8" ry="3" strokeWidth="1.5" fill="currentColor" opacity="0.4"/>
+                    <path d="M20 9 L20 16" strokeWidth="1.8" strokeLinecap="round"/>
                   </svg>
                     <span className="hidden sm:inline bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Quick Order</span>
                     <span className="sm:hidden bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Order</span>
