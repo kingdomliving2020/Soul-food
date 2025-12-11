@@ -266,22 +266,22 @@ const SoulFoodLanding = () => {
               </div>
             </div>
             <div className="flex items-center gap-3 sm:gap-5">
-              {/* Quick Order Button with Soul Food Logo Icon - Lilac background */}
+              {/* Quick Order Button - Truth Served Daily icon on darker purple */}
               <div className="relative group">
                 <div className="relative rounded-xl shadow-md hover:shadow-lg transition-all">
                   <Button
                     onClick={() => window.location.href = '/quick-order'}
-                    className="flex items-center gap-2 bg-purple-200 hover:bg-purple-300 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-0"
-                    title="Know what you want? Quick order here!"
+                    className="flex items-center gap-2 bg-purple-400 hover:bg-purple-500 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-0"
+                    title="Truth, Served Daily - Quick order here!"
                   >
-                    {/* Clean plate/book/utensils icon with transparent background */}
+                    {/* Truth Served Daily icon with transparent background */}
                     <img 
-                      src="/quick-order-trans-48.png" 
+                      src="/quick-order-truth-52.png" 
                       alt="Quick Order" 
-                      className="h-8 sm:h-10 w-auto"
+                      className="h-9 sm:h-11 w-auto"
                     />
-                    <span className="hidden sm:inline text-white font-bold">Quick Order</span>
-                    <span className="sm:hidden text-white font-bold">Order</span>
+                    <span className="hidden sm:inline text-white font-bold drop-shadow-sm">Quick Order</span>
+                    <span className="sm:hidden text-white font-bold drop-shadow-sm">Order</span>
                   </Button>
                 </div>
                 {/* Tooltip on hover */}
