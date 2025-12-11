@@ -250,38 +250,37 @@ const SoulFoodLanding = () => {
       
       {/* Header */}
       <header className="bg-white/95 backdrop-blur-md border-b border-orange-200 sticky top-0 z-50 shadow-lg">
-        <div className="container mx-auto px-4 sm:px-6 py-5 sm:py-6">
+        <div className="container mx-auto px-3 sm:px-6 py-3 sm:py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4 sm:space-x-5">
+            <div className="flex items-center space-x-2 sm:space-x-5">
               <img 
                 src="/soul-food-logo.png" 
                 alt="Soul Food Logo" 
-                className="w-16 h-16 sm:w-20 sm:h-20 object-contain"
+                className="w-10 h-10 sm:w-20 sm:h-20 object-contain"
               />
-              <div>
+              <div className="hidden sm:block">
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">
                   Soul Food
                 </h1>
                 <p className="text-xs sm:text-sm lg:text-base text-slate-600 font-medium">Kingdom Living Project</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 sm:gap-5">
+            <div className="flex items-center gap-2 sm:gap-5">
               {/* Quick Order Button - Truth Served Daily icon on darker purple */}
               <div className="relative group">
                 <div className="relative rounded-xl shadow-md hover:shadow-lg transition-all">
                   <Button
                     onClick={() => window.location.href = '/quick-order'}
-                    className="flex items-center gap-2 bg-purple-400 hover:bg-purple-500 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-0"
+                    className="flex items-center gap-1 sm:gap-2 bg-purple-400 hover:bg-purple-500 px-2 sm:px-4 py-1.5 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-0"
                     title="Truth, Served Daily - Quick order here!"
                   >
                     {/* Truth Served Daily icon with transparent background */}
                     <img 
                       src="/quick-order-truth-52.png" 
                       alt="Quick Order" 
-                      className="h-9 sm:h-11 w-auto"
+                      className="h-7 sm:h-11 w-auto"
                     />
-                    <span className="hidden sm:inline text-white font-bold drop-shadow-sm">Quick Order</span>
-                    <span className="sm:hidden text-white font-bold drop-shadow-sm">Order</span>
+                    <span className="hidden md:inline text-white font-bold drop-shadow-sm">Quick Order</span>
                   </Button>
                 </div>
                 {/* Tooltip on hover */}
@@ -297,7 +296,7 @@ const SoulFoodLanding = () => {
               <Button
                 onClick={handleLogin}
                 data-testid="login-button"
-                className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-5 sm:px-7 py-2.5 sm:py-3 rounded-xl font-semibold text-sm sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+                className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-3 sm:px-7 py-2 sm:py-3 rounded-xl font-semibold text-xs sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
               >
                 Sign In
               </Button>
