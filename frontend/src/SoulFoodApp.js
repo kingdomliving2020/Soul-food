@@ -266,6 +266,16 @@ const SoulFoodLanding = () => {
               </div>
             </div>
             <div className="flex items-center gap-3 sm:gap-5">
+              <Button
+                onClick={() => window.location.href = '/quick-order'}
+                variant="outline"
+                className="hidden sm:flex items-center gap-2 border-2 border-orange-500 text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-xl font-semibold text-sm transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Quick Order
+              </Button>
               <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-full p-1">
                 <ShoppingCart />
               </div>
