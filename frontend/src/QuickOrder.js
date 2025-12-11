@@ -309,8 +309,11 @@ const QuickOrder = () => {
                   <div className="flex items-center justify-between">
                     <div className="text-2xl font-bold text-purple-600">
                       ${getPrice(product).toFixed(2)}
-                      {(selections[product.id]?.format || product.formats[0]) === 'subscription' && (
+                      {(selections[product.id]?.format || product.formats[0]) === 'subscription_monthly' && (
                         <span className="text-sm text-slate-600">/mo</span>
+                      )}
+                      {(selections[product.id]?.format || product.formats[0]) === 'subscription_annual' && (
+                        <span className="text-sm text-slate-600">/year</span>
                       )}
                     </div>
                     <Button
