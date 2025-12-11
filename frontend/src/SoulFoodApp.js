@@ -266,23 +266,22 @@ const SoulFoodLanding = () => {
               </div>
             </div>
             <div className="flex items-center gap-3 sm:gap-5">
-              {/* Quick Order Button with Soul Food Logo Icon */}
+              {/* Quick Order Button with Soul Food Logo Icon - Lilac background */}
               <div className="relative group">
-                <div className="relative p-[2px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-md hover:shadow-lg transition-all">
+                <div className="relative rounded-xl shadow-md hover:shadow-lg transition-all">
                   <Button
                     onClick={() => window.location.href = '/quick-order'}
-                    variant="outline"
-                    className="flex items-center gap-2 bg-white hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-0"
+                    className="flex items-center gap-2 bg-purple-200 hover:bg-purple-300 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-0"
                     title="Know what you want? Quick order here!"
                   >
-                    {/* Extracted plate/book/utensils from Soul Food logo */}
+                    {/* Clean plate/book/utensils icon */}
                     <img 
-                      src="/quick-order-icon-v3-48.png" 
+                      src="/quick-order-clean-48.png" 
                       alt="Quick Order" 
                       className="h-8 sm:h-10 w-auto"
                     />
-                    <span className="hidden sm:inline bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Quick Order</span>
-                    <span className="sm:hidden bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Order</span>
+                    <span className="hidden sm:inline text-white font-bold">Quick Order</span>
+                    <span className="sm:hidden text-white font-bold">Order</span>
                   </Button>
                 </div>
                 {/* Tooltip on hover */}
