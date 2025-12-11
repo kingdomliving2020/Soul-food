@@ -268,17 +268,15 @@ const SoulFoodLanding = () => {
             <div className="flex items-center gap-3 sm:gap-5">
               {/* Quick Order Button with Serving Dish Icon */}
               <div className="relative group">
-                <Button
-                  onClick={() => window.location.href = '/quick-order'}
-                  variant="outline"
-                  className="flex items-center gap-2 border-2 border-transparent bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-padding hover:from-blue-600 hover:to-purple-700 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all shadow-md hover:shadow-lg"
-                  style={{
-                    borderImage: 'linear-gradient(to right, rgb(59, 130, 246), rgb(147, 51, 234)) 1'
-                  }}
-                  title="Know what you want? Quick order here!"
-                >
-                  {/* Plate with Fork and Spoon Icon */}
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <div className="relative p-[2px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-md hover:shadow-lg transition-all">
+                  <Button
+                    onClick={() => window.location.href = '/quick-order'}
+                    variant="outline"
+                    className="flex items-center gap-2 bg-white hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-0"
+                    title="Know what you want? Quick order here!"
+                  >
+                    {/* Plate with Fork and Spoon Icon */}
+                    <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                     {/* Plate (Circle) */}
                     <circle cx="12" cy="13" r="6" strokeWidth="1.5" fill="none" />
                     <circle cx="12" cy="13" r="4.5" strokeWidth="0.8" fill="none" opacity="0.5" />
