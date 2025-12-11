@@ -266,7 +266,7 @@ const SoulFoodLanding = () => {
               </div>
             </div>
             <div className="flex items-center gap-3 sm:gap-5">
-              {/* Quick Order Button with Serving Dish Icon */}
+              {/* Quick Order Button with Soul Food Logo Icon */}
               <div className="relative group">
                 <div className="relative p-[2px] bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-md hover:shadow-lg transition-all">
                   <Button
@@ -275,23 +275,12 @@ const SoulFoodLanding = () => {
                     className="flex items-center gap-2 bg-white hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-0"
                     title="Know what you want? Quick order here!"
                   >
-                    {/* Plate with Fork and Spoon Icon - 15% larger with thicker utensils */}
-                    <svg className="w-8 h-8 sm:w-9 sm:h-9 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    {/* Plate (Circle) */}
-                    <circle cx="12" cy="13" r="5" strokeWidth="1.8" fill="none" />
-                    <circle cx="12" cy="13" r="3.2" strokeWidth="1" fill="none" opacity="0.5" />
-                    
-                    {/* Fork (Left side) - Thicker and more prominent */}
-                    <path d="M4 3 L4 11" strokeWidth="2" strokeLinecap="round"/>
-                    <path d="M2 3 L2 8" strokeWidth="2" strokeLinecap="round"/>
-                    <path d="M6 3 L6 8" strokeWidth="2" strokeLinecap="round"/>
-                    <path d="M2 11 L6 11" strokeWidth="2" strokeLinecap="round"/>
-                    <path d="M4 11 L4 17" strokeWidth="2.2" strokeLinecap="round"/>
-                    
-                    {/* Spoon (Right side) - Larger bowl and thicker handle */}
-                    <ellipse cx="20" cy="5.5" rx="2.2" ry="3.5" strokeWidth="1.8" fill="currentColor" opacity="0.5"/>
-                    <path d="M20 9 L20 17" strokeWidth="2.2" strokeLinecap="round"/>
-                  </svg>
+                    {/* Extracted plate/book/utensils from Soul Food logo */}
+                    <img 
+                      src="/quick-order-icon-v3-48.png" 
+                      alt="Quick Order" 
+                      className="h-8 sm:h-10 w-auto"
+                    />
                     <span className="hidden sm:inline bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Quick Order</span>
                     <span className="sm:hidden bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Order</span>
                   </Button>
