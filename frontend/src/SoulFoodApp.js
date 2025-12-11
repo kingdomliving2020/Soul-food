@@ -267,7 +267,9 @@ const SoulFoodLanding = () => {
                 <p className="text-xs sm:text-sm lg:text-base text-slate-600 font-medium">Kingdom Living Project</p>
               </div>
             </div>
-            <div className="flex items-center gap-2 sm:gap-5">
+            
+            {/* Desktop Navigation */}
+            <div className="hidden sm:flex items-center gap-2 sm:gap-5">
               {/* Quick Order Button - Truth Served Daily icon */}
               <div className="relative group">
                 <div className="relative rounded-xl shadow-md hover:shadow-lg transition-all">
@@ -304,7 +306,66 @@ const SoulFoodLanding = () => {
                 Sign In
               </Button>
             </div>
+
+            {/* Mobile Navigation */}
+            <div className="flex sm:hidden items-center gap-2">
+              {/* Quick Order Button - Compact for mobile */}
+              <Button
+                onClick={() => window.location.href = '/quick-order'}
+                className="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 px-2 py-1.5 rounded-lg font-semibold text-xs transition-all border-2 border-black"
+              >
+                <img src="/quick-order-truth-52.png" alt="Order" className="h-6 w-auto" />
+                <span className="text-slate-700 font-bold text-xs">Order</span>
+              </Button>
+              
+              {/* Shopping Cart */}
+              <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-full p-1">
+                <ShoppingCart />
+              </div>
+              
+              {/* Hamburger Menu Button */}
+              <Button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                variant="ghost"
+                className="p-2"
+              >
+                <svg className="w-6 h-6 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {mobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </Button>
+            </div>
           </div>
+          
+          {/* Mobile Menu Dropdown */}
+          {mobileMenuOpen && (
+            <div className="sm:hidden border-t border-orange-200 py-4 px-3 bg-white/95">
+              <nav className="flex flex-col space-y-3">
+                <a href="#series" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  📚 Explore Series
+                </a>
+                <a href="#free-sample" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  🎁 Free Sample
+                </a>
+                <a href="/gift-certificates" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors">
+                  🎄 Gift Certificates
+                </a>
+                <a href="/quick-order" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors">
+                  🍽️ Quick Order
+                </a>
+                <hr className="border-orange-200" />
+                <Button
+                  onClick={handleLogin}
+                  className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white py-3 rounded-xl font-semibold shadow-lg"
+                >
+                  Sign In
+                </Button>
+              </nav>
+            </div>
+          )}
         </div>
       </header>
 
