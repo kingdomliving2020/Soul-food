@@ -376,22 +376,25 @@ const QuickOrder = () => {
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
               </svg>
-              <span>Back to Home</span>
+              <span className="hidden sm:inline">Back to Home</span>
             </Button>
-            <h1 className="text-xl font-bold text-slate-800">Quick Order</h1>
-            <div className="w-32" />
+            <div className="flex items-center gap-2">
+              <img src="/quick-order-truth-52.png" alt="" className="h-8 w-auto" />
+              <span className="text-lg font-bold text-slate-800">Truth, Served Daily</span>
+            </div>
+            <div className="w-20 sm:w-32" />
           </div>
         </div>
       </header>
 
       <div className="container mx-auto px-4 sm:px-6 py-8">
-        {/* Hero Section */}
+        {/* Hero Section - Updated tagline instead of repeating Quick Order */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-purple-600 bg-clip-text text-transparent">
-            🚀 Quick Order
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-purple-600 bg-clip-text text-transparent">
+            🍽️ What's on Your Plate Today?
           </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Know what you want? Select your items below and add them to your cart in seconds!
+          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+            Select your spiritual nourishment below and add to your cart in seconds!
           </p>
         </div>
 
