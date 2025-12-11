@@ -103,9 +103,18 @@ const QuickOrder = () => {
 
   const merchandise = [
     {
+      id: 'gift-certificate',
+      name: 'Digital Gift Certificate',
+      subtitle: 'For books or game passes - Valid 1 year',
+      image: '/soul-food-logo.png',
+      price: 25.00,
+      isGiftCertificate: true,
+      link: '/gift-certificates'
+    },
+    {
       id: 'leather-bookmark',
       name: 'Bygone Leather Bookmark',
-      subtitle: 'Personalized with your initial',
+      subtitle: 'Personalized with your initial (includes pen holder)',
       image: 'https://m.media-amazon.com/images/I/71xRvB7qZNL._AC_SL1500_.jpg',
       price: 1.50,
       bundlePrice: { qty: 3, price: 3.00 }
