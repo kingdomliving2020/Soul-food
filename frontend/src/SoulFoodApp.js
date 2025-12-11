@@ -266,16 +266,30 @@ const SoulFoodLanding = () => {
               </div>
             </div>
             <div className="flex items-center gap-3 sm:gap-5">
-              <Button
-                onClick={() => window.location.href = '/quick-order'}
-                variant="outline"
-                className="hidden sm:flex items-center gap-2 border-2 border-orange-500 text-orange-600 hover:bg-orange-50 px-4 py-2 rounded-xl font-semibold text-sm transition-all"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                Quick Order
-              </Button>
+              {/* Quick Order Button with Serving Dish Icon */}
+              <div className="relative group">
+                <Button
+                  onClick={() => window.location.href = '/quick-order'}
+                  variant="outline"
+                  className="flex items-center gap-2 border-2 border-orange-500 text-orange-600 hover:bg-orange-50 px-3 sm:px-4 py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all shadow-md hover:shadow-lg"
+                  title="Know what you want? Quick order here!"
+                >
+                  {/* Serving Dish Icon */}
+                  <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+                    <path d="M12 6c-3.31 0-6 2.69-6 6h12c0-3.31-2.69-6-6-6z"/>
+                    <circle cx="12" cy="12" r="1.5"/>
+                  </svg>
+                  <span className="hidden sm:inline">Quick Order</span>
+                  <span className="sm:hidden">Order</span>
+                </Button>
+                {/* Tooltip on hover */}
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-slate-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50 shadow-xl">
+                  Truth Served Here ✨
+                  <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-800 rotate-45"></div>
+                </div>
+              </div>
+              
               <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-full p-1">
                 <ShoppingCart />
               </div>
