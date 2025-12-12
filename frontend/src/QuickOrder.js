@@ -135,12 +135,12 @@ const QuickOrder = () => {
     }
   };
 
-  // Product catalog
+  // Product catalog - Holiday first, then Breakfast, then Box Set, then Coming Soon
   const products = [
     {
-      id: 'breakfast',
-      name: 'Break*fast Series',
-      subtitle: 'Foundation in Christ',
+      id: 'holiday',
+      name: 'Holiday Series',
+      subtitle: '4 C\'s of Christianity',
       available: true,
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
@@ -151,9 +151,9 @@ const QuickOrder = () => {
       }
     },
     {
-      id: 'holiday',
-      name: 'Holiday Series',
-      subtitle: '4 C\'s of Christianity',
+      id: 'breakfast',
+      name: 'Break*fast Series',
+      subtitle: 'Foundation in Christ',
       available: true,
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
