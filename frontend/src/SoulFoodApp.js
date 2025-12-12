@@ -226,6 +226,8 @@ const SoulFoodLanding = () => {
   const [products, setProducts] = useState({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { addToCart } = useCart();
+  const youtubeRef = useRef(null);
+  const playerRef = useRef(null);
   
   // Fetch products from backend
   useEffect(() => {
@@ -233,6 +235,41 @@ const SoulFoodLanding = () => {
       .then(res => res.json())
       .then(data => setProducts(data.products))
       .catch(err => console.error('Failed to load products:', err));
+  }, []);
+
+  // YouTube API and Intersection Observer for auto-pause
+  useEffect(() => {
+    // Load YouTube API
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    window.onYouTubeIframeAPIReady = () => {
+      playerRef.current = new window.YT.Player('youtube-player', {
+        events: {
+          'onReady': () => console.log('YouTube player ready')
+        }
+      });
+    };
+
+    // Intersection Observer to pause when scrolled past
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting && playerRef.current && playerRef.current.pauseVideo) {
+            playerRef.current.pauseVideo();
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    if (youtubeRef.current) {
+      observer.observe(youtubeRef.current);
+    }
+
+    return () => observer.disconnect();
   }, []);
   
   const handleLogin = () => {
