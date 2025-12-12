@@ -477,7 +477,7 @@ const SoulFoodLanding = () => {
             </p>
             
             {/* Music Player - A Friend by Kossi Bruno */}
-            <div className="mt-6 flex justify-center">
+            <div className="mt-6 flex justify-center" ref={youtubeRef}>
               <div className="bg-white rounded-lg shadow-md p-3 max-w-md w-full">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="text-lg">🎵</span>
@@ -488,8 +488,9 @@ const SoulFoodLanding = () => {
                 </div>
                 <div className="relative" style={{paddingBottom: '56.25%', height: 0, overflow: 'hidden'}}>
                   <iframe
+                    id="youtube-player"
                     style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
-                    src="https://www.youtube.com/embed/mNgYAMFbze0?si=ZAl2fwvmqvk4HDC5&rel=0&modestbranding=1"
+                    src="https://www.youtube.com/embed/mNgYAMFbze0?enablejsapi=1&rel=0&modestbranding=1"
                     title="A Friend by Kossi Bruno"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -500,8 +501,67 @@ const SoulFoodLanding = () => {
             </div>
           </div>
 
+          {/* Series Grid - Free Lesson + Holiday first, then Breakfast + Lunch, then Dinner + Supper */}
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {series.map((s, idx) => (
+            {/* Free Lesson Card */}
+            <Card className="relative overflow-hidden border-2 border-amber-300 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-white">
+              <div className="absolute top-4 right-4 z-10">
+                <Badge className="bg-amber-500 text-white px-4 py-2 text-sm font-bold shadow-lg">
+                  🎁 FREE
+                </Badge>
+              </div>
+              
+              <CardHeader className="relative p-0">
+                <div 
+                  className="w-full h-40 bg-cover bg-center"
+                  style={{
+                    backgroundImage: "url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&h=400&fit=crop&crop=center')"
+                  }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 opacity-40" />
+                </div>
+                
+                <div className="relative p-6 flex items-center space-x-4 bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-sm">
+                  <div className="w-16 h-16 bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                    🎁
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl font-bold text-slate-800 mb-1">
+                      Free Sample
+                    </CardTitle>
+                    <p className="text-sm font-semibold text-slate-600">Leap of Faith Mini-Series</p>
+                  </div>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="relative space-y-4 p-6">
+                <p className="text-slate-700 leading-relaxed">Experience our teaching style with this platform-exclusive sample. Learn about Abel's faithful sacrifice and Enoch's consistency with God.</p>
+                
+                <div className="flex items-center justify-between pt-4">
+                  <Badge className="bg-amber-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
+                    ✨ Try Before You Buy
+                  </Badge>
+                  
+                  <Button
+                    onClick={() => window.location.href = '/lesson/free-sample'}
+                    variant="outline"
+                    className="border-2 border-amber-400 hover:border-amber-600 text-amber-700 hover:bg-amber-50 font-semibold px-4 py-2 rounded-lg transition-all shadow-md"
+                  >
+                    🎁 Get Free Lesson
+                  </Button>
+                </div>
+                
+                <Button
+                  onClick={() => window.location.href = '/lesson/free-sample'}
+                  className="w-full bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 hover:opacity-90 shadow-lg text-white font-semibold py-3 rounded-xl transition-all"
+                >
+                  Start Free Lesson Now →
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Holiday Series Card */}
+            {series.filter(s => s.id === 'holiday').map((s) => (
               <Card 
                 key={s.id} 
                 className={`relative overflow-hidden border-2 ${s.available ? 'border-purple-200' : 'border-slate-300'} ${s.available ? 'shadow-xl hover:shadow-2xl' : 'shadow-md'} transition-all duration-300 ${s.available ? 'hover:scale-[1.02]' : ''} bg-white`}
@@ -515,7 +575,6 @@ const SoulFoodLanding = () => {
                 )}
                 
                 <CardHeader className="relative p-0">
-                  {/* Background Image */}
                   <div 
                     className={`w-full h-40 bg-cover bg-center ${!s.available ? 'opacity-50 grayscale' : ''}`}
                     style={{
@@ -525,7 +584,6 @@ const SoulFoodLanding = () => {
                     <div className={`absolute inset-0 bg-gradient-to-br ${s.gradient} opacity-40`} />
                   </div>
                   
-                  {/* Title Overlay */}
                   <div className="relative p-6 flex items-center space-x-4 bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-sm">
                     <div className={`w-16 h-16 bg-gradient-to-br ${s.gradient} rounded-2xl flex items-center justify-center text-3xl shadow-lg`}>
                       {s.icon}
@@ -542,7 +600,79 @@ const SoulFoodLanding = () => {
                 <CardContent className="relative space-y-4 p-6">
                   <p className="text-slate-700 leading-relaxed">{s.description}</p>
                   
-                  {/* Badge and Cart Button - Same Row for Symmetry */}
+                  <div className="flex items-center justify-between pt-4">
+                    {s.available ? (
+                      <Badge className="bg-emerald-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
+                        ✅ Available Now
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-slate-500 text-white px-3 py-1 text-sm font-semibold">
+                        🔒 Unlocks {s.unlockDate}
+                      </Badge>
+                    )}
+                    
+                    <Button
+                      onClick={() => openProductModal(s)}
+                      variant="outline"
+                      className="border-2 border-slate-400 hover:border-slate-600 text-slate-700 hover:bg-slate-50 font-semibold px-4 py-2 rounded-lg transition-all shadow-md"
+                    >
+                      🛒 Add to Cart
+                    </Button>
+                  </div>
+                  
+                  <Button
+                    onClick={() => {
+                      setSelectedSeries(s);
+                      setShowPreview(true);
+                    }}
+                    className={`w-full bg-gradient-to-r ${s.gradient} hover:opacity-90 shadow-lg text-white font-semibold py-3 rounded-xl transition-all`}
+                  >
+                    {s.available ? `Explore Full Series 📚` : `Preview Coming Lessons 📖`}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+
+            {/* Breakfast and Lunch */}
+            {series.filter(s => s.id === 'breakfast' || s.id === 'lunch').map((s) => (
+              <Card 
+                key={s.id} 
+                className={`relative overflow-hidden border-2 ${s.available ? 'border-purple-200' : 'border-slate-300'} ${s.available ? 'shadow-xl hover:shadow-2xl' : 'shadow-md'} transition-all duration-300 ${s.available ? 'hover:scale-[1.02]' : ''} bg-white`}
+              >
+                {!s.available && (
+                  <div className="absolute top-4 right-4 z-10">
+                    <Badge className="bg-slate-700 text-white px-4 py-2 text-sm font-bold shadow-lg">
+                      🔒 Coming {s.unlockDate}
+                    </Badge>
+                  </div>
+                )}
+                
+                <CardHeader className="relative p-0">
+                  <div 
+                    className={`w-full h-40 bg-cover bg-center ${!s.available ? 'opacity-50 grayscale' : ''}`}
+                    style={{
+                      backgroundImage: `url('${s.bgImage}')`
+                    }}
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-br ${s.gradient} opacity-40`} />
+                  </div>
+                  
+                  <div className="relative p-6 flex items-center space-x-4 bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-sm">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${s.gradient} rounded-2xl flex items-center justify-center text-3xl shadow-lg`}>
+                      {s.icon}
+                    </div>
+                    <div>
+                      <CardTitle className="text-2xl font-bold text-slate-800 mb-1">
+                        {s.name}
+                      </CardTitle>
+                      <p className="text-sm font-semibold text-slate-600">{s.theme}</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="relative space-y-4 p-6">
+                  <p className="text-slate-700 leading-relaxed">{s.description}</p>
+                  
                   <div className="flex items-center justify-between pt-4">
                     {s.available ? (
                       <Badge className="bg-emerald-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
@@ -560,6 +690,79 @@ const SoulFoodLanding = () => {
                       className="border-2 border-slate-400 hover:border-slate-600 text-slate-700 hover:bg-slate-50 font-semibold px-4 py-2 rounded-lg transition-all shadow-md"
                     >
                       🛒 {(s.id === 'breakfast' || s.id === 'holiday') ? 'Add to Cart' : 'Pre-Order Book'}
+                    </Button>
+                  </div>
+                  
+                  <Button
+                    onClick={() => {
+                      setSelectedSeries(s);
+                      setShowPreview(true);
+                    }}
+                    className={`w-full bg-gradient-to-r ${s.gradient} hover:opacity-90 shadow-lg text-white font-semibold py-3 rounded-xl transition-all`}
+                  >
+                    {s.available ? `Explore Full Series 📚` : `Preview Coming Lessons 📖`}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+
+            {/* Dinner and Supper */}
+            {series.filter(s => s.id === 'dinner' || s.id === 'supper').map((s) => (
+              <Card 
+                key={s.id} 
+                className={`relative overflow-hidden border-2 ${s.available ? 'border-purple-200' : 'border-slate-300'} ${s.available ? 'shadow-xl hover:shadow-2xl' : 'shadow-md'} transition-all duration-300 ${s.available ? 'hover:scale-[1.02]' : ''} bg-white`}
+              >
+                {!s.available && (
+                  <div className="absolute top-4 right-4 z-10">
+                    <Badge className="bg-slate-700 text-white px-4 py-2 text-sm font-bold shadow-lg">
+                      🔒 Coming {s.unlockDate}
+                    </Badge>
+                  </div>
+                )}
+                
+                <CardHeader className="relative p-0">
+                  <div 
+                    className={`w-full h-40 bg-cover bg-center ${!s.available ? 'opacity-50 grayscale' : ''}`}
+                    style={{
+                      backgroundImage: `url('${s.bgImage}')`
+                    }}
+                  >
+                    <div className={`absolute inset-0 bg-gradient-to-br ${s.gradient} opacity-40`} />
+                  </div>
+                  
+                  <div className="relative p-6 flex items-center space-x-4 bg-gradient-to-br from-white/95 to-white/90 backdrop-blur-sm">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${s.gradient} rounded-2xl flex items-center justify-center text-3xl shadow-lg`}>
+                      {s.icon}
+                    </div>
+                    <div>
+                      <CardTitle className="text-2xl font-bold text-slate-800 mb-1">
+                        {s.name}
+                      </CardTitle>
+                      <p className="text-sm font-semibold text-slate-600">{s.theme}</p>
+                    </div>
+                  </div>
+                </CardHeader>
+                
+                <CardContent className="relative space-y-4 p-6">
+                  <p className="text-slate-700 leading-relaxed">{s.description}</p>
+                  
+                  <div className="flex items-center justify-between pt-4">
+                    {s.available ? (
+                      <Badge className="bg-emerald-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
+                        ✅ Available Now
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-slate-500 text-white px-3 py-1 text-sm font-semibold">
+                        🔒 Unlocks {s.unlockDate}
+                      </Badge>
+                    )}
+                    
+                    <Button
+                      onClick={() => openProductModal(s)}
+                      variant="outline"
+                      className="border-2 border-slate-400 hover:border-slate-600 text-slate-700 hover:bg-slate-50 font-semibold px-4 py-2 rounded-lg transition-all shadow-md"
+                    >
+                      🛒 Pre-Order Book
                     </Button>
                   </div>
                   
