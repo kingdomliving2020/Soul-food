@@ -428,6 +428,78 @@ const SoulFoodLanding = () => {
         </div>
       </section>
 
+      {/* Featured Section - Holiday & Free Lesson Side by Side */}
+      <section className="py-10 px-4 sm:px-6 bg-gradient-to-br from-slate-50 to-purple-50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Holiday Special Widget */}
+            <Card className="bg-gradient-to-br from-red-50 to-green-50 border-2 border-red-200 shadow-xl hover:shadow-2xl transition-all overflow-hidden">
+              <CardContent className="p-0">
+                <div className="flex flex-col sm:flex-row">
+                  <div className="sm:w-2/5 p-4 sm:p-6 flex items-center justify-center bg-gradient-to-br from-red-100 to-green-100">
+                    <img 
+                      src="/covers/holiday-adult-front.jpg" 
+                      alt="Holiday Edition"
+                      className="w-28 h-40 object-cover rounded-lg shadow-lg border-2 border-white"
+                    />
+                  </div>
+                  <div className="sm:w-3/5 p-4 sm:p-6 flex flex-col justify-center">
+                    <Badge className="w-fit mb-2 bg-red-500 text-white text-xs">🎄 Holiday Special</Badge>
+                    <h3 className="text-xl font-bold text-slate-800 mb-1">Holiday Series</h3>
+                    <p className="text-sm text-slate-600 mb-2">4 C's of Christianity - 6 Lessons</p>
+                    <p className="text-xs text-slate-500 mb-3">Perfect for the season! Covenant, Cradle, Cross & Comforter.</p>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-lg font-bold text-red-600">From $9.99/mo</span>
+                    </div>
+                    <Button
+                      onClick={() => {
+                        const holidaySeries = SOUL_FOOD_SERIES.find(s => s.id === 'holiday');
+                        if (holidaySeries) openProductModal(holidaySeries);
+                      }}
+                      className="w-full bg-gradient-to-r from-red-600 to-green-600 hover:from-red-700 hover:to-green-700 text-white text-sm"
+                    >
+                      🛒 View Options
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Free Lesson Widget */}
+            <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 shadow-xl hover:shadow-2xl transition-all overflow-hidden">
+              <CardContent className="p-0">
+                <div className="flex flex-col sm:flex-row">
+                  <div className="sm:w-2/5 p-4 sm:p-6 flex items-center justify-center bg-gradient-to-br from-amber-100 to-orange-100">
+                    <div className="w-28 h-40 bg-white rounded-lg shadow-lg flex items-center justify-center border-2 border-amber-300">
+                      <div className="text-center">
+                        <div className="text-5xl mb-2">🎁</div>
+                        <div className="text-sm font-bold text-amber-600">FREE</div>
+                        <div className="text-xs text-slate-600">Sample Lesson</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="sm:w-3/5 p-4 sm:p-6 flex flex-col justify-center">
+                    <Badge className="w-fit mb-2 bg-amber-500 text-white text-xs">✨ Try Before You Buy</Badge>
+                    <h3 className="text-xl font-bold text-slate-800 mb-1">Free Sample Lesson</h3>
+                    <p className="text-sm text-slate-600 mb-2">Leap of Faith Mini-Series</p>
+                    <p className="text-xs text-slate-500 mb-3">Experience our teaching style with Abel's faithful sacrifice & Enoch's consistency.</p>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-lg font-bold text-amber-600">100% FREE</span>
+                    </div>
+                    <Button
+                      onClick={() => window.location.href = '/lesson/free-sample'}
+                      className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white text-sm"
+                    >
+                      Start Free Lesson →
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
       {/* Soul Food Series Section */}
       <section id="series" className="py-16 sm:py-20 px-4 sm:px-6 bg-white">
         <div className="container mx-auto max-w-7xl">
