@@ -253,7 +253,7 @@ const QuickOrder = () => {
       id: 'soul-food-pen',
       name: 'Soul Food "Truth Served Daily" Pen',
       subtitle: 'Medium tip with stylus (Black or Blue ink)',
-      image: '/covers/pen.png',
+      image: '/covers/soul-food-pen.png',
       price: 4.00,
       bundlePrice: { qty: 6, price: 20.00 },
       bulkBonus: 'FREE with book orders: 2 pens (10+ books), 5 pens (25+ books), 10 pens (50+ books)'
