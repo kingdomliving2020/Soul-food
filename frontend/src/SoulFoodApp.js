@@ -490,7 +490,7 @@ const SoulFoodLanding = () => {
                   <iframe
                     id="youtube-player"
                     style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
-                    src="https://www.youtube.com/embed/mNgYAMFbze0?enablejsapi=1&rel=0&modestbranding=1"
+                    src="https://www.youtube.com/embed/mNgYAMFbze0?si=ZAl2fwvmqvk4HDC5&enablejsapi=1&rel=0&modestbranding=1"
                     title="A Friend by Kossi Bruno"
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
