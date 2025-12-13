@@ -351,7 +351,7 @@ const SoulFoodLanding = () => {
                 onClick={() => window.location.href = '/quick-order'}
                 className="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 px-2 py-1.5 rounded-lg font-semibold text-xs transition-all border-2 border-black"
               >
-                <img src="/quick-order-truth-52.png" alt="Order" className="h-6 w-auto" />
+                <img src="/quick-order-clean-52.png" alt="Order" className="h-6 w-auto" />
                 <span className="text-slate-700 font-bold text-xs">Order</span>
               </Button>
               
