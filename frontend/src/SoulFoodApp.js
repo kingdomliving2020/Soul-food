@@ -851,69 +851,6 @@ const SoulFoodLanding = () => {
         </div>
       </section>
 
-      {/* Free Sample Section */}
-      <section id="free-sample" className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-amber-50 to-orange-50">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-10">
-            <Badge className="mb-4 bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-2 text-sm font-bold">
-              FREE SAMPLE
-            </Badge>
-            <h3 className="text-4xl font-bold mb-4 text-slate-800">
-              Try Leap of Faith - Free Mini-Series
-            </h3>
-            <p className="text-xl text-slate-600">
-              Experience our teaching style with this platform-exclusive sample lesson
-            </p>
-          </div>
-
-          <Card className="shadow-2xl border-2 border-amber-300 overflow-hidden">
-            <CardHeader className="bg-gradient-to-r from-amber-100 to-orange-100 text-center p-8">
-              <CardTitle className="text-2xl font-bold text-slate-800 mb-2">
-                My Brother's Keeper & Consistency Pays
-              </CardTitle>
-              <p className="text-slate-600 italic">
-                "Now faith is the substance of things hoped for, the evidence of things not seen." - Hebrews 11:1
-              </p>
-            </CardHeader>
-            <CardContent className="p-8">
-              <div className="space-y-6">
-                <div>
-                  <h4 className="font-bold text-lg mb-3 text-slate-800">What You'll Learn:</h4>
-                  <ul className="space-y-2">
-                    {[
-                      "Abel's faithful sacrifice and what it teaches us",
-                      "Enoch's remarkable consistency with God",
-                      "The meaning of being your brother's keeper",
-                      "How faith pleases God and brings rewards"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-center space-x-3">
-                        <span className="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                          ✓
-                        </span>
-                        <span className="text-slate-700">{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="bg-amber-50 border-l-4 border-amber-500 p-4 rounded">
-                  <p className="text-sm text-amber-900">
-                    <strong>Bonus:</strong> Includes interactive crossword puzzle and reflection questions!
-                  </p>
-                </div>
-
-                <Button
-                  onClick={() => window.location.href = '/lesson/free-sample'}
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-bold py-4 rounded-xl text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all"
-                >
-                  Start Free Lesson Now →
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
       {/* Gaming Central Section */}
       <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="container mx-auto max-w-6xl">
