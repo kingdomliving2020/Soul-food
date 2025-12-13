@@ -379,7 +379,7 @@ const QuickOrder = () => {
               <span className="hidden sm:inline">Back to Home</span>
             </Button>
             <div className="flex items-center gap-2">
-              <img src="/quick-order-truth-52.png" alt="" className="h-8 w-auto" />
+              <img src="/quick-order-clean-52.png" alt="" className="h-8 w-auto" />
               <span className="text-lg font-bold text-slate-800">Truth, Served Daily</span>
             </div>
             <div className="w-20 sm:w-32" />
