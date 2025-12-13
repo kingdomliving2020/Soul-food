@@ -237,15 +237,15 @@ const QuickOrder = () => {
       id: 'leather-bookmark',
       name: 'Bygone Leather Bookmark',
       subtitle: 'Personalized with your initial (includes pen holder)',
-      image: '/covers/leather-bookmark.png',
+      image: '/covers/leather-bookmark-1.png',
       price: 1.50,
       bundlePrice: { qty: 3, price: 3.00 }
     },
     {
-      id: 'metal-bookmark',
-      name: 'Metal Artistic Bookmark',
-      subtitle: 'Decorative design',
-      image: '/covers/metal-bookmark.png',
+      id: 'magnetic-bookmark',
+      name: 'Magnetic Artistic Bookmark',
+      subtitle: 'Decorative rubber magnet design',
+      image: '/covers/magnetic-bookmark-1.png',
       price: 1.50,
       bundlePrice: { qty: 3, price: 3.00 }
     },
