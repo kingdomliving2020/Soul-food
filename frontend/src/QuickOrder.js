@@ -143,11 +143,11 @@ const QuickOrder = () => {
       subtitle: '4 C\'s of Christianity',
       available: true,
       editions: ['adult', 'youth', 'instructor'],
-      formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
+      formats: ['physical', 'pdf', 'epub'],
       prices: {
-        adult: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
-        youth: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
-        instructor: { subscription_monthly: 14.99, subscription_annual: 164.89, ebook: 68.99, physical: 79.99 }
+        adult: { physical: 9.99, pdf: 7.99, epub: 5.99 },
+        youth: { physical: 9.99, pdf: 7.99, epub: 5.99 },
+        instructor: { physical: 14.99, pdf: 12.99, epub: 9.99 }
       }
     },
     {
@@ -170,9 +170,9 @@ const QuickOrder = () => {
       available: true,
       badge: 'FREE Bookmark',
       editions: ['bundle'],
-      formats: ['physical'],
+      formats: ['physical', 'pdf', 'epub'],
       prices: {
-        bundle: { physical: 39.99 }
+        bundle: { physical: 39.99, pdf: 34.99, epub: 29.99 }
       },
       useHolidayCovers: true
     },
