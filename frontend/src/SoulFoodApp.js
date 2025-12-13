@@ -315,11 +315,11 @@ const SoulFoodLanding = () => {
                     className="flex items-center gap-1 sm:gap-2 bg-slate-100 hover:bg-slate-200 px-2 sm:px-4 py-1.5 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-2 border-black"
                     title="Truth, Served Daily - Quick order here!"
                   >
-                    {/* Truth Served Daily icon - cleaned */}
+                    {/* Truth Served Daily icon - rounded and bigger */}
                     <img 
-                      src="/quick-order-clean-52.png" 
+                      src="/quick-order-rounded-60.png" 
                       alt="Quick Order" 
-                      className="h-7 sm:h-10 w-auto"
+                      className="h-9 sm:h-12 w-auto rounded-lg"
                     />
                     <span className="hidden md:inline text-slate-700 font-bold">Quick Order</span>
                     <span className="md:hidden text-slate-700 font-bold text-xs">Order</span>
