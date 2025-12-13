@@ -497,7 +497,9 @@ const QuickOrder = () => {
                               {fmt === 'subscription_monthly' ? 'Monthly Sub' :
                                fmt === 'subscription_annual' ? 'Annual Sub' :
                                fmt === 'ebook' ? 'eBook' :
-                               fmt === 'physical' ? 'Physical' : fmt}
+                               fmt === 'physical' ? 'Paperback' :
+                               fmt === 'pdf' ? 'Interactive PDF' :
+                               fmt === 'epub' ? 'ePub' : fmt}
                             </option>
                           ))}
                         </select>
