@@ -447,7 +447,7 @@ const SoulFoodLanding = () => {
               Explore Series
             </Button>
             <Button
-              onClick={() => document.getElementById('free-sample')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.getElementById('series')?.scrollIntoView({ behavior: 'smooth' })}
               variant="outline"
               className="w-full sm:w-auto border-2 border-white/80 text-white hover:bg-white/10 px-10 py-4 rounded-xl text-lg font-semibold shadow-lg backdrop-blur-sm"
             >
