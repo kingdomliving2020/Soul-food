@@ -95,10 +95,16 @@ metadata:
   test_sequence: 3
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Snack Packs Page - Layout and Navigation"
+    - "Snack Packs Page - Snack Pack Display and Interaction"
+    - "Interactive Lesson Page - Core Layout and Sections"
+    - "Interactive Lesson Page - Bite Navigation and Content"
+    - "Interactive Lesson Page - Activities and Interactivity"
+    - "Interactive Lesson Page - User Input and Progress Saving"
   stuck_tasks: []
   test_all: false
-  test_priority: "backend_completed"
+  test_priority: "frontend_interactive_lessons"
 
 agent_communication:
   - agent: "testing"
