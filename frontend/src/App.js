@@ -1841,6 +1841,8 @@ function App() {
             <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />
             <Route path="/lesson/:id" element={<LessonViewer />} />
             <Route path="/lessons" element={<LessonsListPage />} />
+            <Route path="/snack-packs" element={<SnackPacksPage />} />
+            <Route path="/interactive-lesson/:nibbleId" element={<InteractiveLesson />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/game/mixup" element={<MixUpGame />} />
             <Route path="/game/tricky-testament" element={<TrickyTestamentGame />} />
