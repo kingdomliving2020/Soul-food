@@ -32,7 +32,7 @@ class InteractiveLessonsAPITester:
         })
         
     def test_get_snack_packs(self):
-        """Test GET /snack-packs endpoint"""
+        """Test GET /snack-packs endpoint - Should return 2 snack packs now"""
         try:
             response = self.session.get(f"{self.base_url}/snack-packs")
             
@@ -48,27 +48,41 @@ class InteractiveLessonsAPITester:
                 return False
                 
             snack_packs = data["snack_packs"]
-            if not isinstance(snack_packs, list) or len(snack_packs) == 0:
-                self.log_test("GET /snack-packs", False, "No snack packs returned")
+            if not isinstance(snack_packs, list):
+                self.log_test("GET /snack-packs", False, "Snack packs is not a list")
                 return False
                 
-            # Verify "In His Image" snack pack exists
-            in_his_image_pack = None
+            # Should return 2 snack packs now: "In His Image" and "Holiday Series - The 4 C's of Christianity"
+            if len(snack_packs) != 2:
+                self.log_test("GET /snack-packs", False, f"Expected 2 snack packs, got {len(snack_packs)}")
+                return False
+                
+            # Verify both expected snack packs exist
+            pack_titles = [pack.get("title") for pack in snack_packs]
+            expected_titles = ["In His Image - Self Worth Series", "Holiday Series - The 4 C's of Christianity"]
+            
+            for expected_title in expected_titles:
+                if expected_title not in pack_titles:
+                    self.log_test("GET /snack-packs", False, f"Missing snack pack: {expected_title}")
+                    return False
+                    
+            # Verify Holiday Series pack details
+            holiday_pack = None
             for pack in snack_packs:
-                if pack.get("title") == "In His Image - Self Worth Series":
-                    in_his_image_pack = pack
+                if pack.get("title") == "Holiday Series - The 4 C's of Christianity":
+                    holiday_pack = pack
                     break
                     
-            if not in_his_image_pack:
-                self.log_test("GET /snack-packs", False, "In His Image snack pack not found")
+            if not holiday_pack:
+                self.log_test("GET /snack-packs", False, "Holiday Series snack pack not found")
                 return False
                 
-            # Verify pack has 3 nibbles
-            if in_his_image_pack.get("total_lessons") != 3:
-                self.log_test("GET /snack-packs", False, f"Expected 3 lessons, got {in_his_image_pack.get('total_lessons')}")
+            # Verify Holiday pack has 4 lessons
+            if holiday_pack.get("total_lessons") != 4:
+                self.log_test("GET /snack-packs", False, f"Expected 4 lessons in Holiday pack, got {holiday_pack.get('total_lessons')}")
                 return False
                 
-            self.log_test("GET /snack-packs", True, "In His Image pack found with 3 lessons")
+            self.log_test("GET /snack-packs", True, "Both snack packs found: In His Image (3 lessons) and Holiday Series (4 lessons)")
             return True
             
         except Exception as e:
