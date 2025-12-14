@@ -177,3 +177,76 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ PASSED - Successfully saves user progress including nibble_id, answers, and completed_bites. Returns success=true confirmation."
+
+frontend_interactive_lessons:
+  - task: "Snack Packs Page - Layout and Navigation"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/SnackPacksPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial testing required - need to verify /snack-packs page loads, displays title, shows snack pack cards with pricing, and View Lessons functionality works"
+
+  - task: "Snack Packs Page - Snack Pack Display and Interaction"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/SnackPacksPage.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial testing required - need to verify 'In His Image - Self Worth Series' snack pack card displays correctly with $7.99 download and $9.99 interactive pricing, View Lessons button expands section with 3 lessons and Start Lesson buttons"
+
+  - task: "Interactive Lesson Page - Core Layout and Sections"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/InteractiveLesson.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial testing required - need to verify /interactive-lesson/in-his-image-1 page loads with 'Made in His Image' title, Key Verse section (Genesis 1:27), Opening Prayer, Appetizer sections display correctly"
+
+  - task: "Interactive Lesson Page - Bite Navigation and Content"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/InteractiveLesson.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial testing required - need to verify bite navigation circles (1, 2, 3) are visible, Bite 1: God's Original Intent section displays with scripture and teaching, reflection question has textarea input, Next button navigates to Bite 2"
+
+  - task: "Interactive Lesson Page - Activities and Interactivity"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/InteractiveLesson.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial testing required - need to verify To-Go Box (Key Takeaways) displays, Complete the Statements activity section works, Check My Answers button functions, Your Prayer section with textarea, Closing Prayer section, footer buttons (Save My Progress, Download PDF, Next Lesson) are functional"
+
+  - task: "Interactive Lesson Page - User Input and Progress Saving"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/InteractiveLesson.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "testing"
+        comment: "Initial testing required - need to verify users can enter text in reflection question textarea, enter text in activity inputs, Check My Answers button provides feedback (toast notification or result display), Save My Progress button shows confirmation"
