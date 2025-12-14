@@ -949,7 +949,7 @@ async def get_snack_pack(pack_id: str):
 
 @router.get("/nibbles")
 async def get_all_nibbles():
-    """Get all available nibbles"""
+    """Get all available nibbles (individual lessons)"""
     return {
         "nibbles": [
             {
@@ -957,7 +957,12 @@ async def get_all_nibbles():
                 "lesson_number": n["lesson_number"],
                 "title": n["title"],
                 "series_name": n["series_name"],
-                "key_verse_ref": n["key_verse_ref"]
+                "key_verse_ref": n["key_verse_ref"],
+                "theme": n.get("theme", ""),
+                "is_bonus": n.get("is_bonus", False),
+                "is_free": n.get("is_free", False),
+                "price_download": n.get("price_download", 0),
+                "price_interactive": n.get("price_interactive", 0)
             } for n in ALL_NIBBLES
         ]
     }
