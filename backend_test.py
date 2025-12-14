@@ -418,7 +418,7 @@ class InteractiveLessonsAPITester:
         print(f"📊 Test Results: {passed}/{total} tests passed")
         
         if passed == total:
-            print("🎉 All backend API tests PASSED!")
+            print("🎉 All Holiday AE backend API tests PASSED!")
             return True
         else:
             print(f"⚠️  {total - passed} test(s) FAILED")
