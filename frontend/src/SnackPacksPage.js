@@ -49,6 +49,11 @@ const SnackPacksPage = () => {
     navigate(`/interactive-lesson/${nibbleId}`);
   };
 
+  // Separate nibbles by series
+  const inHisImageNibbles = nibbles.filter(n => n.series_name === 'In His Image');
+  const holidayMainNibbles = nibbles.filter(n => n.series_name === 'Holiday Series AE' && !n.is_bonus);
+  const holidayBonusNibbles = nibbles.filter(n => n.series_name === 'Holiday Series AE' && n.is_bonus);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 flex items-center justify-center">
@@ -85,11 +90,11 @@ const SnackPacksPage = () => {
                 className="w-10 h-10 object-contain"
               />
               <div>
-                <h1 className="text-lg sm:text-xl font-bold text-slate-800">Snack Packs</h1>
-                <p className="text-xs text-slate-600">Interactive Lessons</p>
+                <h1 className="text-lg sm:text-xl font-bold text-slate-800">Interactive Lessons</h1>
+                <p className="text-xs text-slate-600">Nibbles & Snack Packs</p>
               </div>
             </div>
-            <div className="w-20" /> {/* Spacer for alignment */}
+            <div className="w-20" />
           </div>
         </div>
       </header>
@@ -98,19 +103,20 @@ const SnackPacksPage = () => {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4">
-            Snack Packs
+            Interactive Bible Studies
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Bite-sized interactive lessons designed for your spiritual growth. 
-            Each pack contains 3-4 "nibbles" - engaging lessons with reflection questions and activities.
+            Each "Nibble" is a standalone lesson with scripture, teaching, reflection questions, and activities.
           </p>
         </div>
 
-        {/* Snack Packs Grid */}
+        {/* Snack Packs Section */}
         {snackPacks.length > 0 && (
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center">
-              <span className="mr-2">🥡</span> Available Snack Packs
+              <span className="mr-2">🥡</span> Snack Packs
+              <span className="ml-3 text-sm font-normal text-slate-500">(Bundled Lesson Sets)</span>
             </h2>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -132,7 +138,6 @@ const SnackPacksPage = () => {
                     <CardTitle className="text-xl mt-2 group-hover:text-indigo-600 transition-colors">
                       {pack.title}
                     </CardTitle>
-                    <p className="text-sm text-indigo-600 font-medium">{pack.series_name}</p>
                   </CardHeader>
                   <CardContent className="p-4">
                     <p className="text-slate-600 text-sm mb-4">{pack.description}</p>
@@ -147,16 +152,6 @@ const SnackPacksPage = () => {
                         <p className="font-bold text-lg text-indigo-600">${pack.price_interactive}</p>
                       </div>
                     </div>
-                    
-                    {pack.available_in && pack.available_in.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-4">
-                        {pack.available_in.map(series => (
-                          <Badge key={series} variant="outline" className="text-xs capitalize">
-                            {series}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
                     
                     <Button 
                       className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
@@ -180,7 +175,7 @@ const SnackPacksPage = () => {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-2xl font-bold text-slate-800">{selectedPack.title}</h3>
-                <p className="text-indigo-600">{selectedPack.series_name}</p>
+                <p className="text-indigo-600">{selectedPack.total_lessons} Lessons Included</p>
               </div>
               <Button 
                 variant="ghost" 
@@ -192,78 +187,132 @@ const SnackPacksPage = () => {
             </div>
             
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {nibbles
-                .filter(n => selectedPack.nibbles.includes(n.id))
-                .map((nibble, index) => (
-                  <Card 
-                    key={nibble.id}
-                    className="border border-slate-200 hover:border-indigo-300 transition-all hover:shadow-lg"
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                          {nibble.lesson_number}
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-slate-800">{nibble.title}</h4>
-                          <p className="text-xs text-slate-500">{nibble.key_verse_ref}</p>
-                        </div>
+              {inHisImageNibbles.map((nibble) => (
+                <Card 
+                  key={nibble.id}
+                  className="border border-slate-200 hover:border-indigo-300 transition-all hover:shadow-lg"
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                        {nibble.lesson_number}
                       </div>
-                      
-                      <Button 
-                        onClick={() => handleStartLesson(nibble.id)}
-                        className="w-full bg-indigo-600 hover:bg-indigo-700"
-                      >
-                        Start Lesson →
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
+                      <div>
+                        <h4 className="font-semibold text-slate-800">{nibble.title}</h4>
+                        <p className="text-xs text-slate-500">{nibble.key_verse_ref}</p>
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      onClick={() => handleStartLesson(nibble.id)}
+                      className="w-full bg-indigo-600 hover:bg-indigo-700"
+                    >
+                      Start Lesson →
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         )}
 
-        {/* All Individual Nibbles */}
-        <div>
-          <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center">
-            <span className="mr-2">📖</span> Individual Lessons (Nibbles)
-          </h2>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {nibbles.map((nibble) => (
-              <Card 
-                key={nibble.id}
-                className="border border-slate-200 hover:border-indigo-300 transition-all hover:shadow-lg group"
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                      {nibble.lesson_number}
+        {/* Holiday Series - Individual Lessons */}
+        {holidayMainNibbles.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-slate-800 mb-2 flex items-center">
+              <span className="mr-2">🎄</span> Holiday Series – Adult Edition
+            </h2>
+            <p className="text-slate-600 mb-6">The 4 C's of Christianity: Covenant, Cradle, Cross, and Comforter</p>
+            
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {holidayMainNibbles.map((nibble) => (
+                <Card 
+                  key={nibble.id}
+                  className="border-2 border-amber-200 hover:border-amber-400 transition-all hover:shadow-lg group bg-gradient-to-br from-white to-amber-50"
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                        {nibble.lesson_number}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-slate-800 group-hover:text-amber-700 transition-colors">
+                          {nibble.title}
+                        </h4>
+                        <p className="text-xs text-amber-600 font-medium">{nibble.theme}</p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-slate-800 group-hover:text-indigo-600 transition-colors">
-                        {nibble.title}
-                      </h4>
-                      <p className="text-sm text-indigo-600">{nibble.series_name}</p>
+                    
+                    <div className="bg-amber-50 rounded-lg p-2 mb-3 border border-amber-200">
+                      <p className="text-xs text-slate-500 mb-1">Key Verse</p>
+                      <p className="text-sm text-slate-700 font-medium">{nibble.key_verse_ref}</p>
                     </div>
-                  </div>
-                  
-                  <div className="bg-slate-50 rounded-lg p-3 mb-4">
-                    <p className="text-xs text-slate-500 mb-1">Key Verse</p>
-                    <p className="text-sm text-slate-700 font-medium">{nibble.key_verse_ref}</p>
-                  </div>
-                  
-                  <Button 
-                    onClick={() => handleStartLesson(nibble.id)}
-                    className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 group-hover:shadow-lg transition-all"
-                  >
-                    <span className="mr-2">✨</span> Start Interactive Lesson
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                    
+                    <div className="flex items-center justify-between text-sm mb-3">
+                      <span className="text-slate-500">PDF: <span className="font-semibold text-slate-700">${nibble.price_download}</span></span>
+                      <span className="text-amber-600">Interactive: <span className="font-semibold">${nibble.price_interactive}</span></span>
+                    </div>
+                    
+                    <Button 
+                      onClick={() => handleStartLesson(nibble.id)}
+                      className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 group-hover:shadow-lg transition-all"
+                    >
+                      <span className="mr-2">✨</span> Start Lesson
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Bonus Lessons - FREE */}
+        {holidayBonusNibbles.length > 0 && (
+          <div className="mb-12">
+            <h2 className="text-2xl font-bold text-slate-800 mb-2 flex items-center">
+              <span className="mr-2">🎁</span> Bonus Lessons
+              <Badge className="ml-3 bg-emerald-500 text-white">FREE</Badge>
+            </h2>
+            <p className="text-slate-600 mb-6">Foundational teachings to deepen your faith journey</p>
+            
+            <div className="grid sm:grid-cols-2 gap-4">
+              {holidayBonusNibbles.map((nibble) => (
+                <Card 
+                  key={nibble.id}
+                  className="border-2 border-emerald-200 hover:border-emerald-400 transition-all hover:shadow-lg group bg-gradient-to-br from-white to-emerald-50"
+                >
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-4">
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg">
+                        <span className="text-2xl">🎁</span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-bold text-lg text-slate-800 group-hover:text-emerald-700 transition-colors">
+                            {nibble.title}
+                          </h4>
+                          <Badge className="bg-emerald-100 text-emerald-700 text-xs">BONUS</Badge>
+                        </div>
+                        <p className="text-sm text-emerald-600 font-medium mb-2">{nibble.theme}</p>
+                        <p className="text-xs text-slate-500">{nibble.key_verse_ref}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-emerald-600 font-bold text-lg">FREE</span>
+                      <Button 
+                        onClick={() => handleStartLesson(nibble.id)}
+                        className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+                      >
+                        Start Free Lesson →
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Empty State */}
         {snackPacks.length === 0 && nibbles.length === 0 && (
