@@ -1,10 +1,17 @@
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import StreamingResponse
 from typing import List, Optional
 from datetime import datetime
 import os
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
+# Import PDF generator
+from utils.pdf_generator import LessonPDFGenerator
+
 router = APIRouter(prefix="/interactive-lessons", tags=["interactive-lessons"])
+
+# Initialize PDF generator
+pdf_generator = LessonPDFGenerator()
 
 # In His Image Series - 5th Week Snack Pack
 IN_HIS_IMAGE_NIBBLES = [
