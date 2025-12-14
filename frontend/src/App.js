@@ -16,6 +16,8 @@ import ShoppingCart from './ShoppingCart';
 import CheckoutPage from './CheckoutPage';
 import PaymentSuccess from './PaymentSuccess';
 import PaymentCancel from './PaymentCancel';
+import InteractiveLesson from './InteractiveLesson';
+import SnackPacksPage from './SnackPacksPage';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
