@@ -785,7 +785,7 @@ async def check_answers(data: dict):
     
     # Find the nibble
     nibble = None
-    for n in IN_HIS_IMAGE_NIBBLES:
+    for n in ALL_NIBBLES:
         if n["id"] == nibble_id:
             nibble = n
             break
