@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
-router = APIRouter(prefix="/api/lessons", tags=["lessons"])
+router = APIRouter(prefix="/interactive-lessons", tags=["interactive-lessons"])
 
 # In His Image Series - 5th Week Snack Pack
 IN_HIS_IMAGE_NIBBLES = [
