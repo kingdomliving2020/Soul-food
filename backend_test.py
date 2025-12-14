@@ -134,58 +134,149 @@ class InteractiveLessonsAPITester:
             self.log_test("GET /nibbles", False, f"Exception: {str(e)}")
             return False
             
-    def test_get_single_nibble(self):
-        """Test GET /nibble/{nibble_id} endpoint"""
+    def test_holiday_ae_covenant(self):
+        """Test GET /nibble/holiday-ae-covenant - The Covenant lesson"""
         try:
-            nibble_id = "in-his-image-1"
+            nibble_id = "holiday-ae-covenant"
             response = self.session.get(f"{self.base_url}/nibble/{nibble_id}")
             
             if response.status_code != 200:
-                self.log_test("GET /nibble/{nibble_id}", False, f"Status code: {response.status_code}")
+                self.log_test("GET /nibble/holiday-ae-covenant", False, f"Status code: {response.status_code}")
                 return False
                 
             data = response.json()
             
             # Verify response structure
             if "nibble" not in data:
-                self.log_test("GET /nibble/{nibble_id}", False, "Missing 'nibble' key in response")
+                self.log_test("GET /nibble/holiday-ae-covenant", False, "Missing 'nibble' key in response")
                 return False
                 
             nibble = data["nibble"]
             
-            # Verify required fields
-            required_fields = ["id", "title", "bites", "activity", "key_verse_text", 
-                             "opening_prayer", "closing_prayer", "to_go_box"]
-            
-            for field in required_fields:
-                if field not in nibble:
-                    self.log_test("GET /nibble/{nibble_id}", False, f"Missing required field: {field}")
-                    return False
-                    
-            # Verify nibble has correct ID and title
-            if nibble["id"] != nibble_id:
-                self.log_test("GET /nibble/{nibble_id}", False, f"Wrong nibble ID returned: {nibble['id']}")
+            # Verify theme
+            if nibble.get("theme") != "The Promise Still Stands":
+                self.log_test("GET /nibble/holiday-ae-covenant", False, f"Wrong theme: {nibble.get('theme')}")
                 return False
                 
-            if nibble["title"] != "Made in His Image":
-                self.log_test("GET /nibble/{nibble_id}", False, f"Wrong title: {nibble['title']}")
+            # Verify has 3 bites
+            if len(nibble.get("bites", [])) != 3:
+                self.log_test("GET /nibble/holiday-ae-covenant", False, f"Expected 3 bites, got {len(nibble.get('bites', []))}")
                 return False
                 
-            # Verify bites array has 3 items
-            if len(nibble["bites"]) != 3:
-                self.log_test("GET /nibble/{nibble_id}", False, f"Expected 3 bites, got {len(nibble['bites'])}")
+            # Verify has 4 fill-in-blank activity questions
+            activity = nibble.get("activity", {})
+            questions = activity.get("questions", [])
+            if len(questions) != 4:
+                self.log_test("GET /nibble/holiday-ae-covenant", False, f"Expected 4 activity questions, got {len(questions)}")
                 return False
                 
-            # Verify activity has questions
-            if "questions" not in nibble["activity"]:
-                self.log_test("GET /nibble/{nibble_id}", False, "Activity missing questions")
-                return False
-                
-            self.log_test("GET /nibble/{nibble_id}", True, "Nibble structure and content verified")
+            self.log_test("GET /nibble/holiday-ae-covenant", True, "Covenant lesson verified: theme 'The Promise Still Stands', 3 bites, 4 fill-in-blank questions")
             return True
             
         except Exception as e:
-            self.log_test("GET /nibble/{nibble_id}", False, f"Exception: {str(e)}")
+            self.log_test("GET /nibble/holiday-ae-covenant", False, f"Exception: {str(e)}")
+            return False
+            
+    def test_holiday_ae_cradle(self):
+        """Test GET /nibble/holiday-ae-cradle - The Cradle lesson"""
+        try:
+            nibble_id = "holiday-ae-cradle"
+            response = self.session.get(f"{self.base_url}/nibble/{nibble_id}")
+            
+            if response.status_code != 200:
+                self.log_test("GET /nibble/holiday-ae-cradle", False, f"Status code: {response.status_code}")
+                return False
+                
+            data = response.json()
+            nibble = data.get("nibble", {})
+            
+            # Verify theme
+            if nibble.get("theme") != "Heaven Came Low":
+                self.log_test("GET /nibble/holiday-ae-cradle", False, f"Wrong theme: {nibble.get('theme')}")
+                return False
+                
+            # Verify has 3 bites
+            if len(nibble.get("bites", [])) != 3:
+                self.log_test("GET /nibble/holiday-ae-cradle", False, f"Expected 3 bites, got {len(nibble.get('bites', []))}")
+                return False
+                
+            # Verify has matching activity
+            activity = nibble.get("activity", {})
+            if activity.get("title") != "Cradle Connections - Matching":
+                self.log_test("GET /nibble/holiday-ae-cradle", False, f"Wrong activity type: {activity.get('title')}")
+                return False
+                
+            self.log_test("GET /nibble/holiday-ae-cradle", True, "Cradle lesson verified: theme 'Heaven Came Low', 3 bites, matching activity")
+            return True
+            
+        except Exception as e:
+            self.log_test("GET /nibble/holiday-ae-cradle", False, f"Exception: {str(e)}")
+            return False
+            
+    def test_holiday_ae_cross(self):
+        """Test GET /nibble/holiday-ae-cross - The Cross lesson"""
+        try:
+            nibble_id = "holiday-ae-cross"
+            response = self.session.get(f"{self.base_url}/nibble/{nibble_id}")
+            
+            if response.status_code != 200:
+                self.log_test("GET /nibble/holiday-ae-cross", False, f"Status code: {response.status_code}")
+                return False
+                
+            data = response.json()
+            nibble = data.get("nibble", {})
+            
+            # Verify theme
+            if nibble.get("theme") != "Grieving Grace → Redeeming Grace":
+                self.log_test("GET /nibble/holiday-ae-cross", False, f"Wrong theme: {nibble.get('theme')}")
+                return False
+                
+            # Verify has 3 bites
+            if len(nibble.get("bites", [])) != 3:
+                self.log_test("GET /nibble/holiday-ae-cross", False, f"Expected 3 bites, got {len(nibble.get('bites', []))}")
+                return False
+                
+            self.log_test("GET /nibble/holiday-ae-cross", True, "Cross lesson verified: theme 'Grieving Grace → Redeeming Grace', 3 bites")
+            return True
+            
+        except Exception as e:
+            self.log_test("GET /nibble/holiday-ae-cross", False, f"Exception: {str(e)}")
+            return False
+            
+    def test_holiday_ae_comforter(self):
+        """Test GET /nibble/holiday-ae-comforter - The Comforter lesson"""
+        try:
+            nibble_id = "holiday-ae-comforter"
+            response = self.session.get(f"{self.base_url}/nibble/{nibble_id}")
+            
+            if response.status_code != 200:
+                self.log_test("GET /nibble/holiday-ae-comforter", False, f"Status code: {response.status_code}")
+                return False
+                
+            data = response.json()
+            nibble = data.get("nibble", {})
+            
+            # Verify theme
+            if nibble.get("theme") != "God Remains With Us":
+                self.log_test("GET /nibble/holiday-ae-comforter", False, f"Wrong theme: {nibble.get('theme')}")
+                return False
+                
+            # Verify has 5 bites (longest lesson)
+            if len(nibble.get("bites", [])) != 5:
+                self.log_test("GET /nibble/holiday-ae-comforter", False, f"Expected 5 bites, got {len(nibble.get('bites', []))}")
+                return False
+                
+            # Verify has reflection-based activity (Comfort Letters)
+            activity = nibble.get("activity", {})
+            if activity.get("title") != "Comfort Letters":
+                self.log_test("GET /nibble/holiday-ae-comforter", False, f"Wrong activity type: {activity.get('title')}")
+                return False
+                
+            self.log_test("GET /nibble/holiday-ae-comforter", True, "Comforter lesson verified: theme 'God Remains With Us', 5 bites, Comfort Letters activity")
+            return True
+            
+        except Exception as e:
+            self.log_test("GET /nibble/holiday-ae-comforter", False, f"Exception: {str(e)}")
             return False
             
     def test_check_answers(self):
