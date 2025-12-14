@@ -54,6 +54,14 @@ try:
     print("✅ Contact routes loaded")
 except Exception as e:
     print(f"⚠️ Could not load contact routes: {e}")
+
+# Import interactive lesson routes
+try:
+    from routes.lessons import router as interactive_lessons_router
+    api_router.include_router(interactive_lessons_router)
+    print("✅ Interactive lesson routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load interactive lesson routes: {e}")
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
