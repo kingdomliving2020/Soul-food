@@ -1049,3 +1049,56 @@ async def check_answers(data: dict):
         "correct_count": correct_count,
         "total_gradable": total_gradable
     }
+
+@router.get("/download/nibble/{nibble_id}")
+async def download_nibble_pdf(nibble_id: str):
+    """Download a single lesson as PDF"""
+    # Find the nibble
+    nibble = None
+    for n in ALL_NIBBLES:
+        if n["id"] == nibble_id:
+            nibble = n
+            break
+    
+    if not nibble:
+        raise HTTPException(status_code=404, detail="Lesson not found")
+    
+    # Generate PDF
+    pdf_buffer = pdf_generator.generate_lesson_pdf(nibble)
+    
+    # Create filename
+    filename = f"SoulFood_{nibble['series_name'].replace(' ', '_')}_{nibble['title'].replace(' ', '_')}.pdf"
+    
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}"
+        }
+    )
+
+@router.get("/download/series/{series_name}")
+async def download_series_pdf(series_name: str):
+    """Download all lessons in a series as a single PDF"""
+    # Find all nibbles in the series
+    series_nibbles = [n for n in ALL_NIBBLES if n["series_name"] == series_name]
+    
+    if not series_nibbles:
+        raise HTTPException(status_code=404, detail="Series not found")
+    
+    # Sort by lesson number
+    series_nibbles.sort(key=lambda x: x.get("lesson_number", 0))
+    
+    # Generate PDF
+    pdf_buffer = pdf_generator.generate_series_pdf(series_nibbles, series_name)
+    
+    # Create filename
+    filename = f"SoulFood_{series_name.replace(' ', '_')}_Complete.pdf"
+    
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}"
+        }
+    )
