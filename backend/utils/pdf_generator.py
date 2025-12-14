@@ -270,7 +270,7 @@ class LessonPDFGenerator:
         """
         story.append(Paragraph(dedication_text, ParagraphStyle(
             'Dedication',
-            parent=self.styles['BodyText'],
+            parent=self.styles['LessonBodyText'],
             alignment=TA_CENTER,
             fontSize=12,
             leading=20
@@ -294,7 +294,7 @@ class LessonPDFGenerator:
         ]
         
         for item in quick_start_items:
-            story.append(Paragraph(item, self.styles['BodyText']))
+            story.append(Paragraph(item, self.styles['LessonBodyText']))
             story.append(Spacer(1, 0.1*inch))
         
         toc_entries.append(("Quick Start Guide", 4))
@@ -367,7 +367,7 @@ class LessonPDFGenerator:
         # Appetizer
         story.append(Paragraph("🍽️ Appetizer", self.styles['SectionHeader']))
         if nibble.get('appetizer'):
-            story.append(Paragraph(nibble['appetizer'], self.styles['BodyText']))
+            story.append(Paragraph(nibble['appetizer'], self.styles['LessonBodyText']))
         story.append(Spacer(1, 0.2*inch))
         
         # Key Verse
@@ -391,8 +391,8 @@ class LessonPDFGenerator:
             
             # Teaching
             if bite.get('teaching'):
-                story.append(Paragraph("<b>Teaching:</b>", self.styles['BodyText']))
-                story.append(Paragraph(bite['teaching'], self.styles['BodyText']))
+                story.append(Paragraph("<b>Teaching:</b>", self.styles['LessonBodyText']))
+                story.append(Paragraph(bite['teaching'], self.styles['LessonBodyText']))
             
             # CST (Core Shared Truth)
             if bite.get('cst'):
@@ -400,7 +400,7 @@ class LessonPDFGenerator:
                     f"<b>Core Shared Truth:</b> {bite['cst']}",
                     ParagraphStyle(
                         'CST',
-                        parent=self.styles['BodyText'],
+                        parent=self.styles['LessonBodyText'],
                         backColor=colors.HexColor('#F3E8FF'),
                         borderPadding=8,
                         textColor=colors.HexColor('#7C3AED')
@@ -425,7 +425,7 @@ class LessonPDFGenerator:
         story.append(Paragraph("🥡 To-Go Box (Key Takeaways)", self.styles['SectionHeader']))
         if nibble.get('to_go_box'):
             for item in nibble['to_go_box']:
-                story.append(Paragraph(f"✓ {item}", self.styles['BodyText']))
+                story.append(Paragraph(f"✓ {item}", self.styles['LessonBodyText']))
         story.append(Spacer(1, 0.2*inch))
         
         # Word Study
@@ -434,7 +434,7 @@ class LessonPDFGenerator:
             for term, definition in nibble['word_study'].items():
                 story.append(Paragraph(
                     f"<b>{term}:</b> {definition}",
-                    self.styles['BodyText']
+                    self.styles['LessonBodyText']
                 ))
             story.append(Spacer(1, 0.2*inch))
         
@@ -447,7 +447,7 @@ class LessonPDFGenerator:
             ))
             
             if activity.get('instructions'):
-                story.append(Paragraph(activity['instructions'], self.styles['BodyText']))
+                story.append(Paragraph(activity['instructions'], self.styles['LessonBodyText']))
             
             story.append(Spacer(1, 0.1*inch))
             
@@ -461,7 +461,7 @@ class LessonPDFGenerator:
                 elif q_type == 'word_scramble':
                     scrambled = q.get('scrambled_letters', '')
                     story.append(Paragraph(f"{i}. {prompt}", self.styles['Question']))
-                    story.append(Paragraph(f"Unscramble: {scrambled}", self.styles['BodyText']))
+                    story.append(Paragraph(f"Unscramble: {scrambled}", self.styles['LessonBodyText']))
                     story.append(Paragraph("Answer: _______________________", self.styles['AnswerLine']))
                 else:  # reflection
                     story.append(Paragraph(f"{i}. {prompt}", self.styles['Question']))
@@ -475,7 +475,7 @@ class LessonPDFGenerator:
         # Your Prayer
         story.append(Paragraph("✍️ Your Prayer", self.styles['SectionHeader']))
         if nibble.get('your_prayer_prompt'):
-            story.append(Paragraph(nibble['your_prayer_prompt'], self.styles['BodyText']))
+            story.append(Paragraph(nibble['your_prayer_prompt'], self.styles['LessonBodyText']))
         story.append(Paragraph(
             "_" * 70 + "<br/>" + "_" * 70 + "<br/>" + "_" * 70 + "<br/>" + "_" * 70,
             self.styles['AnswerLine']
@@ -562,7 +562,7 @@ class LessonPDFGenerator:
         """
         story.append(Paragraph(dedication_text, ParagraphStyle(
             'Dedication',
-            parent=self.styles['BodyText'],
+            parent=self.styles['LessonBodyText'],
             alignment=TA_CENTER,
             fontSize=12,
             leading=20
@@ -584,7 +584,7 @@ class LessonPDFGenerator:
         ]
         
         for item in quick_start_items:
-            story.append(Paragraph(item, self.styles['BodyText']))
+            story.append(Paragraph(item, self.styles['LessonBodyText']))
         story.append(PageBreak())
         
         # === TABLE OF CONTENTS ===
@@ -647,7 +647,7 @@ class LessonPDFGenerator:
             # Appetizer
             story.append(Paragraph("🍽️ Appetizer", self.styles['SectionHeader']))
             if nibble.get('appetizer'):
-                story.append(Paragraph(nibble['appetizer'], self.styles['BodyText']))
+                story.append(Paragraph(nibble['appetizer'], self.styles['LessonBodyText']))
             story.append(Spacer(1, 0.2*inch))
             
             # Bites
@@ -662,15 +662,15 @@ class LessonPDFGenerator:
                     story.append(Paragraph(scripture, self.styles['Scripture']))
                 
                 if bite.get('teaching'):
-                    story.append(Paragraph("<b>Teaching:</b>", self.styles['BodyText']))
-                    story.append(Paragraph(bite['teaching'], self.styles['BodyText']))
+                    story.append(Paragraph("<b>Teaching:</b>", self.styles['LessonBodyText']))
+                    story.append(Paragraph(bite['teaching'], self.styles['LessonBodyText']))
                 
                 if bite.get('cst'):
                     story.append(Paragraph(
                         f"<b>Core Shared Truth:</b> {bite['cst']}",
                         ParagraphStyle(
                             'CST',
-                            parent=self.styles['BodyText'],
+                            parent=self.styles['LessonBodyText'],
                             backColor=colors.HexColor('#F3E8FF'),
                             borderPadding=8,
                             textColor=colors.HexColor('#7C3AED')
@@ -694,14 +694,14 @@ class LessonPDFGenerator:
             story.append(Paragraph("🥡 To-Go Box", self.styles['SectionHeader']))
             if nibble.get('to_go_box'):
                 for item in nibble['to_go_box']:
-                    story.append(Paragraph(f"✓ {item}", self.styles['BodyText']))
+                    story.append(Paragraph(f"✓ {item}", self.styles['LessonBodyText']))
             story.append(Spacer(1, 0.2*inch))
             
             # Word Study
             if nibble.get('word_study'):
                 story.append(Paragraph("📚 Word Study", self.styles['SectionHeader']))
                 for term, definition in nibble['word_study'].items():
-                    story.append(Paragraph(f"<b>{term}:</b> {definition}", self.styles['BodyText']))
+                    story.append(Paragraph(f"<b>{term}:</b> {definition}", self.styles['LessonBodyText']))
                 story.append(Spacer(1, 0.2*inch))
             
             # Activity
@@ -713,7 +713,7 @@ class LessonPDFGenerator:
                 ))
                 
                 if activity.get('instructions'):
-                    story.append(Paragraph(activity['instructions'], self.styles['BodyText']))
+                    story.append(Paragraph(activity['instructions'], self.styles['LessonBodyText']))
                 
                 for i, q in enumerate(activity.get('questions', []), 1):
                     prompt = q.get('prompt', '')
@@ -725,7 +725,7 @@ class LessonPDFGenerator:
                     elif q_type == 'word_scramble':
                         scrambled = q.get('scrambled_letters', '')
                         story.append(Paragraph(f"{i}. {prompt}", self.styles['Question']))
-                        story.append(Paragraph(f"Unscramble: {scrambled}", self.styles['BodyText']))
+                        story.append(Paragraph(f"Unscramble: {scrambled}", self.styles['LessonBodyText']))
                         story.append(Paragraph("Answer: _______________________", self.styles['AnswerLine']))
                     else:
                         story.append(Paragraph(f"{i}. {prompt}", self.styles['Question']))
@@ -739,7 +739,7 @@ class LessonPDFGenerator:
             # Your Prayer
             story.append(Paragraph("✍️ Your Prayer", self.styles['SectionHeader']))
             if nibble.get('your_prayer_prompt'):
-                story.append(Paragraph(nibble['your_prayer_prompt'], self.styles['BodyText']))
+                story.append(Paragraph(nibble['your_prayer_prompt'], self.styles['LessonBodyText']))
             story.append(Paragraph(
                 "_" * 70 + "<br/>" + "_" * 70 + "<br/>" + "_" * 70,
                 self.styles['AnswerLine']
