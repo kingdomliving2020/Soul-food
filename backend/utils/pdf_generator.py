@@ -386,7 +386,7 @@ class LessonPDFGenerator:
             
             # Scripture
             if bite.get('scripture_ref') and bite.get('scripture_text'):
-                scripture = f"<b>{bite['scripture_ref']}</b><br/>"{bite['scripture_text']}""
+                scripture = f"<b>{bite['scripture_ref']}</b><br/>\"{bite['scripture_text']}\""
                 story.append(Paragraph(scripture, self.styles['Scripture']))
             
             # Teaching
