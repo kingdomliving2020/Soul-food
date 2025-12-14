@@ -541,7 +541,12 @@ const InteractiveLesson = () => {
             {savingProgress ? 'Saving...' : '💾 Save My Progress'}
           </Button>
           <Button
-            onClick={() => toast.info('PDF download coming soon!')}
+            onClick={() => {
+              // Download PDF
+              const downloadUrl = `${API}/interactive-lessons/download/nibble/${nibbleId}`;
+              window.open(downloadUrl, '_blank');
+              toast.success('PDF download started!');
+            }}
             variant="outline"
             className="border-purple-300 text-purple-700 hover:bg-purple-50 flex items-center gap-2"
           >
