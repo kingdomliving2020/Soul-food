@@ -729,17 +729,19 @@ ALL_SNACK_PACKS = [IN_HIS_IMAGE_SNACK_PACK, HOLIDAY_AE_SNACK_PACK]
 async def get_snack_packs():
     """Get all available snack packs"""
     return {
-        "snack_packs": [IN_HIS_IMAGE_SNACK_PACK]
+        "snack_packs": ALL_SNACK_PACKS
     }
 
 @router.get("/snack-pack/{pack_id}")
 async def get_snack_pack(pack_id: str):
     """Get a specific snack pack with its nibbles"""
-    if pack_id == "in-his-image-snack-pack":
-        return {
-            "snack_pack": IN_HIS_IMAGE_SNACK_PACK,
-            "nibbles": IN_HIS_IMAGE_NIBBLES
-        }
+    for pack in ALL_SNACK_PACKS:
+        if pack["id"] == pack_id:
+            pack_nibbles = [n for n in ALL_NIBBLES if n["id"] in pack["nibbles"]]
+            return {
+                "snack_pack": pack,
+                "nibbles": pack_nibbles
+            }
     raise HTTPException(status_code=404, detail="Snack pack not found")
 
 @router.get("/nibbles")
@@ -753,14 +755,14 @@ async def get_all_nibbles():
                 "title": n["title"],
                 "series_name": n["series_name"],
                 "key_verse_ref": n["key_verse_ref"]
-            } for n in IN_HIS_IMAGE_NIBBLES
+            } for n in ALL_NIBBLES
         ]
     }
 
 @router.get("/nibble/{nibble_id}")
 async def get_nibble(nibble_id: str):
     """Get a specific nibble (lesson)"""
-    for nibble in IN_HIS_IMAGE_NIBBLES:
+    for nibble in ALL_NIBBLES:
         if nibble["id"] == nibble_id:
             return {"nibble": nibble}
     raise HTTPException(status_code=404, detail="Nibble not found")
