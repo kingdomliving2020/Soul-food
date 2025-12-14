@@ -390,8 +390,8 @@ class InteractiveLessonsAPITester:
             return False
             
     def run_all_tests(self):
-        """Run all backend API tests"""
-        print("🧪 Starting Interactive Lessons Backend API Tests")
+        """Run all Holiday AE backend API tests"""
+        print("🧪 Starting Holiday AE Interactive Lessons Backend API Tests")
         print(f"🌐 Testing against: {self.base_url}")
         print("=" * 60)
         
