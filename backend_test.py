@@ -90,7 +90,7 @@ class InteractiveLessonsAPITester:
             return False
             
     def test_get_nibbles(self):
-        """Test GET /nibbles endpoint"""
+        """Test GET /nibbles endpoint - Should return 7 total nibbles (3 In His Image + 4 Holiday AE)"""
         try:
             response = self.session.get(f"{self.base_url}/nibbles")
             
@@ -110,13 +110,16 @@ class InteractiveLessonsAPITester:
                 self.log_test("GET /nibbles", False, "Nibbles is not a list")
                 return False
                 
-            # Verify we have 3 nibbles
-            if len(nibbles) != 3:
-                self.log_test("GET /nibbles", False, f"Expected 3 nibbles, got {len(nibbles)}")
+            # Should return 7 total nibbles (3 In His Image + 4 Holiday AE)
+            if len(nibbles) != 7:
+                self.log_test("GET /nibbles", False, f"Expected 7 nibbles, got {len(nibbles)}")
                 return False
                 
             # Verify expected nibble IDs exist
-            expected_ids = ["in-his-image-1", "in-his-image-2", "in-his-image-3"]
+            expected_ids = [
+                "in-his-image-1", "in-his-image-2", "in-his-image-3",  # In His Image series
+                "holiday-ae-covenant", "holiday-ae-cradle", "holiday-ae-cross", "holiday-ae-comforter"  # Holiday AE series
+            ]
             actual_ids = [nibble.get("id") for nibble in nibbles]
             
             for expected_id in expected_ids:
@@ -124,7 +127,7 @@ class InteractiveLessonsAPITester:
                     self.log_test("GET /nibbles", False, f"Missing nibble ID: {expected_id}")
                     return False
                     
-            self.log_test("GET /nibbles", True, "All 3 expected nibbles found")
+            self.log_test("GET /nibbles", True, "All 7 expected nibbles found (3 In His Image + 4 Holiday AE)")
             return True
             
         except Exception as e:
