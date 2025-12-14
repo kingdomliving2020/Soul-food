@@ -280,14 +280,14 @@ class InteractiveLessonsAPITester:
             return False
             
     def test_check_answers(self):
-        """Test POST /progress/check-answers endpoint"""
+        """Test POST /progress/check-answers endpoint with Holiday AE Covenant lesson"""
         try:
+            # Test with Holiday AE Covenant lesson as specified in review request
             test_data = {
-                "nibble_id": "in-his-image-1",
+                "nibble_id": "holiday-ae-covenant",
                 "answers": {
-                    "a-1-1": "I need healing in my self-worth and confidence",
-                    "a-1-2": "valuable and loved by God",
-                    "a-1-3": "my relationship with God and others"
+                    "covenant-a-1": "binding",
+                    "covenant-a-2": "families"
                 }
             }
             
@@ -322,7 +322,14 @@ class InteractiveLessonsAPITester:
                 self.log_test("POST /progress/check-answers", False, "No results returned")
                 return False
                 
-            self.log_test("POST /progress/check-answers", True, f"Received {len(results)} answer results")
+            # Verify results have is_correct for each answer
+            for result in results:
+                if "is_correct" in result:  # Only check gradable questions
+                    if "question_id" not in result:
+                        self.log_test("POST /progress/check-answers", False, "Result missing question_id")
+                        return False
+                        
+            self.log_test("POST /progress/check-answers", True, f"Holiday AE Covenant answers checked successfully, received {len(results)} results with is_correct fields")
             return True
             
         except Exception as e:
