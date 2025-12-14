@@ -699,31 +699,234 @@ HOLIDAY_AE_NIBBLES = [
         },
         "closing_prayer": "Father God, thank You for not leaving us as orphans. Thank You for the Holy Spirit who comforts, guides, empowers, and walks with us daily. Help us to be sensitive to His leading and to bear fruit that brings glory to Your name. In Jesus' name, amen.",
         "your_prayer_prompt": "Write your own prayer inviting the Holy Spirit to guide you this week:",
-        "scripture_disclosure": "Scripture quotations are from the World English Bible (WEB), public domain."
+        "scripture_disclosure": "Scripture quotations are from the World English Bible (WEB), public domain.",
+        "price_download": 7.99,
+        "price_interactive": 9.99,
+        "is_free": False
+    },
+    
+    # =============================================================================
+    # BONUS LESSON 1: THE NAMES OF GOD
+    # =============================================================================
+    {
+        "id": "holiday-ae-bonus-names",
+        "lesson_number": 5,
+        "title": "The Names of God",
+        "series_name": "Holiday Series AE",
+        "edition": "adult",
+        "theme": "Foundations of Faith",
+        "is_bonus": True,
+        "appetizer": "Throughout Scripture, God reveals Himself through His names. Each name reflects an aspect of His character, His relationship with us, and His work in the world. Understanding these names deepens our worship and trust.",
+        "opening_prayer": "Father, reveal Yourself to us through Your names. Help us know You more deeply and trust You more fully. In Jesus' name, amen.",
+        "key_verse_ref": "Proverbs 18:10 (WEB)",
+        "key_verse_text": "Yahweh's name is a strong tower; the righteous run to him and are safe.",
+        "bites": [
+            {
+                "id": "names-bite-1",
+                "title": "Yahweh – I AM",
+                "scripture_ref": "Exodus 3:14 (WEB)",
+                "scripture_text": "God said to Moses, 'I AM WHO I AM.' He said, 'You shall tell the children of Israel this: I AM has sent me to you.'",
+                "teaching": "Yahweh is the covenant name of God, meaning 'I AM' – the self-existent, eternal One. He is not dependent on anyone or anything. He simply IS. This name assures us that God is constant, unchanging, and always present.",
+                "question": {
+                    "id": "names-q-1",
+                    "type": "reflection",
+                    "prompt": "How does knowing God as 'I AM' give you confidence in uncertain times?"
+                }
+            },
+            {
+                "id": "names-bite-2",
+                "title": "Elohim – The Creator God",
+                "scripture_ref": "Genesis 1:1 (WEB)",
+                "scripture_text": "In the beginning, God (Elohim) created the heavens and the earth.",
+                "teaching": "Elohim is the plural form of El (God), used to describe God's majesty and power. It appears in the very first verse of the Bible, establishing God as the all-powerful Creator of everything.",
+                "question": {
+                    "id": "names-q-2",
+                    "type": "reflection",
+                    "prompt": "What does it mean to you that the same God who created the universe knows you personally?"
+                }
+            },
+            {
+                "id": "names-bite-3",
+                "title": "Adonai – Lord and Master",
+                "scripture_ref": "Psalm 8:1 (WEB)",
+                "scripture_text": "Yahweh, our Lord (Adonai), how majestic is your name in all the earth!",
+                "teaching": "Adonai means 'Lord' or 'Master.' It speaks of God's authority and our submission to Him. When we call God 'Adonai,' we acknowledge His right to rule over our lives.",
+                "question": {
+                    "id": "names-q-3",
+                    "type": "reflection",
+                    "prompt": "In what area of your life do you need to surrender more fully to God as your Adonai?"
+                }
+            },
+            {
+                "id": "names-bite-4",
+                "title": "Jehovah Compound Names",
+                "scripture_ref": "Various",
+                "scripture_text": "Jehovah-Jireh (The Lord Will Provide), Jehovah-Rapha (The Lord Who Heals), Jehovah-Shalom (The Lord Is Peace), Jehovah-Nissi (The Lord Is My Banner)",
+                "teaching": "God reveals Himself through compound names that describe His provision for every need: He provides, heals, gives peace, and fights our battles. Whatever you need, there is a name of God that speaks to your situation.",
+                "question": {
+                    "id": "names-q-4",
+                    "type": "reflection",
+                    "prompt": "Which of these Jehovah names speaks most to your current season? Why?"
+                }
+            }
+        ],
+        "to_go_box": [
+            "Yahweh – I AM: God is eternal and unchanging",
+            "Elohim – Creator: God is all-powerful",
+            "Adonai – Lord: God has authority over our lives",
+            "Jehovah compound names reveal God's provision for every need"
+        ],
+        "word_study": {
+            "Yahweh": "I AM – the covenant name of God",
+            "Elohim": "God (plural) – emphasizing majesty and power",
+            "Adonai": "Lord, Master – emphasizing authority",
+            "El Shaddai": "God Almighty – emphasizing sufficiency"
+        },
+        "activity": {
+            "id": "names-activity",
+            "title": "Name That Need",
+            "instructions": "Match a name of God to a need in your life. Write a short prayer using that name.",
+            "questions": [
+                {
+                    "id": "names-a-1",
+                    "type": "reflection",
+                    "prompt": "What is a current need in your life, and which name of God speaks to it?"
+                },
+                {
+                    "id": "names-a-2",
+                    "type": "reflection",
+                    "prompt": "Write a short prayer addressing God by that name:"
+                }
+            ]
+        },
+        "closing_prayer": "Lord, thank You for revealing Yourself through Your names. Help us to know You more deeply and trust You more fully in every area of our lives. In Jesus' name, amen.",
+        "your_prayer_prompt": "Write your own prayer using one of God's names:",
+        "scripture_disclosure": "Scripture quotations are from the World English Bible (WEB), public domain.",
+        "price_download": 0,
+        "price_interactive": 0,
+        "is_free": True
+    },
+    
+    # =============================================================================
+    # BONUS LESSON 10: TIMES AND SEASONS
+    # =============================================================================
+    {
+        "id": "holiday-ae-bonus-times",
+        "lesson_number": 6,
+        "title": "Times and Seasons",
+        "series_name": "Holiday Series AE",
+        "edition": "adult",
+        "theme": "God's Order in Days and Numbers",
+        "is_bonus": True,
+        "appetizer": "God is a God of order. From the beginning, He established times, seasons, and patterns. Understanding biblical numbers and their significance helps us see God's intentionality woven throughout Scripture.",
+        "opening_prayer": "Lord, open our eyes to see Your divine order in creation and in our lives. Help us discern the times and seasons You have appointed. In Jesus' name, amen.",
+        "key_verse_ref": "Ecclesiastes 3:1 (WEB)",
+        "key_verse_text": "For everything there is a season, and a time for every purpose under heaven.",
+        "bites": [
+            {
+                "id": "times-bite-1",
+                "title": "The Significance of Seven",
+                "scripture_ref": "Genesis 2:2-3 (WEB)",
+                "scripture_text": "On the seventh day God finished his work which he had done; and he rested on the seventh day from all his work.",
+                "teaching": "Seven represents completion and perfection in Scripture. God rested on the seventh day, establishing the Sabbath pattern. Seven appears throughout the Bible: seven churches, seven seals, seven trumpets – all pointing to God's complete work.",
+                "question": {
+                    "id": "times-q-1",
+                    "type": "reflection",
+                    "prompt": "How does understanding 'seven' as completion change how you view God's work in your life?"
+                }
+            },
+            {
+                "id": "times-bite-2",
+                "title": "Forty – A Time of Testing",
+                "scripture_ref": "Matthew 4:1-2 (WEB)",
+                "scripture_text": "Then Jesus was led up by the Spirit into the wilderness to be tempted by the devil. When he had fasted forty days and forty nights, he was hungry.",
+                "teaching": "Forty often represents a period of testing, trial, or transformation. Israel wandered 40 years. Moses spent 40 days on the mountain. Jesus fasted 40 days. These 'forty seasons' prepare us for what's next.",
+                "question": {
+                    "id": "times-q-2",
+                    "type": "reflection",
+                    "prompt": "Have you experienced a 'forty season' of testing? What did God teach you through it?"
+                }
+            },
+            {
+                "id": "times-bite-3",
+                "title": "Twelve – Divine Government",
+                "scripture_ref": "Revelation 21:12-14 (WEB)",
+                "scripture_text": "It had a great and high wall with twelve gates... and names written on them, which are the names of the twelve tribes... The wall of the city had twelve foundations, and on them twelve names of the twelve Apostles.",
+                "teaching": "Twelve represents divine government and authority: 12 tribes, 12 apostles, 12 gates in the New Jerusalem. God establishes order and structure in His kingdom.",
+                "question": {
+                    "id": "times-q-3",
+                    "type": "reflection",
+                    "prompt": "How do you see God's order and authority displayed in your life or church community?"
+                }
+            },
+            {
+                "id": "times-bite-4",
+                "title": "Appointed Times (Moedim)",
+                "scripture_ref": "Leviticus 23:2 (WEB)",
+                "scripture_text": "The appointed feasts of Yahweh, which you shall proclaim to be holy convocations, even these are my appointed feasts.",
+                "teaching": "God appointed specific times (moedim) for His people to gather and remember His faithfulness. These feasts point to Christ and remind us that God works within time to accomplish His eternal purposes.",
+                "question": {
+                    "id": "times-q-4",
+                    "type": "reflection",
+                    "prompt": "What 'appointed times' do you set aside to remember God's faithfulness in your life?"
+                }
+            }
+        ],
+        "to_go_box": [
+            "Seven = Completion and perfection",
+            "Forty = Testing and preparation",
+            "Twelve = Divine government and authority",
+            "God works within time to accomplish eternal purposes",
+            "Every season has a purpose under heaven"
+        ],
+        "word_study": {
+            "Moedim": "Appointed times; divine appointments set by God",
+            "Shabbat": "Sabbath; the seventh day of rest",
+            "Kairos": "Greek for 'opportune time' – God's appointed moment"
+        },
+        "activity": {
+            "id": "times-activity",
+            "title": "Season Reflection",
+            "instructions": "Reflect on the current season of your life and what God may be doing in it.",
+            "questions": [
+                {
+                    "id": "times-a-1",
+                    "type": "reflection",
+                    "prompt": "What season are you currently in (waiting, testing, growing, harvesting)?"
+                },
+                {
+                    "id": "times-a-2",
+                    "type": "reflection",
+                    "prompt": "What do you sense God is teaching you or preparing you for in this season?"
+                },
+                {
+                    "id": "times-a-3",
+                    "type": "reflection",
+                    "prompt": "Write a prayer surrendering this season to God's timing:"
+                }
+            ]
+        },
+        "closing_prayer": "Father, thank You for being a God of order and purpose. Help us trust Your timing, even when we don't understand. Give us wisdom to discern the seasons and grace to walk faithfully through each one. In Jesus' name, amen.",
+        "your_prayer_prompt": "Write your own prayer about the season you're in:",
+        "scripture_disclosure": "Scripture quotations are from the World English Bible (WEB), public domain.",
+        "price_download": 0,
+        "price_interactive": 0,
+        "is_free": True
     }
 ]
 
-# Holiday AE Snack Pack definition
-HOLIDAY_AE_SNACK_PACK = {
-    "id": "holiday-ae-snack-pack",
-    "title": "Holiday Series - The 4 C's of Christianity",
-    "series_name": "Holiday Series AE",
-    "edition": "adult",
-    "description": "A 4-lesson journey through the foundations of Christian faith: The Covenant (God's promise), The Cradle (God comes to us), The Cross (God saves us), and The Comforter (God remains with us). Perfect for the holiday season reflection.",
-    "theme_verse": "\"...I will in no way leave you, neither will I in any way forsake you.\" — Hebrews 13:5b (WEB)",
-    "nibbles": ["holiday-ae-covenant", "holiday-ae-cradle", "holiday-ae-cross", "holiday-ae-comforter"],
-    "total_lessons": 4,
-    "available_in": ["holiday"],
-    "price_download": 9.99,
-    "price_interactive": 12.99,
-    "is_free_sample": False
-}
+# Add pricing to the main 4 Holiday AE lessons
+for nibble in HOLIDAY_AE_NIBBLES[:4]:
+    if "price_download" not in nibble:
+        nibble["price_download"] = 7.99
+        nibble["price_interactive"] = 9.99
+        nibble["is_free"] = False
 
 # Combine all nibbles for lookup
 ALL_NIBBLES = IN_HIS_IMAGE_NIBBLES + HOLIDAY_AE_NIBBLES
 
-# Combine all snack packs
-ALL_SNACK_PACKS = [IN_HIS_IMAGE_SNACK_PACK, HOLIDAY_AE_SNACK_PACK]
+# Only In His Image has a snack pack - Holiday is individual lessons
+ALL_SNACK_PACKS = [IN_HIS_IMAGE_SNACK_PACK]
 
 @router.get("/snack-packs")
 async def get_snack_packs():
