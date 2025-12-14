@@ -127,6 +127,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ PASSED - Returns 'In His Image - Self Worth Series' snack pack with 3 nibbles. Response structure verified with correct total_lessons count."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Holiday AE Testing: Now returns 2 snack packs as expected: 'In His Image - Self Worth Series' (3 lessons) and 'Holiday Series - The 4 C's of Christianity' (4 lessons). Both snack packs verified with correct structure and lesson counts."
 
   - task: "Interactive Lessons API - Nibbles endpoint"
     implemented: true
@@ -140,19 +143,61 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ PASSED - Returns all 3 expected nibbles: in-his-image-1, in-his-image-2, in-his-image-3. Response structure and content verified."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Holiday AE Testing: Now returns 7 total nibbles as expected (3 In His Image + 4 Holiday AE). All nibble IDs verified: in-his-image-1, in-his-image-2, in-his-image-3, holiday-ae-covenant, holiday-ae-cradle, holiday-ae-cross, holiday-ae-comforter."
 
-  - task: "Interactive Lessons API - Single Nibble endpoint"
+  - task: "Holiday AE Covenant Lesson API"
     implemented: true
     working: true
     file: "/app/backend/routes/lessons.py"
-    endpoint: "/api/interactive-lessons/nibble/{nibble_id}"
+    endpoint: "/api/interactive-lessons/nibble/holiday-ae-covenant"
     stuck_count: 0
     priority: "high"
     needs_retesting: false
     status_history:
       - working: true
         agent: "testing"
-        comment: "✅ PASSED - Returns complete nibble data for 'in-his-image-1' including title 'Made in His Image', 3 bites, activity with questions, key_verse_text, opening_prayer, closing_prayer, and to_go_box array."
+        comment: "✅ PASSED - Holiday AE Covenant lesson verified: theme 'The Promise Still Stands', 3 bites, 4 fill-in-blank activity questions. All content structure matches specifications."
+
+  - task: "Holiday AE Cradle Lesson API"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/lessons.py"
+    endpoint: "/api/interactive-lessons/nibble/holiday-ae-cradle"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Holiday AE Cradle lesson verified: theme 'Heaven Came Low', 3 bites, matching activity ('Cradle Connections - Matching'). All content structure correct."
+
+  - task: "Holiday AE Cross Lesson API"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/lessons.py"
+    endpoint: "/api/interactive-lessons/nibble/holiday-ae-cross"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Holiday AE Cross lesson verified: theme 'Grieving Grace → Redeeming Grace', 3 bites. All content structure matches specifications."
+
+  - task: "Holiday AE Comforter Lesson API"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/lessons.py"
+    endpoint: "/api/interactive-lessons/nibble/holiday-ae-comforter"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Holiday AE Comforter lesson verified: theme 'God Remains With Us', 5 bites (longest lesson), reflection-based activity ('Comfort Letters'). All content structure correct."
 
   - task: "Interactive Lessons API - Check Answers endpoint"
     implemented: true
@@ -166,6 +211,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ PASSED - Successfully processes answer checking for nibble 'in-his-image-1'. Returns success=true with detailed results array for all submitted answers."
+      - working: true
+        agent: "testing"
+        comment: "✅ PASSED - Holiday AE Testing: Successfully tested with Holiday AE Covenant lesson using specified test data (covenant-a-1: 'binding', covenant-a-2: 'families'). Returns success=true with detailed results array containing is_correct fields for each answer."
 
   - task: "Interactive Lessons API - Save Progress endpoint"
     implemented: true
