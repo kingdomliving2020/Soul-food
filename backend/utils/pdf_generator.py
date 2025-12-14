@@ -214,7 +214,7 @@ class LessonPDFGenerator:
         
         # Theme
         if nibble.get('theme'):
-            story.append(Paragraph(f""{nibble['theme']}"", self.styles['Theme']))
+            story.append(Paragraph(f'"{nibble["theme"]}"', self.styles['Theme']))
         
         story.append(Spacer(1, 0.5*inch))
         
