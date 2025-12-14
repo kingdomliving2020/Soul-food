@@ -91,8 +91,8 @@ frontend:
 
 metadata:
   created_by: "testing_agent"
-  version: "1.3"
-  test_sequence: 4
+  version: "1.4"
+  test_sequence: 5
 
 test_plan:
   current_focus: []
@@ -113,6 +113,8 @@ agent_communication:
     message: "Starting comprehensive frontend UI testing for Interactive Lessons system. Will test: 1) Snack Packs page (/snack-packs) - page load, snack pack display, pricing, View Lessons functionality 2) Interactive Lesson page (/interactive-lesson/in-his-image-1) - all sections, navigation, interactivity 3) User interactions - text inputs, activities, Check My Answers, Save Progress functionality"
   - agent: "testing"
     message: "✅ COMPREHENSIVE INTERACTIVE LESSONS FRONTEND TESTING COMPLETED - All functionality working perfectly! Snack Packs page loads correctly with proper pricing display ($7.99/$9.99) and functional View Lessons expansion. Interactive lesson page displays all sections beautifully: Key Verse (Genesis 1:27), Opening Prayer, Appetizer, bite navigation (1,2,3), scripture content, teaching materials, reflection questions, activities, Your Prayer, and Closing Prayer. User interactions work flawlessly: text input in reflection/activity fields, Check My Answers shows 'Reflection recorded' feedback, Save My Progress shows 'Progress saved!' confirmation. All footer buttons functional. Ready for production use."
+  - agent: "testing"
+    message: "✅ HOLIDAY AE BACKEND API TESTING COMPLETED - Successfully tested the new Holiday AE (Adult Edition) interactive lessons system. All 7 backend API endpoints working perfectly: 1) GET /snack-packs returns 2 snack packs (In His Image + Holiday Series) 2) GET /nibbles returns 7 total nibbles (3 + 4) 3) All 4 Holiday AE lessons verified: Covenant (theme: The Promise Still Stands, 3 bites, 4 fill-in-blank questions), Cradle (theme: Heaven Came Low, 3 bites, matching activity), Cross (theme: Grieving Grace → Redeeming Grace, 3 bites), Comforter (theme: God Remains With Us, 5 bites, Comfort Letters activity) 4) POST /check-answers tested with Holiday AE Covenant lesson using specified test data. All endpoints return correct data structures, themes, bite counts, and activity types as specified. Backend ready for production use."
 
 backend:
   - task: "Interactive Lessons API - Snack Packs endpoint"
