@@ -398,7 +398,10 @@ class InteractiveLessonsAPITester:
         tests = [
             self.test_get_snack_packs,
             self.test_get_nibbles,
-            self.test_get_single_nibble,
+            self.test_holiday_ae_covenant,
+            self.test_holiday_ae_cradle,
+            self.test_holiday_ae_cross,
+            self.test_holiday_ae_comforter,
             self.test_check_answers,
             self.test_save_progress,
             self.test_invalid_nibble_id
