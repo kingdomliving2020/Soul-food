@@ -1381,7 +1381,7 @@ const SoulFoodLanding = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {/* Adult Edition */}
-            <Card className="border-2 border-blue-200 shadow-xl hover:shadow-2xl transition-all">
+            <Card className="border-2 border-blue-200 shadow-xl hover:shadow-2xl transition-all flex flex-col">
               <CardHeader className="bg-gradient-to-br from-blue-50 to-cyan-50 text-center p-6">
                 <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
                   👤
@@ -1395,11 +1395,11 @@ const SoulFoodLanding = () => {
                 <Badge className="bg-emerald-500 text-white text-xs px-3 py-1 mb-2">All quarterly releases included</Badge>
                 <p className="text-sm text-slate-600">eBook: $31.99 (current content only)</p>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex flex-col flex-grow">
                 <p className="text-sm text-slate-600 mb-4 italic">
                   Core lessons using WEB Bible for clarity and modern understanding
                 </p>
-                <ul className="space-y-3 mb-6">
+                <ul className="space-y-3 mb-6 flex-grow">
                   <li className="flex items-start space-x-2">
                     <span className="text-blue-500 mt-0.5">✓</span>
                     <span className="text-slate-700 text-sm">All Soul Food series lessons</span>
@@ -1425,14 +1425,14 @@ const SoulFoodLanding = () => {
                     <span className="text-slate-700 text-sm">Community discussion access</span>
                   </li>
                 </ul>
-                <Button onClick={handleLogin} className="w-full bg-blue-600 hover:bg-blue-700">
+                <Button onClick={handleLogin} className="w-full bg-blue-600 hover:bg-blue-700 mt-auto">
                   Get Started
                 </Button>
               </CardContent>
             </Card>
 
             {/* Youth Edition */}
-            <Card className="border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all">
+            <Card className="border-2 border-purple-200 shadow-xl hover:shadow-2xl transition-all flex flex-col">
               <CardHeader className="bg-gradient-to-br from-purple-50 to-pink-50 text-center p-6">
                 <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
                   🎓
@@ -1447,11 +1447,11 @@ const SoulFoodLanding = () => {
                 <Badge className="bg-emerald-500 text-white text-xs px-3 py-1 mb-2">All quarterly releases included</Badge>
                 <p className="text-sm text-slate-600">eBook: $31.99 (current content only)</p>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex flex-col flex-grow">
                 <p className="text-sm text-slate-600 mb-4 italic">
                   Age-appropriate content with WEB Bible, designed for young believers
                 </p>
-                <ul className="space-y-3 mb-6">
+                <ul className="space-y-3 mb-6 flex-grow">
                   <li className="flex items-start space-x-2">
                     <span className="text-purple-500 mt-0.5">✓</span>
                     <span className="text-slate-700 text-sm">Youth-focused Soul Food lessons</span>
@@ -1477,14 +1477,14 @@ const SoulFoodLanding = () => {
                     <span className="text-slate-700 text-sm">Peer community & parent resources</span>
                   </li>
                 </ul>
-                <Button onClick={handleLogin} className="w-full bg-purple-600 hover:bg-purple-700">
+                <Button onClick={handleLogin} className="w-full bg-purple-600 hover:bg-purple-700 mt-auto">
                   Get Started
                 </Button>
               </CardContent>
             </Card>
 
             {/* Instructor Edition */}
-            <Card className="border-2 border-orange-300 shadow-xl hover:shadow-2xl transition-all relative">
+            <Card className="border-2 border-orange-300 shadow-xl hover:shadow-2xl transition-all relative flex flex-col">
               <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-orange-500 to-amber-600 text-white px-4 py-1 font-bold text-sm">
                 For Teachers & Leaders
               </Badge>
@@ -1501,11 +1501,11 @@ const SoulFoodLanding = () => {
                 <Badge className="bg-emerald-500 text-white text-xs px-3 py-1 mb-2">All quarterly releases included</Badge>
                 <p className="text-sm text-slate-600">eBook: $68.99 (current content only)</p>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex flex-col flex-grow">
                 <p className="text-sm text-slate-600 mb-4 italic font-semibold">
                   Complete teaching toolkit for facilitating Adult or Youth classes
                 </p>
-                <ul className="space-y-3 mb-6">
+                <ul className="space-y-3 mb-6 flex-grow">
                   <li className="flex items-start space-x-2">
                     <span className="text-orange-500 mt-0.5">✓</span>
                     <span className="text-slate-700 text-sm">All AE & YE content included</span>
@@ -1539,7 +1539,7 @@ const SoulFoodLanding = () => {
                     <span className="text-slate-700 text-sm">Downloadable teaching materials</span>
                   </li>
                 </ul>
-                <Button onClick={handleLogin} className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700">
+                <Button onClick={handleLogin} className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 mt-auto">
                   Get Started
                 </Button>
               </CardContent>
