@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Interactive Lessons System
-Tests all interactive lesson endpoints with realistic data
+Backend API Testing for Holiday AE Interactive Lessons System
+Tests the new Holiday AE (Adult Edition) interactive lessons system
 """
 
 import requests
