@@ -91,7 +91,7 @@ class LessonPDFGenerator:
         
         # Body text style
         self.styles.add(ParagraphStyle(
-            name='BodyText',
+            name='LessonBodyText',
             parent=self.styles['Normal'],
             fontSize=11,
             spaceBefore=4,
