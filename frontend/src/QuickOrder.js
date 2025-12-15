@@ -136,12 +136,12 @@ const QuickOrder = () => {
     }
   };
 
-  // Product catalog - Holiday first, then Breakfast, then Box Set, then Coming Soon
+  // Product catalog - Holiday first, then Breakfast, then Nibbles/Snack Packs, then Box Set, then Coming Soon
   const products = [
     {
       id: 'holiday',
       name: 'Holiday Series',
-      subtitle: '4 C\'s of Christianity',
+      subtitle: '4 C\'s of Christianity (6 Lessons)',
       available: true,
       editions: ['adult', 'youth', 'instructor'],
       formats: ['physical', 'pdf', 'epub'],
@@ -154,14 +154,72 @@ const QuickOrder = () => {
     {
       id: 'breakfast',
       name: 'Break*fast Series',
-      subtitle: 'Foundation in Christ',
+      subtitle: 'Foundation in Christ (48 Lessons)',
       available: true,
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
-        adult: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
-        youth: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
-        instructor: { subscription_monthly: 14.99, subscription_annual: 164.89, ebook: 68.99, physical: 79.99 }
+        adult: { subscription_monthly: 7.99, subscription_annual: 79.99, ebook: 24.99, physical: 39.99 },
+        youth: { subscription_monthly: 7.99, subscription_annual: 79.99, ebook: 24.99, physical: 39.99 },
+        instructor: { subscription_monthly: 11.99, subscription_annual: 119.99, ebook: 49.99, physical: 79.99 }
+      }
+    },
+    {
+      id: 'holiday-nibble',
+      name: 'Holiday Nibble',
+      subtitle: 'Single Interactive Lesson',
+      description: 'One complete interactive lesson from the Holiday Series',
+      available: true,
+      isNibble: true,
+      editions: ['adult', 'youth'],
+      formats: ['interactive'],
+      prices: {
+        adult: { interactive: 1.99 },
+        youth: { interactive: 1.99 }
+      }
+    },
+    {
+      id: 'holiday-snack-pack',
+      name: 'Holiday Snack Pack',
+      subtitle: '6-Lesson Bundle (Save 30%!)',
+      description: 'All 6 Holiday lessons at a discounted price',
+      available: true,
+      isSnackPack: true,
+      badge: 'Best Value',
+      editions: ['adult', 'youth'],
+      formats: ['interactive'],
+      prices: {
+        adult: { interactive: 8.99 },
+        youth: { interactive: 8.99 }
+      }
+    },
+    {
+      id: 'breakfast-nibble',
+      name: 'Breakfast Nibble',
+      subtitle: 'Single Interactive Lesson',
+      description: 'One complete interactive lesson from the Breakfast Series',
+      available: true,
+      isNibble: true,
+      editions: ['adult', 'youth'],
+      formats: ['interactive'],
+      prices: {
+        adult: { interactive: 1.99 },
+        youth: { interactive: 1.99 }
+      }
+    },
+    {
+      id: 'breakfast-snack-pack',
+      name: 'Breakfast Snack Pack',
+      subtitle: '12-Lesson Bundle (Save 35%!)',
+      description: '12 Breakfast lessons - one full quarter of content',
+      available: true,
+      isSnackPack: true,
+      badge: 'Best Value',
+      editions: ['adult', 'youth'],
+      formats: ['interactive'],
+      prices: {
+        adult: { interactive: 15.99 },
+        youth: { interactive: 15.99 }
       }
     },
     {
@@ -169,7 +227,7 @@ const QuickOrder = () => {
       name: 'Holiday Box Set',
       subtitle: 'Holiday + Break*fast Series Bundle',
       available: true,
-      badge: 'FREE Bookmark',
+      badge: 'FREE Bookmark + eBook',
       editions: ['bundle'],
       formats: ['physical', 'pdf', 'epub'],
       prices: {
@@ -187,9 +245,9 @@ const QuickOrder = () => {
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
-        adult: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
-        youth: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
-        instructor: { subscription_monthly: 14.99, subscription_annual: 164.89, ebook: 68.99, physical: 79.99 }
+        adult: { subscription_monthly: 7.99, subscription_annual: 79.99, ebook: 24.99, physical: 39.99 },
+        youth: { subscription_monthly: 7.99, subscription_annual: 79.99, ebook: 24.99, physical: 39.99 },
+        instructor: { subscription_monthly: 11.99, subscription_annual: 119.99, ebook: 49.99, physical: 79.99 }
       }
     },
     {
@@ -202,9 +260,9 @@ const QuickOrder = () => {
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
-        adult: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
-        youth: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
-        instructor: { subscription_monthly: 14.99, subscription_annual: 164.89, ebook: 68.99, physical: 79.99 }
+        adult: { subscription_monthly: 7.99, subscription_annual: 79.99, ebook: 24.99, physical: 39.99 },
+        youth: { subscription_monthly: 7.99, subscription_annual: 79.99, ebook: 24.99, physical: 39.99 },
+        instructor: { subscription_monthly: 11.99, subscription_annual: 119.99, ebook: 49.99, physical: 79.99 }
       }
     },
     {
@@ -217,9 +275,9 @@ const QuickOrder = () => {
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription_monthly', 'subscription_annual', 'ebook', 'physical'],
       prices: {
-        adult: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
-        youth: { subscription_monthly: 9.99, subscription_annual: 109.89, ebook: 31.99, physical: 39.99 },
-        instructor: { subscription_monthly: 14.99, subscription_annual: 164.89, ebook: 68.99, physical: 79.99 }
+        adult: { subscription_monthly: 7.99, subscription_annual: 79.99, ebook: 24.99, physical: 39.99 },
+        youth: { subscription_monthly: 7.99, subscription_annual: 79.99, ebook: 24.99, physical: 39.99 },
+        instructor: { subscription_monthly: 11.99, subscription_annual: 119.99, ebook: 49.99, physical: 79.99 }
       }
     }
   ];
