@@ -86,7 +86,7 @@ const BackCoverModal = ({ isOpen, onClose, frontCover, backCover, productName })
 };
 
 const QuickOrder = () => {
-  const { addToCart } = useCart();
+  const { addToCart, cartItems, removeFromCart, updateQuantity, getCartTotal, getCartCount, isCartOpen, setIsCartOpen } = useCart();
   const [previewModal, setPreviewModal] = useState({ isOpen: false, frontCover: '', backCover: '', productName: '' });
   
   // Cover images mapping by edition and format
