@@ -68,13 +68,9 @@ const AuthPage = () => {
   // Beta Login (username + password)
   const handleBetaLogin = async (e) => {
     e.preventDefault();
-    console.log('=== BETA LOGIN HANDLER v2 CALLED ===');
     
     // Prevent double submission
-    if (loading) {
-      console.log('Already loading, skipping');
-      return;
-    }
+    if (loading) return;
     
     if (!formData.betaUsername.trim() || !formData.betaPassword.trim()) {
       toast.error('Please enter username and password');
@@ -84,7 +80,6 @@ const AuthPage = () => {
     setLoading(true);
     
     try {
-      console.log('Making fetch request to:', `${API}/auth/beta-login`);
       const response = await fetch(`${API}/auth/beta-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -94,14 +89,23 @@ const AuthPage = () => {
         })
       });
       
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
-      
-      const data = await response.json();
-      console.log('Parsed JSON data:', data);
+      // Handle the response - the emergent preview logger might consume the body for non-OK responses
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        // If body was already read (by emergent logger), check response status
+        if (!response.ok) {
+          // For 401 errors, provide a helpful message
+          if (response.status === 401) {
+            throw new Error('Invalid username or password. Please check your credentials.');
+          }
+          throw new Error(`Login failed (${response.status}). Please try again.`);
+        }
+        throw jsonError;
+      }
       
       if (!response.ok) {
-        console.log('Response not OK, throwing error with detail:', data.detail);
         throw new Error(data.detail || 'Invalid credentials');
       }
       
@@ -115,9 +119,6 @@ const AuthPage = () => {
       
     } catch (err) {
       console.error('Beta login error:', err);
-      console.error('Error name:', err.name);
-      console.error('Error message:', err.message);
-      // Show the actual error message from the backend
       const errorMsg = err.message || 'Login failed. Please try again.';
       toast.error(errorMsg);
     } finally {
