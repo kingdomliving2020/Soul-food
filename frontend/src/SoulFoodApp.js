@@ -307,30 +307,19 @@ const SoulFoodLanding = () => {
             
             {/* Desktop Navigation */}
             <div className="hidden sm:flex items-center gap-2 sm:gap-5">
-              {/* Quick Order Button - Truth Served Daily icon */}
-              <div className="relative group">
-                <div className="relative rounded-xl shadow-md hover:shadow-lg transition-all">
-                  <Button
-                    onClick={() => window.location.href = '/quick-order'}
-                    className="flex items-center gap-1 sm:gap-2 bg-slate-100 hover:bg-slate-200 px-2 sm:px-4 py-1.5 sm:py-2 rounded-xl font-semibold text-xs sm:text-sm transition-all border-2 border-black"
-                    title="Truth, Served Daily - Quick order here!"
-                  >
-                    {/* Truth Served Daily icon - rounded and bigger */}
-                    <img 
-                      src="/quick-order-rounded-60.png" 
-                      alt="Quick Order" 
-                      className="h-9 sm:h-12 w-auto rounded-lg"
-                    />
-                    <span className="hidden md:inline text-slate-700 font-bold">Quick Order</span>
-                    <span className="md:hidden text-slate-700 font-bold text-xs">Order</span>
-                  </Button>
-                </div>
-                {/* Tooltip on hover */}
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 bg-slate-800 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-50 shadow-xl">
-                  Truth Served Here ✨
-                  <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-slate-800 rotate-45"></div>
-                </div>
-              </div>
+              {/* Quick Order Button - Icon placed INSIDE the button */}
+              <Button
+                onClick={() => window.location.href = '/quick-order'}
+                className="flex items-center gap-2 bg-white hover:bg-slate-50 px-3 py-2 rounded-xl font-semibold text-sm transition-all border-2 border-slate-800 shadow-md hover:shadow-lg"
+                title="Truth, Served Daily - Quick order here!"
+              >
+                <img 
+                  src="/quick-order-rounded-60.png" 
+                  alt="Quick Order" 
+                  className="h-7 w-7 object-contain"
+                />
+                <span className="text-slate-700 font-bold">Quick Order</span>
+              </Button>
               
               <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-full p-1">
                 <ShoppingCart />
@@ -346,17 +335,17 @@ const SoulFoodLanding = () => {
 
             {/* Mobile Navigation */}
             <div className="flex sm:hidden items-center gap-2">
-              {/* Quick Order Button - Compact for mobile */}
+              {/* Quick Order Button - Compact for mobile with icon INSIDE */}
               <Button
                 onClick={() => window.location.href = '/quick-order'}
-                className="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 px-2 py-1.5 rounded-lg font-semibold text-xs transition-all border-2 border-black"
+                className="flex items-center gap-1.5 bg-white hover:bg-slate-50 px-2.5 py-1.5 rounded-lg font-semibold text-xs transition-all border-2 border-slate-800 shadow-sm"
               >
-                <img src="/quick-order-rounded-60.png" alt="Order" className="h-8 w-auto rounded-lg" />
-                <span className="text-slate-700 font-bold text-xs">Order</span>
+                <img src="/quick-order-rounded-60.png" alt="Order" className="h-6 w-6 object-contain" />
+                <span className="text-slate-700 font-bold">Order</span>
               </Button>
               
-              {/* Shopping Cart */}
-              <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-full p-1">
+              {/* Shopping Cart - Better spacing for mobile */}
+              <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-full p-0.5">
                 <ShoppingCart />
               </div>
               
