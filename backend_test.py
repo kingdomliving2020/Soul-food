@@ -549,7 +549,7 @@ class SoulFoodAuthTester:
 
 def main():
     """Main test execution"""
-    tester = InteractiveLessonsAPITester()
+    tester = SoulFoodAuthTester()
     success = tester.run_all_tests()
     
     # Print detailed results for debugging
