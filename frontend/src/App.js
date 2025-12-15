@@ -576,16 +576,25 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Updated Pricing Section with Corrected Subscription Prices */}
+      {/* Updated Pricing Section - Digital Available Soon, Print Ships January */}
       <section className="py-12 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-indigo-50 to-purple-50">
         <div className="container mx-auto">
-          <h3 className="text-3xl sm:text-4xl font-bold text-center mb-12 sm:mb-16 text-slate-800">
+          <h3 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-slate-800">
             Choose Your Learning Path
           </h3>
+          <p className="text-center text-slate-600 mb-12 sm:mb-16 max-w-2xl mx-auto">
+            Digital access launching soon! Get instant access to interactive lessons, eBooks, and community features. 
+            Physical workbooks shipping January 2025.
+          </p>
           
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
-            {/* Print Version */}
+            {/* Print Version - Ships January */}
             <Card className="shadow-2xl border border-slate-200 relative rounded-2xl overflow-hidden">
+              <div className="absolute top-3 right-3">
+                <Badge className="bg-amber-500 text-white px-3 py-1 text-xs font-semibold">
+                  Ships January
+                </Badge>
+              </div>
               <CardHeader className="text-center p-6 bg-gradient-to-r from-slate-50 to-gray-100">
                 <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-slate-600 to-gray-700 rounded-xl flex items-center justify-center">
                   <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -593,7 +602,8 @@ const LandingPage = () => {
                   </svg>
                 </div>
                 <CardTitle className="text-2xl text-slate-800">Print Workbook</CardTitle>
-                <div className="text-3xl sm:text-4xl font-bold mb-6 text-slate-700">$39.99<span className="text-lg text-slate-600"></span></div>
+                <div className="text-3xl sm:text-4xl font-bold mb-2 text-slate-700">$39.99</div>
+                <p className="text-sm text-amber-600 font-medium">Pre-order now • Ships January 2025</p>
               </CardHeader>
               <CardContent className="p-6 sm:p-8 pt-0">
                 <ul className="space-y-3 mb-8">
@@ -616,24 +626,29 @@ const LandingPage = () => {
                     High-quality paper & binding
                   </li>
                   <li className="flex items-center">
-                    <svg className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    <svg className="w-5 h-5 text-indigo-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                     </svg>
-                    Perfect for offline study
+                    <span className="text-slate-600">FREE instant eBook with pre-order!</span>
                   </li>
                 </ul>
                 <Button
-                  onClick={() => alert('Print orders coming soon! Please use the digital options for now.')}
+                  onClick={() => toast.info('Pre-orders opening soon! Join the waitlist for early access.')}
                   data-testid="print-plan-btn"
                   className="w-full bg-gradient-to-r from-slate-600 to-gray-700 hover:from-slate-700 hover:to-gray-800 py-3 rounded-xl font-semibold"
                 >
-                  Order Print Version
+                  Join Waitlist
                 </Button>
               </CardContent>
             </Card>
 
-            {/* eBook Download */}
+            {/* eBook Download - Available Soon */}
             <Card className="shadow-2xl border border-indigo-200 relative rounded-2xl overflow-hidden">
+              <div className="absolute top-3 right-3">
+                <Badge className="bg-emerald-500 text-white px-3 py-1 text-xs font-semibold">
+                  Coming Soon
+                </Badge>
+              </div>
               <CardHeader className="text-center p-6 bg-gradient-to-r from-indigo-50 to-blue-100">
                 <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-indigo-600 to-blue-700 rounded-xl flex items-center justify-center">
                   <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -641,7 +656,8 @@ const LandingPage = () => {
                   </svg>
                 </div>
                 <CardTitle className="text-2xl text-slate-800">Digital eBook</CardTitle>
-                <div className="text-3xl sm:text-4xl font-bold mb-6 text-indigo-600">$24.99<span className="text-lg text-slate-600"></span></div>
+                <div className="text-3xl sm:text-4xl font-bold mb-2 text-indigo-600">$24.99</div>
+                <p className="text-sm text-emerald-600 font-medium">Instant download • Own forever</p>
               </CardHeader>
               <CardContent className="p-6 sm:p-8 pt-0">
                 <ul className="space-y-3 mb-8">
@@ -667,24 +683,29 @@ const LandingPage = () => {
                     <svg className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Instant download
+                    One-time purchase
                   </li>
                 </ul>
                 <Button
-                  onClick={handleLogin}
+                  onClick={() => toast.info('eBook purchases launching soon! Sign up to be notified.')}
                   data-testid="ebook-plan-btn"
                   className="w-full bg-gradient-to-r from-indigo-600 to-blue-700 hover:from-indigo-700 hover:to-blue-800 py-3 rounded-xl font-semibold"
                 >
-                  Buy Digital eBook
+                  Get Notified
                 </Button>
               </CardContent>
             </Card>
 
-            {/* Online Subscription with Corrected Pricing */}
+            {/* Interactive Subscription - Most Popular, Available Soon */}
             <Card className="shadow-2xl border-2 border-purple-400 relative rounded-2xl overflow-hidden">
               <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                 <Badge className="bg-gradient-to-r from-purple-600 to-indigo-700 text-white px-6 py-2 text-sm font-semibold">
                   Most Popular
+                </Badge>
+              </div>
+              <div className="absolute top-3 right-3">
+                <Badge className="bg-emerald-500 text-white px-3 py-1 text-xs font-semibold">
+                  Coming Soon
                 </Badge>
               </div>
               <CardHeader className="text-center p-6 sm:p-8 pt-10 bg-gradient-to-r from-purple-50 to-indigo-100">
@@ -693,9 +714,9 @@ const LandingPage = () => {
                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <CardTitle className="text-2xl text-slate-800">Online Community</CardTitle>
+                <CardTitle className="text-2xl text-slate-800">Interactive Experience</CardTitle>
                 <div className="text-3xl sm:text-4xl font-bold mb-2 text-purple-600">$7.99<span className="text-lg text-slate-600">/month</span></div>
-                <div className="text-sm text-slate-600 mb-4">Instructor: $11.99/month</div>
+                <p className="text-sm text-emerald-600 font-medium">Full access • Cancel anytime</p>
               </CardHeader>
               <CardContent className="p-6 sm:p-8 pt-0">
                 <ul className="space-y-3 mb-8">
@@ -703,7 +724,13 @@ const LandingPage = () => {
                     <svg className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Interactive online lessons
+                    <strong>Interactive</strong> online lessons
+                  </li>
+                  <li className="flex items-center">
+                    <svg className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Progress tracking & achievements
                   </li>
                   <li className="flex items-center">
                     <svg className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -715,36 +742,41 @@ const LandingPage = () => {
                     <svg className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Video insights & discussions
+                    Games, quizzes & challenges
                   </li>
                   <li className="flex items-center">
                     <svg className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Progress tracking & games
+                    New content added quarterly
                   </li>
                   <li className="flex items-center">
                     <svg className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    All seasonal & bonus content
-                  </li>
-                  <li className="flex items-center">
-                    <svg className="w-5 h-5 text-emerald-500 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    Cancel anytime
+                    Instructor Edition: $11.99/mo
                   </li>
                 </ul>
                 <Button
-                  onClick={handleLogin}
+                  onClick={() => toast.info('Subscriptions launching soon! Sign up to be first in line.')}
                   data-testid="subscription-plan-btn"
                   className="w-full bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 py-3 rounded-xl font-semibold"
                 >
-                  Start Subscription
+                  Join Waitlist
                 </Button>
               </CardContent>
             </Card>
+          </div>
+          
+          {/* Coming Soon Notice */}
+          <div className="mt-12 text-center">
+            <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg border border-purple-200">
+              <span className="text-2xl">🚀</span>
+              <div className="text-left">
+                <p className="font-bold text-slate-800">Digital Access Launching Soon!</p>
+                <p className="text-sm text-slate-600">Interactive lessons, eBooks & subscriptions available shortly. Print books ship January 2025.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
