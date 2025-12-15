@@ -49,7 +49,8 @@ RBAC_TEST_CODES = {
         "warning_mins": [15, 5],
         "access_level": "instructor",
         "restrictions": ["no_physical_merchandise", "digital_only"],
-        "description": "Instructor Edition Tester - Full digital access"
+        "description": "Full digital access",
+        "max_registrations": 20
     },
     "test_ye": {
         "codes": ["test1234"],
@@ -58,7 +59,8 @@ RBAC_TEST_CODES = {
         "warning_mins": [15, 5],
         "access_level": "youth",
         "restrictions": ["no_physical_merchandise", "digital_only"],
-        "description": "Youth Edition Tester - Youth content access"
+        "description": "Youth content access",
+        "max_registrations": 20
     },
     "test_ae": {
         "codes": ["test12345"],
@@ -67,7 +69,8 @@ RBAC_TEST_CODES = {
         "warning_mins": [15, 5],
         "access_level": "adult",
         "restrictions": ["no_physical_merchandise", "digital_only"],
-        "description": "Adult Edition Tester - Adult content access"
+        "description": "Adult content access",
+        "max_registrations": 20
     },
     "beta": {
         "codes": ["Beta1!2!3!"],
@@ -76,7 +79,8 @@ RBAC_TEST_CODES = {
         "warning_mins": [15, 5],
         "access_level": "beta",
         "restrictions": ["no_physical_merchandise", "limited_content"],
-        "description": "Beta Tester - Limited preview access"
+        "description": "Beta preview access",
+        "max_registrations": 20
     }
 }
 
