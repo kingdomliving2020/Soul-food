@@ -89,16 +89,7 @@ const AuthPage = () => {
         })
       });
       
-      // Clone response before reading to handle potential retry scenarios
-      const responseClone = response.clone();
-      
-      let data;
-      try {
-        data = await response.json();
-      } catch (jsonError) {
-        // If JSON parsing fails, try the clone
-        data = await responseClone.json();
-      }
+      const data = await response.json();
       
       if (!response.ok) {
         throw new Error(data.detail || 'Invalid credentials');
@@ -114,7 +105,9 @@ const AuthPage = () => {
       
     } catch (err) {
       console.error('Beta login error:', err);
-      toast.error(err.message || 'Login failed. Please try again.');
+      // Show the actual error message from the backend
+      const errorMsg = err.message || 'Login failed. Please try again.';
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
