@@ -264,7 +264,7 @@ backend:
 
   - task: "Frontend Authentication Integration"
     implemented: true
-    working: true
+    working: false
     file: "/app/frontend/src/AuthPage.js"
     endpoint: "Frontend auth page and API integration"
     stuck_count: 0
@@ -274,6 +274,22 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ PASSED - Auth page accessible with React app structure. Beta login API integration works correctly, returns proper session data for frontend. Authenticated users can access interactive lessons API. Snack-packs page accessible for post-login redirection."
+      - working: false
+        agent: "testing"
+        comment: "🚨 CRITICAL BUG FOUND - Beta login has Response body cloning issue. Valid login (adult/test12345) works perfectly with proper redirect and session message. However, failed login attempts show JavaScript error 'Failed to execute 'clone' on 'Response': Response body is already used' instead of user-friendly error messages. This prevents proper error handling and user feedback. The issue is in AuthPage.js lines 93-100 where response.clone() is called after response.json() has already consumed the body."
+
+  - task: "Beta Login Response Cloning Bug Fix"
+    implemented: false
+    working: false
+    file: "/app/frontend/src/AuthPage.js"
+    endpoint: "Beta login error handling"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "testing"
+        comment: "🚨 NEW BUG IDENTIFIED - The beta login function in AuthPage.js has a critical Response body cloning issue. When login fails, the code tries to clone the response after already reading it with response.json(), causing 'Failed to execute 'clone' on 'Response': Response body is already used' error. This prevents proper error messages from being shown to users. Need to fix the response handling logic to either clone before reading or handle errors without cloning."
 
 frontend_interactive_lessons:
   - task: "Snack Packs Page - Layout and Navigation"
