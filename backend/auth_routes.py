@@ -61,7 +61,7 @@ COMMON_PASSWORDS = {
 # BETA/TEST USER CREDENTIALS (username + password, no strict rules)
 # =============================================================================
 BETA_USERS = {
-    "instructor_beta": {
+    "instructor": {
         "password": "test123",
         "role": "instructor_tester",
         "session_timeout_mins": 120,
@@ -69,7 +69,7 @@ BETA_USERS = {
         "restrictions": ["no_physical_merchandise", "digital_only"],
         "description": "Instructor Edition Access"
     },
-    "youth_beta": {
+    "youth": {
         "password": "test1234",
         "role": "youth_tester", 
         "session_timeout_mins": 90,
@@ -77,7 +77,7 @@ BETA_USERS = {
         "restrictions": ["no_physical_merchandise", "digital_only"],
         "description": "Youth Edition Access"
     },
-    "adult_beta": {
+    "adult": {
         "password": "test12345",
         "role": "adult_tester",
         "session_timeout_mins": 90,
@@ -85,10 +85,10 @@ BETA_USERS = {
         "restrictions": ["no_physical_merchandise", "digital_only"],
         "description": "Adult Edition Access"
     },
-    "beta_tester": {
+    "beta": {
         "password": "Beta1!2!3!",
         "role": "beta_tester",
-        "session_timeout_mins": 45,
+        "session_timeout_mins": 90,
         "access_level": "beta",
         "restrictions": ["no_physical_merchandise", "limited_content"],
         "description": "Beta Preview Access"
