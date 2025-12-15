@@ -132,15 +132,7 @@ const AuthPage = () => {
         })
       });
       
-      // Clone response before reading to handle potential retry scenarios
-      const responseClone = response.clone();
-      
-      let data;
-      try {
-        data = await response.json();
-      } catch (jsonError) {
-        data = await responseClone.json();
-      }
+      const data = await response.json();
       
       if (!response.ok) {
         throw new Error(data.detail || 'Invalid credentials');
@@ -167,7 +159,8 @@ const AuthPage = () => {
       
     } catch (err) {
       console.error('Login error:', err);
-      toast.error(err.message || 'Login failed. Please try again.');
+      const errorMsg = err.message || 'Login failed. Please try again.';
+      toast.error(errorMsg);
     } finally {
       setLoading(false);
     }
