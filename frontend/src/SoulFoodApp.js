@@ -273,23 +273,8 @@ const SoulFoodLanding = () => {
   }, []);
   
   const handleLogin = () => {
-    // Redirect to home page after login instead of dashboard
-    const redirectUrl = `${window.location.origin}/`;
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
-  };
-  
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
-  const [isRegistering, setIsRegistering] = useState(false);
-  
-  const handleEmailLogin = async (e) => {
-    e.preventDefault();
-    // For now, show a message - full implementation would connect to backend
-    toast.info('Email login coming soon! Please use Google Sign In for now.');
-  };
-  
-  const openLoginModal = () => {
-    setShowLoginModal(true);
+    // Navigate to auth page for login/register
+    window.location.href = '/auth';
   };
   
   const openProductModal = (seriesData) => {
