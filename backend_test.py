@@ -423,22 +423,95 @@ class SoulFoodAuthTester:
             self.log_test("NIST Login - Email", False, f"Exception: {str(e)}")
             return False
             
+    def test_account_lockout(self):
+        """Test account lockout after 3 failed attempts"""
+        try:
+            # First register a user
+            timestamp = int(time.time())
+            email = f"lockouttest{timestamp}@example.com"
+            username = f"lockouttest{timestamp}"
+            password = "LockoutTest123!"
+            
+            # Register
+            register_data = {
+                "email": email,
+                "username": username,
+                "password": password,
+                "name": "Lockout Test User"
+            }
+            
+            register_response = self.session.post(
+                f"{self.base_url}/auth/register",
+                json=register_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if register_response.status_code != 200:
+                self.log_test("Account Lockout Test", False, f"Registration failed: {register_response.status_code}")
+                return False
+            
+            # Make 3 failed login attempts
+            login_data = {
+                "identifier": email,
+                "password": "wrongpassword"
+            }
+            
+            for attempt in range(3):
+                response = self.session.post(
+                    f"{self.base_url}/auth/login",
+                    json=login_data,
+                    headers={"Content-Type": "application/json"}
+                )
+                
+                if response.status_code not in [401, 423]:
+                    self.log_test("Account Lockout Test", False, f"Attempt {attempt + 1}: Expected 401 or 423, got {response.status_code}")
+                    return False
+            
+            # 4th attempt should be locked (423)
+            response = self.session.post(
+                f"{self.base_url}/auth/login",
+                json=login_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 423:
+                self.log_test("Account Lockout Test", False, f"Expected 423 (locked), got {response.status_code}")
+                return False
+            
+            data = response.json()
+            error_message = data.get("detail", "")
+            
+            if "locked" not in error_message.lower():
+                self.log_test("Account Lockout Test", False, f"Expected lockout message, got: {error_message}")
+                return False
+            
+            self.log_test("Account Lockout Test", True, "Account correctly locked after 3 failed attempts")
+            return True
+            
+        except Exception as e:
+            self.log_test("Account Lockout Test", False, f"Exception: {str(e)}")
+            return False
+
     def run_all_tests(self):
-        """Run all Holiday AE backend API tests"""
-        print("🧪 Starting Holiday AE Interactive Lessons Backend API Tests")
+        """Run all Soul Food Authentication System tests"""
+        print("🧪 Starting Soul Food Authentication System Backend API Tests")
         print(f"🌐 Testing against: {self.base_url}")
-        print("=" * 60)
+        print("=" * 70)
         
         tests = [
-            self.test_get_snack_packs,
-            self.test_get_nibbles,
-            self.test_holiday_ae_covenant,
-            self.test_holiday_ae_cradle,
-            self.test_holiday_ae_cross,
-            self.test_holiday_ae_comforter,
-            self.test_check_answers,
-            self.test_save_progress,
-            self.test_invalid_nibble_id
+            # Beta Login Tests (Priority - User's son is blocked)
+            self.test_beta_login_instructor,
+            self.test_beta_login_youth,
+            self.test_beta_login_adult,
+            self.test_beta_login_beta,
+            self.test_beta_login_invalid_username,
+            self.test_beta_login_wrong_password,
+            
+            # NIST Authentication Tests
+            self.test_nist_register_weak_password,
+            self.test_nist_register_valid_password,
+            self.test_nist_login_email,
+            self.test_account_lockout
         ]
         
         passed = 0
