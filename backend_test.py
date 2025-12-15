@@ -286,61 +286,39 @@ class SoulFoodAuthTester:
             self.log_test("Beta Login - Wrong Password", False, f"Exception: {str(e)}")
             return False
             
-    def test_check_answers(self):
-        """Test POST /progress/check-answers endpoint with Holiday AE Covenant lesson"""
+    def test_nist_register_weak_password(self):
+        """Test registration with weak password - should fail"""
         try:
-            # Test with Holiday AE Covenant lesson as specified in review request
             test_data = {
-                "nibble_id": "holiday-ae-covenant",
-                "answers": {
-                    "covenant-a-1": "binding",
-                    "covenant-a-2": "families"
-                }
+                "email": "testuser@example.com",
+                "username": "testuser",
+                "password": "weak",  # Too short, fails requirements
+                "name": "Test User"
             }
             
             response = self.session.post(
-                f"{self.base_url}/progress/check-answers",
+                f"{self.base_url}/auth/register",
                 json=test_data,
                 headers={"Content-Type": "application/json"}
             )
             
-            if response.status_code != 200:
-                self.log_test("POST /progress/check-answers", False, f"Status code: {response.status_code}")
+            if response.status_code != 400:
+                self.log_test("NIST Register - Weak Password", False, f"Expected 400, got {response.status_code}")
                 return False
                 
             data = response.json()
+            error_message = data.get("detail", "")
             
-            # Verify response structure
-            if "success" not in data or not data["success"]:
-                self.log_test("POST /progress/check-answers", False, "Success field missing or false")
+            # Should reject password that's too short
+            if "Password must be at least 8 characters" not in error_message:
+                self.log_test("NIST Register - Weak Password", False, f"Wrong error message: {error_message}")
                 return False
-                
-            if "results" not in data:
-                self.log_test("POST /progress/check-answers", False, "Missing results field")
-                return False
-                
-            results = data["results"]
-            if not isinstance(results, list):
-                self.log_test("POST /progress/check-answers", False, "Results is not a list")
-                return False
-                
-            # Verify we got results for our answers
-            if len(results) == 0:
-                self.log_test("POST /progress/check-answers", False, "No results returned")
-                return False
-                
-            # Verify results have is_correct for each answer
-            for result in results:
-                if "is_correct" in result:  # Only check gradable questions
-                    if "question_id" not in result:
-                        self.log_test("POST /progress/check-answers", False, "Result missing question_id")
-                        return False
-                        
-            self.log_test("POST /progress/check-answers", True, f"Holiday AE Covenant answers checked successfully, received {len(results)} results with is_correct fields")
+            
+            self.log_test("NIST Register - Weak Password", True, "Correctly rejected weak password")
             return True
             
         except Exception as e:
-            self.log_test("POST /progress/check-answers", False, f"Exception: {str(e)}")
+            self.log_test("NIST Register - Weak Password", False, f"Exception: {str(e)}")
             return False
             
     def test_save_progress(self):
