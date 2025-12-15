@@ -61,19 +61,19 @@ const ShoppingCart = () => {
       {isCartOpen && (
         <>
           {/* Mobile overlay */}
-          <div className="fixed inset-0 bg-black/30 z-40 sm:hidden" onClick={() => setIsCartOpen(false)} />
+          <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setIsCartOpen(false)} />
           
-          {/* Cart dropdown */}
-          <div className="fixed sm:absolute inset-x-2 sm:inset-x-auto sm:right-0 top-16 sm:top-full sm:mt-2 w-auto sm:w-80 md:w-96 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 flex flex-col max-h-[80vh] sm:max-h-[85vh]">
+          {/* Cart dropdown - Mobile full width, Desktop positioned */}
+          <div className="fixed inset-x-0 bottom-0 sm:bottom-auto sm:inset-x-auto sm:absolute sm:right-0 sm:top-full sm:mt-2 w-full sm:w-80 md:w-96 bg-white rounded-t-2xl sm:rounded-xl shadow-2xl border border-gray-200 z-50 flex flex-col max-h-[85vh] sm:max-h-[80vh]">
             {/* Header */}
-            <div className="bg-gradient-to-r from-orange-500 to-amber-600 text-white px-4 py-3 rounded-t-xl flex items-center justify-between">
+            <div className="bg-gradient-to-r from-orange-500 to-amber-600 text-white px-4 py-3 rounded-t-2xl sm:rounded-t-xl flex items-center justify-between flex-shrink-0">
               <h3 className="font-bold text-base sm:text-lg flex items-center gap-2">
                 <CartIcon className="w-5 h-5" />
                 Cart ({cartCount})
               </h3>
               <button 
                 onClick={() => setIsCartOpen(false)}
-                className="p-1 hover:bg-white/20 rounded-full transition-colors"
+                className="p-1.5 hover:bg-white/20 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -81,13 +81,13 @@ const ShoppingCart = () => {
 
             {/* Cart Items */}
             {cartItems.length === 0 ? (
-              <div className="p-6 sm:p-8 text-center">
+              <div className="p-6 sm:p-8 text-center flex-shrink-0">
                 <CartIcon className="w-12 h-12 mx-auto text-gray-300 mb-3" />
                 <p className="text-gray-600 font-medium text-sm sm:text-base">Your cart is empty</p>
               </div>
             ) : (
               <>
-                <div className="p-3 sm:p-4 space-y-3 overflow-y-auto flex-1">
+                <div className="p-3 sm:p-4 space-y-3 overflow-y-auto flex-1 min-h-0">
                   {cartItems.map((item) => (
                     <div
                       key={item.uniqueKey || item.productId}
@@ -152,21 +152,21 @@ const ShoppingCart = () => {
                   ))}
                 </div>
 
-                {/* Footer */}
-                <div className="border-t bg-gray-50 p-3 sm:p-4 space-y-2 rounded-b-xl">
+                {/* Footer - Always visible, never cut off */}
+                <div className="border-t bg-gray-50 p-4 space-y-3 rounded-b-xl flex-shrink-0 safe-area-bottom">
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-gray-800 text-sm sm:text-base">Total:</span>
-                    <span className="text-xl sm:text-2xl font-bold text-purple-600">${total.toFixed(2)}</span>
+                    <span className="font-bold text-gray-800 text-base">Total:</span>
+                    <span className="text-xl font-bold text-purple-600">${total.toFixed(2)}</span>
                   </div>
                   <button
                     onClick={handleCheckout}
-                    className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold py-3 rounded-lg transition-all shadow-lg text-sm sm:text-base"
+                    className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold py-3 rounded-lg transition-all shadow-lg text-base"
                   >
                     Checkout
                   </button>
                   <button
                     onClick={() => setIsCartOpen(false)}
-                    className="w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-2 rounded-lg border border-gray-300 transition-colors text-sm"
+                    className="w-full bg-white hover:bg-gray-50 text-gray-700 font-medium py-2.5 rounded-lg border border-gray-300 transition-colors text-sm"
                   >
                     Continue Shopping
                   </button>
