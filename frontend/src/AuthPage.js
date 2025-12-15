@@ -68,9 +68,13 @@ const AuthPage = () => {
   // Beta Login (username + password)
   const handleBetaLogin = async (e) => {
     e.preventDefault();
+    console.log('=== BETA LOGIN HANDLER v2 CALLED ===');
     
     // Prevent double submission
-    if (loading) return;
+    if (loading) {
+      console.log('Already loading, skipping');
+      return;
+    }
     
     if (!formData.betaUsername.trim() || !formData.betaPassword.trim()) {
       toast.error('Please enter username and password');
@@ -80,6 +84,7 @@ const AuthPage = () => {
     setLoading(true);
     
     try {
+      console.log('Making fetch request to:', `${API}/auth/beta-login`);
       const response = await fetch(`${API}/auth/beta-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -89,9 +94,14 @@ const AuthPage = () => {
         })
       });
       
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+      
       const data = await response.json();
+      console.log('Parsed JSON data:', data);
       
       if (!response.ok) {
+        console.log('Response not OK, throwing error with detail:', data.detail);
         throw new Error(data.detail || 'Invalid credentials');
       }
       
@@ -105,6 +115,8 @@ const AuthPage = () => {
       
     } catch (err) {
       console.error('Beta login error:', err);
+      console.error('Error name:', err.name);
+      console.error('Error message:', err.message);
       // Show the actual error message from the backend
       const errorMsg = err.message || 'Login failed. Please try again.';
       toast.error(errorMsg);
