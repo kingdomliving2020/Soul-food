@@ -1,0 +1,184 @@
+<analysis>**original_problem_statement:**
+The user's goal is to build a full-stack e-commerce and learning platform called Soul Food. The project started from a GitHub repository and has evolved to include: an interactive lesson system (Nibbles and Snack Packs) processed from DOCX files, a complete UI/UX overhaul, and a sophisticated Role-Based Access Control (RBAC) system.
+
+Recent feature requests include:
+1.  **Advanced Authentication Security**: Implement a comprehensive security system with NIST-compliant standards. This includes allowing users to register and log in with either a username or email. It also requires strict password policies (8+ characters, complexity rules, 120-day expiry, no reuse), account lockout after 3 failed attempts, a 60-minute session timeout, and a secure password reset flow via an email link that expires in 1 hour.
+2.  **Beta Tester Access**: Provide two ways for beta testers to log in:
+    *   **Registration**: A Beta Code field on the sign-up form that assigns a specific RBAC role.
+    *   **Quick Access**: A dedicated tab for Beta Code Only login, granting instant, temporary access without creating a permanent account. The password rules do not apply to this method.
+3.  **UI/UX Refinements**: Address visual issues, including cleaning up the mobile shopping cart, aligning buttons on the Quick Order page, adjusting the theme to a purple/blue palette, removing pagan symbols like pine trees, and enlarging the logo on the auth page.
+4.  **Interactive PDF Downloads**: Enhance the downloadable PDF versions of lessons to include a fully interactive Table of Contents with clickable links to all major sections (Title Page, Copyright, Dedication, Lesson Headers, Activities, etc.).
+5.  **Guest Checkout**: Allow users to build a shopping cart as a guest and then be prompted to sign up or log in to complete the purchase and track their order.
+
+**User's preferred language**: English
+
+**what currently exists?**
+The application is a full-stack project using React, FastAPI, and MongoDB.
+-   **Interactive Content**: Two complete lesson series, In His Image and Holiday AE, are available. The frontend features an  component for engaging with content and a  that serves as the lesson catalog, displaying snack packs and individual lessons with correct pricing.
+-   **Authentication**: A comprehensive authentication system has been built. It includes backend routes () for registration, login (email/username), and password management (hashing, JWT tokens). The frontend () provides a tabbed UI for Sign In, Sign Up, and a Beta Code Only quick access, styled with a purple and blue theme. RBAC is linked to beta codes.
+-   **PDF Generation**: A backend utility () using  generates downloadable PDF versions of the lessons, accessible via a Download PDF button.
+-   **E-commerce UI**: The shopping cart () and Quick Order page () have been fixed for mobile responsiveness and button alignment. The cart logic () now supports adding custom merchandise.
+-   **Integrations**: MailerLite is integrated for sending emails (contact form, password resets), and Google Sign-In is available as a login option.
+
+**Last working item**:
+-   **Last item agent was working**: The agent was in the middle of a major security overhaul for the authentication system. It had just overwritten  and  to implement NIST-compliant password policies, username/email login options, password expiry, account lockout, and a secure password reset flow. The final user instruction was to ensure usernames and passwords adhere to safe character sets.
+-   **Status**: IN PROGRESS
+-   **Agent Testing Done**: N
+-   **Which testing method agent to use?**: both. The backend testing agent is crucial for verifying all the new, complex security rules (password complexity, expiry, lockout, reset links). The frontend testing agent is needed to test the updated  UI, including username input, password validation feedback, and the different login flows.
+-   **User Testing Done**: N
+
+**All Pending/In progress Issue list**:
+-   **Issue 1**: The advanced authentication system is implemented but completely untested. It is the highest priority to verify its functionality against all user-specified security requirements. (P0)
+
+    **Issues Detail**:
+    -   **Issue 1**: Test and Stabilize Advanced Authentication System
+        -   **Attempted fixes**: The agent wrote the code in  and  but did not perform any testing.
+        -   **Next debug checklist**:
+            1.  **Backend ()**:
+                -   Verify password complexity rules (length, char types) are enforced during registration.
+                -   Test account lockout after 3 failed login attempts.
+                -   Test password reset flow: request link, email sending (mock or check logs), reset with token, and token expiry.
+                -   Confirm username and email can both be used for login.
+                -   Verify username and password validation (safe characters per NIST).
+                -   Test beta login with username/password (ensure relaxed password rules apply).
+                -   Test password expiry logic (this may require manual DB date changes or a dedicated test endpoint).
+            2.  **Frontend ()**:
+                -   Confirm the UI correctly prompts for a username during registration.
+                -   Ensure password validation messages are user-friendly.
+                -   Test all three tabs: Sign In, Sign Up, and Beta access.
+        -   **Why fix this issue and what will be achieved with the fix?**: This will deliver a secure, production-ready authentication system that meets the user's explicit and stringent security requirements, enabling safe user registration and access control.
+        -   **Status**: IN PROGRESS
+        -   **Is recurring issue?**: N
+        -   **Should Test frontend/backend/both after fix?**: Both
+        -   **Blocked on other issue**: None
+
+**In progress Task List**:
+-   **Task 1**: Complete and Test Advanced Authentication Security (P0)
+    -   **Where to resume**: The core logic is in  and . The agent must now create and execute a thorough testing plan covering all security features.
+    -   **What will be achieved with this?**: A fully functional and secure user authentication system that meets all specified requirements, including NIST standards.
+    -   **Status**: IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?**: Both
+    -   **Blocked on something**: None
+
+**Upcoming and Future Tasks**
+
+-   **Upcoming Tasks**:
+    -   **P0**: **Enhance PDF with Interactive TOC**: Modify  to create a clickable Table of Contents in the downloaded PDFs, linking to the Title Page, Copyright, Dedication, Quick Start guide, and all major lesson sections.
+    -   **P1**: **Implement Guest Checkout Flow**: Update the frontend cart and checkout process to allow guests to add items and be prompted to sign up or log in only when they are ready to complete the purchase.
+    -   **P2**: **Create Admin View for Beta Stats**: Build a simple, protected frontend route that calls the  endpoint and displays the remaining session slots for each beta test group.
+
+-   **Future Tasks**:
+    -   Implement Stripe for payment processing.
+    -   Create a comprehensive admin dashboard to manage users, view coupon usage, and analyze marketing effectiveness.
+    -   Migrate all hardcoded product and lesson data from Python files into MongoDB collections for scalability.
+    -   Expand the 5th week content concept to other mealtime series.
+
+**Completed work in this session**
+-   **Interactive Lesson System**: Built and integrated two full lesson series (In His Image, Holiday AE) from DOCX files, including backend APIs and frontend interactive components.
+-   **Holiday Lesson Refinement**: Restructured the Holiday series into individual paid and free bonus lessons with correct pricing, and updated the UI accordingly.
+-   **Full Authentication System**: Created a complete user authentication system from scratch, featuring email/password login, Google Sign-In, and a Beta Code Only access method, with a new purple/blue theme.
+-   **UI/UX Fixes**:
+    -   Resolved multiple UI bugs, including the mobile shopping cart layout, merchandise button alignment on the Quick Order page, and incorrect login redirects.
+    -   Fixed the  logic to support custom merchandise.
+    -   Removed all pine tree icons sitewide and replaced them with bell icons as per user's strict instructions.
+-   **PDF Generation**: Implemented a -based system to generate downloadable PDFs for lessons.
+-   **MailerLite Integration**: Successfully integrated the MailerLite API to enable the contact form and password reset emails.
+-   **Beta User Management**: Implemented a backend session counter and an admin endpoint to track beta code usage.
+
+**Earlier issues found/mentioned but not fixed**
+-   **Issue 1**: PDF Orphan/Widow Prevention
+    -   **Debug checklist**: Investigate  features or custom flowable logic within  to prevent single lines of a paragraph from being left at the top or bottom of a page.
+    -   **Why to solve this issue and what will be achieved with this?**: This will meet a specific user requirement for professional-quality typography in the downloadable workbooks, enhancing the user experience.
+    -   **Should Test frontend/backend/both after fix?**: Backend (by generating and inspecting the PDF).
+    -   **Is recurring issue?**: N
+
+**Known issue recurrence from previous fork**
+-   None
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Frontend**: React, React Router, Tailwind CSS, Context API
+-   **Backend**: FastAPI, Pydantic, JWT
+-   **Database**: MongoDB (for users); lesson content is currently hardcoded.
+-   **Authentication**:  for hashing,  for JWTs, RBAC linked to beta codes, account lockout, password policies (complexity, expiry), and password reset flows.
+-   **Integrations**: MailerLite (Email), Google Auth,  (PDF Generation).
+
+**key DB schema**
+-   **users**: 
+-   **coupons**: (Hardcoded in ) 
+
+**changes in tech stack**
+-    added for PDF generation.
+-    and  added for the authentication system.
+
+**All files of reference**
+-   : **Overwritten & Untested**. Contains all new, complex security logic.
+-   : **Overwritten & Untested**. Supports username input and new auth flows.
+-   : **Newly created**. Generates lesson PDFs; needs TOC enhancement.
+-   : **Heavily modified**. Contains hardcoded data for all lessons.
+-   : **Heavily modified**. Displays the lesson catalog.
+-   : **Overwritten**. Logic updated to handle custom merchandise.
+
+**Areas that need refactoring**:
+-   **Hardcoded Data**: The lesson content in  and product data in various frontend components should be migrated to MongoDB to improve scalability and maintainability.
+
+**key api endpoints**
+-   : Create a new user with password policy checks.
+-   : Log in with email/username; checks for account lockout.
+-   : Quick login with just a beta username and password.
+-   : Initiates the password reset flow by sending an email.
+-   : Completes the password reset using a token.
+-   : (Admin) Returns usage statistics for beta codes.
+-   : Get all individual lessons.
+-   : Download a lesson as a PDF.
+
+**Critical Info for New Agent**
+-   **PRIORITY ONE**: Thoroughly test and stabilize the advanced authentication system. The code has been written but is completely unverified. The user has high expectations for security.
+-   **User Preferences**: The user is highly visual and detail-oriented. Maintain the purple/blue theme, confirm UI changes with screenshots, and strictly adhere to the no pine trees rule.
+-   **Next Major Feature**: After securing authentication, focus on enhancing the PDF downloads with a fully interactive Table of Contents.
+-   **Testing Credentials**: Use the provided beta codes (, , etc.) to test the different RBAC roles and registration flows.
+
+**documents created in this job**
+-   None.
+
+**Last 10 User Messages and any pending user messages**
+1.  **Request:** Hide test codes, change theme to purple/blue, add session counter. **Status:** Completed.
+2.  **Request:** Remove all pine tree icons. **Status:** Completed.
+3.  **Request:** Fix login redirect, broken shopping cart, and button alignment. **Status:** Completed.
+4.  **Request:** Enlarge auth page logo; asked how to share preview URL. **Status:** Completed.
+5.  **Question:** Couldn't find the beta login option. **Status:** Clarified (was on sign-up form).
+6.  **Request:** Confirmed desire for a Beta Code Only login without email. **Status:** Completed.
+7.  **Request:** Specified comprehensive security requirements (username/email login, strong password policies, expiry, lockout, password reset). **Status:** In Progress.
+8.  **Request:** Added NIST standards for safe characters in usernames/passwords. **Status:** In Progress.
+9.  **Pending User Need:** The user wants to start testing the RBAC functions and lesson quality (interactive and downloadable) as soon as the platform is stable.
+10. **Pending User Need:** The user wants a guest checkout flow.
+
+**Project Health Check:**
+-   **Broken**: The newly implemented advanced authentication system is completely untested and should be considered non-functional until verified.
+-   **Mocked**: Most product data (excluding lessons) is hardcoded on the frontend. The final checkout and payment flow is not implemented.
+
+**3rd Party Integrations**
+-   **MailerLite**: Integrated for sending emails (contact form, password reset). Requires User API Key.
+-   **Google Auth**: Integrated as a sign-in option. Uses Emergent-managed keys.
+-   **reportlab**: A Python library used for server-side PDF generation.
+-   **Stripe**: Planned for future payment processing.
+
+**Testing status**
+-   **Testing agent used after significant changes**: YES, for the initial interactive lesson feature, but NOT for the recent authentication overhaul.
+-   **Troubleshoot agent used after agent stuck in loop**: NO
+-   **Test files created**: None
+-   **Known regressions**: None
+
+**Credentials to test flow:**
+-   **Beta/Test Codes**:
+    -    (Username: , Role: , 120 min session)
+    -    (Username: , Role: , 90 min session)
+    -    (Username: , Role: , 45 min session)
+    -    (Username: , Role: , 90 min session)
+-   **MailerLite API Key**: Stored in the environment.
+
+**What agent forgot to execute**
+-   The agent did not test the extensive authentication security changes after implementing them. This is the most critical pending action.
+-   The specific user request to prevent orphan and widow lines in the generated PDFs has been acknowledged but not yet implemented.</analysis>

@@ -10,7 +10,7 @@ import sys
 from typing import Dict, Any
 
 # Backend URL from frontend/.env
-BASE_URL = "https://interactive-lessons-2.preview.emergentagent.com/api/interactive-lessons"
+BASE_URL = "https://elearn-shop.preview.emergentagent.com/api/interactive-lessons"
 
 class InteractiveLessonsAPITester:
     def __init__(self):
