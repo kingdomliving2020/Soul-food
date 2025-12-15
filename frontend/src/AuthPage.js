@@ -123,6 +123,10 @@ const AuthPage = () => {
   // Regular Login (email/username + password)
   const handleLogin = async (e) => {
     e.preventDefault();
+    
+    // Prevent double submission
+    if (loading) return;
+    
     setLoading(true);
     
     try {
@@ -130,12 +134,20 @@ const AuthPage = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          identifier: formData.identifier,
+          identifier: formData.identifier.trim(),
           password: formData.password
         })
       });
       
-      const data = await response.json();
+      // Clone response before reading to handle potential retry scenarios
+      const responseClone = response.clone();
+      
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        data = await responseClone.json();
+      }
       
       if (!response.ok) {
         throw new Error(data.detail || 'Invalid credentials');
@@ -161,7 +173,8 @@ const AuthPage = () => {
       setTimeout(() => navigate(returnTo), 1000);
       
     } catch (err) {
-      toast.error(err.message);
+      console.error('Login error:', err);
+      toast.error(err.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
