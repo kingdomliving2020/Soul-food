@@ -135,18 +135,18 @@ const AuthPage = () => {
         </Button>
         
         <Card className="shadow-2xl border-2 border-purple-200">
-          <CardHeader className="text-center bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white rounded-t-lg">
-            <div className="flex justify-center mb-3">
+          <CardHeader className="text-center bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white rounded-t-lg py-8">
+            <div className="flex justify-center mb-4">
               <img 
                 src="/soul-food-logo.png" 
                 alt="Soul Food Logo" 
-                className="h-16 w-auto"
+                className="h-24 w-auto"
               />
             </div>
             <CardTitle className="text-2xl font-bold">
               {isLogin ? 'Welcome Back!' : 'Join Soul Food'}
             </CardTitle>
-            <p className="text-purple-100 text-sm">
+            <p className="text-purple-100 text-sm mt-1">
               {isLogin ? 'Sign in to continue your journey' : 'Create your account to get started'}
             </p>
           </CardHeader>
