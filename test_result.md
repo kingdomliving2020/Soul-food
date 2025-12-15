@@ -101,6 +101,8 @@ test_plan:
   test_priority: "completed"
 
 agent_communication:
+  - agent: "main"
+    message: "Fixed beta login issue - usernames were mismatched (instructor_beta vs instructor). Updated BETA_USERS to use simpler usernames: instructor, youth, adult, beta. Added actionable error messages showing valid usernames if wrong one entered."
   - agent: "testing"
     message: "Starting comprehensive testing of Quick Order page functionality based on user requirements. Will test layout, modal functionality, pricing display, and cart integration."
   - agent: "testing"
