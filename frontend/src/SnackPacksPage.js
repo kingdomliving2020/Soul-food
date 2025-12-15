@@ -220,7 +220,7 @@ const SnackPacksPage = () => {
         {holidayMainNibbles.length > 0 && (
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-slate-800 mb-2 flex items-center">
-              <span className="mr-2">🎄</span> Holiday Series – Adult Edition
+              <span className="mr-2">🔔</span> Holiday Series – Adult Edition
             </h2>
             <p className="text-slate-600 mb-6">The 4 C's of Christianity: Covenant, Cradle, Cross, and Comforter</p>
             

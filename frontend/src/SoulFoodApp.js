@@ -392,7 +392,7 @@ const SoulFoodLanding = () => {
                   🎁 Free Sample
                 </a>
                 <a href="/gift-certificates" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors">
-                  🎄 Gift Certificates
+                  🔔 Gift Certificates
                 </a>
                 <a href="/quick-order" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors">
                   🍽️ Quick Order
