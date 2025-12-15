@@ -252,40 +252,38 @@ class SoulFoodAuthTester:
             self.log_test("Beta Login - Invalid Username", False, f"Exception: {str(e)}")
             return False
             
-    def test_holiday_ae_comforter(self):
-        """Test GET /nibble/holiday-ae-comforter - The Comforter lesson"""
+    def test_beta_login_wrong_password(self):
+        """Test beta login with wrong password - should return actionable error"""
         try:
-            nibble_id = "holiday-ae-comforter"
-            response = self.session.get(f"{self.base_url}/nibble/{nibble_id}")
+            test_data = {
+                "username": "instructor",
+                "password": "wrongpassword"
+            }
             
-            if response.status_code != 200:
-                self.log_test("GET /nibble/holiday-ae-comforter", False, f"Status code: {response.status_code}")
+            response = self.session.post(
+                f"{self.base_url}/auth/beta-login",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 401:
+                self.log_test("Beta Login - Wrong Password", False, f"Expected 401, got {response.status_code}")
                 return False
                 
             data = response.json()
-            nibble = data.get("nibble", {})
+            error_message = data.get("detail", "")
             
-            # Verify theme
-            if nibble.get("theme") != "God Remains With Us":
-                self.log_test("GET /nibble/holiday-ae-comforter", False, f"Wrong theme: {nibble.get('theme')}")
+            # Verify error message is actionable
+            expected_message = "Incorrect password for 'instructor'. Please check your password and try again."
+            if error_message != expected_message:
+                self.log_test("Beta Login - Wrong Password", False, f"Wrong error message: {error_message}")
                 return False
-                
-            # Verify has 5 bites (longest lesson)
-            if len(nibble.get("bites", [])) != 5:
-                self.log_test("GET /nibble/holiday-ae-comforter", False, f"Expected 5 bites, got {len(nibble.get('bites', []))}")
-                return False
-                
-            # Verify has reflection-based activity (Comfort Letters)
-            activity = nibble.get("activity", {})
-            if activity.get("title") != "Comfort Letters":
-                self.log_test("GET /nibble/holiday-ae-comforter", False, f"Wrong activity type: {activity.get('title')}")
-                return False
-                
-            self.log_test("GET /nibble/holiday-ae-comforter", True, "Comforter lesson verified: theme 'God Remains With Us', 5 bites, Comfort Letters activity")
+            
+            self.log_test("Beta Login - Wrong Password", True, "Correct actionable error message for wrong password")
             return True
             
         except Exception as e:
-            self.log_test("GET /nibble/holiday-ae-comforter", False, f"Exception: {str(e)}")
+            self.log_test("Beta Login - Wrong Password", False, f"Exception: {str(e)}")
             return False
             
     def test_check_answers(self):
