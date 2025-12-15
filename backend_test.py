@@ -18,6 +18,7 @@ class SoulFoodAuthTester:
         self.base_url = BASE_URL
         self.session = requests.Session()
         self.test_results = []
+        self.auth_tokens = {}  # Store tokens for cleanup
         
     def log_test(self, test_name: str, success: bool, details: str = ""):
         """Log test results"""
