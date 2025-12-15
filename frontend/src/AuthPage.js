@@ -221,7 +221,22 @@ const AuthPage = () => {
         })
       });
       
-      const data = await response.json();
+      // Handle the response - the emergent preview logger might consume the body for non-OK responses
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        // If body was already read, check response status
+        if (!response.ok) {
+          if (response.status === 400) {
+            throw new Error('Please check your registration details and try again.');
+          } else if (response.status === 409) {
+            throw new Error('Email or username already exists.');
+          }
+          throw new Error(`Registration failed (${response.status}). Please try again.`);
+        }
+        throw jsonError;
+      }
       
       if (!response.ok) {
         throw new Error(data.detail || 'Registration failed');
