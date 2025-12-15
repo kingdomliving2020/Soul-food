@@ -104,18 +104,18 @@ const LandingPage = () => {
   };
   
   // Check if user is logged in
-  const [currentUser, setCurrentUser] = useState(null);
-  
-  useEffect(() => {
+  const [currentUser, setCurrentUser] = useState(() => {
     const user = localStorage.getItem('soul_food_user');
     if (user) {
       try {
-        setCurrentUser(JSON.parse(user));
+        return JSON.parse(user);
       } catch (e) {
         localStorage.removeItem('soul_food_user');
+        return null;
       }
     }
-  }, []);
+    return null;
+  });
   
   const handleLogout = () => {
     localStorage.removeItem('soul_food_token');
