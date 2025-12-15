@@ -104,20 +104,49 @@ code {
 html, body, #root {
     width: 100%;
     min-height: 100%;
+    min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
     overflow-x: hidden;
 }
 
-/* Mobile landscape specific fixes */
-@media screen and (orientation: landscape) and (max-height: 500px) {
-    /* Reduce padding in landscape mobile */
+/* Android & iOS orientation handling */
+@media screen and (orientation: landscape) {
+    /* Landscape mode adjustments */
     .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
+        padding-left: max(1rem, env(safe-area-inset-left, 0px));
+        padding-right: max(1rem, env(safe-area-inset-right, 0px));
     }
     
     /* Make cart more compact in landscape */
     .cart-dropdown {
         max-height: 70vh;
+    }
+    
+    /* Header adjustments for landscape */
+    header {
+        padding-top: env(safe-area-inset-top, 0px);
+    }
+}
+
+/* Small height screens (landscape phones, foldables) */
+@media screen and (max-height: 500px) {
+    /* Reduce vertical spacing */
+    .py-12 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+    .py-16 { padding-top: 2rem; padding-bottom: 2rem; }
+    .py-20 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
+    .mb-8 { margin-bottom: 1rem; }
+    .mb-12 { margin-bottom: 1.5rem; }
+    
+    /* Reduce hero text size in landscape */
+    h1, h2 {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+    }
+}
+
+/* Foldable/dual screen support */
+@media (horizontal-viewport-segments: 2) {
+    .container {
+        padding-left: env(viewport-segment-left 0 0, 1rem);
+        padding-right: env(viewport-segment-right 1 0, 1rem);
     }
 }
 
