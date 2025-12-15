@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -18,6 +18,7 @@ import PaymentSuccess from './PaymentSuccess';
 import PaymentCancel from './PaymentCancel';
 import InteractiveLesson from './InteractiveLesson';
 import SnackPacksPage from './SnackPacksPage';
+import AuthPage from './AuthPage';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
