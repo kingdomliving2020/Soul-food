@@ -86,49 +86,48 @@ class SoulFoodAuthTester:
             self.log_test("Beta Login - Instructor", False, f"Exception: {str(e)}")
             return False
             
-    def test_get_nibbles(self):
-        """Test GET /nibbles endpoint - Should return 7 total nibbles (3 In His Image + 4 Holiday AE)"""
+    def test_beta_login_youth(self):
+        """Test beta login with youth credentials"""
         try:
-            response = self.session.get(f"{self.base_url}/nibbles")
+            test_data = {
+                "username": "youth",
+                "password": "test1234"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/auth/beta-login",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
             
             if response.status_code != 200:
-                self.log_test("GET /nibbles", False, f"Status code: {response.status_code}")
+                self.log_test("Beta Login - Youth", False, f"Status code: {response.status_code}, Response: {response.text}")
                 return False
                 
             data = response.json()
+            user = data["user"]
+            session_config = data["session_config"]
             
-            # Verify response structure
-            if "nibbles" not in data:
-                self.log_test("GET /nibbles", False, "Missing 'nibbles' key in response")
+            # Verify youth-specific values
+            if user.get("role") != "youth_tester":
+                self.log_test("Beta Login - Youth", False, f"Wrong role: {user.get('role')}, expected: youth_tester")
                 return False
                 
-            nibbles = data["nibbles"]
-            if not isinstance(nibbles, list):
-                self.log_test("GET /nibbles", False, "Nibbles is not a list")
+            if user.get("access_level") != "youth":
+                self.log_test("Beta Login - Youth", False, f"Wrong access_level: {user.get('access_level')}, expected: youth")
                 return False
                 
-            # Should return 7 total nibbles (3 In His Image + 4 Holiday AE)
-            if len(nibbles) != 7:
-                self.log_test("GET /nibbles", False, f"Expected 7 nibbles, got {len(nibbles)}")
+            if session_config.get("timeout_mins") != 90:
+                self.log_test("Beta Login - Youth", False, f"Wrong session timeout: {session_config.get('timeout_mins')}, expected: 90")
                 return False
-                
-            # Verify expected nibble IDs exist
-            expected_ids = [
-                "in-his-image-1", "in-his-image-2", "in-his-image-3",  # In His Image series
-                "holiday-ae-covenant", "holiday-ae-cradle", "holiday-ae-cross", "holiday-ae-comforter"  # Holiday AE series
-            ]
-            actual_ids = [nibble.get("id") for nibble in nibbles]
             
-            for expected_id in expected_ids:
-                if expected_id not in actual_ids:
-                    self.log_test("GET /nibbles", False, f"Missing nibble ID: {expected_id}")
-                    return False
-                    
-            self.log_test("GET /nibbles", True, "All 7 expected nibbles found (3 In His Image + 4 Holiday AE)")
+            self.auth_tokens["youth"] = data["access_token"]
+            
+            self.log_test("Beta Login - Youth", True, "Youth login successful with correct role, access_level, and 90 min session")
             return True
             
         except Exception as e:
-            self.log_test("GET /nibbles", False, f"Exception: {str(e)}")
+            self.log_test("Beta Login - Youth", False, f"Exception: {str(e)}")
             return False
             
     def test_holiday_ae_covenant(self):
