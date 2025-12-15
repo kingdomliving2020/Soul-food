@@ -350,13 +350,24 @@ const QuickOrder = () => {
       return '/soul-food-logo.png';
     }
     
+    // Handle nibbles and snack packs - use the parent series image
+    if (product.isNibble || product.isSnackPack) {
+      const seriesId = product.id.includes('holiday') ? 'holiday' : 'breakfast';
+      const editionKey = edition === 'bundle' ? 'adult' : edition;
+      return coverImages[seriesId]?.adult?.physical?.[type] || 
+             (seriesId === 'holiday' ? '/covers/holiday-adult-front.jpg' : '/covers/breakfast-adult-front.jpg');
+    }
+    
     // Get cover from mapping
     const productCovers = coverImages[product.id];
     if (productCovers && productCovers[edition] && productCovers[edition][format]) {
       return productCovers[edition][format][type];
     }
     
-    // Fallback
+    // Fallback based on product ID
+    if (product.id.includes('holiday')) {
+      return type === 'front' ? '/covers/holiday-adult-front.jpg' : '/covers/holiday-adult-back.jpg';
+    }
     return type === 'front' ? '/covers/breakfast-adult-front.jpg' : '/covers/breakfast-adult-back.jpg';
   };
 
