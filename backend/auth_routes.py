@@ -498,17 +498,25 @@ async def login(credentials: UserLogin):
 async def beta_login(credentials: BetaLogin):
     """Login with beta test credentials (username + password)"""
     
-    username = credentials.username.lower()
+    username = credentials.username.lower().strip()
+    password = credentials.password.strip()
     
     # Check if username exists in beta users
     if username not in BETA_USERS:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid beta credentials")
+        valid_usernames = list(BETA_USERS.keys())
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail=f"Username '{username}' not found. Valid beta usernames: {', '.join(valid_usernames)}"
+        )
     
     beta_user = BETA_USERS[username]
     
     # Verify password (simple comparison for beta users)
-    if credentials.password != beta_user["password"]:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid beta credentials")
+    if password != beta_user["password"]:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, 
+            detail=f"Incorrect password for '{username}'. Please check your password and try again."
+        )
     
     # Create session
     session_id = str(uuid.uuid4())
