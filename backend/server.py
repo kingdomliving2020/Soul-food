@@ -62,6 +62,15 @@ try:
     print("✅ Interactive lesson routes loaded")
 except Exception as e:
     print(f"⚠️ Could not load interactive lesson routes: {e}")
+
+# Import authentication routes
+try:
+    from auth_routes import router as auth_router
+    app.include_router(auth_router)
+    print("✅ Authentication routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load authentication routes: {e}")
+
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
