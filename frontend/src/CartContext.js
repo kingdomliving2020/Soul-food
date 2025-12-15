@@ -65,23 +65,30 @@ export const PRODUCTS = {
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem('soulFoodCart');
     if (savedCart) {
       try {
-        setCartItems(JSON.parse(savedCart));
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCartItems(parsed);
+        }
       } catch (e) {
         console.error('Error loading cart:', e);
       }
     }
+    setIsInitialized(true);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart to localStorage whenever it changes (but only after initial load)
   useEffect(() => {
-    localStorage.setItem('soulFoodCart', JSON.stringify(cartItems));
-  }, [cartItems]);
+    if (isInitialized) {
+      localStorage.setItem('soulFoodCart', JSON.stringify(cartItems));
+    }
+  }, [cartItems, isInitialized]);
 
   // Flexible addToCart - handles both PRODUCTS lookup and custom items
   const addToCart = (itemOrProductId, quantity = 1, metadata = {}) => {
