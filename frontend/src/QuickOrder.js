@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCart } from './CartContext';
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { ShoppingCart, X, Trash2 } from 'lucide-react';
 
 // Back Cover Preview Modal Component
 const BackCoverModal = ({ isOpen, onClose, frontCover, backCover, productName }) => {
