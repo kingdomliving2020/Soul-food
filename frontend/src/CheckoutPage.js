@@ -97,15 +97,7 @@ const CheckoutPage = () => {
         }),
       });
 
-      // Clone response before reading to handle both success and error cases
-      const responseClone = response.clone();
-      
-      let data;
-      try {
-        data = await response.json();
-      } catch (jsonError) {
-        data = await responseClone.json();
-      }
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.detail || 'Failed to create checkout session');
