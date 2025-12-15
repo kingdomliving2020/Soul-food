@@ -702,6 +702,17 @@ const SoulFoodLanding = () => {
                   >
                     {s.available ? `Explore Full Series 📚` : `Preview Coming Lessons 📖`}
                   </Button>
+                  
+                  {/* Interactive Lessons Link - Only for available series */}
+                  {s.available && (
+                    <Button
+                      onClick={() => window.location.href = '/snack-packs'}
+                      variant="outline"
+                      className="w-full mt-2 border-2 border-purple-400 text-purple-700 hover:bg-purple-50 font-semibold py-2 rounded-xl"
+                    >
+                      ✨ Try Interactive Lessons
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ))}
