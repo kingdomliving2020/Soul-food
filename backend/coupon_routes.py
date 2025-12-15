@@ -60,10 +60,33 @@ COUPONS = {
     },
     "Beta1!2!3!": {
         "code": "Beta1!2!3!",
-        "max_uses": 20,
+        "max_uses": 100,
         "discount_percent": 100,
-        "conditions": "Games, holiday, breakfast set 24hr pass, single login session",
-        "applies_to": ["gaming_day_pass", "mealtime_bundle", "combo_bundle", "instructor_set"]
+        "conditions": "Beta tester full access - all items"
+    },
+    "BETATEST": {
+        "code": "BETATEST",
+        "max_uses": 100,
+        "discount_percent": 100,
+        "conditions": "Beta tester full access - all items"
+    },
+    "test123": {
+        "code": "test123",
+        "max_uses": 100,
+        "discount_percent": 100,
+        "conditions": "Instructor beta tester access"
+    },
+    "test1234": {
+        "code": "test1234",
+        "max_uses": 100,
+        "discount_percent": 100,
+        "conditions": "Youth beta tester access"
+    },
+    "test12345": {
+        "code": "test12345",
+        "max_uses": 100,
+        "discount_percent": 100,
+        "conditions": "Adult beta tester access"
     }
 }
 
