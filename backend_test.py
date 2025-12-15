@@ -364,20 +364,63 @@ class SoulFoodAuthTester:
             self.log_test("NIST Register - Valid Password", False, f"Exception: {str(e)}")
             return False
             
-    def test_invalid_nibble_id(self):
-        """Test error handling for invalid nibble ID"""
+    def test_nist_login_email(self):
+        """Test regular login with email"""
         try:
-            response = self.session.get(f"{self.base_url}/nibble/invalid-id")
+            # First register a user
+            timestamp = int(time.time())
+            email = f"logintest{timestamp}@example.com"
+            username = f"logintest{timestamp}"
+            password = "LoginTest123!"
             
-            if response.status_code != 404:
-                self.log_test("Error handling (invalid nibble)", False, f"Expected 404, got {response.status_code}")
+            # Register
+            register_data = {
+                "email": email,
+                "username": username,
+                "password": password,
+                "name": "Login Test User"
+            }
+            
+            register_response = self.session.post(
+                f"{self.base_url}/auth/register",
+                json=register_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if register_response.status_code != 200:
+                self.log_test("NIST Login - Email", False, f"Registration failed: {register_response.status_code}")
+                return False
+            
+            # Now test login with email
+            login_data = {
+                "identifier": email,  # Using email
+                "password": password
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/auth/login",
+                json=login_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 200:
+                self.log_test("NIST Login - Email", False, f"Login failed: {response.status_code}, Response: {response.text}")
                 return False
                 
-            self.log_test("Error handling (invalid nibble)", True, "Correctly returns 404 for invalid nibble")
+            data = response.json()
+            
+            # Verify login response
+            if "access_token" not in data:
+                self.log_test("NIST Login - Email", False, "Missing access_token in response")
+                return False
+            
+            self.auth_tokens[f"logintest{timestamp}"] = data["access_token"]
+            
+            self.log_test("NIST Login - Email", True, "Successfully logged in with email")
             return True
             
         except Exception as e:
-            self.log_test("Error handling (invalid nibble)", False, f"Exception: {str(e)}")
+            self.log_test("NIST Login - Email", False, f"Exception: {str(e)}")
             return False
             
     def run_all_tests(self):
