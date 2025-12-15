@@ -383,7 +383,109 @@ const QuickOrder = () => {
               <img src="/quick-order-rounded-60.png" alt="" className="h-10 w-auto rounded-lg" />
               <span className="text-lg font-bold text-slate-800">Truth, Served Daily</span>
             </div>
-            <div className="w-20 sm:w-32" />
+            
+            {/* Cart Button */}
+            <div className="relative">
+              <Button
+                onClick={() => setIsCartOpen(!isCartOpen)}
+                variant="ghost"
+                className="relative p-2 text-slate-700 hover:text-slate-900"
+              >
+                <ShoppingCart className="w-6 h-6" />
+                {getCartCount() > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {getCartCount()}
+                  </span>
+                )}
+              </Button>
+              
+              {/* Cart Dropdown */}
+              {isCartOpen && (
+                <>
+                  <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setIsCartOpen(false)} />
+                  <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-2xl border border-gray-200 z-50 max-h-[80vh] flex flex-col">
+                    {/* Cart Header */}
+                    <div className="bg-gradient-to-r from-orange-500 to-amber-600 text-white px-4 py-3 rounded-t-xl flex items-center justify-between">
+                      <h3 className="font-bold text-lg flex items-center gap-2">
+                        <ShoppingCart className="w-5 h-5" />
+                        Cart ({getCartCount()})
+                      </h3>
+                      <button onClick={() => setIsCartOpen(false)} className="p-1 hover:bg-white/20 rounded-full">
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                    
+                    {cartItems.length === 0 ? (
+                      <div className="p-8 text-center">
+                        <ShoppingCart className="w-12 h-12 mx-auto text-gray-300 mb-3" />
+                        <p className="text-gray-600">Your cart is empty</p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="p-4 space-y-3 overflow-y-auto flex-1">
+                          {cartItems.map((item) => (
+                            <div key={item.uniqueKey || item.id} className="bg-gray-50 rounded-lg p-3 border">
+                              <div className="flex justify-between items-start mb-2">
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="font-bold text-gray-900 text-sm truncate">{item.name}</h4>
+                                </div>
+                                <button
+                                  onClick={() => removeFromCart(item.uniqueKey || item.id)}
+                                  className="text-red-500 hover:text-red-700 p-1"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => updateQuantity(item.uniqueKey || item.id, item.quantity - 1)}
+                                    className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center"
+                                  >
+                                    -
+                                  </button>
+                                  <span className="font-bold text-sm">{item.quantity}</span>
+                                  <button
+                                    onClick={() => updateQuantity(item.uniqueKey || item.id, item.quantity + 1)}
+                                    className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center"
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                                <div className="font-bold text-purple-600">
+                                  ${((item.salePrice || item.price) * item.quantity).toFixed(2)}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {/* Cart Footer */}
+                        <div className="border-t bg-gray-50 p-4 rounded-b-xl space-y-3">
+                          <div className="flex justify-between items-center">
+                            <span className="font-bold text-gray-800">Total:</span>
+                            <span className="text-2xl font-bold text-purple-600">${getCartTotal().toFixed(2)}</span>
+                          </div>
+                          <Button
+                            onClick={() => window.location.href = '/checkout'}
+                            className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold py-3"
+                          >
+                            Proceed to Checkout
+                          </Button>
+                          <Button
+                            onClick={() => setIsCartOpen(false)}
+                            variant="outline"
+                            className="w-full"
+                          >
+                            Continue Shopping
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </header>
