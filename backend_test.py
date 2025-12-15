@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Holiday AE Interactive Lessons System
-Tests the new Holiday AE (Adult Edition) interactive lessons system
+Backend API Testing for Soul Food Authentication System
+Tests the beta login system and NIST authentication requirements
 """
 
 import requests
 import json
 import sys
+import time
 from typing import Dict, Any
 
 # Backend URL from frontend/.env
-BASE_URL = "https://elearn-shop.preview.emergentagent.com/api/interactive-lessons"
+BASE_URL = "https://elearn-shop.preview.emergentagent.com/api"
 
-class InteractiveLessonsAPITester:
+class SoulFoodAuthTester:
     def __init__(self):
         self.base_url = BASE_URL
         self.session = requests.Session()
