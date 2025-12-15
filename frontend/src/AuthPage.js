@@ -184,6 +184,9 @@ const AuthPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     
+    // Prevent double submission
+    if (loading) return;
+    
     // Validate password
     if (passwordError) {
       toast.error(passwordError);
@@ -197,14 +200,22 @@ const AuthPage = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          email: formData.email,
-          username: formData.username,
+          email: formData.email.trim(),
+          username: formData.username.trim(),
           password: formData.password,
-          name: formData.name
+          name: formData.name.trim()
         })
       });
       
-      const data = await response.json();
+      // Clone response before reading to handle potential retry scenarios
+      const responseClone = response.clone();
+      
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        data = await responseClone.json();
+      }
       
       if (!response.ok) {
         throw new Error(data.detail || 'Registration failed');
@@ -219,7 +230,8 @@ const AuthPage = () => {
       setTimeout(() => navigate(returnTo), 1000);
       
     } catch (err) {
-      toast.error(err.message);
+      console.error('Registration error:', err);
+      toast.error(err.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
