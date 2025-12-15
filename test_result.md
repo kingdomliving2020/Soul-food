@@ -95,10 +95,11 @@ metadata:
   test_sequence: 6
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Beta Login Response Cloning Bug Fix"
   stuck_tasks: []
   test_all: false
-  test_priority: "authentication_testing_completed"
+  test_priority: "critical_bug_fix_needed"
 
 agent_communication:
   - agent: "main"
