@@ -1873,6 +1873,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<SoulFoodLanding />} />
+            <Route path="/auth" element={<AuthPage />} />
             <Route path="/quick-order" element={<QuickOrder />} />
             <Route path="/gift-certificates" element={<GiftCertificate />} />
             <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />
