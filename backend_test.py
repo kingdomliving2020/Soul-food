@@ -33,62 +33,57 @@ class SoulFoodAuthTester:
             "details": details
         })
         
-    def test_get_snack_packs(self):
-        """Test GET /snack-packs endpoint - Should return 2 snack packs now"""
+    def test_beta_login_instructor(self):
+        """Test beta login with instructor credentials"""
         try:
-            response = self.session.get(f"{self.base_url}/snack-packs")
+            test_data = {
+                "username": "instructor",
+                "password": "test123"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/auth/beta-login",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
             
             if response.status_code != 200:
-                self.log_test("GET /snack-packs", False, f"Status code: {response.status_code}")
+                self.log_test("Beta Login - Instructor", False, f"Status code: {response.status_code}, Response: {response.text}")
                 return False
                 
             data = response.json()
             
             # Verify response structure
-            if "snack_packs" not in data:
-                self.log_test("GET /snack-packs", False, "Missing 'snack_packs' key in response")
-                return False
-                
-            snack_packs = data["snack_packs"]
-            if not isinstance(snack_packs, list):
-                self.log_test("GET /snack-packs", False, "Snack packs is not a list")
-                return False
-                
-            # Should return 2 snack packs now: "In His Image" and "Holiday Series - The 4 C's of Christianity"
-            if len(snack_packs) != 2:
-                self.log_test("GET /snack-packs", False, f"Expected 2 snack packs, got {len(snack_packs)}")
-                return False
-                
-            # Verify both expected snack packs exist
-            pack_titles = [pack.get("title") for pack in snack_packs]
-            expected_titles = ["In His Image - Self Worth Series", "Holiday Series - The 4 C's of Christianity"]
-            
-            for expected_title in expected_titles:
-                if expected_title not in pack_titles:
-                    self.log_test("GET /snack-packs", False, f"Missing snack pack: {expected_title}")
+            required_fields = ["access_token", "token_type", "user", "session_config"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Beta Login - Instructor", False, f"Missing field: {field}")
                     return False
-                    
-            # Verify Holiday Series pack details
-            holiday_pack = None
-            for pack in snack_packs:
-                if pack.get("title") == "Holiday Series - The 4 C's of Christianity":
-                    holiday_pack = pack
-                    break
-                    
-            if not holiday_pack:
-                self.log_test("GET /snack-packs", False, "Holiday Series snack pack not found")
+            
+            user = data["user"]
+            session_config = data["session_config"]
+            
+            # Verify instructor-specific values
+            if user.get("role") != "instructor_tester":
+                self.log_test("Beta Login - Instructor", False, f"Wrong role: {user.get('role')}, expected: instructor_tester")
                 return False
                 
-            # Verify Holiday pack has 4 lessons
-            if holiday_pack.get("total_lessons") != 4:
-                self.log_test("GET /snack-packs", False, f"Expected 4 lessons in Holiday pack, got {holiday_pack.get('total_lessons')}")
+            if user.get("access_level") != "instructor":
+                self.log_test("Beta Login - Instructor", False, f"Wrong access_level: {user.get('access_level')}, expected: instructor")
                 return False
                 
-            self.log_test("GET /snack-packs", True, "Both snack packs found: In His Image (3 lessons) and Holiday Series (4 lessons)")
+            if session_config.get("timeout_mins") != 120:
+                self.log_test("Beta Login - Instructor", False, f"Wrong session timeout: {session_config.get('timeout_mins')}, expected: 120")
+                return False
+            
+            # Store token for potential cleanup
+            self.auth_tokens["instructor"] = data["access_token"]
+            
+            self.log_test("Beta Login - Instructor", True, "Instructor login successful with correct role, access_level, and 120 min session")
             return True
             
         except Exception as e:
-            self.log_test("GET /snack-packs", False, f"Exception: {str(e)}")
+            self.log_test("Beta Login - Instructor", False, f"Exception: {str(e)}")
             return False
             
     def test_get_nibbles(self):
