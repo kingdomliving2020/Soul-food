@@ -85,8 +85,44 @@ const LandingPage = () => {
   const [showAuth, setShowAuth] = useState(false);
   
   const handleLogin = () => {
-    const redirectUrl = `${window.location.origin}/dashboard`;
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
+    // Navigate to auth page instead of direct Google login
+    window.location.href = '/auth';
+  };
+  
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
+  const [isRegistering, setIsRegistering] = useState(false);
+  
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    // For now, show a message - full implementation would connect to backend
+    toast.info('Email login coming soon! Please use Google Sign In for now.');
+  };
+  
+  const openLoginModal = () => {
+    setShowLoginModal(true);
+  };
+  
+  // Check if user is logged in
+  const [currentUser, setCurrentUser] = useState(null);
+  
+  useEffect(() => {
+    const user = localStorage.getItem('soul_food_user');
+    if (user) {
+      try {
+        setCurrentUser(JSON.parse(user));
+      } catch (e) {
+        localStorage.removeItem('soul_food_user');
+      }
+    }
+  }, []);
+  
+  const handleLogout = () => {
+    localStorage.removeItem('soul_food_token');
+    localStorage.removeItem('soul_food_user');
+    localStorage.removeItem('soul_food_session');
+    setCurrentUser(null);
+    toast.success('Logged out successfully');
   };
 
   return (
