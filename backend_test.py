@@ -321,41 +321,47 @@ class SoulFoodAuthTester:
             self.log_test("NIST Register - Weak Password", False, f"Exception: {str(e)}")
             return False
             
-    def test_save_progress(self):
-        """Test POST /progress/save endpoint"""
+    def test_nist_register_valid_password(self):
+        """Test registration with valid strong password - should succeed"""
         try:
+            # Use unique email to avoid conflicts
+            import time
+            timestamp = int(time.time())
+            
             test_data = {
-                "nibble_id": "in-his-image-1",
-                "answers": {
-                    "q-1-1": "It means God had a specific plan and purpose for my life",
-                    "q-1-2": "It gives me hope that broken areas can be restored",
-                    "q-1-3": "It shows how much I matter to Him"
-                },
-                "completed_bites": ["bite-1-1", "bite-1-2", "bite-1-3"]
+                "email": f"testuser{timestamp}@example.com",
+                "username": f"testuser{timestamp}",
+                "password": "StrongPass123!",  # Meets all requirements
+                "name": "Test User"
             }
             
             response = self.session.post(
-                f"{self.base_url}/progress/save",
+                f"{self.base_url}/auth/register",
                 json=test_data,
                 headers={"Content-Type": "application/json"}
             )
             
             if response.status_code != 200:
-                self.log_test("POST /progress/save", False, f"Status code: {response.status_code}")
+                self.log_test("NIST Register - Valid Password", False, f"Status code: {response.status_code}, Response: {response.text}")
                 return False
                 
             data = response.json()
             
             # Verify response structure
-            if "success" not in data or not data["success"]:
-                self.log_test("POST /progress/save", False, "Success field missing or false")
-                return False
-                
-            self.log_test("POST /progress/save", True, "Progress saved successfully")
+            required_fields = ["access_token", "token_type", "user", "session_config"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("NIST Register - Valid Password", False, f"Missing field: {field}")
+                    return False
+            
+            # Store token for cleanup
+            self.auth_tokens[f"testuser{timestamp}"] = data["access_token"]
+            
+            self.log_test("NIST Register - Valid Password", True, "Successfully registered with strong password")
             return True
             
         except Exception as e:
-            self.log_test("POST /progress/save", False, f"Exception: {str(e)}")
+            self.log_test("NIST Register - Valid Password", False, f"Exception: {str(e)}")
             return False
             
     def test_invalid_nibble_id(self):
