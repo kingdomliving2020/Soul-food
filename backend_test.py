@@ -521,11 +521,11 @@ class SoulFoodAuthTester:
             if test():
                 passed += 1
                 
-        print("=" * 60)
+        print("=" * 70)
         print(f"📊 Test Results: {passed}/{total} tests passed")
         
         if passed == total:
-            print("🎉 All Holiday AE backend API tests PASSED!")
+            print("🎉 All Soul Food Authentication tests PASSED!")
             return True
         else:
             print(f"⚠️  {total - passed} test(s) FAILED")
