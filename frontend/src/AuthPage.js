@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import { Eye, EyeOff, Mail, Lock, User, Sparkles, ArrowLeft, Zap } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Zap, ArrowLeft, AtSign, AlertCircle } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -19,50 +19,57 @@ const AuthPage = () => {
   const [authMode, setAuthMode] = useState('login'); // 'login', 'register', 'beta'
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [betaCodeValid, setBetaCodeValid] = useState(null);
+  const [passwordError, setPasswordError] = useState('');
   
   const [formData, setFormData] = useState({
+    identifier: '', // email or username for login
     email: '',
+    username: '',
     password: '',
     name: '',
-    betaCode: ''
+    betaUsername: '',
+    betaPassword: ''
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    if (name === 'betaCode') {
-      setBetaCodeValid(null);
+    // Clear password error when typing
+    if (name === 'password') {
+      setPasswordError('');
     }
   };
 
-  const validateBetaCode = async () => {
-    if (!formData.betaCode.trim()) {
-      setBetaCodeValid(null);
+  // Validate password on blur (for registration)
+  const validatePassword = () => {
+    const password = formData.password;
+    if (!password || authMode !== 'register') return;
+    
+    if (password.length < 8) {
+      setPasswordError('Password must be at least 8 characters');
       return;
     }
     
-    try {
-      const response = await fetch(`${API}/auth/validate-test-code/${encodeURIComponent(formData.betaCode)}`);
-      const data = await response.json();
-      setBetaCodeValid(data);
-      
-      if (data.valid) {
-        toast.success(`Code accepted! ${data.remaining_slots} slots remaining.`);
-      } else {
-        toast.error(data.message || 'Invalid code');
-      }
-    } catch (err) {
-      toast.error('Could not validate code');
+    let criteriaCount = 0;
+    if (/[A-Z]/.test(password)) criteriaCount++;
+    if (/[a-z]/.test(password)) criteriaCount++;
+    if (/\d/.test(password)) criteriaCount++;
+    if (/[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/`~]/.test(password)) criteriaCount++;
+    
+    if (criteriaCount < 3) {
+      setPasswordError('Password must include at least 3 of: uppercase, lowercase, number, special character');
+      return;
     }
+    
+    setPasswordError('');
   };
 
-  // Beta Code Only Login
+  // Beta Login (username + password)
   const handleBetaLogin = async (e) => {
     e.preventDefault();
-    if (!formData.betaCode.trim()) {
-      toast.error('Please enter a beta code');
+    if (!formData.betaUsername.trim() || !formData.betaPassword.trim()) {
+      toast.error('Please enter username and password');
       return;
     }
     
@@ -72,25 +79,25 @@ const AuthPage = () => {
       const response = await fetch(`${API}/auth/beta-login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ beta_code: formData.betaCode })
+        body: JSON.stringify({ 
+          username: formData.betaUsername,
+          password: formData.betaPassword
+        })
       });
       
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.detail || 'Invalid beta code');
+        throw new Error(data.detail || 'Invalid credentials');
       }
       
-      // Store token and user info
       localStorage.setItem('soul_food_token', data.access_token);
       localStorage.setItem('soul_food_user', JSON.stringify(data.user));
       localStorage.setItem('soul_food_session', JSON.stringify(data.session_config));
       
       toast.success(data.session_config.message);
       
-      setTimeout(() => {
-        navigate(returnTo);
-      }, 1000);
+      setTimeout(() => navigate(returnTo), 1000);
       
     } catch (err) {
       toast.error(err.message);
@@ -99,49 +106,90 @@ const AuthPage = () => {
     }
   };
 
-  // Email/Password Login or Register
-  const handleSubmit = async (e) => {
+  // Regular Login (email/username + password)
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     
     try {
-      const endpoint = authMode === 'login' ? '/auth/login' : '/auth/register';
-      const body = authMode === 'login' 
-        ? { email: formData.email, password: formData.password }
-        : { 
-            email: formData.email, 
-            password: formData.password, 
-            name: formData.name,
-            test_code: formData.betaCode || null
-          };
-      
-      const response = await fetch(`${API}${endpoint}`, {
+      const response = await fetch(`${API}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify({ 
+          identifier: formData.identifier,
+          password: formData.password
+        })
       });
       
       const data = await response.json();
       
       if (!response.ok) {
-        throw new Error(data.detail || 'Authentication failed');
+        throw new Error(data.detail || 'Invalid credentials');
       }
       
       localStorage.setItem('soul_food_token', data.access_token);
       localStorage.setItem('soul_food_user', JSON.stringify(data.user));
       localStorage.setItem('soul_food_session', JSON.stringify(data.session_config));
       
-      toast.success(data.session_config.message || `Welcome${authMode === 'login' ? ' back' : ''}, ${data.user.name}!`);
-      
-      if (data.session_config.restrictions?.length > 0) {
-        toast.info(`Your session: ${data.session_config.timeout_mins} minutes`, {
-          duration: 5000
-        });
+      // Check for password expiry warnings
+      if (data.password_expired) {
+        toast.warning('Your password has expired. Please change it.');
+        navigate('/change-password');
+        return;
       }
       
-      setTimeout(() => {
-        navigate(returnTo);
-      }, 1000);
+      if (data.password_expiring_soon) {
+        toast.info(`Your password expires in ${data.password_expires_in_days} days`);
+      }
+      
+      toast.success(data.session_config.message);
+      
+      setTimeout(() => navigate(returnTo), 1000);
+      
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Registration
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    
+    // Validate password
+    if (passwordError) {
+      toast.error(passwordError);
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      const response = await fetch(`${API}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: formData.email,
+          username: formData.username,
+          password: formData.password,
+          name: formData.name
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.detail || 'Registration failed');
+      }
+      
+      localStorage.setItem('soul_food_token', data.access_token);
+      localStorage.setItem('soul_food_user', JSON.stringify(data.user));
+      localStorage.setItem('soul_food_session', JSON.stringify(data.session_config));
+      
+      toast.success(data.session_config.message);
+      
+      setTimeout(() => navigate(returnTo), 1000);
       
     } catch (err) {
       toast.error(err.message);
@@ -160,7 +208,6 @@ const AuthPage = () => {
       <Toaster position="top-right" />
       
       <div className="w-full max-w-md">
-        {/* Back Button */}
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
@@ -173,17 +220,13 @@ const AuthPage = () => {
         <Card className="shadow-2xl border-2 border-purple-200">
           <CardHeader className="text-center bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white rounded-t-lg py-8">
             <div className="flex justify-center mb-4">
-              <img 
-                src="/soul-food-logo.png" 
-                alt="Soul Food Logo" 
-                className="h-24 w-auto"
-              />
+              <img src="/soul-food-logo.png" alt="Soul Food Logo" className="h-24 w-auto" />
             </div>
             <CardTitle className="text-2xl font-bold">
-              {authMode === 'beta' ? 'Quick Beta Access' : authMode === 'login' ? 'Welcome Back!' : 'Join Soul Food'}
+              {authMode === 'beta' ? 'Beta Access' : authMode === 'login' ? 'Welcome Back!' : 'Join Soul Food'}
             </CardTitle>
             <p className="text-purple-100 text-sm mt-1">
-              {authMode === 'beta' ? 'Enter your beta code for instant access' : authMode === 'login' ? 'Sign in to continue your journey' : 'Create your account to get started'}
+              {authMode === 'beta' ? 'Enter your beta credentials' : authMode === 'login' ? 'Sign in with email or username' : 'Create your account'}
             </p>
           </CardHeader>
           
@@ -193,9 +236,7 @@ const AuthPage = () => {
               <button
                 onClick={() => setAuthMode('login')}
                 className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-                  authMode === 'login' 
-                    ? 'bg-white text-purple-700 shadow-sm' 
-                    : 'text-slate-600 hover:text-slate-800'
+                  authMode === 'login' ? 'bg-white text-purple-700 shadow-sm' : 'text-slate-600 hover:text-slate-800'
                 }`}
               >
                 Sign In
@@ -203,9 +244,7 @@ const AuthPage = () => {
               <button
                 onClick={() => setAuthMode('register')}
                 className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-                  authMode === 'register' 
-                    ? 'bg-white text-purple-700 shadow-sm' 
-                    : 'text-slate-600 hover:text-slate-800'
+                  authMode === 'register' ? 'bg-white text-purple-700 shadow-sm' : 'text-slate-600 hover:text-slate-800'
                 }`}
               >
                 Sign Up
@@ -213,9 +252,7 @@ const AuthPage = () => {
               <button
                 onClick={() => setAuthMode('beta')}
                 className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-1 ${
-                  authMode === 'beta' 
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm' 
-                    : 'text-slate-600 hover:text-slate-800'
+                  authMode === 'beta' ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-800'
                 }`}
               >
                 <Zap className="w-3 h-3" />
@@ -223,85 +260,143 @@ const AuthPage = () => {
               </button>
             </div>
 
-            {/* BETA CODE ONLY LOGIN */}
+            {/* BETA LOGIN (username + password) */}
             {authMode === 'beta' && (
               <form onSubmit={handleBetaLogin} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="betaCodeOnly" className="flex items-center gap-2 text-slate-700">
-                    <Sparkles className="w-4 h-4 text-purple-600" />
-                    Beta Code
+                  <Label htmlFor="betaUsername" className="flex items-center gap-2 text-slate-700">
+                    <User className="w-4 h-4" />
+                    Beta Username
                   </Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="betaCodeOnly"
-                      name="betaCode"
-                      type="text"
-                      placeholder="Enter your beta code"
-                      value={formData.betaCode}
-                      onChange={handleInputChange}
-                      required
-                      className="border-slate-300 focus:border-purple-500 focus:ring-purple-500"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={validateBetaCode}
-                      className="shrink-0 border-purple-300 text-purple-600 hover:bg-purple-50"
-                    >
-                      Verify
-                    </Button>
-                  </div>
-                  {betaCodeValid && (
-                    <div className={`text-sm p-2 rounded ${betaCodeValid.valid ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-                      {betaCodeValid.valid ? (
-                        <span className="flex items-center gap-2">
-                          <Sparkles className="w-4 h-4" />
-                          Valid! {betaCodeValid.remaining_slots} slots remaining
-                        </span>
-                      ) : (
-                        `✗ ${betaCodeValid.message || 'Code not recognized'}`
-                      )}
-                    </div>
-                  )}
-                  <p className="text-xs text-slate-500">
-                    Quick access without creating an account. Session time is limited.
-                  </p>
+                  <Input
+                    id="betaUsername"
+                    name="betaUsername"
+                    type="text"
+                    placeholder="Enter beta username"
+                    value={formData.betaUsername}
+                    onChange={handleInputChange}
+                    required
+                    className="border-slate-300 focus:border-purple-500"
+                  />
                 </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="betaPassword" className="flex items-center gap-2 text-slate-700">
+                    <Lock className="w-4 h-4" />
+                    Password
+                  </Label>
+                  <Input
+                    id="betaPassword"
+                    name="betaPassword"
+                    type="password"
+                    placeholder="Enter password"
+                    value={formData.betaPassword}
+                    onChange={handleInputChange}
+                    required
+                    className="border-slate-300 focus:border-purple-500"
+                  />
+                </div>
+                
+                <p className="text-xs text-slate-500">
+                  Beta access for authorized testers only. Session time is limited.
+                </p>
                 
                 <Button
                   type="submit"
                   disabled={loading}
                   className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-3"
                 >
-                  {loading ? 'Verifying...' : '⚡ Quick Access'}
+                  {loading ? 'Verifying...' : '⚡ Beta Login'}
                 </Button>
               </form>
             )}
 
-            {/* EMAIL/PASSWORD FORM */}
-            {(authMode === 'login' || authMode === 'register') && (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Name field (register only) */}
-                {authMode === 'register' && (
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="flex items-center gap-2 text-slate-700">
-                      <User className="w-4 h-4" />
-                      Your Name
-                    </Label>
+            {/* REGULAR LOGIN */}
+            {authMode === 'login' && (
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="identifier" className="flex items-center gap-2 text-slate-700">
+                    <AtSign className="w-4 h-4" />
+                    Email or Username
+                  </Label>
+                  <Input
+                    id="identifier"
+                    name="identifier"
+                    type="text"
+                    placeholder="Enter email or username"
+                    value={formData.identifier}
+                    onChange={handleInputChange}
+                    required
+                    className="border-slate-300 focus:border-purple-500"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="loginPassword" className="flex items-center gap-2 text-slate-700">
+                    <Lock className="w-4 h-4" />
+                    Password
+                  </Label>
+                  <div className="relative">
                     <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      placeholder="Enter your name"
-                      value={formData.name}
+                      id="loginPassword"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      value={formData.password}
                       onChange={handleInputChange}
                       required
-                      className="border-slate-300 focus:border-purple-500 focus:ring-purple-500"
+                      className="border-slate-300 focus:border-purple-500 pr-10"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
-                )}
+                </div>
                 
-                {/* Email field */}
+                <div className="text-right">
+                  <button
+                    type="button"
+                    onClick={() => navigate('/forgot-password')}
+                    className="text-sm text-purple-600 hover:text-purple-700"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+                
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 text-white font-bold py-3"
+                >
+                  {loading ? 'Signing in...' : 'Sign In'}
+                </Button>
+              </form>
+            )}
+
+            {/* REGISTRATION */}
+            {authMode === 'register' && (
+              <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="flex items-center gap-2 text-slate-700">
+                    <User className="w-4 h-4" />
+                    Full Name
+                  </Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    type="text"
+                    placeholder="Your full name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="border-slate-300 focus:border-purple-500"
+                  />
+                </div>
+                
                 <div className="space-y-2">
                   <Label htmlFor="email" className="flex items-center gap-2 text-slate-700">
                     <Mail className="w-4 h-4" />
@@ -315,27 +410,48 @@ const AuthPage = () => {
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="border-slate-300 focus:border-purple-500 focus:ring-purple-500"
+                    className="border-slate-300 focus:border-purple-500"
                   />
                 </div>
                 
-                {/* Password field */}
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="flex items-center gap-2 text-slate-700">
+                  <Label htmlFor="username" className="flex items-center gap-2 text-slate-700">
+                    <AtSign className="w-4 h-4" />
+                    Username
+                  </Label>
+                  <Input
+                    id="username"
+                    name="username"
+                    type="text"
+                    placeholder="Choose a username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    required
+                    minLength={3}
+                    maxLength={30}
+                    pattern="^[a-zA-Z0-9_]+$"
+                    className="border-slate-300 focus:border-purple-500"
+                  />
+                  <p className="text-xs text-slate-500">Letters, numbers, and underscores only</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="regPassword" className="flex items-center gap-2 text-slate-700">
                     <Lock className="w-4 h-4" />
                     Password
                   </Label>
                   <div className="relative">
                     <Input
-                      id="password"
+                      id="regPassword"
                       name="password"
                       type={showPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
+                      placeholder="Create a strong password"
                       value={formData.password}
                       onChange={handleInputChange}
+                      onBlur={validatePassword}
                       required
-                      minLength={6}
-                      className="border-slate-300 focus:border-purple-500 focus:ring-purple-500 pr-10"
+                      minLength={8}
+                      className={`border-slate-300 focus:border-purple-500 pr-10 ${passwordError ? 'border-red-400' : ''}`}
                     />
                     <button
                       type="button"
@@ -345,62 +461,34 @@ const AuthPage = () => {
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+                  
+                  {passwordError && (
+                    <div className="flex items-start gap-2 text-red-600 text-xs">
+                      <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                      <span>{passwordError}</span>
+                    </div>
+                  )}
+                  
+                  <div className="text-xs text-slate-500 space-y-1">
+                    <p>Password must:</p>
+                    <ul className="list-disc list-inside ml-2 space-y-0.5">
+                      <li>Be at least 8 characters</li>
+                      <li>Include 3 of: uppercase, lowercase, number, special character</li>
+                    </ul>
+                  </div>
                 </div>
                 
-                {/* Beta Code field (register only) */}
-                {authMode === 'register' && (
-                  <div className="space-y-2">
-                    <Label htmlFor="betaCode" className="flex items-center gap-2 text-slate-700">
-                      <Sparkles className="w-4 h-4" />
-                      Beta Code
-                      <span className="text-xs text-slate-400 font-normal">(if you have one)</span>
-                    </Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="betaCode"
-                        name="betaCode"
-                        type="text"
-                        placeholder="Enter your code"
-                        value={formData.betaCode}
-                        onChange={handleInputChange}
-                        className="border-slate-300 focus:border-purple-500 focus:ring-purple-500"
-                      />
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={validateBetaCode}
-                        className="shrink-0 border-purple-300 text-purple-600 hover:bg-purple-50"
-                      >
-                        Verify
-                      </Button>
-                    </div>
-                    {betaCodeValid && (
-                      <div className={`text-sm p-2 rounded ${betaCodeValid.valid ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-                        {betaCodeValid.valid ? (
-                          <span className="flex items-center gap-2">
-                            <Sparkles className="w-4 h-4" />
-                            Special access granted!
-                          </span>
-                        ) : (
-                          '✗ Code not recognized'
-                        )}
-                      </div>
-                    )}
-                  </div>
-                )}
-                
-                {/* Submit Button */}
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !!passwordError}
                   className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 text-white font-bold py-3"
                 >
-                  {loading ? 'Please wait...' : (authMode === 'login' ? 'Sign In' : 'Create Account')}
+                  {loading ? 'Creating account...' : 'Create Account'}
                 </Button>
               </form>
             )}
             
-            {/* Divider - only for non-beta modes */}
+            {/* Google Login - only for regular login/register */}
             {authMode !== 'beta' && (
               <>
                 <div className="relative my-6">
@@ -412,7 +500,6 @@ const AuthPage = () => {
                   </div>
                 </div>
                 
-                {/* Google Login */}
                 <Button
                   type="button"
                   variant="outline"
@@ -430,19 +517,16 @@ const AuthPage = () => {
               </>
             )}
             
-            {/* Guest Checkout Link */}
+            {/* Guest checkout link */}
             {returnTo === '/checkout' && (
               <div className="text-center mt-4 pt-4 border-t border-slate-200">
-                <p className="text-slate-500 text-sm">
-                  Just want to checkout?
-                  <button
-                    type="button"
-                    onClick={() => navigate('/checkout', { state: { guestCheckout: true } })}
-                    className="ml-2 text-indigo-600 hover:text-indigo-700 font-semibold"
-                  >
-                    Continue as Guest
-                  </button>
-                </p>
+                <button
+                  type="button"
+                  onClick={() => navigate('/checkout', { state: { guestCheckout: true } })}
+                  className="text-sm text-indigo-600 hover:text-indigo-700 font-semibold"
+                >
+                  Continue as Guest
+                </button>
               </div>
             )}
           </CardContent>
