@@ -107,15 +107,22 @@ class CouponValidateResponse(BaseModel):
 async def validate_coupon(request: CouponValidateRequest):
     """Validate a coupon code and return discount information"""
     
-    code = request.code.strip().upper()
+    input_code = request.code.strip()
+    
+    # Find coupon (case-insensitive lookup)
+    code = None
+    for coupon_code in COUPONS.keys():
+        if coupon_code.lower() == input_code.lower():
+            code = coupon_code
+            break
     
     # Check if coupon exists
-    if code not in COUPONS:
+    if code is None:
         return CouponValidateResponse(
             valid=False,
             discount_percent=0,
             message="Invalid coupon code",
-            code=code
+            code=input_code
         )
     
     coupon = COUPONS[code]
