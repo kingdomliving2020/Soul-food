@@ -130,47 +130,48 @@ class SoulFoodAuthTester:
             self.log_test("Beta Login - Youth", False, f"Exception: {str(e)}")
             return False
             
-    def test_holiday_ae_covenant(self):
-        """Test GET /nibble/holiday-ae-covenant - The Covenant lesson"""
+    def test_beta_login_adult(self):
+        """Test beta login with adult credentials"""
         try:
-            nibble_id = "holiday-ae-covenant"
-            response = self.session.get(f"{self.base_url}/nibble/{nibble_id}")
+            test_data = {
+                "username": "adult",
+                "password": "test12345"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/auth/beta-login",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
             
             if response.status_code != 200:
-                self.log_test("GET /nibble/holiday-ae-covenant", False, f"Status code: {response.status_code}")
+                self.log_test("Beta Login - Adult", False, f"Status code: {response.status_code}, Response: {response.text}")
                 return False
                 
             data = response.json()
+            user = data["user"]
+            session_config = data["session_config"]
             
-            # Verify response structure
-            if "nibble" not in data:
-                self.log_test("GET /nibble/holiday-ae-covenant", False, "Missing 'nibble' key in response")
+            # Verify adult-specific values
+            if user.get("role") != "adult_tester":
+                self.log_test("Beta Login - Adult", False, f"Wrong role: {user.get('role')}, expected: adult_tester")
                 return False
                 
-            nibble = data["nibble"]
+            if user.get("access_level") != "adult":
+                self.log_test("Beta Login - Adult", False, f"Wrong access_level: {user.get('access_level')}, expected: adult")
+                return False
+                
+            if session_config.get("timeout_mins") != 90:
+                self.log_test("Beta Login - Adult", False, f"Wrong session timeout: {session_config.get('timeout_mins')}, expected: 90")
+                return False
             
-            # Verify theme
-            if nibble.get("theme") != "The Promise Still Stands":
-                self.log_test("GET /nibble/holiday-ae-covenant", False, f"Wrong theme: {nibble.get('theme')}")
-                return False
-                
-            # Verify has 3 bites
-            if len(nibble.get("bites", [])) != 3:
-                self.log_test("GET /nibble/holiday-ae-covenant", False, f"Expected 3 bites, got {len(nibble.get('bites', []))}")
-                return False
-                
-            # Verify has 4 fill-in-blank activity questions
-            activity = nibble.get("activity", {})
-            questions = activity.get("questions", [])
-            if len(questions) != 4:
-                self.log_test("GET /nibble/holiday-ae-covenant", False, f"Expected 4 activity questions, got {len(questions)}")
-                return False
-                
-            self.log_test("GET /nibble/holiday-ae-covenant", True, "Covenant lesson verified: theme 'The Promise Still Stands', 3 bites, 4 fill-in-blank questions")
+            self.auth_tokens["adult"] = data["access_token"]
+            
+            self.log_test("Beta Login - Adult", True, "Adult login successful with correct role, access_level, and 90 min session")
             return True
             
         except Exception as e:
-            self.log_test("GET /nibble/holiday-ae-covenant", False, f"Exception: {str(e)}")
+            self.log_test("Beta Login - Adult", False, f"Exception: {str(e)}")
             return False
             
     def test_holiday_ae_cradle(self):
