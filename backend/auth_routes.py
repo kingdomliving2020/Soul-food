@@ -286,6 +286,77 @@ async def register(user_data: UserRegister):
         }
     )
 
+class BetaCodeLogin(BaseModel):
+    beta_code: str
+
+@router.post("/beta-login")
+async def beta_code_login(data: BetaCodeLogin):
+    """Login with just a beta code - no email/password needed"""
+    
+    role_config = get_role_from_test_code(data.beta_code)
+    
+    if not role_config:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid beta code"
+        )
+    
+    # Check remaining slots
+    role_name = role_config["role"]
+    max_regs = role_config.get("max_registrations", 20)
+    current_count = await db.beta_sessions.count_documents({"role": role_name})
+    
+    if current_count >= max_regs:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This beta code has reached its session limit"
+        )
+    
+    # Create a temporary beta session
+    session_id = str(uuid.uuid4())
+    now = datetime.now(timezone.utc)
+    session_timeout = role_config["session_timeout_mins"]
+    
+    beta_session = {
+        "id": session_id,
+        "role": role_name,
+        "access_level": role_config["access_level"],
+        "beta_code_used": data.beta_code,
+        "created_at": now.isoformat(),
+        "expires_at": (now + timedelta(minutes=session_timeout)).isoformat()
+    }
+    
+    await db.beta_sessions.insert_one(beta_session)
+    
+    # Create access token
+    access_token = create_access_token(
+        data={
+            "sub": session_id,
+            "role": role_name,
+            "access_level": role_config["access_level"],
+            "is_beta_session": True
+        },
+        expires_delta=timedelta(minutes=session_timeout)
+    )
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": session_id,
+            "name": f"Beta Tester",
+            "role": role_name,
+            "access_level": role_config["access_level"],
+            "is_beta_session": True
+        },
+        "session_config": {
+            "timeout_mins": session_timeout,
+            "warning_mins": role_config["warning_mins"],
+            "restrictions": role_config["restrictions"],
+            "message": f"Beta access granted! Session: {session_timeout} minutes"
+        }
+    }
+
 @router.post("/login", response_model=TokenResponse)
 async def login(credentials: UserLogin):
     """Login with email and password"""
