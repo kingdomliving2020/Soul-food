@@ -68,6 +68,10 @@ const AuthPage = () => {
   // Beta Login (username + password)
   const handleBetaLogin = async (e) => {
     e.preventDefault();
+    
+    // Prevent double submission
+    if (loading) return;
+    
     if (!formData.betaUsername.trim() || !formData.betaPassword.trim()) {
       toast.error('Please enter username and password');
       return;
@@ -80,12 +84,21 @@ const AuthPage = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          username: formData.betaUsername,
+          username: formData.betaUsername.trim(),
           password: formData.betaPassword
         })
       });
       
-      const data = await response.json();
+      // Clone response before reading to handle potential retry scenarios
+      const responseClone = response.clone();
+      
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        // If JSON parsing fails, try the clone
+        data = await responseClone.json();
+      }
       
       if (!response.ok) {
         throw new Error(data.detail || 'Invalid credentials');
@@ -100,7 +113,8 @@ const AuthPage = () => {
       setTimeout(() => navigate(returnTo), 1000);
       
     } catch (err) {
-      toast.error(err.message);
+      console.error('Beta login error:', err);
+      toast.error(err.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
