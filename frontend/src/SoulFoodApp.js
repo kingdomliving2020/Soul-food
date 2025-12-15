@@ -1351,19 +1351,19 @@ const SoulFoodLanding = () => {
               helping you focus on core principles without navigating Old English.
             </p>
             
-            {/* Pricing Clarity Notice */}
-            <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 shadow-lg">
+            {/* Updated Pricing Clarity Notice - Digital Soon, Print January */}
+            <div className="max-w-4xl mx-auto bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-xl p-6 shadow-lg">
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white text-xl">ℹ️</span>
+                <div className="flex-shrink-0 w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-xl">🚀</span>
                 </div>
                 <div className="text-left">
-                  <h4 className="font-bold text-slate-800 mb-2">📅 Content Releases Quarterly Throughout 2026</h4>
+                  <h4 className="font-bold text-slate-800 mb-2">📅 Launching Soon - Get Ready!</h4>
                   <div className="text-sm text-slate-700 space-y-2">
-                    <p><strong>Subscription ($9.99 or $14.99/month):</strong> Get immediate access to Break*fast & Holiday Series, PLUS automatic access to new series as they unlock quarterly (Lunch Q1, Dinner Q2, Supper Q3).</p>
-                    <p><strong>eBook ($31.99 or $68.99 one-time):</strong> Purchase includes ONLY currently available content at time of purchase. New quarterly releases require separate purchase or subscription upgrade.</p>
-                    <p><strong>Physical Books ($39.99 or $79.99):</strong> Pre-order Holiday/Breakfast Box Set - Ships mid-December! Includes FREE instant eBook access + printable gift certificate.</p>
-                    <p className="font-semibold text-blue-700 bg-blue-100 px-3 py-2 rounded-lg mt-3">💡 Best Value: Subscribe to get all content as it releases throughout the year!</p>
+                    <p><strong>Interactive Subscription ($7.99-$11.99/month):</strong> Full access to interactive lessons, progress tracking, games, and community features. New content added quarterly throughout 2025.</p>
+                    <p><strong>eBook ($24.99-$68.99 one-time):</strong> Downloadable PDF workbooks you own forever. Print at home or use on any device.</p>
+                    <p><strong>Physical Books ($39.99-$79.99):</strong> Premium spiral-bound workbooks shipping January 2025. Pre-order includes FREE instant eBook access!</p>
+                    <p className="font-semibold text-purple-700 bg-purple-100 px-3 py-2 rounded-lg mt-3">💡 Join the waitlist now - be first to access when we launch!</p>
                   </div>
                 </div>
               </div>
