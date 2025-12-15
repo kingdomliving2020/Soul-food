@@ -564,8 +564,8 @@ const QuickOrder = () => {
           <h3 className="text-2xl font-bold mb-6 text-slate-800">🎁 Merchandise</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {merchandise.map(item => (
-              <Card key={item.id} className="shadow-lg hover:shadow-xl transition-shadow">
-                <CardContent className="p-4">
+              <Card key={item.id} className="shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full">
+                <CardContent className="p-4 flex flex-col flex-1">
                   <img 
                     src={item.image} 
                     alt={item.name}
@@ -574,90 +574,93 @@ const QuickOrder = () => {
                   <h4 className="text-sm font-bold text-slate-800 mb-1">{item.name}</h4>
                   <p className="text-xs text-slate-600 mb-3">{item.subtitle}</p>
                   
-                  {/* Pen Color Selector */}
-                  {item.id === 'soul-food-pen' && (
-                    <div className="mb-2">
-                      <label className="block text-xs font-medium mb-1">Ink Color:</label>
-                      <select
-                        className="w-full p-1.5 border border-slate-300 rounded text-xs"
-                        value={selections[item.id]?.inkColor || 'black'}
-                        onChange={(e) => updateSelection(item.id, 'inkColor', e.target.value)}
-                      >
-                        <option value="black">Black Ink</option>
-                        <option value="blue">Blue Ink</option>
-                      </select>
-                    </div>
-                  )}
-
-                  {/* Leather Bookmark Initial */}
-                  {item.id === 'leather-bookmark' && (
-                    <div className="mb-2">
-                      <label className="block text-xs font-medium mb-1">Your Initial:</label>
-                      <input
-                        type="text"
-                        maxLength="1"
-                        placeholder="A"
-                        className="w-full p-1.5 border border-slate-300 rounded text-xs uppercase"
-                        value={selections[item.id]?.initial || ''}
-                        onChange={(e) => updateSelection(item.id, 'initial', e.target.value.toUpperCase())}
-                      />
-                    </div>
-                  )}
-
-                  {/* Quantity */}
-                  <div className="mb-2">
-                    <label className="block text-xs font-medium mb-1">Quantity:</label>
-                    <div className="flex items-center space-x-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => updateSelection(item.id, 'quantity', Math.max(1, (selections[item.id]?.quantity || 1) - 1))}
-                        className="h-6 w-6 p-0 text-xs"
-                      >
-                        -
-                      </Button>
-                      <span className="w-8 text-center font-semibold text-sm">
-                        {selections[item.id]?.quantity || 1}
-                      </span>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => updateSelection(item.id, 'quantity', (selections[item.id]?.quantity || 1) + 1)}
-                        className="h-6 w-6 p-0 text-xs"
-                      >
-                        +
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Price Info */}
-                  <div className="mb-3 text-xs text-slate-600">
-                    <div className="font-semibold">${item.price.toFixed(2)} each</div>
-                    {item.bundlePrice && (
-                      <div className="text-emerald-600 font-semibold">
-                        {item.bundlePrice.qty} for ${item.bundlePrice.price.toFixed(2)}
+                  {/* Spacer to push content to consistent positions */}
+                  <div className="flex-1 flex flex-col justify-end">
+                    {/* Pen Color Selector */}
+                    {item.id === 'soul-food-pen' && (
+                      <div className="mb-2">
+                        <label className="block text-xs font-medium mb-1">Ink Color:</label>
+                        <select
+                          className="w-full p-1.5 border border-slate-300 rounded text-xs"
+                          value={selections[item.id]?.inkColor || 'black'}
+                          onChange={(e) => updateSelection(item.id, 'inkColor', e.target.value)}
+                        >
+                          <option value="black">Black Ink</option>
+                          <option value="blue">Blue Ink</option>
+                        </select>
                       </div>
                     )}
-                  </div>
 
-                  {/* Add to Cart or Go to Gift Certificates */}
-                  {item.isGiftCertificate ? (
-                    <Button
-                      onClick={() => window.location.href = item.link}
-                      size="sm"
-                      className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-xs"
-                    >
-                      Create Gift Certificate →
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() => handleMerchandiseAdd(item)}
-                      size="sm"
-                      className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-xs"
-                    >
-                      Add to Cart
-                    </Button>
-                  )}
+                    {/* Leather Bookmark Initial */}
+                    {item.id === 'leather-bookmark' && (
+                      <div className="mb-2">
+                        <label className="block text-xs font-medium mb-1">Your Initial:</label>
+                        <input
+                          type="text"
+                          maxLength="1"
+                          placeholder="A"
+                          className="w-full p-1.5 border border-slate-300 rounded text-xs uppercase"
+                          value={selections[item.id]?.initial || ''}
+                          onChange={(e) => updateSelection(item.id, 'initial', e.target.value.toUpperCase())}
+                        />
+                      </div>
+                    )}
+
+                    {/* Quantity */}
+                    <div className="mb-2">
+                      <label className="block text-xs font-medium mb-1">Quantity:</label>
+                      <div className="flex items-center space-x-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateSelection(item.id, 'quantity', Math.max(1, (selections[item.id]?.quantity || 1) - 1))}
+                          className="h-6 w-6 p-0 text-xs"
+                        >
+                          -
+                        </Button>
+                        <span className="w-8 text-center font-semibold text-sm">
+                          {selections[item.id]?.quantity || 1}
+                        </span>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateSelection(item.id, 'quantity', (selections[item.id]?.quantity || 1) + 1)}
+                          className="h-6 w-6 p-0 text-xs"
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Price Info */}
+                    <div className="mb-3 text-xs text-slate-600">
+                      <div className="font-semibold">${item.price.toFixed(2)} each</div>
+                      {item.bundlePrice && (
+                        <div className="text-emerald-600 font-semibold">
+                          {item.bundlePrice.qty} for ${item.bundlePrice.price.toFixed(2)}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Add to Cart or Go to Gift Certificates */}
+                    {item.isGiftCertificate ? (
+                      <Button
+                        onClick={() => window.location.href = item.link}
+                        size="sm"
+                        className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-xs"
+                      >
+                        Create Gift Certificate →
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => handleMerchandiseAdd(item)}
+                        size="sm"
+                        className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-xs"
+                      >
+                        Add to Cart
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
