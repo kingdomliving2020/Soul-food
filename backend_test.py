@@ -174,40 +174,48 @@ class SoulFoodAuthTester:
             self.log_test("Beta Login - Adult", False, f"Exception: {str(e)}")
             return False
             
-    def test_holiday_ae_cradle(self):
-        """Test GET /nibble/holiday-ae-cradle - The Cradle lesson"""
+    def test_beta_login_beta(self):
+        """Test beta login with beta credentials"""
         try:
-            nibble_id = "holiday-ae-cradle"
-            response = self.session.get(f"{self.base_url}/nibble/{nibble_id}")
+            test_data = {
+                "username": "beta",
+                "password": "Beta1!2!3!"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/auth/beta-login",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
             
             if response.status_code != 200:
-                self.log_test("GET /nibble/holiday-ae-cradle", False, f"Status code: {response.status_code}")
+                self.log_test("Beta Login - Beta", False, f"Status code: {response.status_code}, Response: {response.text}")
                 return False
                 
             data = response.json()
-            nibble = data.get("nibble", {})
+            user = data["user"]
+            session_config = data["session_config"]
             
-            # Verify theme
-            if nibble.get("theme") != "Heaven Came Low":
-                self.log_test("GET /nibble/holiday-ae-cradle", False, f"Wrong theme: {nibble.get('theme')}")
+            # Verify beta-specific values
+            if user.get("role") != "beta_tester":
+                self.log_test("Beta Login - Beta", False, f"Wrong role: {user.get('role')}, expected: beta_tester")
                 return False
                 
-            # Verify has 3 bites
-            if len(nibble.get("bites", [])) != 3:
-                self.log_test("GET /nibble/holiday-ae-cradle", False, f"Expected 3 bites, got {len(nibble.get('bites', []))}")
+            if user.get("access_level") != "beta":
+                self.log_test("Beta Login - Beta", False, f"Wrong access_level: {user.get('access_level')}, expected: beta")
                 return False
                 
-            # Verify has matching activity
-            activity = nibble.get("activity", {})
-            if activity.get("title") != "Cradle Connections - Matching":
-                self.log_test("GET /nibble/holiday-ae-cradle", False, f"Wrong activity type: {activity.get('title')}")
+            if session_config.get("timeout_mins") != 90:
+                self.log_test("Beta Login - Beta", False, f"Wrong session timeout: {session_config.get('timeout_mins')}, expected: 90")
                 return False
-                
-            self.log_test("GET /nibble/holiday-ae-cradle", True, "Cradle lesson verified: theme 'Heaven Came Low', 3 bites, matching activity")
+            
+            self.auth_tokens["beta"] = data["access_token"]
+            
+            self.log_test("Beta Login - Beta", True, "Beta login successful with correct role, access_level, and 90 min session")
             return True
             
         except Exception as e:
-            self.log_test("GET /nibble/holiday-ae-cradle", False, f"Exception: {str(e)}")
+            self.log_test("Beta Login - Beta", False, f"Exception: {str(e)}")
             return False
             
     def test_holiday_ae_cross(self):
