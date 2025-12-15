@@ -1092,137 +1092,139 @@ const SoulFoodLanding = () => {
       </section>
 
       {/* Holiday Box Set Pre-Order Section */}
-      {/* Holiday Box Set Pre-Order Section */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-red-50 via-green-50 to-emerald-50">
+      {/* Holiday Box Set Pre-Order Section - Updated for January Shipping */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-10">
-            <Badge className="mb-4 bg-gradient-to-r from-red-600 to-green-600 text-white px-8 py-3 text-base font-bold animate-pulse shadow-2xl">
-              🎁 PRE-ORDER NOW - Ships Mid-December!
+            <Badge className="mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 text-base font-bold shadow-2xl">
+              🚀 DIGITAL ACCESS LAUNCHING SOON
             </Badge>
-            <h3 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-red-600 to-green-600 bg-clip-text text-transparent">
-              Holiday Box Set Pre-Order
+            <h3 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              Start Your Journey Today
             </h3>
-            <p className="text-xl text-slate-700">
-              Physical books delivered in time for Christmas + Instant Digital Access!
+            <p className="text-xl text-slate-700 max-w-2xl mx-auto">
+              Interactive lessons, eBooks & subscriptions available soon. Physical workbooks shipping January 2025!
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {/* Adult/Youth Box Set */}
-            <Card className="border-4 border-red-300 shadow-2xl overflow-hidden hover:scale-105 transition-all">
-              <CardHeader className="bg-gradient-to-br from-red-100 to-green-100 p-6">
+            {/* Digital Access - Coming Soon */}
+            <Card className="border-4 border-purple-300 shadow-2xl overflow-hidden hover:scale-105 transition-all">
+              <CardHeader className="bg-gradient-to-br from-purple-100 to-indigo-100 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <CardTitle className="text-2xl font-bold text-slate-800">
-                    Holiday + Break*fast Box Set
+                    Interactive Digital Bundle
                   </CardTitle>
-                  <span className="text-4xl">🎁</span>
+                  <span className="text-4xl">✨</span>
                 </div>
-                <p className="text-sm text-slate-600 font-semibold">Adult or Youth Edition</p>
+                <Badge className="bg-emerald-500 text-white px-3 py-1 text-xs">Coming Soon</Badge>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                <div className="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-4">
-                  <h5 className="font-bold text-emerald-800 mb-2">✨ Pre-Order Bonuses:</h5>
+                <div className="bg-purple-50 border-2 border-purple-300 rounded-xl p-4">
+                  <h5 className="font-bold text-purple-800 mb-2">🎯 What's Included:</h5>
                   <ul className="text-sm text-slate-700 space-y-2">
                     <li className="flex items-start space-x-2">
-                      <span className="text-emerald-600 font-bold">✓</span>
-                      <span><strong>Instant eBook Access</strong> - Start reading today!</span>
+                      <span className="text-purple-600 font-bold">✓</span>
+                      <span><strong>Interactive Lessons</strong> - Engaging online experience</span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <span className="text-emerald-600 font-bold">✓</span>
-                      <span><strong>Printable Gift Certificate</strong> - Beautiful "IOU" to give on Christmas</span>
+                      <span className="text-purple-600 font-bold">✓</span>
+                      <span><strong>Progress Tracking</strong> - Games, quizzes & achievements</span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <span className="text-emerald-600 font-bold">✓</span>
-                      <span><strong>Physical Books</strong> - Shipped mid-December</span>
+                      <span className="text-purple-600 font-bold">✓</span>
+                      <span><strong>Downloadable eBooks</strong> - PDF workbooks included</span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <span className="text-emerald-600 font-bold">✓</span>
-                      <span>2 Complete Series: Holiday (4 C's) + Break*fast</span>
+                      <span className="text-purple-600 font-bold">✓</span>
+                      <span><strong>Community Access</strong> - Discussion forums & support</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="text-center py-4">
+                  <div className="flex items-center justify-center gap-4 mb-2">
+                    <div className="text-center">
+                      <p className="text-xs text-slate-500 uppercase">Subscription</p>
+                      <div className="text-2xl font-bold text-purple-600">$7.99<span className="text-sm text-slate-500">/mo</span></div>
+                    </div>
+                    <div className="text-slate-400">or</div>
+                    <div className="text-center">
+                      <p className="text-xs text-slate-500 uppercase">eBook</p>
+                      <div className="text-2xl font-bold text-indigo-600">$24.99</div>
+                    </div>
+                  </div>
+                  <Badge className="bg-amber-500 text-white text-xs px-3 py-1 mt-2">
+                    Early Access Waitlist Open!
+                  </Badge>
+                </div>
+
+                <Button 
+                  onClick={() => window.location.href = '/auth'}
+                  className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-4 rounded-xl text-lg shadow-2xl transform hover:scale-105 transition-all"
+                >
+                  Join Waitlist for Digital Access →
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Print Pre-Order - Ships January */}
+            <Card className="border-4 border-amber-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
+              <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 text-sm font-bold z-10 shadow-xl rotate-12">
+                Ships January!
+              </Badge>
+              <CardHeader className="bg-gradient-to-br from-amber-50 to-orange-100 p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <CardTitle className="text-2xl font-bold text-slate-800">
+                    Print Workbook Bundle
+                  </CardTitle>
+                  <span className="text-4xl">📚</span>
+                </div>
+                <Badge className="bg-amber-500 text-white px-3 py-1 text-xs">Pre-Order Open</Badge>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4">
+                  <h5 className="font-bold text-amber-800 mb-2">📦 Pre-Order Includes:</h5>
+                  <ul className="text-sm text-slate-700 space-y-2">
+                    <li className="flex items-start space-x-2">
+                      <span className="text-amber-600 font-bold">✓</span>
+                      <span><strong>Physical Workbooks</strong> - High-quality spiral-bound</span>
+                    </li>
+                    <li className="flex items-start space-x-2">
+                      <span className="text-amber-600 font-bold">✓</span>
+                      <span><strong>FREE Instant eBook</strong> - Start reading while you wait!</span>
+                    </li>
+                    <li className="flex items-start space-x-2">
+                      <span className="text-amber-600 font-bold">✓</span>
+                      <span><strong>All 48 Lessons</strong> - Complete Break*fast + Holiday series</span>
+                    </li>
+                    <li className="flex items-start space-x-2">
+                      <span className="text-amber-600 font-bold">✓</span>
+                      <span>Adult, Youth, or Instructor editions available</span>
                     </li>
                   </ul>
                 </div>
 
                 <div className="text-center py-4">
                   <p className="text-lg text-slate-500 line-through mb-1">Reg. $49.99</p>
-                  <div className="text-4xl font-bold text-red-600 mb-2">
+                  <div className="text-4xl font-bold text-amber-600 mb-2">
                     $39.99
                   </div>
-                  <Badge className="bg-amber-500 text-white text-xs px-3 py-1 mt-2">
+                  <Badge className="bg-emerald-500 text-white text-xs px-3 py-1 mt-2">
                     Save $10 - Physical + Digital Bundle!
                   </Badge>
                 </div>
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-sm text-slate-700">
-                  <p className="font-semibold">📦 Estimated Delivery: December 15-20, 2025</p>
-                  <p className="text-xs mt-1">Order by Dec 10 to guarantee Christmas delivery</p>
+                  <p className="font-semibold">📦 Ships: January 2025</p>
+                  <p className="text-xs mt-1">Perfect timing for New Year study groups!</p>
                 </div>
 
                 <Button 
-                  onClick={() => toast.success("Pre-order page opening soon!")}
-                  className="w-full bg-gradient-to-r from-red-600 to-green-600 hover:from-red-700 hover:to-green-700 text-white font-bold py-4 rounded-xl text-lg shadow-2xl transform hover:scale-105 transition-all"
+                  onClick={() => toast.info('Print pre-orders opening soon! Join the waitlist to be notified.')}
+                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-4 rounded-xl text-lg shadow-2xl transform hover:scale-105 transition-all"
                 >
-                  Pre-Order Holiday Box Set →
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Instructor Box Set */}
-            <Card className="border-4 border-orange-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
-              <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-orange-600 to-amber-600 text-white px-4 py-2 text-sm font-bold z-10 shadow-xl rotate-12">
-                For Teachers!
-              </Badge>
-              <CardHeader className="bg-gradient-to-br from-orange-100 to-amber-100 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <CardTitle className="text-2xl font-bold text-slate-800">
-                    Instructor Box Set
-                  </CardTitle>
-                  <span className="text-4xl">📚</span>
-                </div>
-                <p className="text-sm text-slate-600 font-semibold">Complete Teaching Edition</p>
-              </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-4">
-                  <h5 className="font-bold text-emerald-800 mb-2">✨ Pre-Order Bonuses:</h5>
-                  <ul className="text-sm text-slate-700 space-y-2">
-                    <li className="flex items-start space-x-2">
-                      <span className="text-emerald-600 font-bold">✓</span>
-                      <span><strong>Instant eBook Access</strong> - Start teaching today!</span>
-                    </li>
-                    <li className="flex items-start space-x-2">
-                      <span className="text-emerald-600 font-bold">✓</span>
-                      <span><strong>Printable Gift Certificate</strong> - Perfect for gifting</span>
-                    </li>
-                    <li className="flex items-start space-x-2">
-                      <span className="text-emerald-600 font-bold">✓</span>
-                      <span><strong>Physical Books</strong> - Premium instructor edition</span>
-                    </li>
-                    <li className="flex items-start space-x-2">
-                      <span className="text-emerald-600 font-bold">✓</span>
-                      <span>Teaching guides, dual scripture, historical notes</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="text-center py-4">
-                  <p className="text-lg text-slate-500 line-through mb-1">Reg. $99.99</p>
-                  <div className="text-4xl font-bold text-orange-600 mb-2">
-                    $79.99
-                  </div>
-                  <Badge className="bg-amber-500 text-white text-xs px-3 py-1 mt-2">
-                    Save $20 - Best Value for Educators!
-                  </Badge>
-                </div>
-
-                <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-sm text-slate-700">
-                  <p className="font-semibold">📦 Estimated Delivery: December 15-20, 2025</p>
-                  <p className="text-xs mt-1">Perfect for January class start!</p>
-                </div>
-
-                <Button 
-                  onClick={() => addToCart('instructor_set', 1, { productName: 'Instructor Set (Box Set)' })}
-                  className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white font-bold py-4 rounded-xl text-lg shadow-2xl transform hover:scale-105 transition-all"
-                >
-                  🛒 Pre-Order Instructor Set →
+                  Join Print Waitlist →
                 </Button>
               </CardContent>
             </Card>
