@@ -145,7 +145,22 @@ const AuthPage = () => {
         })
       });
       
-      const data = await response.json();
+      // Handle the response - the emergent preview logger might consume the body for non-OK responses
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        // If body was already read, check response status
+        if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error('Invalid email/username or password.');
+          } else if (response.status === 423) {
+            throw new Error('Account is locked. Please try again later.');
+          }
+          throw new Error(`Login failed (${response.status}). Please try again.`);
+        }
+        throw jsonError;
+      }
       
       if (!response.ok) {
         throw new Error(data.detail || 'Invalid credentials');
