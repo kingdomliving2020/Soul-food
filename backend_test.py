@@ -218,34 +218,38 @@ class SoulFoodAuthTester:
             self.log_test("Beta Login - Beta", False, f"Exception: {str(e)}")
             return False
             
-    def test_holiday_ae_cross(self):
-        """Test GET /nibble/holiday-ae-cross - The Cross lesson"""
+    def test_beta_login_invalid_username(self):
+        """Test beta login with invalid username - should return actionable error"""
         try:
-            nibble_id = "holiday-ae-cross"
-            response = self.session.get(f"{self.base_url}/nibble/{nibble_id}")
+            test_data = {
+                "username": "wronguser",
+                "password": "test123"
+            }
             
-            if response.status_code != 200:
-                self.log_test("GET /nibble/holiday-ae-cross", False, f"Status code: {response.status_code}")
+            response = self.session.post(
+                f"{self.base_url}/auth/beta-login",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 401:
+                self.log_test("Beta Login - Invalid Username", False, f"Expected 401, got {response.status_code}")
                 return False
                 
             data = response.json()
-            nibble = data.get("nibble", {})
+            error_message = data.get("detail", "")
             
-            # Verify theme
-            if nibble.get("theme") != "Grieving Grace → Redeeming Grace":
-                self.log_test("GET /nibble/holiday-ae-cross", False, f"Wrong theme: {nibble.get('theme')}")
+            # Verify error message contains username and valid options
+            expected_message = "Username 'wronguser' not found. Valid beta usernames: instructor, youth, adult, beta"
+            if error_message != expected_message:
+                self.log_test("Beta Login - Invalid Username", False, f"Wrong error message: {error_message}")
                 return False
-                
-            # Verify has 3 bites
-            if len(nibble.get("bites", [])) != 3:
-                self.log_test("GET /nibble/holiday-ae-cross", False, f"Expected 3 bites, got {len(nibble.get('bites', []))}")
-                return False
-                
-            self.log_test("GET /nibble/holiday-ae-cross", True, "Cross lesson verified: theme 'Grieving Grace → Redeeming Grace', 3 bites")
+            
+            self.log_test("Beta Login - Invalid Username", True, "Correct actionable error message for invalid username")
             return True
             
         except Exception as e:
-            self.log_test("GET /nibble/holiday-ae-cross", False, f"Exception: {str(e)}")
+            self.log_test("Beta Login - Invalid Username", False, f"Exception: {str(e)}")
             return False
             
     def test_holiday_ae_comforter(self):
