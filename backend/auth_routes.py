@@ -420,22 +420,58 @@ async def guest_checkout(data: GuestCheckout):
 
 @router.get("/validate-test-code/{code}")
 async def validate_test_code(code: str):
-    """Validate a test code and return the role it grants"""
+    """Validate a beta code and return the role it grants"""
     
     role_config = get_role_from_test_code(code)
     
     if role_config:
+        # Check remaining slots
+        role_name = role_config["role"]
+        max_regs = role_config.get("max_registrations", 20)
+        current_count = await db.users.count_documents({"role": role_name})
+        remaining = max(0, max_regs - current_count)
+        
+        if remaining == 0:
+            return {
+                "valid": False,
+                "message": "This code has reached its limit. Please contact support."
+            }
+        
         return {
             "valid": True,
-            "role": role_config["role"],
             "access_level": role_config["access_level"],
             "description": role_config["description"],
-            "session_timeout_mins": role_config["session_timeout_mins"]
+            "remaining_slots": remaining
         }
     
     return {
         "valid": False,
-        "message": "Invalid test code"
+        "message": "Code not recognized"
+    }
+
+@router.get("/admin/beta-stats")
+async def get_beta_stats():
+    """Get registration stats for all beta/test codes (admin use)"""
+    
+    stats = []
+    for role_key, config in RBAC_TEST_CODES.items():
+        role_name = config["role"]
+        max_regs = config.get("max_registrations", 20)
+        current_count = await db.users.count_documents({"role": role_name})
+        
+        stats.append({
+            "role_key": role_key,
+            "role": role_name,
+            "access_level": config["access_level"],
+            "max_registrations": max_regs,
+            "current_registrations": current_count,
+            "remaining": max(0, max_regs - current_count),
+            "session_timeout_mins": config["session_timeout_mins"]
+        })
+    
+    return {
+        "stats": stats,
+        "total_beta_users": sum(s["current_registrations"] for s in stats)
     }
 
 @router.post("/logout")
