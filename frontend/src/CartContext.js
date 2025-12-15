@@ -83,15 +83,56 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('soulFoodCart', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (productId, quantity = 1, metadata = {}) => {
-    const product = PRODUCTS[productId];
-    if (!product) {
-      console.error('Product not found:', productId);
-      return;
-    }
+  // Flexible addToCart - handles both PRODUCTS lookup and custom items
+  const addToCart = (itemOrProductId, quantity = 1, metadata = {}) => {
+    let itemToAdd;
+    let uniqueKey;
 
-    // Create unique key based on product + metadata for different configurations
-    const uniqueKey = `${productId}_${metadata.series}_${metadata.edition}_${metadata.medium}`;
+    // Check if it's a custom item object (from QuickOrder merchandise)
+    if (typeof itemOrProductId === 'object' && itemOrProductId !== null) {
+      const customItem = itemOrProductId;
+      uniqueKey = customItem.id || `custom_${Date.now()}`;
+      itemToAdd = {
+        productId: customItem.id,
+        uniqueKey: uniqueKey,
+        name: customItem.name,
+        salePrice: customItem.price,
+        listPrice: customItem.price,
+        quantity: customItem.quantity || 1,
+        image: customItem.image,
+        metadata: {
+          series: customItem.series || null,
+          seriesName: customItem.seriesName || null,
+          edition: customItem.edition || 'standard',
+          medium: customItem.medium || 'physical',
+          unit_price: customItem.price
+        }
+      };
+    } else {
+      // Standard product lookup
+      const productId = itemOrProductId;
+      const product = PRODUCTS[productId];
+      
+      if (!product) {
+        console.error('Product not found:', productId);
+        return;
+      }
+
+      uniqueKey = `${productId}_${metadata.series}_${metadata.edition}_${metadata.medium}`;
+      itemToAdd = {
+        productId,
+        uniqueKey,
+        ...product,
+        quantity,
+        metadata: {
+          series: metadata.series || null,
+          seriesName: metadata.seriesName || null,
+          edition: metadata.edition || 'adult',
+          medium: metadata.medium || 'pdf',
+          unit_price: metadata.unit_price || product.salePrice
+        }
+      };
+    }
 
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.uniqueKey === uniqueKey);
@@ -100,24 +141,12 @@ export const CartProvider = ({ children }) => {
         // Update quantity if same configuration already in cart
         return prevItems.map(item =>
           item.uniqueKey === uniqueKey
-            ? { ...item, quantity: item.quantity + quantity }
+            ? { ...item, quantity: item.quantity + (itemToAdd.quantity || 1) }
             : item
         );
       } else {
-        // Add new item to cart with full metadata
-        return [...prevItems, { 
-          productId,
-          uniqueKey,
-          ...product,
-          quantity,
-          metadata: {
-            series: metadata.series || null,
-            seriesName: metadata.seriesName || null,
-            edition: metadata.edition || 'adult',
-            medium: metadata.medium || 'pdf',
-            unit_price: metadata.unit_price || product.salePrice
-          }
-        }];
+        // Add new item to cart
+        return [...prevItems, itemToAdd];
       }
     });
     
