@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import { Eye, EyeOff, Mail, Lock, User, Gift, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, Sparkles, ArrowLeft } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -20,43 +20,43 @@ const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [testCodeValid, setTestCodeValid] = useState(null);
+  const [betaCodeValid, setBetaCodeValid] = useState(null);
   
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     name: '',
-    testCode: ''
+    betaCode: ''
   });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
-    // Reset test code validation when changed
-    if (name === 'testCode') {
-      setTestCodeValid(null);
+    // Reset beta code validation when changed
+    if (name === 'betaCode') {
+      setBetaCodeValid(null);
     }
   };
 
-  const validateTestCode = async () => {
-    if (!formData.testCode.trim()) {
-      setTestCodeValid(null);
+  const validateBetaCode = async () => {
+    if (!formData.betaCode.trim()) {
+      setBetaCodeValid(null);
       return;
     }
     
     try {
-      const response = await fetch(`${API}/auth/validate-test-code/${encodeURIComponent(formData.testCode)}`);
+      const response = await fetch(`${API}/auth/validate-test-code/${encodeURIComponent(formData.betaCode)}`);
       const data = await response.json();
-      setTestCodeValid(data);
+      setBetaCodeValid(data);
       
       if (data.valid) {
-        toast.success(`Test code valid! You'll get ${data.access_level} access.`);
+        toast.success(`Code accepted! Special access granted.`);
       } else {
-        toast.error('Invalid test code');
+        toast.error('Invalid code');
       }
     } catch (err) {
-      toast.error('Could not validate test code');
+      toast.error('Could not validate code');
     }
   };
 
@@ -72,7 +72,7 @@ const AuthPage = () => {
             email: formData.email, 
             password: formData.password, 
             name: formData.name,
-            test_code: formData.testCode || null
+            test_code: formData.betaCode || null
           };
       
       const response = await fetch(`${API}${endpoint}`, {
@@ -95,9 +95,9 @@ const AuthPage = () => {
       // Show success message
       toast.success(data.session_config.message || `Welcome${isLogin ? ' back' : ''}, ${data.user.name}!`);
       
-      // Show session info for test users
+      // Show session info for special access users
       if (data.session_config.restrictions?.length > 0) {
-        toast.info(`Session: ${data.session_config.timeout_mins} mins | ${data.user.role}`, {
+        toast.info(`Your session: ${data.session_config.timeout_mins} minutes`, {
           duration: 5000
         });
       }
@@ -120,7 +120,7 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 flex items-center justify-center p-4">
       <Toaster position="top-right" />
       
       <div className="w-full max-w-md">
@@ -134,8 +134,8 @@ const AuthPage = () => {
           Back to Home
         </Button>
         
-        <Card className="shadow-2xl border-2 border-orange-200">
-          <CardHeader className="text-center bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-t-lg">
+        <Card className="shadow-2xl border-2 border-purple-200">
+          <CardHeader className="text-center bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white rounded-t-lg">
             <div className="flex justify-center mb-3">
               <img 
                 src="/soul-food-logo.png" 
@@ -146,7 +146,7 @@ const AuthPage = () => {
             <CardTitle className="text-2xl font-bold">
               {isLogin ? 'Welcome Back!' : 'Join Soul Food'}
             </CardTitle>
-            <p className="text-orange-100 text-sm">
+            <p className="text-purple-100 text-sm">
               {isLogin ? 'Sign in to continue your journey' : 'Create your account to get started'}
             </p>
           </CardHeader>
@@ -168,7 +168,7 @@ const AuthPage = () => {
                     value={formData.name}
                     onChange={handleInputChange}
                     required={!isLogin}
-                    className="border-slate-300 focus:border-orange-500"
+                    className="border-slate-300 focus:border-purple-500 focus:ring-purple-500"
                   />
                 </div>
               )}
@@ -187,7 +187,7 @@ const AuthPage = () => {
                   value={formData.email}
                   onChange={handleInputChange}
                   required
-                  className="border-slate-300 focus:border-orange-500"
+                  className="border-slate-300 focus:border-purple-500 focus:ring-purple-500"
                 />
               </div>
               
@@ -207,7 +207,7 @@ const AuthPage = () => {
                     onChange={handleInputChange}
                     required
                     minLength={6}
-                    className="border-slate-300 focus:border-orange-500 pr-10"
+                    className="border-slate-300 focus:border-purple-500 focus:ring-purple-500 pr-10"
                   />
                   <button
                     type="button"
@@ -219,47 +219,45 @@ const AuthPage = () => {
                 </div>
               </div>
               
-              {/* Test Code field (register only) */}
+              {/* Beta Code field (register only) */}
               {!isLogin && (
                 <div className="space-y-2">
-                  <Label htmlFor="testCode" className="flex items-center gap-2 text-slate-700">
-                    <Gift className="w-4 h-4" />
-                    Test/Beta Code (Optional)
+                  <Label htmlFor="betaCode" className="flex items-center gap-2 text-slate-700">
+                    <Sparkles className="w-4 h-4" />
+                    Beta Code
+                    <span className="text-xs text-slate-400 font-normal">(if you have one)</span>
                   </Label>
                   <div className="flex gap-2">
                     <Input
-                      id="testCode"
-                      name="testCode"
+                      id="betaCode"
+                      name="betaCode"
                       type="text"
-                      placeholder="Enter test code if you have one"
-                      value={formData.testCode}
+                      placeholder="Enter your code"
+                      value={formData.betaCode}
                       onChange={handleInputChange}
-                      className="border-slate-300 focus:border-orange-500"
+                      className="border-slate-300 focus:border-purple-500 focus:ring-purple-500"
                     />
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={validateTestCode}
-                      className="shrink-0"
+                      onClick={validateBetaCode}
+                      className="shrink-0 border-purple-300 text-purple-600 hover:bg-purple-50"
                     >
                       Verify
                     </Button>
                   </div>
-                  {testCodeValid && (
-                    <div className={`text-sm p-2 rounded ${testCodeValid.valid ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
-                      {testCodeValid.valid ? (
-                        <>
-                          ✓ {testCodeValid.description}
-                          <Badge className="ml-2 bg-green-600">{testCodeValid.access_level}</Badge>
-                        </>
+                  {betaCodeValid && (
+                    <div className={`text-sm p-2 rounded ${betaCodeValid.valid ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+                      {betaCodeValid.valid ? (
+                        <span className="flex items-center gap-2">
+                          <Sparkles className="w-4 h-4" />
+                          Special access granted!
+                        </span>
                       ) : (
-                        '✗ Invalid test code'
+                        '✗ Code not recognized'
                       )}
                     </div>
                   )}
-                  <p className="text-xs text-slate-500">
-                    Have a beta or tester code? Enter it to unlock special access.
-                  </p>
                 </div>
               )}
               
@@ -267,7 +265,7 @@ const AuthPage = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-bold py-3"
+                className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 hover:from-indigo-700 hover:via-purple-700 hover:to-blue-700 text-white font-bold py-3"
               >
                 {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
               </Button>
@@ -319,9 +317,9 @@ const AuthPage = () => {
                   type="button"
                   onClick={() => {
                     setIsLogin(!isLogin);
-                    setTestCodeValid(null);
+                    setBetaCodeValid(null);
                   }}
-                  className="ml-2 text-orange-600 hover:text-orange-700 font-semibold"
+                  className="ml-2 text-purple-600 hover:text-purple-700 font-semibold"
                 >
                   {isLogin ? 'Sign Up' : 'Sign In'}
                 </button>
@@ -336,44 +334,13 @@ const AuthPage = () => {
                   <button
                     type="button"
                     onClick={() => navigate('/checkout', { state: { guestCheckout: true } })}
-                    className="ml-2 text-purple-600 hover:text-purple-700 font-semibold"
+                    className="ml-2 text-indigo-600 hover:text-indigo-700 font-semibold"
                   >
                     Continue as Guest
                   </button>
                 </p>
               </div>
             )}
-          </CardContent>
-        </Card>
-        
-        {/* Test Codes Info */}
-        <Card className="mt-4 bg-purple-50 border-purple-200">
-          <CardContent className="p-4">
-            <h4 className="font-bold text-purple-800 mb-2 flex items-center gap-2">
-              <Gift className="w-4 h-4" />
-              Testing the Site?
-            </h4>
-            <p className="text-sm text-purple-700 mb-2">
-              Use these test codes to explore different access levels:
-            </p>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div className="bg-white p-2 rounded border border-purple-200">
-                <code className="font-mono text-purple-600">test123</code>
-                <p className="text-slate-600">Instructor Edition</p>
-              </div>
-              <div className="bg-white p-2 rounded border border-purple-200">
-                <code className="font-mono text-purple-600">test1234</code>
-                <p className="text-slate-600">Youth Edition</p>
-              </div>
-              <div className="bg-white p-2 rounded border border-purple-200">
-                <code className="font-mono text-purple-600">test12345</code>
-                <p className="text-slate-600">Adult Edition</p>
-              </div>
-              <div className="bg-white p-2 rounded border border-purple-200">
-                <code className="font-mono text-purple-600">Beta1!2!3!</code>
-                <p className="text-slate-600">Beta Tester</p>
-              </div>
-            </div>
           </CardContent>
         </Card>
       </div>
