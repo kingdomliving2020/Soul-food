@@ -487,7 +487,7 @@ const MixUpGame = () => {
   }
 
   if (gameOver) {
-    const finalMoney = moneyLadder[score - 1] || '$0';
+    const finalBounty = bountyLadder[score - 1] || 0;
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-8">
         <div className="container mx-auto max-w-4xl">
@@ -496,9 +496,10 @@ const MixUpGame = () => {
               <h2 className="text-5xl font-bold text-slate-800 mb-4">
                 {score === 15 ? '🎉 CONGRATULATIONS! 🎉' : 'Game Over!'}
               </h2>
-              <div className="text-6xl font-bold text-amber-600 mb-6">
-                {finalMoney}
+              <div className="flex justify-center mb-6">
+                <BountyDisplay amount={finalBounty} size="xl" />
               </div>
+              <p className="text-xl text-slate-600 mb-2">Heaven's Bounty Earned!</p>
               <p className="text-2xl text-slate-700 mb-8">
                 You answered {score} out of 15 questions correctly!
               </p>
@@ -516,6 +517,7 @@ const MixUpGame = () => {
                   Back to Home
                 </Button>
               </div>
+              <GameDisclaimer />
             </CardContent>
           </Card>
         </div>
