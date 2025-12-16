@@ -424,22 +424,23 @@ const TrickyTestamentGame = () => {
                 onClick={() => handleDailyDoubleWager(200)}
                 className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 sm:py-4 text-base sm:text-lg"
               >
-                Wager 200
+                Wager 200 Stacks
               </Button>
               <Button
                 onClick={() => handleDailyDoubleWager(Math.floor(score / 2))}
                 className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 sm:py-4 text-base sm:text-lg"
                 disabled={score === 0}
               >
-                Wager Half ({Math.floor(score / 2)})
+                Wager Half ({Math.floor(score / 2)} Stacks)
               </Button>
               <Button
                 onClick={() => handleDailyDoubleWager(maxWager)}
                 className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 sm:py-4 text-base sm:text-lg"
               >
-                All In! ({maxWager})
+                All In! ({maxWager} Stacks)
               </Button>
             </div>
+            <GameDisclaimer />
           </CardContent>
         </Card>
       </div>
@@ -467,16 +468,16 @@ const TrickyTestamentGame = () => {
             </div>
             <div className="text-center">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">Tricky Testaments</h1>
-              <p className="text-sm sm:text-base text-purple-300">Pick a category and point value!</p>
+              <p className="text-sm sm:text-base text-purple-300">Pick a category and earn Stacks!</p>
             </div>
           </div>
 
           {/* Score Display */}
           <div className="text-center mb-4 sm:mb-6">
-            <div className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl">
-              <div className="text-xs sm:text-sm text-blue-100">Your Score</div>
-              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold">{score} Points</div>
-              <div className="text-xs sm:text-sm text-blue-100">{answeredQuestions.length}/10 Answered</div>
+            <div className="inline-flex flex-col items-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl">
+              <div className="text-xs sm:text-sm text-blue-100">Heaven's Bounty</div>
+              <BountyDisplay amount={score} size="lg" />
+              <div className="text-xs sm:text-sm text-blue-100 mt-1">{answeredQuestions.length}/10 Answered</div>
             </div>
           </div>
 
