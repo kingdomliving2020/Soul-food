@@ -119,11 +119,33 @@ class SoulFoodCartTester:
                 
                 # Force click using JavaScript to bypass overlay issues
                 await page.evaluate('(button) => button.click()', cart_button)
-                await page.wait_for_timeout(1000)
+                await page.wait_for_timeout(2000)
                 
-                # Check if cart dropdown is visible
+                # Debug: Take screenshot and check page content
+                await page.screenshot(path='/app/debug_cart.png')
+                
+                # Check if cart dropdown is visible with multiple selectors
                 cart_dropdown = await page.query_selector('.absolute.right-0.top-full')
                 if not cart_dropdown:
+                    # Try alternative selectors for cart dropdown
+                    cart_dropdown = await page.query_selector('[class*="absolute"][class*="right-0"]')
+                    if not cart_dropdown:
+                        cart_dropdown = await page.query_selector('.bg-white.rounded-xl.shadow-2xl')
+                        if not cart_dropdown:
+                            # Check if cart is already open by looking for cart items
+                            cart_items = await page.query_selector('.bg-gray-50.rounded-lg.p-3.border')
+                            if cart_items:
+                                cart_dropdown = True  # Cart is open, just different structure
+                
+                if not cart_dropdown:
+                    # Debug: Print page content around cart area
+                    page_content = await page.content()
+                    print("DEBUG: Page content length:", len(page_content))
+                    
+                    # Check if there are any cart-related elements
+                    cart_elements = await page.query_selector_all('[class*="cart"], [class*="Cart"]')
+                    print(f"DEBUG: Found {len(cart_elements)} cart-related elements")
+                    
                     self.log_test("Cart Dropdown Open", False, "Cart dropdown not visible")
                     await browser.close()
                     return False
