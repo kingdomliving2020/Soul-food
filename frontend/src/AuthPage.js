@@ -587,19 +587,6 @@ const AuthPage = () => {
                 </Button>
               </>
             )}
-            
-            {/* Guest checkout link */}
-            {returnTo === '/checkout' && (
-              <div className="text-center mt-4 pt-4 border-t border-slate-200">
-                <button
-                  type="button"
-                  onClick={() => navigate('/checkout', { state: { guestCheckout: true } })}
-                  className="text-sm text-indigo-600 hover:text-indigo-700 font-semibold"
-                >
-                  Continue as Guest
-                </button>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>
