@@ -166,18 +166,18 @@ class SoulFoodCartTester:
                 print("🔍 Step 8: Verifying coupon application...")
                 
                 # Look for success message or discount applied
-                success_indicators = [
-                    'text="Coupon applied!"',
-                    'text*="100%"',
-                    'text*="discount"',
-                    '.text-green-600',
-                    '.text-emerald-600'
-                ]
-                
                 coupon_success = False
-                for indicator in success_indicators:
-                    element = await page.query_selector(indicator)
-                    if element:
+                
+                # Check for success message containing "100%" or "discount"
+                page_text = await page.text_content('body')
+                if "100%" in page_text or "Coupon applied" in page_text or "discount" in page_text.lower():
+                    coupon_success = True
+                
+                # Also check for green text elements (success indicators)
+                green_elements = await page.query_selector_all('.text-green-600, .text-emerald-600, .text-green-500')
+                for element in green_elements:
+                    element_text = await element.text_content()
+                    if element_text and ("100%" in element_text or "discount" in element_text.lower() or "applied" in element_text.lower()):
                         coupon_success = True
                         break
                 
