@@ -579,12 +579,16 @@ class SoulFoodAuthTester:
             return False
 
     def run_all_tests(self):
-        """Run all Soul Food Authentication System tests"""
-        print("🧪 Starting Soul Food Authentication System Backend API Tests")
+        """Run all Soul Food Backend API Tests"""
+        print("🧪 Starting Soul Food Backend API Tests")
         print(f"🌐 Testing against: {self.base_url}")
         print("=" * 70)
         
         tests = [
+            # Coupon Validation Tests (Priority - E-commerce flow)
+            self.test_coupon_validation_beta123,
+            self.test_coupon_validation_betatest,
+            
             # Beta Login Tests (Priority - User's son is blocked)
             self.test_beta_login_instructor,
             self.test_beta_login_youth,
