@@ -350,12 +350,27 @@ const QuickOrder = () => {
       return '/soul-food-logo.png';
     }
     
-    // Handle nibbles and snack packs - use the parent series image
+    // Handle nibbles and snack packs - use dedicated cover images
     if (product.isNibble || product.isSnackPack) {
       const seriesId = product.id.includes('holiday') ? 'holiday' : 'breakfast';
       const editionKey = edition === 'bundle' ? 'adult' : edition;
-      return coverImages[seriesId]?.adult?.physical?.[type] || 
-             (seriesId === 'holiday' ? '/covers/holiday-adult-front.jpg' : '/covers/breakfast-adult-front.jpg');
+      const productType = product.isNibble ? 'nibble' : 'snackpack';
+      
+      // Map to specific nibble/snackpack cover images
+      const nibbleSnackCovers = {
+        'breakfast-adult-nibble': '/covers/breakfast-adult-nibble.jpg',
+        'breakfast-youth-nibble': '/covers/breakfast-youth-nibble.png',
+        'breakfast-adult-snackpack': '/covers/breakfast-adult-snackpack.jpg',
+        'breakfast-youth-snackpack': '/covers/breakfast-youth-snackpack.png',
+        'holiday-adult-nibble': '/covers/holiday-adult-nibble.jpg',
+        'holiday-youth-nibble': '/covers/holiday-adult-nibble.jpg', // fallback to adult
+        'holiday-adult-snackpack': '/covers/holiday-adult-nibble.jpg', // fallback
+        'holiday-youth-snackpack': '/covers/holiday-adult-nibble.jpg'  // fallback
+      };
+      
+      const coverKey = `${seriesId}-${editionKey}-${productType}`;
+      return nibbleSnackCovers[coverKey] || 
+             (seriesId === 'holiday' ? '/covers/holiday-adult-nibble.jpg' : '/covers/breakfast-adult-nibble.jpg');
     }
     
     // Get cover from mapping
