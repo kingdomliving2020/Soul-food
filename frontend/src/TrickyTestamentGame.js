@@ -4,6 +4,40 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
+// Custom Currency Component - Heaven's Bounty / Sofu Stacks
+const BountyDisplay = ({ amount, size = 'md' }) => {
+  const sizeClasses = {
+    sm: 'text-sm',
+    md: 'text-xl',
+    lg: 'text-3xl',
+    xl: 'text-5xl'
+  };
+  
+  return (
+    <div className={`flex items-center gap-2 ${sizeClasses[size]} font-bold`}>
+      <img 
+        src="/bounty-stack-token.png" 
+        alt="Heaven's Bounty" 
+        className={size === 'xl' ? 'w-12 h-12' : size === 'lg' ? 'w-8 h-8' : 'w-6 h-6'}
+      />
+      <span className="bg-gradient-to-r from-amber-600 to-yellow-500 bg-clip-text text-transparent">
+        {amount.toLocaleString()} Stacks
+      </span>
+    </div>
+  );
+};
+
+// Game Disclaimer Component
+const GameDisclaimer = () => (
+  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-center text-xs text-amber-800 mt-4">
+    <p className="font-semibold">✝️ Faith Enrichment Games ✝️</p>
+    <p className="mt-1">
+      "Heaven's Bounty" and "Sofu Stacks" are spiritual reward tokens designed to affirm your growth 
+      and knowledge in the Christian faith. These are not real currency and have no monetary value.
+    </p>
+  </div>
+);
+
 const TrickyTestamentGame = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
