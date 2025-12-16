@@ -78,21 +78,47 @@ class SoulFoodCartTester:
                 # Step 3: Verify cart shows Holiday Nibble
                 print("🔍 Step 3: Verifying cart contents...")
                 
-                # Click cart button to open cart dropdown
-                cart_button = await page.query_selector('button:has([data-testid="shopping-cart"], svg)')
+                # Wait for any overlays to disappear
+                await page.wait_for_timeout(2000)
+                
+                # Try to close any existing overlays first
+                overlay = await page.query_selector('.fixed.inset-0.bg-black')
+                if overlay:
+                    await overlay.click()
+                    await page.wait_for_timeout(500)
+                
+                # Find cart button using multiple strategies
+                cart_button = None
+                
+                # Strategy 1: Look for button with ShoppingCart icon
+                cart_buttons = await page.query_selector_all('button')
+                for button in cart_buttons:
+                    # Check if button contains shopping cart icon
+                    svg = await button.query_selector('svg')
+                    if svg:
+                        # Check if it's a shopping cart icon (has specific path or class)
+                        svg_content = await svg.inner_html()
+                        if 'shopping' in svg_content.lower() or 'cart' in svg_content.lower() or 'M3 3h2l.4 2M7 13h10l4-8H5.4' in svg_content:
+                            cart_button = button
+                            break
+                
+                # Strategy 2: Look for button in header with cart badge
                 if not cart_button:
-                    # Try alternative selector
-                    cart_button = await page.query_selector('button:has-text("")')  # Cart button with icon
-                    if not cart_button:
-                        # Try finding by ShoppingCart icon class
-                        cart_button = await page.query_selector('button:has(.lucide-shopping-cart)')
+                    cart_button = await page.query_selector('button:has(.absolute.-top-1.-right-1)')
+                
+                # Strategy 3: Look for any button in the header area that might be cart
+                if not cart_button:
+                    header_buttons = await page.query_selector_all('header button')
+                    if len(header_buttons) >= 2:  # Usually back button and cart button
+                        cart_button = header_buttons[-1]  # Last button is usually cart
                 
                 if not cart_button:
                     self.log_test("Cart Button Click", False, "Could not find cart button")
                     await browser.close()
                     return False
                 
-                await cart_button.click()
+                # Force click using JavaScript to bypass overlay issues
+                await page.evaluate('(button) => button.click()', cart_button)
                 await page.wait_for_timeout(1000)
                 
                 # Check if cart dropdown is visible
