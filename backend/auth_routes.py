@@ -293,7 +293,7 @@ def check_password_expiry(password_changed_at: str) -> tuple[bool, int]:
 
 async def send_password_reset_email(email: str, reset_token: str, name: str):
     """Send password reset email via MailerLite"""
-    reset_link = f"https://elearn-shop.preview.emergentagent.com/reset-password?token={reset_token}"
+    reset_link = f"https://nibbles-platform.preview.emergentagent.com/reset-password?token={reset_token}"
     
     print(f"""
     ========================================
