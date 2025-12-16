@@ -713,6 +713,9 @@ const MixUpGame = () => {
             </button>
           </div>
         )}
+        
+        {/* Game Disclaimer */}
+        <GameDisclaimer />
       </div>
     </div>
   );
