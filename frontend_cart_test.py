@@ -197,23 +197,22 @@ class SoulFoodCartTester:
                 # Step 9: Verify Total becomes $0.00
                 print("🔍 Step 9: Verifying total is $0.00...")
                 
-                # Look for total amount
-                total_elements = await page.query_selector_all('text*="Total"')
+                # Look for total amount in page text
+                page_text = await page.text_content('body')
                 total_found = False
                 
-                for element in total_elements:
-                    parent = await element.query_selector('..')
-                    if parent:
-                        total_text = await parent.text_content()
-                        if "$0.00" in total_text:
+                if "$0.00" in page_text:
+                    total_found = True
+                
+                # Also look for elements that might contain the total
+                if not total_found:
+                    # Look for elements with "Total" text
+                    all_elements = await page.query_selector_all('*')
+                    for element in all_elements:
+                        element_text = await element.text_content()
+                        if element_text and "Total" in element_text and "$0.00" in element_text:
                             total_found = True
                             break
-                
-                if not total_found:
-                    # Try alternative approach - look for any $0.00 on the page
-                    zero_dollar = await page.query_selector('text="$0.00"')
-                    if zero_dollar:
-                        total_found = True
                 
                 if not total_found:
                     self.log_test("Total Verification", False, "Total did not become $0.00")
