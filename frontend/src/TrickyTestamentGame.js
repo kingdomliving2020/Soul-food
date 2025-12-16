@@ -637,6 +637,9 @@ const TrickyTestamentGame = () => {
             </Button>
           </div>
         )}
+        
+        {/* Game Disclaimer */}
+        <GameDisclaimer />
       </div>
     </div>
   );
