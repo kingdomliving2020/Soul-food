@@ -549,12 +549,12 @@ const MixUpGame = () => {
           </div>
         </div>
 
-        {/* Money Ladder */}
+        {/* Heaven's Bounty Ladder */}
         <div className="grid grid-cols-5 gap-1 mb-4">
-          {moneyLadder.map((amount, index) => (
+          {bountyLadder.map((amount, index) => (
             <div
               key={index}
-              className={`text-center py-1 rounded text-xs sm:text-sm ${
+              className={`text-center py-1 rounded text-xs sm:text-sm flex items-center justify-center gap-1 ${
                 index === currentQuestion
                   ? 'bg-amber-500 text-white font-bold'
                   : index < currentQuestion
@@ -562,7 +562,7 @@ const MixUpGame = () => {
                   : 'bg-slate-700 text-slate-400'
               }`}
             >
-              {amount}
+              <span>{amount >= 1000 ? `${amount/1000}K` : amount}</span>
             </div>
           ))}
         </div>
