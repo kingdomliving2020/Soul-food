@@ -492,6 +492,92 @@ class SoulFoodAuthTester:
             self.log_test("Account Lockout Test", False, f"Exception: {str(e)}")
             return False
 
+    def test_coupon_validation_beta123(self):
+        """Test coupon validation with Beta1!2!3! code"""
+        try:
+            test_data = {
+                "code": "Beta1!2!3!",
+                "product_ids": ["holiday-nibble-adult-interactive"]
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/coupons/validate",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Coupon Validation - Beta1!2!3!", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["valid", "discount_percent", "message", "code"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Coupon Validation - Beta1!2!3!", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify coupon is valid with 100% discount
+            if not data.get("valid"):
+                self.log_test("Coupon Validation - Beta1!2!3!", False, f"Coupon not valid: {data.get('message')}")
+                return False
+                
+            if data.get("discount_percent") != 100:
+                self.log_test("Coupon Validation - Beta1!2!3!", False, f"Wrong discount: {data.get('discount_percent')}, expected: 100")
+                return False
+            
+            self.log_test("Coupon Validation - Beta1!2!3!", True, "Beta1!2!3! coupon validated successfully with 100% discount")
+            return True
+            
+        except Exception as e:
+            self.log_test("Coupon Validation - Beta1!2!3!", False, f"Exception: {str(e)}")
+            return False
+
+    def test_coupon_validation_betatest(self):
+        """Test coupon validation with BETATEST code"""
+        try:
+            test_data = {
+                "code": "BETATEST",
+                "product_ids": ["holiday-nibble-adult-interactive"]
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/coupons/validate",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Coupon Validation - BETATEST", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["valid", "discount_percent", "message", "code"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Coupon Validation - BETATEST", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify coupon is valid with 100% discount
+            if not data.get("valid"):
+                self.log_test("Coupon Validation - BETATEST", False, f"Coupon not valid: {data.get('message')}")
+                return False
+                
+            if data.get("discount_percent") != 100:
+                self.log_test("Coupon Validation - BETATEST", False, f"Wrong discount: {data.get('discount_percent')}, expected: 100")
+                return False
+            
+            self.log_test("Coupon Validation - BETATEST", True, "BETATEST coupon validated successfully with 100% discount")
+            return True
+            
+        except Exception as e:
+            self.log_test("Coupon Validation - BETATEST", False, f"Exception: {str(e)}")
+            return False
+
     def run_all_tests(self):
         """Run all Soul Food Authentication System tests"""
         print("🧪 Starting Soul Food Authentication System Backend API Tests")
