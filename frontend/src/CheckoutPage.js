@@ -37,10 +37,18 @@ const CheckoutPage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          code: couponCode,
+          code: couponCode.trim(),
           product_ids: productIds
         }),
       });
+
+      // Handle case where body may already be consumed by interceptor
+      if (response.bodyUsed) {
+        console.error('Response body already consumed');
+        setCouponError('Unable to validate coupon. Please refresh and try again.');
+        setCouponApplied(null);
+        return;
+      }
 
       const data = await response.json();
 
@@ -48,12 +56,17 @@ const CheckoutPage = () => {
         setCouponApplied(data);
         setCouponError('');
       } else {
-        setCouponError(data.message);
+        setCouponError(data.message || 'Invalid coupon code');
         setCouponApplied(null);
       }
     } catch (err) {
       console.error('Coupon validation error:', err);
-      setCouponError('Failed to validate coupon. Please try again.');
+      // More specific error message
+      if (err.message && err.message.includes('body stream')) {
+        setCouponError('Unable to validate coupon. Please refresh the page and try again.');
+      } else {
+        setCouponError('Failed to validate coupon. Please try again.');
+      }
     } finally {
       setCouponLoading(false);
     }
@@ -193,7 +206,7 @@ const CheckoutPage = () => {
                     <input
                       type="text"
                       value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      onChange={(e) => setCouponCode(e.target.value)}
                       placeholder="Enter code"
                       className="flex-1 min-w-0 px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
                       disabled={couponLoading}
