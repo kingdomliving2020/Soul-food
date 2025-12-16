@@ -365,9 +365,10 @@ const TrickyTestamentGame = () => {
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-4">
                 {score >= 800 ? '🏆 Champion! 🏆' : 'Game Complete!'}
               </h2>
-              <div className="text-4xl sm:text-5xl lg:text-6xl font-bold text-purple-600 mb-4 sm:mb-6">
-                {score} Points
+              <div className="flex justify-center mb-4 sm:mb-6">
+                <BountyDisplay amount={score} size="xl" />
               </div>
+              <p className="text-xl text-slate-600 mb-2">Heaven's Bounty Earned!</p>
               <p className="text-lg sm:text-xl lg:text-2xl text-slate-700 mb-6 sm:mb-8">
                 You completed all 10 Jeopardy-style questions!
               </p>
@@ -385,6 +386,7 @@ const TrickyTestamentGame = () => {
                   Back to Home
                 </Button>
               </div>
+              <GameDisclaimer />
             </CardContent>
           </Card>
         </div>
@@ -400,23 +402,23 @@ const TrickyTestamentGame = () => {
         <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 sm:border-4 border-yellow-400 max-w-2xl w-full mx-4">
           <CardContent className="p-6 sm:p-8 lg:p-12 text-center">
             <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold text-yellow-600 mb-4 sm:mb-6 animate-pulse">
-              💰 DAILY DOUBLE! 💰
+              ✨ DAILY DOUBLE! ✨
             </h2>
             <p className="text-lg sm:text-xl lg:text-2xl text-slate-800 mb-3 sm:mb-4">
               You found the hidden Daily Double!
             </p>
-            <p className="text-base sm:text-lg lg:text-xl text-slate-700 mb-4 sm:mb-6 lg:mb-8">
-              Current Score: <strong>{score} points</strong>
-            </p>
+            <div className="flex justify-center mb-4">
+              <BountyDisplay amount={score} size="lg" />
+            </div>
             <p className="text-sm sm:text-base lg:text-lg text-slate-600 mb-4 sm:mb-6">
-              How much do you want to wager?
+              How many Stacks do you want to wager?
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <Button
                 onClick={() => handleDailyDoubleWager(100)}
                 className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 sm:py-4 text-base sm:text-lg"
               >
-                Wager 100
+                Wager 100 Stacks
               </Button>
               <Button
                 onClick={() => handleDailyDoubleWager(200)}
