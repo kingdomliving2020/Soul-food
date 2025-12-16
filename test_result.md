@@ -96,13 +96,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Quick Order Cart Persistence"
-    - "Quick Order Checkout"
     - "Interactive Lessons Access"
     - "Beta Login Response Cloning Bug Fix"
   stuck_tasks: []
   test_all: false
-  test_priority: "recently_fixed_features"
+  test_priority: "e_commerce_flow_completed"
 
 agent_communication:
   - agent: "main"
