@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Soul Food Authentication System
-Tests the beta login system and NIST authentication requirements
+Backend API Testing for Soul Food Quick Order and Checkout Flow
+Tests pricing verification, cart functionality, coupon validation, and checkout flow
 """
 
 import requests
@@ -13,7 +13,7 @@ from typing import Dict, Any
 # Backend URL from frontend/.env
 BASE_URL = "https://nibbles-platform.preview.emergentagent.com/api"
 
-class SoulFoodAuthTester:
+class SoulFoodQuickOrderTester:
     def __init__(self):
         self.base_url = BASE_URL
         self.session = requests.Session()
