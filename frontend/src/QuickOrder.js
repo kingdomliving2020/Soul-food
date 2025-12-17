@@ -150,14 +150,16 @@ const QuickOrder = () => {
   ];
 
   // Breakfast individual lessons for Nibble selection (organized by month)
+  // NOTE: "In His Image" series is FREE - available in Free Lessons section above
   const breakfastLessons = [
-    // Month 1: Prayer, the First Resort
-    { id: 'in-his-image-1', name: 'Made in His Image (Self-Worth)', available: true, month: 1 },
-    { id: 'in-his-image-2', name: 'Accepted and Loved', available: true, month: 1 },
-    { id: 'in-his-image-3', name: 'Chosen of God', available: true, month: 1 },
+    // Month 1: Prayer, the First Resort (Coming Soon - In His Image is FREE above)
+    { id: 'prayer-esther', name: 'Esther - Second is Best', available: false, month: 1, comingSoon: true },
+    { id: 'prayer-solomon', name: 'Solomon - Wisdom in Response', available: false, month: 1, comingSoon: true },
+    { id: 'prayer-jesus', name: 'Jesus - Prayer as First Resort', available: false, month: 1, comingSoon: true },
+    { id: 'prayer-paul', name: 'Paul & Silas - Faith in the Dark', available: false, month: 1, comingSoon: true },
     // Month 2 & 3 - Coming soon
-    { id: 'prayer-1', name: 'Esther - Second is Best', available: false, month: 2, comingSoon: true },
-    { id: 'prayer-2', name: 'Solomon - Wisdom in Response', available: false, month: 2, comingSoon: true },
+    { id: 'through-1', name: 'The Art of Through - Lesson 1', available: false, month: 2, comingSoon: true },
+    { id: 'faith-1', name: 'Faith & Foresight - Lesson 1', available: false, month: 3, comingSoon: true },
   ];
 
   // Holiday lessons for Nibble selection
