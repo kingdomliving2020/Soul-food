@@ -692,7 +692,13 @@ const QuickOrder = () => {
         <section className="mb-12">
           <h3 className="text-2xl font-bold mb-4 text-slate-800">🎁 Free Lessons</h3>
           <p className="text-slate-600 mb-4">Try these lessons for FREE - no payment required!</p>
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+          <div className="relative rounded-xl overflow-hidden border border-green-200">
+            {/* Background Image */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center opacity-20"
+              style={{ backgroundImage: "url('/images/free-lessons-card.png')" }}
+            />
+            <div className="relative bg-gradient-to-r from-green-50/90 to-emerald-50/90 p-4">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
               {freeLessons.map(lesson => (
                 <div key={lesson.id} className="bg-white rounded-lg p-3 shadow-sm border border-green-100 hover:shadow-md transition-shadow">
