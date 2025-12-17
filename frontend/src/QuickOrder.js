@@ -618,14 +618,15 @@ const QuickOrder = () => {
           <div className="grid md:grid-cols-2 gap-6">
             {mealSeries.map(meal => {
               const sel = selections[meal.id] || {};
-              const selectedPkg = sel.package || meal.packages[0].id;
-              const selectedEdition = sel.edition || meal.editions[0];
+              const defaultPkg = meal.packages?.[0]?.id || 'full';
+              const selectedPkg = sel.package || defaultPkg;
+              const selectedEdition = sel.edition || meal.editions?.[0] || 'adult';
               const selectedFormat = sel.format || (selectedPkg === 'subscription' ? 'subscription_monthly' : 'interactive');
-              const selectedMonth = sel.month || (meal.monthOptions?.[0]?.id);
-              const selectedLesson = sel.lesson || (meal.lessonOptions?.[0]?.id);
+              const selectedMonth = sel.month || (meal.monthOptions?.[0]?.id || 'month-1');
+              const selectedLesson = sel.lesson || (meal.lessonOptions?.[0]?.id || 'covenant');
               
-              const pkgData = meal.packages.find(p => p.id === selectedPkg);
-              const pricingData = meal.pricing[selectedPkg];
+              const pkgData = meal.packages?.find(p => p.id === selectedPkg) || meal.packages?.[0];
+              const pricingData = meal.pricing?.[selectedPkg] || {};
               
               // Get price based on selections
               const getPackagePrice = () => {
