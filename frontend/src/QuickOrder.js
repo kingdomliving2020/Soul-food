@@ -220,6 +220,37 @@ const QuickOrder = () => {
       salePercent: 10
     },
     {
+      id: 'lunch',
+      name: 'Lunch Series',
+      tagline: 'Spiritual Maturity & Growth',
+      description: 'Deeper lessons for continued spiritual development',
+      available: false,
+      preOrder: true,
+      comingSoon: 'Q3 2026',
+      editions: ['adult', 'youth'],
+      formats: ['interactive', 'epub', 'physical'],
+      packages: [
+        { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, available: false, preOrder: true },
+        { id: 'snack', name: 'Snack Pack (4 Lessons)', lessons: 4, available: false, preOrder: true },
+        { id: 'meal', name: 'Meal Bundle (12 Lessons)', lessons: 12, available: false, preOrder: true }
+      ],
+      pricing: {
+        nibble: {
+          listPrices: { adult: { interactive: 3.99, epub: 2.99 }, youth: { interactive: 3.99, epub: 2.99 } },
+          prices: { adult: { interactive: 3.59, epub: 2.69 }, youth: { interactive: 3.59, epub: 2.69 } }
+        },
+        snack: {
+          listPrices: { adult: { interactive: 7.99, epub: 5.99 }, youth: { interactive: 7.99, epub: 5.99 } },
+          prices: { adult: { interactive: 7.19, epub: 5.39 }, youth: { interactive: 7.19, epub: 5.39 } }
+        },
+        meal: {
+          listPrices: { adult: { interactive: 16.99, epub: 12.99 }, youth: { interactive: 16.99, epub: 12.99 } },
+          prices: { adult: { interactive: 15.29, epub: 11.69 }, youth: { interactive: 15.29, epub: 11.69 } }
+        }
+      },
+      salePercent: 10
+    },
+    {
       id: 'instructor',
       name: 'Instructor Edition',
       tagline: 'Complete Teaching Resources',
