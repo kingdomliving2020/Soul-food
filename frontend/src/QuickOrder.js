@@ -168,6 +168,15 @@ const QuickOrder = () => {
     { id: 'comforter', name: 'The Comforter', available: true }
   ];
 
+  // FREE LESSONS - Self-Worth series and Bonus lessons
+  const freeLessons = [
+    { id: 'in-his-image-1', name: 'Made in His Image', series: 'Self-Worth (5th Week)', description: 'Genesis 1:27 - You are created in God\'s image' },
+    { id: 'in-his-image-2', name: 'Accepted and Loved', series: 'Self-Worth (5th Week)', description: 'Luke 5:31 - Jesus welcomes everyone' },
+    { id: 'in-his-image-3', name: 'Chosen of God', series: 'Self-Worth (5th Week)', description: 'Luke 5:31-32 - You are chosen and valued' },
+    { id: 'holiday-ae-bonus-names', name: 'The Names of God', series: 'Holiday Bonus', description: 'Proverbs 18:10 - Yahweh, Elohim, Adonai' },
+    { id: 'holiday-ae-bonus-times', name: 'Times and Seasons', series: 'Holiday Bonus', description: 'Ecclesiastes 3:1 - Biblical numerology' }
+  ];
+
   // COMPACT AMAZON-STYLE: One card per meal series with all options
   // Unavailable options are greyed out, Instructor bundles = Pre-order
   const mealSeries = [
