@@ -143,20 +143,22 @@ const QuickOrder = () => {
   
   // Breakfast Series monthly topics for Snack Pack selection
   const breakfastMonths = [
-    { id: 'month-1', name: 'Month 1: Prayer, the First Resort', lessons: 4 },
-    { id: 'month-2', name: 'Month 2: The Art of Through', lessons: 4 },
-    { id: 'month-3', name: 'Month 3: Faith & Foresight', lessons: 4 }
+    { id: 'month-1', name: 'Month 1: Prayer, the First Resort', lessons: 4, available: true },
+    { id: 'month-2', name: 'Month 2: The Art of Through', lessons: 4, available: true },
+    { id: 'month-3', name: 'Month 3: Faith & Foresight', lessons: 4, available: true },
+    { id: 'month-4', name: 'Month 4: Coming Q2 2026', lessons: 4, available: false, comingSoon: true }
   ];
 
   // Holiday lessons for Nibble selection
   const holidayLessons = [
-    { id: 'covenant', name: 'The Covenant' },
-    { id: 'cradle', name: 'The Cradle' },
-    { id: 'cross', name: 'The Cross' },
-    { id: 'comforter', name: 'The Comforter' }
+    { id: 'covenant', name: 'The Covenant', available: true },
+    { id: 'cradle', name: 'The Cradle', available: true },
+    { id: 'cross', name: 'The Cross', available: true },
+    { id: 'comforter', name: 'The Comforter', available: true }
   ];
 
   // COMPACT AMAZON-STYLE: One card per meal series with all options
+  // Unavailable options are greyed out, Instructor bundles = Pre-order
   const mealSeries = [
     {
       id: 'holiday',
@@ -164,22 +166,20 @@ const QuickOrder = () => {
       tagline: '4 C\'s of Christianity + 2 FREE Bonus Lessons',
       description: 'Covenant, Cradle, Cross, Comforter - celebrating faith through the seasons',
       available: true,
-      editions: ['adult', 'youth', 'instructor'],
-      formats: ['physical', 'interactive', 'epub'],
+      editions: ['adult', 'youth'],
+      formats: ['interactive', 'epub', 'physical'],
       packages: [
-        { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, selectLesson: true },
-        { id: 'full', name: 'Full Series (4 + 2 FREE)', lessons: 6, badge: '2 Bonus FREE!' }
+        { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, selectLesson: true, available: true },
+        { id: 'full', name: 'Full Series (4 + 2 FREE)', lessons: 6, badge: '2 Bonus FREE!', available: true }
       ],
-      // Pricing by package -> edition -> format
       pricing: {
         nibble: {
-          listPrices: { adult: { interactive: 3.99, epub: 2.99 }, youth: { interactive: 3.99, epub: 2.99 }, instructor: { interactive: 4.99, epub: 3.99 } },
-          prices: { adult: { interactive: 3.59, epub: 2.69 }, youth: { interactive: 3.59, epub: 2.69 }, instructor: { interactive: 4.49, epub: 3.59 } }
+          listPrices: { adult: { interactive: 3.99, epub: 2.99 }, youth: { interactive: 3.99, epub: 2.99 } },
+          prices: { adult: { interactive: 3.59, epub: 2.69 }, youth: { interactive: 3.59, epub: 2.69 } }
         },
         full: {
-          // Full series = Snack Pack price because 2 bonus are FREE
-          listPrices: { adult: { physical: 11.99, interactive: 7.99, epub: 5.99 }, youth: { physical: 11.99, interactive: 7.99, epub: 5.99 }, instructor: { physical: 14.99, interactive: 9.99, epub: 7.99 } },
-          prices: { adult: { physical: 10.79, interactive: 7.19, epub: 5.39 }, youth: { physical: 10.79, interactive: 7.19, epub: 5.39 }, instructor: { physical: 13.49, interactive: 8.99, epub: 7.19 } }
+          listPrices: { adult: { physical: 11.99, interactive: 7.99, epub: 5.99 }, youth: { physical: 11.99, interactive: 7.99, epub: 5.99 } },
+          prices: { adult: { physical: 10.79, interactive: 7.19, epub: 5.39 }, youth: { physical: 10.79, interactive: 7.19, epub: 5.39 } }
         }
       },
       lessonOptions: holidayLessons,
@@ -191,39 +191,63 @@ const QuickOrder = () => {
       tagline: 'Foundation in Christ',
       description: '48 lessons across 12 months of spiritual growth',
       available: true,
-      editions: ['adult', 'youth', 'instructor'],
-      formats: ['physical', 'interactive', 'epub', 'subscription_monthly', 'subscription_annual'],
+      editions: ['adult', 'youth'],
+      formats: ['interactive', 'epub'],
       packages: [
-        { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1 },
-        { id: 'snack', name: 'Snack Pack (4 Lessons/1 Month)', lessons: 4, selectMonth: true },
-        { id: 'mealtime', name: 'Mealtime (12 Lessons/Quarter)', lessons: 12 },
-        { id: 'combo', name: 'Combo (Youth + Adult)', lessons: 24, note: '2 editions' },
-        { id: 'subscription', name: 'Subscription (All Access)', isSubscription: true }
+        { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, available: true },
+        { id: 'snack', name: 'Snack Pack (4 Lessons)', lessons: 4, selectMonth: true, available: true },
+        { id: 'meal', name: 'Meal Bundle (12 Lessons)', lessons: 12, available: false, preOrder: true, note: 'Q2 2026' },
+        { id: 'subscription', name: 'Subscription (All Access)', isSubscription: true, available: true }
       ],
       pricing: {
         nibble: {
-          listPrices: { adult: { interactive: 3.99, epub: 2.99 }, youth: { interactive: 3.99, epub: 2.99 }, instructor: { interactive: 4.99, epub: 3.99 } },
-          prices: { adult: { interactive: 3.59, epub: 2.69 }, youth: { interactive: 3.59, epub: 2.69 }, instructor: { interactive: 4.49, epub: 3.59 } }
+          listPrices: { adult: { interactive: 3.99, epub: 2.99 }, youth: { interactive: 3.99, epub: 2.99 } },
+          prices: { adult: { interactive: 3.59, epub: 2.69 }, youth: { interactive: 3.59, epub: 2.69 } }
         },
         snack: {
-          listPrices: { adult: { interactive: 7.99, epub: 5.99 }, youth: { interactive: 7.99, epub: 5.99 }, instructor: { interactive: 9.99, epub: 7.99 } },
-          prices: { adult: { interactive: 7.19, epub: 5.39 }, youth: { interactive: 7.19, epub: 5.39 }, instructor: { interactive: 8.99, epub: 7.19 } }
+          listPrices: { adult: { interactive: 7.99, epub: 5.99 }, youth: { interactive: 7.99, epub: 5.99 } },
+          prices: { adult: { interactive: 7.19, epub: 5.39 }, youth: { interactive: 7.19, epub: 5.39 } }
         },
-        mealtime: {
-          listPrices: { adult: { physical: 21.99, interactive: 16.99, epub: 12.99 }, youth: { physical: 21.99, interactive: 16.99, epub: 12.99 }, instructor: { physical: 24.99, interactive: 19.99, epub: 15.99 } },
-          prices: { adult: { physical: 19.79, interactive: 15.29, epub: 11.69 }, youth: { physical: 19.79, interactive: 15.29, epub: 11.69 }, instructor: { physical: 22.49, interactive: 17.99, epub: 14.39 } }
-        },
-        combo: {
-          // Combo = Youth + Adult together
-          listPrices: { adult: { physical: 29.99, interactive: 24.99, epub: 19.99 }, youth: { physical: 29.99, interactive: 24.99, epub: 19.99 } },
-          prices: { adult: { physical: 26.99, interactive: 22.49, epub: 17.99 }, youth: { physical: 26.99, interactive: 22.49, epub: 17.99 } }
+        meal: {
+          listPrices: { adult: { interactive: 16.99, epub: 12.99 }, youth: { interactive: 16.99, epub: 12.99 } },
+          prices: { adult: { interactive: 15.29, epub: 11.69 }, youth: { interactive: 15.29, epub: 11.69 } }
         },
         subscription: {
-          prices: { adult: { subscription_monthly: 7.99, subscription_annual: 79.99 }, youth: { subscription_monthly: 7.99, subscription_annual: 79.99 }, instructor: { subscription_monthly: 11.99, subscription_annual: 119.99 } }
+          prices: { adult: { subscription_monthly: 7.99, subscription_annual: 79.99 }, youth: { subscription_monthly: 7.99, subscription_annual: 79.99 } }
         }
       },
       monthOptions: breakfastMonths,
       salePercent: 10
+    },
+    {
+      id: 'instructor',
+      name: 'Instructor Edition',
+      tagline: 'Complete Teaching Resources',
+      description: 'Full curriculum with teaching guides, answer keys, and group activities',
+      available: false,
+      preOrder: true,
+      editions: ['instructor'],
+      formats: ['interactive', 'epub', 'physical'],
+      packages: [
+        { id: 'holiday-full', name: 'Holiday Set (6 Lessons)', lessons: 6, available: false, preOrder: true },
+        { id: 'meal', name: 'Meal Bundle (12 Lessons)', lessons: 12, available: false, preOrder: true },
+        { id: 'full-set', name: 'Full Curriculum (36 Lessons)', lessons: 36, available: false, preOrder: true, badge: '15% Off' }
+      ],
+      pricing: {
+        'holiday-full': {
+          listPrices: { instructor: { physical: 14.99, interactive: 9.99, epub: 7.99 } },
+          prices: { instructor: { physical: 13.49, interactive: 8.99, epub: 7.19 } }
+        },
+        meal: {
+          listPrices: { instructor: { physical: 24.99, interactive: 19.99, epub: 15.99 } },
+          prices: { instructor: { physical: 22.49, interactive: 17.99, epub: 14.39 } }
+        },
+        'full-set': {
+          listPrices: { instructor: { physical: 45.99, interactive: 35.99, epub: 29.99 } },
+          prices: { instructor: { physical: 39.09, interactive: 30.59, epub: 25.49 } }
+        }
+      },
+      salePercent: 15
     }
   ];
 
