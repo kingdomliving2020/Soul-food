@@ -355,6 +355,31 @@ const QuickOrder = () => {
     }
   ];
 
+  // Gaming passes - $30 Adult/Youth all-day, $40 Instructor (category selection)
+  const gamingPasses = [
+    {
+      id: 'gaming-day-pass-standard',
+      name: 'Gaming Day Pass',
+      subtitle: 'All-Day Access (Adult/Youth)',
+      description: '8+ hours of all game modes and categories',
+      image: '/images/bounty-stack-token.png',
+      listPrice: 35.00,
+      price: 30.00,
+      editions: ['adult', 'youth']
+    },
+    {
+      id: 'gaming-day-pass-instructor',
+      name: 'Instructor Gaming Pass',
+      subtitle: 'All-Day Access with Category Selection',
+      description: 'Select specific categories, topics, and questions for your group',
+      image: '/images/bounty-stack-token.png',
+      listPrice: 40.00,
+      price: 40.00,
+      editions: ['instructor'],
+      badge: 'Full Control'
+    }
+  ];
+
   const merchandise = [
     {
       id: 'gift-certificate',
