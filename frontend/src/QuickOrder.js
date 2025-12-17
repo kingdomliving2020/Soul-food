@@ -855,8 +855,8 @@ const QuickOrder = () => {
                                 : `${meal.name} - ${pkgData?.name}`;
                               
                               addToCart({
-                                productId: `${meal.id}-${selectedPkg}${pkgData?.selectMonth ? `-${selectedMonth}` : ''}${pkgData?.selectLesson ? `-${selectedLesson}` : ''}`,
-                                name: itemName,
+                                id: `${meal.id}-${selectedPkg}${pkgData?.selectMonth ? `-${selectedMonth}` : ''}${pkgData?.selectLesson ? `-${selectedLesson}` : ''}-${selectedEdition}-${selectedFormat}`,
+                                name: `${itemName} - ${selectedEdition.toUpperCase()} - ${selectedFormat.toUpperCase()}`,
                                 edition: selectedEdition,
                                 format: selectedFormat,
                                 price: price,
