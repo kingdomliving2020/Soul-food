@@ -1052,8 +1052,23 @@ async def check_answers(data: dict):
 
 @router.get("/download/nibble/{nibble_id}")
 async def download_nibble_pdf(nibble_id: str):
-    """Download a single lesson as PDF"""
-    # Find the nibble
+    """Download a single lesson as PDF - serves uploaded PDFs first, falls back to generated"""
+    import os
+    from fastapi.responses import FileResponse
+    
+    # Check for uploaded PDF first (professional quality)
+    pdf_folder = "/app/backend/lesson_pdfs"
+    uploaded_pdf_path = os.path.join(pdf_folder, f"{nibble_id}.pdf")
+    
+    if os.path.exists(uploaded_pdf_path):
+        # Serve the professionally designed uploaded PDF
+        return FileResponse(
+            uploaded_pdf_path,
+            media_type="application/pdf",
+            filename=f"SoulFood_{nibble_id}.pdf"
+        )
+    
+    # Find the nibble for fallback generation
     nibble = None
     for n in ALL_NIBBLES:
         if n["id"] == nibble_id:
@@ -1063,7 +1078,7 @@ async def download_nibble_pdf(nibble_id: str):
     if not nibble:
         raise HTTPException(status_code=404, detail="Lesson not found")
     
-    # Generate PDF
+    # Fallback: Generate PDF (basic quality)
     pdf_buffer = pdf_generator.generate_lesson_pdf(nibble)
     
     # Create filename
