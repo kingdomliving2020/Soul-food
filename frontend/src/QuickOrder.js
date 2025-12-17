@@ -149,6 +149,17 @@ const QuickOrder = () => {
     { id: 'month-4', name: 'Month 4: Coming Q2 2026', lessons: 4, available: false, comingSoon: true }
   ];
 
+  // Breakfast individual lessons for Nibble selection (organized by month)
+  const breakfastLessons = [
+    // Month 1: Prayer, the First Resort
+    { id: 'in-his-image-1', name: 'Made in His Image (Self-Worth)', available: true, month: 1 },
+    { id: 'in-his-image-2', name: 'Accepted and Loved', available: true, month: 1 },
+    { id: 'in-his-image-3', name: 'Chosen of God', available: true, month: 1 },
+    // Month 2 & 3 - Coming soon
+    { id: 'prayer-1', name: 'Esther - Second is Best', available: false, month: 2, comingSoon: true },
+    { id: 'prayer-2', name: 'Solomon - Wisdom in Response', available: false, month: 2, comingSoon: true },
+  ];
+
   // Holiday lessons for Nibble selection
   const holidayLessons = [
     { id: 'covenant', name: 'The Covenant', available: true },
