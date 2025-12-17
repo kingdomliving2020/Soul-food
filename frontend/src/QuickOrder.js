@@ -815,7 +815,8 @@ const QuickOrder = () => {
                             )}
                             {(selections[product.id]?.format || product.formats[0]) === 'subscription_annual' && (
                               <span className="text-xs text-slate-500">/yr</span>
-                          )}
+                            )}
+                          </div>
                         </div>
                         <Button
                           onClick={() => handleAddToCart(product)}
