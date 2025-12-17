@@ -801,13 +801,20 @@ const QuickOrder = () => {
 
                       {/* Price & Add to Cart */}
                       <div className="flex items-center justify-between mt-auto pt-2 border-t border-slate-100">
-                        <div className="text-lg font-bold text-purple-600">
-                          ${getPrice(product).toFixed(2)}
-                          {(selections[product.id]?.format || product.formats[0]) === 'subscription_monthly' && (
-                            <span className="text-xs text-slate-500">/mo</span>
+                        <div className="flex flex-col">
+                          {/* Show list price crossed out if on sale */}
+                          {isSaleActive && getListPrice(product) && getListPrice(product) !== getPrice(product) && (
+                            <span className="text-xs text-slate-400 line-through">
+                              ${getListPrice(product).toFixed(2)}
+                            </span>
                           )}
-                          {(selections[product.id]?.format || product.formats[0]) === 'subscription_annual' && (
-                            <span className="text-xs text-slate-500">/yr</span>
+                          <div className="text-lg font-bold text-purple-600">
+                            ${getPrice(product).toFixed(2)}
+                            {(selections[product.id]?.format || product.formats[0]) === 'subscription_monthly' && (
+                              <span className="text-xs text-slate-500">/mo</span>
+                            )}
+                            {(selections[product.id]?.format || product.formats[0]) === 'subscription_annual' && (
+                              <span className="text-xs text-slate-500">/yr</span>
                           )}
                         </div>
                         <Button
