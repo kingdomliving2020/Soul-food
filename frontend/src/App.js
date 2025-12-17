@@ -1897,6 +1897,7 @@ import MixUpGame from './MixUpGame';
 import TrickyTestamentGame from './TrickyTestamentGame';
 import QuickOrder from './QuickOrder';
 import GiftCertificate from './GiftCertificate';
+import OrderSuccess from './OrderSuccess';
 
 function App() {
   return (
