@@ -466,6 +466,14 @@ const QuickOrder = () => {
     return product.prices[edition]?.[format] || 0;
   };
 
+  const getListPrice = (product) => {
+    if (!product.listPrices) return null;
+    const selection = selections[product.id] || {};
+    const edition = selection.edition || product.editions[0];
+    const format = selection.format || product.formats[0];
+    return product.listPrices[edition]?.[format] || null;
+  };
+
   const handleAddToCart = (product) => {
     const selection = selections[product.id] || {};
     const edition = selection.edition || product.editions[0];
