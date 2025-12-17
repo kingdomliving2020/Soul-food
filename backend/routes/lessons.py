@@ -297,9 +297,10 @@ IN_HIS_IMAGE_SNACK_PACK = {
     "nibbles": ["in-his-image-1", "in-his-image-2", "in-his-image-3"],
     "total_lessons": 3,
     "available_in": ["holiday", "breakfast"],
-    "price_download": 7.99,
-    "price_interactive": 9.99,
-    "is_free_sample": False
+    "price_download": 0,
+    "price_interactive": 0,
+    "is_free": True,
+    "is_free_sample": True
 }
 
 # =============================================================================
