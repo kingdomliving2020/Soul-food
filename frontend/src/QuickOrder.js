@@ -813,6 +813,10 @@ const QuickOrder = () => {
                           </div>
                           <Button
                             onClick={() => {
+                              if (meal.preOrder || pkgData?.preOrder) {
+                                toast.info('Pre-orders coming soon! Sign up for notifications.');
+                                return;
+                              }
                               const itemName = pkgData?.selectMonth 
                                 ? `${meal.name} - ${meal.monthOptions.find(m => m.id === selectedMonth)?.name}`
                                 : pkgData?.selectLesson
@@ -829,9 +833,11 @@ const QuickOrder = () => {
                               });
                               toast.success(`Added ${itemName} to cart!`);
                             }}
-                            className="bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700 px-4"
+                            className={meal.preOrder || pkgData?.preOrder 
+                              ? "bg-amber-500 hover:bg-amber-600 px-4" 
+                              : "bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700 px-4"}
                           >
-                            Add to Cart
+                            {meal.preOrder || pkgData?.preOrder ? 'Pre-Order' : 'Add to Cart'}
                           </Button>
                         </div>
                       </div>
