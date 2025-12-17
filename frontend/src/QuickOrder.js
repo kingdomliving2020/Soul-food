@@ -699,11 +699,21 @@ const QuickOrder = () => {
                           <select
                             className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white"
                             value={selectedPkg}
-                            onChange={(e) => updateSelection(meal.id, 'package', e.target.value)}
+                            onChange={(e) => {
+                              const pkg = meal.packages.find(p => p.id === e.target.value);
+                              if (pkg?.available !== false) {
+                                updateSelection(meal.id, 'package', e.target.value);
+                              }
+                            }}
                           >
                             {meal.packages.map(pkg => (
-                              <option key={pkg.id} value={pkg.id}>
-                                {pkg.name} {pkg.note ? `(${pkg.note})` : ''}
+                              <option 
+                                key={pkg.id} 
+                                value={pkg.id}
+                                disabled={pkg.available === false}
+                                className={pkg.available === false ? 'text-slate-400' : ''}
+                              >
+                                {pkg.name} {pkg.preOrder ? '(Pre-Order)' : ''} {pkg.note && !pkg.preOrder ? `(${pkg.note})` : ''}
                               </option>
                             ))}
                           </select>
