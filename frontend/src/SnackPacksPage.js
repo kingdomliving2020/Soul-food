@@ -261,8 +261,16 @@ const SnackPacksPage = () => {
                     </div>
                     
                     <div className="flex items-center justify-between text-sm mb-3">
-                      <span className="text-slate-500">PDF: <span className="font-semibold text-slate-700">${nibble.price_download}</span></span>
-                      <span className="text-amber-600">Interactive: <span className="font-semibold">${nibble.price_interactive}</span></span>
+                      {nibble.is_free || nibble.price_download === 0 ? (
+                        <span className="w-full text-center bg-green-100 text-green-700 px-3 py-1 rounded-full font-bold">
+                          🎁 FREE
+                        </span>
+                      ) : (
+                        <>
+                          <span className="text-slate-500">PDF: <span className="font-semibold text-slate-700">${nibble.price_download}</span></span>
+                          <span className="text-amber-600">Interactive: <span className="font-semibold">${nibble.price_interactive}</span></span>
+                        </>
+                      )}
                     </div>
                     
                     <Button 
