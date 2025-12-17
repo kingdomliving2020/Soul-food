@@ -709,10 +709,10 @@ const QuickOrder = () => {
                       <div className="flex-shrink-0 relative">
                         <img 
                           src={meal.id === 'holiday' ? '/covers/holiday-adult-front.jpg' : 
-                               meal.id === 'instructor' ? '/covers/breakfast-adult-front.jpg' :
+                               meal.id === 'lunch' ? '/soul-food-logo.png' :
                                '/covers/breakfast-adult-front.jpg'} 
                           alt={meal.name}
-                          className={`w-28 h-40 object-cover rounded-lg border border-slate-200 shadow-sm ${meal.preOrder ? 'opacity-70' : ''}`}
+                          className={`w-28 h-40 object-cover rounded-lg border border-slate-200 shadow-sm ${meal.preOrder ? 'opacity-60 grayscale-[30%]' : ''}`}
                         />
                         {meal.preOrder && (
                           <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">
