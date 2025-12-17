@@ -29,7 +29,12 @@ const CheckoutPage = () => {
     setCouponError('');
 
     try {
-      const productIds = cartItems.map(item => item.productId);
+      // Get product IDs - use uniqueKey or productId, filter out any undefined
+      const productIds = cartItems
+        .map(item => item.productId || item.uniqueKey || item.id)
+        .filter(id => id);
+      
+      console.log('Validating coupon with productIds:', productIds);
       
       const response = await fetch(`${BACKEND_URL}/api/coupons/validate`, {
         method: 'POST',
