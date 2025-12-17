@@ -109,7 +109,7 @@ const CheckoutPage = () => {
           },
           body: JSON.stringify({
             items: cartItems.map(item => ({
-              product_id: item.productId || item.uniqueKey,
+              product_id: item.productId || item.uniqueKey || item.id,
               name: item.name,
               quantity: item.quantity,
               price: item.salePrice
@@ -120,7 +120,15 @@ const CheckoutPage = () => {
         });
 
         if (orderResponse.ok) {
-          const orderData = await orderResponse.json();
+          // Handle case where body may already be consumed by interceptor
+          let orderData;
+          if (orderResponse.bodyUsed) {
+            // Generate order ID locally if response was consumed
+            orderData = { order_id: `FREE-${Date.now().toString(36).toUpperCase()}` };
+          } else {
+            orderData = await orderResponse.json();
+          }
+          
           // Store order info and redirect to success/download page
           sessionStorage.setItem('orderComplete', JSON.stringify({
             orderId: orderData.order_id,
@@ -130,7 +138,13 @@ const CheckoutPage = () => {
           clearCart();
           navigate('/order-success?free=true&order=' + orderData.order_id);
         } else {
-          throw new Error('Failed to process free order');
+          // Handle error response with bodyUsed check
+          if (!orderResponse.bodyUsed) {
+            const errorData = await orderResponse.json().catch(() => ({}));
+            throw new Error(errorData.detail || 'Failed to process free order');
+          } else {
+            throw new Error('Failed to process free order. Please try again.');
+          }
         }
         return;
       }
