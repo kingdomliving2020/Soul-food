@@ -187,7 +187,10 @@ IN_HIS_IMAGE_NIBBLES = [
                 }
             ]
         },
-        "closing_prayer": "Lord, thank You for creating me with intention and care. Help me release every false identity I've carried and receive the truth of who You say I am. Restore what has been distorted and let my life reflect Your image. Amen."
+        "closing_prayer": "Lord, thank You for creating me with intention and care. Help me release every false identity I've carried and receive the truth of who You say I am. Restore what has been distorted and let my life reflect Your image. Amen.",
+        "price_download": 0,
+        "price_interactive": 0,
+        "is_free": True
     },
     {
         "id": "in-his-image-3",
