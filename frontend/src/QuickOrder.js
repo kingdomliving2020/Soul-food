@@ -749,6 +749,7 @@ const QuickOrder = () => {
                 </div>
               ))}
             </div>
+            </div>
           </div>
         </section>
 
