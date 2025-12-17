@@ -161,7 +161,8 @@ const OrderSuccess = () => {
                 </button>
               </div>
             </div>
-          ))}
+            );
+          })}
 
           {!orderData?.items?.length && (
             <div className="text-center py-8 text-gray-500">
