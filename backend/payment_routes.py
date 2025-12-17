@@ -201,6 +201,54 @@ class StatusRequest(BaseModel):
     session_id: str
 
 
+class FreeOrderItem(BaseModel):
+    product_id: str
+    name: str
+    quantity: int
+    price: float
+
+
+class FreeOrderRequest(BaseModel):
+    items: list[FreeOrderItem]
+    coupon_code: str
+    discount_percent: int
+
+
+@router.post("/free-order")
+async def process_free_order(request: FreeOrderRequest):
+    """Process a free order (100% discount coupon)"""
+    import uuid
+    
+    # Validate coupon
+    if request.discount_percent != 100:
+        raise HTTPException(status_code=400, detail="This endpoint is for free orders only (100% discount)")
+    
+    # Generate order ID
+    order_id = f"FREE-{str(uuid.uuid4())[:8].upper()}"
+    
+    # Store the order
+    order = {
+        "order_id": order_id,
+        "items": [item.dict() for item in request.items],
+        "coupon_code": request.coupon_code,
+        "discount_percent": request.discount_percent,
+        "total_amount": 0.00,
+        "payment_status": "completed",
+        "order_type": "free_beta",
+        "created_at": datetime.utcnow(),
+        "updated_at": datetime.utcnow()
+    }
+    
+    await db.orders.insert_one(order)
+    
+    return {
+        "success": True,
+        "order_id": order_id,
+        "message": "Free order processed successfully",
+        "items": [item.dict() for item in request.items]
+    }
+
+
 @router.post("/checkout/session")
 async def create_checkout_session(request: CheckoutRequest, http_request: Request):
     """Create a Stripe checkout session for a product"""
