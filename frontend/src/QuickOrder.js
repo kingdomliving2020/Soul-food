@@ -792,10 +792,27 @@ const QuickOrder = () => {
                             <select
                               className="w-full p-2 border border-orange-300 rounded-lg text-sm bg-orange-50"
                               value={selectedLesson}
-                              onChange={(e) => updateSelection(meal.id, 'lesson', e.target.value)}
+                              onChange={(e) => {
+                                const lesson = meal.lessonOptions.find(l => l.id === e.target.value);
+                                if (lesson?.available !== false) {
+                                  updateSelection(meal.id, 'lesson', e.target.value);
+                                }
+                              }}
                             >
-                              {meal.lessonOptions.map(lesson => (
-                                <option key={lesson.id} value={lesson.id}>{lesson.name}</option>
+                              {meal.lessonOptions.filter(l => l.available !== false).map(lesson => (
+                                <option key={lesson.id} value={lesson.id}>
+                                  {lesson.name}
+                                </option>
+                              ))}
+                              {meal.lessonOptions.some(l => l.available === false) && (
+                                <option disabled className="text-gray-400">
+                                  ── Coming Soon ──
+                                </option>
+                              )}
+                              {meal.lessonOptions.filter(l => l.available === false).map(lesson => (
+                                <option key={lesson.id} value={lesson.id} disabled className="text-gray-400">
+                                  {lesson.name} (Coming Soon)
+                                </option>
                               ))}
                             </select>
                           </div>
