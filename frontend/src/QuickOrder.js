@@ -653,7 +653,7 @@ const QuickOrder = () => {
                       {/* Cover Image */}
                       <div className="flex-shrink-0">
                         <img 
-                          src={getCoverImage({ id: meal.id, editions: meal.editions }, 'front')} 
+                          src={meal.id === 'holiday' ? '/covers/holiday-adult-front.jpg' : '/covers/breakfast-adult-front.jpg'} 
                           alt={meal.name}
                           className="w-28 h-40 object-cover rounded-lg border border-slate-200 shadow-sm"
                         />
