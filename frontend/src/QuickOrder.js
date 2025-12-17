@@ -205,7 +205,7 @@ const QuickOrder = () => {
       editions: ['adult', 'youth'],
       formats: ['interactive', 'epub'],
       packages: [
-        { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, available: true },
+        { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, selectLesson: true, available: true },
         { id: 'snack', name: 'Snack Pack (4 Lessons)', lessons: 4, selectMonth: true, available: true },
         { id: 'meal', name: 'Meal Bundle (12 Lessons)', lessons: 12, available: false, preOrder: true, note: 'Q2 2026' },
         { id: 'subscription', name: 'Subscription (All Access)', isSubscription: true, available: true }
@@ -228,6 +228,7 @@ const QuickOrder = () => {
         }
       },
       monthOptions: breakfastMonths,
+      lessonOptions: breakfastLessons,
       salePercent: 10
     },
     {
