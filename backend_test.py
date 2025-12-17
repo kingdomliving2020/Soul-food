@@ -753,6 +753,141 @@ class SoulFoodQuickOrderTester:
             self.log_test("Checkout Coupon Case Sensitivity", False, f"Exception: {str(e)}")
             return False
 
+    def test_soul_food_coupon_validation_holiday_covenant(self):
+        """Test coupon validation with Beta1!2!3! code for holiday-nibble-covenant"""
+        try:
+            test_data = {
+                "code": "Beta1!2!3!",
+                "product_ids": ["holiday-nibble-covenant"]
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/coupons/validate",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Soul Food Coupon - Holiday Covenant", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["valid", "discount_percent", "message", "code"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Soul Food Coupon - Holiday Covenant", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify coupon is valid with 100% discount
+            if not data.get("valid"):
+                self.log_test("Soul Food Coupon - Holiday Covenant", False, f"Coupon not valid: {data.get('message')}")
+                return False
+                
+            if data.get("discount_percent") != 100:
+                self.log_test("Soul Food Coupon - Holiday Covenant", False, f"Wrong discount: {data.get('discount_percent')}, expected: 100")
+                return False
+            
+            self.log_test("Soul Food Coupon - Holiday Covenant", True, "Beta1!2!3! coupon validated successfully for holiday-nibble-covenant with 100% discount")
+            return True
+            
+        except Exception as e:
+            self.log_test("Soul Food Coupon - Holiday Covenant", False, f"Exception: {str(e)}")
+            return False
+
+    def test_soul_food_free_order_processing(self):
+        """Test free order processing with 100% discount coupon"""
+        try:
+            test_data = {
+                "items": [
+                    {
+                        "product_id": "holiday-nibble-covenant",
+                        "name": "Holiday Series - The Covenant",
+                        "quantity": 1,
+                        "price": 3.59
+                    }
+                ],
+                "coupon_code": "Beta1!2!3!",
+                "discount_percent": 100
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/payments/free-order",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Soul Food Free Order Processing", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["success", "order_id", "message", "items"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Soul Food Free Order Processing", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify order was processed successfully
+            if not data.get("success"):
+                self.log_test("Soul Food Free Order Processing", False, f"Order not successful: {data.get('message')}")
+                return False
+                
+            # Verify order ID format
+            order_id = data.get("order_id", "")
+            if not order_id.startswith("FREE-"):
+                self.log_test("Soul Food Free Order Processing", False, f"Invalid order ID format: {order_id}")
+                return False
+            
+            # Store order ID for potential cleanup
+            self.order_id = order_id
+            
+            self.log_test("Soul Food Free Order Processing", True, f"Free order processed successfully with order ID: {order_id}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Soul Food Free Order Processing", False, f"Exception: {str(e)}")
+            return False
+
+    def test_soul_food_pdf_download(self):
+        """Test PDF download for holiday-ae-covenant lesson"""
+        try:
+            response = self.session.get(
+                f"{self.base_url}/interactive-lessons/download/nibble/holiday-ae-covenant",
+                headers={"Accept": "application/pdf"}
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Soul Food PDF Download", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+            
+            # Verify content type is PDF
+            content_type = response.headers.get("content-type", "")
+            if "application/pdf" not in content_type:
+                self.log_test("Soul Food PDF Download", False, f"Wrong content type: {content_type}, expected: application/pdf")
+                return False
+            
+            # Verify we got actual PDF content
+            content = response.content
+            if len(content) < 1000:  # PDF should be at least 1KB
+                self.log_test("Soul Food PDF Download", False, f"PDF content too small: {len(content)} bytes")
+                return False
+            
+            # Verify PDF header
+            if not content.startswith(b'%PDF'):
+                self.log_test("Soul Food PDF Download", False, "Content does not start with PDF header")
+                return False
+            
+            self.log_test("Soul Food PDF Download", True, f"PDF downloaded successfully ({len(content)} bytes)")
+            return True
+            
+        except Exception as e:
+            self.log_test("Soul Food PDF Download", False, f"Exception: {str(e)}")
+            return False
+
     def test_api_endpoints_availability(self):
         """Test that required API endpoints are available"""
         try:
