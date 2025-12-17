@@ -981,7 +981,7 @@ class SoulFoodQuickOrderTester:
 
     def run_all_tests(self):
         """Run all Soul Food Quick Order and Checkout Tests"""
-        print("🧪 Starting Soul Food Quick Order and Checkout Tests")
+        print("🧪 Starting Soul Food Complete Checkout and Download Flow Tests")
         print(f"🌐 Testing against: {self.base_url}")
         print("=" * 70)
         
@@ -990,11 +990,16 @@ class SoulFoodQuickOrderTester:
             self.test_api_endpoints_availability,
             self.test_series_and_editions_data,
             
+            # Soul Food Complete Flow Tests (Priority)
+            self.test_soul_food_coupon_validation_holiday_covenant,
+            self.test_soul_food_free_order_processing,
+            self.test_soul_food_pdf_download,
+            
             # Quick Order and Pricing Tests
             self.test_quick_order_pricing_verification,
             self.test_cart_flow_holiday_nibble,
             
-            # Checkout and Coupon Tests (Priority)
+            # Checkout and Coupon Tests
             self.test_checkout_coupon_beta123,
             self.test_checkout_coupon_case_sensitivity,
             
@@ -1014,7 +1019,7 @@ class SoulFoodQuickOrderTester:
         print(f"📊 Test Results: {passed}/{total} tests passed")
         
         if passed == total:
-            print("🎉 All Soul Food Quick Order and Checkout tests PASSED!")
+            print("🎉 All Soul Food Complete Checkout and Download Flow tests PASSED!")
             return True
         else:
             print(f"⚠️  {total - passed} test(s) FAILED")
