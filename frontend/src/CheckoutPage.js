@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useCart, PRODUCTS } from './CartContext';
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, ShoppingBag } from 'lucide-react';
+import { CreditCard, ShoppingBag, Trash2 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const CheckoutPage = () => {
-  const { cartItems, getCartTotal, clearCart } = useCart();
+  const { cartItems, getCartTotal, clearCart, removeFromCart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
