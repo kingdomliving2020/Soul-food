@@ -90,14 +90,26 @@ const OrderSuccess = () => {
   };
 
   const handleViewInteractive = (item) => {
-    // Navigate to the interactive lesson page
-    const seriesMatch = item.name.match(/Holiday|Breakfast|Lunch/i);
-    const lessonMatch = item.name.match(/Covenant|Cradle|Cross|Comforter/i);
+    // Navigate to the interactive lesson page using nibble ID
+    const editionMatch = item.name?.match(/ADULT|YOUTH|INSTRUCTOR/i);
+    const edition = editionMatch ? editionMatch[0].toLowerCase() : 'adult';
+    const editionCode = edition === 'adult' ? 'ae' : edition === 'youth' ? 'ye' : 'ie';
     
-    const series = seriesMatch ? seriesMatch[0].toLowerCase() : 'holiday';
-    const lesson = lessonMatch ? lessonMatch[0].toLowerCase() : 'covenant';
+    // Determine nibble ID based on lesson name
+    let nibbleId = 'holiday-ae-covenant'; // default
     
-    navigate(`/lesson/${series}-${lesson}`);
+    if (item.name?.includes('Covenant')) nibbleId = `holiday-${editionCode}-covenant`;
+    else if (item.name?.includes('Cradle')) nibbleId = `holiday-${editionCode}-cradle`;
+    else if (item.name?.includes('Cross')) nibbleId = `holiday-${editionCode}-cross`;
+    else if (item.name?.includes('Comforter')) nibbleId = `holiday-${editionCode}-comforter`;
+    else if (item.name?.includes('Made in His Image')) nibbleId = 'in-his-image-1';
+    else if (item.name?.includes('Accepted and Loved')) nibbleId = 'in-his-image-2';
+    else if (item.name?.includes('Chosen of God')) nibbleId = 'in-his-image-3';
+    else if (item.name?.includes('Names of God')) nibbleId = `holiday-${editionCode}-bonus-names`;
+    else if (item.name?.includes('Times and Seasons')) nibbleId = `holiday-${editionCode}-bonus-times`;
+    
+    // Navigate to the interactive lesson route
+    navigate(`/interactive-lesson/${nibbleId}`);
   };
 
   return (
