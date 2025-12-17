@@ -688,6 +688,64 @@ const QuickOrder = () => {
           </p>
         </div>
 
+        {/* FREE LESSONS SECTION */}
+        <section className="mb-12">
+          <h3 className="text-2xl font-bold mb-4 text-slate-800">🎁 Free Lessons</h3>
+          <p className="text-slate-600 mb-4">Try these lessons for FREE - no payment required!</p>
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {freeLessons.map(lesson => (
+                <div key={lesson.id} className="bg-white rounded-lg p-3 shadow-sm border border-green-100 hover:shadow-md transition-shadow">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <span className="text-green-600 text-lg">✓</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-slate-800 text-sm">{lesson.name}</h4>
+                      <p className="text-xs text-green-600 font-medium">{lesson.series}</p>
+                      <p className="text-xs text-slate-500 mt-1 truncate">{lesson.description}</p>
+                      <div className="flex gap-2 mt-2">
+                        <a
+                          href={`/interactive-lesson/${lesson.id}`}
+                          className="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-full font-medium transition-colors"
+                        >
+                          Start Free
+                        </a>
+                        <button
+                          onClick={async () => {
+                            try {
+                              const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/interactive-lessons/download/nibble/${lesson.id}`);
+                              if (response.ok) {
+                                const blob = await response.blob();
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = `SoulFood_${lesson.name.replace(/\s+/g, '_')}.pdf`;
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                window.URL.revokeObjectURL(url);
+                                toast.success('PDF downloaded!');
+                              } else {
+                                toast.error('Download not available yet');
+                              }
+                            } catch (err) {
+                              toast.error('Download failed');
+                            }
+                          }}
+                          className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-medium transition-colors"
+                        >
+                          📥 PDF
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* COMPACT AMAZON-STYLE: Soul Food Meals */}
         <section className="mb-12">
           <h3 className="text-2xl font-bold mb-6 text-slate-800">📚 Soul Food Meals</h3>
