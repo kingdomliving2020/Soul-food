@@ -118,12 +118,21 @@ const OrderSuccess = () => {
             Your Downloads
           </h2>
           
-          {orderData?.items?.map((item, index) => (
+          {orderData?.items?.map((item, index) => {
+            // Parse item details
+            const seriesMatch = item.name?.match(/Holiday|Breakfast|Lunch/i);
+            const lessonMatch = item.name?.match(/Covenant|Cradle|Cross|Comforter/i);
+            const series = seriesMatch ? seriesMatch[0] : 'Holiday';
+            const lesson = lessonMatch ? lessonMatch[0] : 'Covenant';
+            
+            return (
             <div key={index} className="border-b last:border-b-0 py-4">
               <div className="flex justify-between items-start mb-3">
                 <div>
-                  <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                  <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+                  <h3 className="font-semibold text-gray-900">{item.name || `${series} Series - ${lesson}`}</h3>
+                  <p className="text-sm text-gray-500">
+                    {series} Series • {lesson} Lesson • Qty: {item.quantity || 1}
+                  </p>
                 </div>
                 {isFreeOrder && (
                   <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-1 rounded">
