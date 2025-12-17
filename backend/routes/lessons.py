@@ -281,7 +281,10 @@ IN_HIS_IMAGE_NIBBLES = [
                 }
             ]
         },
-        "closing_prayer": "Father God, thank You for choosing me with intention and wisdom. Help me see myself through Your Word rather than comparison or rejection. Teach me to live as one who belongs to You—secure in identity, grounded in purpose, and faithful in calling. Amen."
+        "closing_prayer": "Father God, thank You for choosing me with intention and wisdom. Help me see myself through Your Word rather than comparison or rejection. Teach me to live as one who belongs to You—secure in identity, grounded in purpose, and faithful in calling. Amen.",
+        "price_download": 0,
+        "price_interactive": 0,
+        "is_free": True
     }
 ]
 
