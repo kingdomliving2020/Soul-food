@@ -1920,6 +1920,7 @@ function App() {
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancel" element={<PaymentCancel />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
           </Routes>
         </BrowserRouter>
       </CartProvider>
