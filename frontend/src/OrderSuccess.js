@@ -119,11 +119,11 @@ const OrderSuccess = () => {
           </h2>
           
           {orderData?.items?.map((item, index) => {
-            // Parse item details
-            const seriesMatch = item.name?.match(/Holiday|Breakfast|Lunch/i);
-            const lessonMatch = item.name?.match(/Covenant|Cradle|Cross|Comforter/i);
-            const series = seriesMatch ? seriesMatch[0] : 'Holiday';
-            const lesson = lessonMatch ? lessonMatch[0] : 'Covenant';
+            // Parse item details from the full item name
+            const seriesMatch = item.name?.match(/Holiday|Break\*?fast|Lunch/i);
+            const lessonMatch = item.name?.match(/Covenant|Cradle|Cross|Comforter|Made in His Image|Accepted and Loved|Chosen of God/i);
+            const series = seriesMatch ? seriesMatch[0].replace('*', '') : 'Holiday';
+            const lesson = lessonMatch ? lessonMatch[0] : 'Lesson';
             
             return (
             <div key={index} className="border-b last:border-b-0 py-4">
@@ -131,7 +131,7 @@ const OrderSuccess = () => {
                 <div>
                   <h3 className="font-semibold text-gray-900">{item.name || `${series} Series - ${lesson}`}</h3>
                   <p className="text-sm text-gray-500">
-                    {series} Series • {lesson} Lesson • Qty: {item.quantity || 1}
+                    {series} Series • {lesson} • Qty: {item.quantity || 1}
                   </p>
                 </div>
                 {isFreeOrder && (
