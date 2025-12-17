@@ -675,13 +675,20 @@ const QuickOrder = () => {
                   <CardContent className="p-5">
                     <div className="flex gap-4">
                       {/* Cover Image */}
-                      <div className="flex-shrink-0">
+                      <div className="flex-shrink-0 relative">
                         <img 
-                          src={meal.id === 'holiday' ? '/covers/holiday-adult-front.jpg' : '/covers/breakfast-adult-front.jpg'} 
+                          src={meal.id === 'holiday' ? '/covers/holiday-adult-front.jpg' : 
+                               meal.id === 'instructor' ? '/covers/breakfast-adult-front.jpg' :
+                               '/covers/breakfast-adult-front.jpg'} 
                           alt={meal.name}
-                          className="w-28 h-40 object-cover rounded-lg border border-slate-200 shadow-sm"
+                          className={`w-28 h-40 object-cover rounded-lg border border-slate-200 shadow-sm ${meal.preOrder ? 'opacity-70' : ''}`}
                         />
-                        {pkgData?.badge && (
+                        {meal.preOrder && (
+                          <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">
+                            Pre-Order
+                          </Badge>
+                        )}
+                        {pkgData?.badge && !meal.preOrder && (
                           <Badge className="mt-2 bg-emerald-500 text-xs w-full justify-center">
                             {pkgData.badge}
                           </Badge>
