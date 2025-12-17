@@ -93,7 +93,10 @@ IN_HIS_IMAGE_NIBBLES = [
             ]
         },
         "closing_prayer": "God, thank You for seeing me as worth restoring. Help me walk toward the wholeness You intended from the beginning.",
-        "your_prayer_prompt": "Take a moment and write a prayer for yourself or loved one that may need divine support with coming into wholeness and embracing their purpose as they walk in or discover Heaven's view of them."
+        "your_prayer_prompt": "Take a moment and write a prayer for yourself or loved one that may need divine support with coming into wholeness and embracing their purpose as they walk in or discover Heaven's view of them.",
+        "price_download": 0,
+        "price_interactive": 0,
+        "is_free": True
     },
     {
         "id": "in-his-image-2",
