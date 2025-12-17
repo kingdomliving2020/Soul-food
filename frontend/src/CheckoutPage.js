@@ -170,21 +170,30 @@ const CheckoutPage = () => {
               <h2 className="text-xl font-bold mb-4">Order Summary</h2>
               
               {cartItems.map((item) => (
-                <div key={item.productId} className="flex justify-between items-center py-4 border-b last:border-b-0">
+                <div key={item.uniqueKey || item.productId} className="flex justify-between items-center py-4 border-b last:border-b-0">
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900">{item.name}</h3>
                     <p className="text-sm text-gray-500">{item.description}</p>
                     <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
                   </div>
-                  <div className="text-right ml-4">
-                    {item.listPrice > item.salePrice && (
-                      <div className="text-sm text-gray-400 line-through">
-                        ${item.listPrice.toFixed(2)}
+                  <div className="flex items-center gap-3 ml-4">
+                    <div className="text-right">
+                      {item.listPrice > item.salePrice && (
+                        <div className="text-sm text-gray-400 line-through">
+                          ${item.listPrice.toFixed(2)}
+                        </div>
+                      )}
+                      <div className="text-lg font-bold text-purple-600">
+                        ${(item.salePrice * item.quantity).toFixed(2)}
                       </div>
-                    )}
-                    <div className="text-lg font-bold text-purple-600">
-                      ${(item.salePrice * item.quantity).toFixed(2)}
                     </div>
+                    <button
+                      onClick={() => removeFromCart(item.uniqueKey || item.productId)}
+                      className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors"
+                      title="Remove item"
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
               ))}
