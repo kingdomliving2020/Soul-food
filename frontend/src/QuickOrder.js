@@ -684,7 +684,7 @@ const QuickOrder = () => {
         {/* Hero Section - Updated tagline instead of repeating Quick Order */}
         <div className="text-center mb-8">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-purple-600 bg-clip-text text-transparent">
-            🍽️ What's on Your Plate Today?
+            🍽️ What&apos;s on Your Plate Today?
           </h2>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
             Select your spiritual nourishment below and add to your cart in seconds!
