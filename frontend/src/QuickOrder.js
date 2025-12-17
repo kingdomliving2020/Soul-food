@@ -690,68 +690,87 @@ const QuickOrder = () => {
           </p>
         </div>
 
-        {/* FREE LESSONS SECTION */}
+        {/* FREE LESSONS CARD - Same style as Holiday/Breakfast cards */}
         <section className="mb-12">
-          <h3 className="text-2xl font-bold mb-4 text-slate-800">🎁 Free Lessons</h3>
-          <p className="text-slate-600 mb-4">Try these lessons for FREE - no payment required!</p>
-          <div className="relative rounded-xl overflow-hidden border border-green-200">
-            {/* Background Image */}
-            <div 
-              className="absolute inset-0 bg-cover bg-center opacity-20"
-              style={{ backgroundImage: "url('/images/free-lessons-card.png')" }}
-            />
-            <div className="relative bg-gradient-to-r from-green-50/90 to-emerald-50/90 p-4">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {freeLessons.map(lesson => (
-                <div key={lesson.id} className="bg-white rounded-lg p-3 shadow-sm border border-green-100 hover:shadow-md transition-shadow">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <span className="text-green-600 text-lg">✓</span>
+          <h3 className="text-2xl font-bold mb-6 text-slate-800">🎁 Free Lessons</h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Free Lessons Card */}
+            <Card className="shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+              <CardContent className="p-0">
+                <div className="flex">
+                  {/* Cover Image */}
+                  <div className="flex-shrink-0 w-36">
+                    <img 
+                      src="/images/free-lessons-card.png" 
+                      alt="Free Lessons - Made in His Image, Names of God, Times & Seasons"
+                      className="w-full h-full object-cover"
+                      style={{ minHeight: '280px' }}
+                    />
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="flex-1 p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h4 className="font-bold text-lg text-slate-800">Free Lesson Collection</h4>
+                      <Badge className="bg-green-500 text-white text-xs">FREE</Badge>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-semibold text-slate-800 text-sm">{lesson.name}</h4>
-                      <p className="text-xs text-green-600 font-medium">{lesson.series}</p>
-                      <p className="text-xs text-slate-500 mt-1 truncate">{lesson.description}</p>
-                      <div className="flex gap-2 mt-2">
-                        <a
-                          href={`/interactive-lesson/${lesson.id}`}
-                          className="text-xs bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-full font-medium transition-colors"
-                        >
-                          Start Free
-                        </a>
-                        <button
-                          onClick={async () => {
-                            try {
-                              const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/interactive-lessons/download/nibble/${lesson.id}`);
-                              if (response.ok) {
-                                const blob = await response.blob();
-                                const url = window.URL.createObjectURL(blob);
-                                const a = document.createElement('a');
-                                a.href = url;
-                                a.download = `SoulFood_${lesson.name.replace(/\s+/g, '_')}.pdf`;
-                                document.body.appendChild(a);
-                                a.click();
-                                document.body.removeChild(a);
-                                window.URL.revokeObjectURL(url);
-                                toast.success('PDF downloaded!');
-                              } else {
-                                toast.error('Download not available yet');
-                              }
-                            } catch (err) {
-                              toast.error('Download failed');
-                            }
-                          }}
-                          className="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-full font-medium transition-colors"
-                        >
-                          📥 PDF
-                        </button>
-                      </div>
+                    <p className="text-xs text-slate-500 mb-3">Self-Worth Series + Holiday Bonus Lessons</p>
+                    
+                    {/* Lesson List */}
+                    <div className="space-y-2 mb-4">
+                      {freeLessons.map(lesson => (
+                        <div key={lesson.id} className="flex items-center justify-between bg-green-50 rounded-lg p-2 border border-green-100">
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-slate-800 truncate">{lesson.name}</p>
+                            <p className="text-xs text-green-600">{lesson.series}</p>
+                          </div>
+                          <div className="flex gap-1 ml-2">
+                            <a
+                              href={`/interactive-lesson/${lesson.id}`}
+                              className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded font-medium transition-colors"
+                            >
+                              Start
+                            </a>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/interactive-lessons/download/nibble/${lesson.id}`);
+                                  if (response.ok) {
+                                    const blob = await response.blob();
+                                    const url = window.URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    a.download = `SoulFood_${lesson.name.replace(/\s+/g, '_')}.pdf`;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    document.body.removeChild(a);
+                                    window.URL.revokeObjectURL(url);
+                                    toast.success('PDF downloaded!');
+                                  } else {
+                                    toast.error('Download not available yet');
+                                  }
+                                } catch (err) {
+                                  toast.error('Download failed');
+                                }
+                              }}
+                              className="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 px-2 py-1 rounded font-medium transition-colors"
+                            >
+                              📥
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    {/* Price Display */}
+                    <div className="text-center py-2 bg-green-100 rounded-lg">
+                      <span className="text-2xl font-bold text-green-700">$0.00</span>
+                      <span className="text-sm text-green-600 ml-2">All 5 Lessons FREE!</span>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </section>
 
