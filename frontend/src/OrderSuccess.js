@@ -25,18 +25,41 @@ const OrderSuccess = () => {
     setDownloading(prev => ({ ...prev, [item.name]: true }));
     
     try {
-      // Extract series and lesson info from the item
+      // Extract series and lesson info from the item name
       const seriesMatch = item.name.match(/Holiday|Breakfast|Lunch/i);
-      const lessonMatch = item.name.match(/Covenant|Cradle|Cross|Comforter|Prayer|Faith/i);
+      const lessonMatch = item.name.match(/Covenant|Cradle|Cross|Comforter/i);
+      const editionMatch = item.name.match(/ADULT|YOUTH|INSTRUCTOR/i);
       
       const series = seriesMatch ? seriesMatch[0].toLowerCase() : 'holiday';
       const lesson = lessonMatch ? lessonMatch[0].toLowerCase() : 'covenant';
+      const edition = editionMatch ? editionMatch[0].toLowerCase() : 'adult';
+      
+      // Map to correct nibble ID format: holiday-ae-covenant, holiday-ae-cradle, etc.
+      const editionCode = edition === 'adult' ? 'ae' : edition === 'youth' ? 'ye' : 'ie';
+      const nibbleId = `${series}-${editionCode}-${lesson}`;
+      
+      console.log('Downloading nibble:', nibbleId);
       
       // Call the PDF download endpoint
-      const response = await fetch(`${BACKEND_URL}/api/interactive-lessons/download/${series}/${lesson}`);
+      const response = await fetch(`${BACKEND_URL}/api/interactive-lessons/download/nibble/${nibbleId}`);
       
       if (!response.ok) {
-        throw new Error('Failed to download');
+        // Try alternative download method - series download
+        console.log('Nibble download failed, trying series download');
+        const seriesResponse = await fetch(`${BACKEND_URL}/api/interactive-lessons/download/series/${series}`);
+        if (!seriesResponse.ok) {
+          throw new Error('Failed to download');
+        }
+        const blob = await seriesResponse.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `SoulFood_${series}_series.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        return;
       }
       
       // Get the blob and create download
@@ -52,7 +75,7 @@ const OrderSuccess = () => {
       
     } catch (error) {
       console.error('Download error:', error);
-      alert('Download failed. Please try again or contact support.');
+      alert('Download is being prepared. Please try again in a moment or visit the Interactive Lessons page.');
     } finally {
       setDownloading(prev => ({ ...prev, [item.name]: false }));
     }
