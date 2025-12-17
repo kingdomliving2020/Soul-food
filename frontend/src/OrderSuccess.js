@@ -26,17 +26,25 @@ const OrderSuccess = () => {
     
     try {
       // Extract series and lesson info from the item name
-      const seriesMatch = item.name.match(/Holiday|Breakfast|Lunch/i);
-      const lessonMatch = item.name.match(/Covenant|Cradle|Cross|Comforter/i);
+      const seriesMatch = item.name.match(/Holiday|Break\*?fast|Lunch/i);
       const editionMatch = item.name.match(/ADULT|YOUTH|INSTRUCTOR/i);
       
-      const series = seriesMatch ? seriesMatch[0].toLowerCase() : 'holiday';
-      const lesson = lessonMatch ? lessonMatch[0].toLowerCase() : 'covenant';
+      let series = seriesMatch ? seriesMatch[0].toLowerCase().replace('*', '') : 'holiday';
       const edition = editionMatch ? editionMatch[0].toLowerCase() : 'adult';
       
-      // Map to correct nibble ID format: holiday-ae-covenant, holiday-ae-cradle, etc.
+      // Determine lesson ID based on lesson name in item
+      let lessonId = 'covenant'; // default
+      if (item.name?.includes('Covenant')) lessonId = 'covenant';
+      else if (item.name?.includes('Cradle')) lessonId = 'cradle';
+      else if (item.name?.includes('Cross')) lessonId = 'cross';
+      else if (item.name?.includes('Comforter')) lessonId = 'comforter';
+      else if (item.name?.includes('Made in His Image')) lessonId = 'in-his-image-1';
+      else if (item.name?.includes('Accepted and Loved')) lessonId = 'in-his-image-2';
+      else if (item.name?.includes('Chosen of God')) lessonId = 'in-his-image-3';
+      
+      // Map to correct nibble ID format
       const editionCode = edition === 'adult' ? 'ae' : edition === 'youth' ? 'ye' : 'ie';
-      const nibbleId = `${series}-${editionCode}-${lesson}`;
+      const nibbleId = `${series}-${editionCode}-${lessonId}`;
       
       console.log('Downloading nibble:', nibbleId);
       
