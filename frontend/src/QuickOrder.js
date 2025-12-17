@@ -198,8 +198,8 @@ const QuickOrder = () => {
     {
       id: 'holiday-snack-pack',
       name: 'Holiday Snack Pack',
-      subtitle: '6-Lesson Bundle (Save 10%!)',
-      description: 'All 6 Holiday lessons at a discounted price',
+      subtitle: 'The 4 C\'s Bundle (4 Lessons)',
+      description: 'All 4 C\'s of Christianity: Covenant, Cradle, Cross, Comforter',
       available: true,
       isSnackPack: true,
       badge: 'Best Value',
@@ -237,20 +237,20 @@ const QuickOrder = () => {
     {
       id: 'breakfast-snack-pack',
       name: 'Breakfast Snack Pack',
-      subtitle: '12-Lesson Bundle (Save 10%!)',
-      description: '12 Breakfast lessons - one full quarter of content',
+      subtitle: 'Monthly Pack (4 Lessons)',
+      description: 'One month of Breakfast lessons - choose your month/topic',
       available: true,
       isSnackPack: true,
       badge: 'Best Value',
       editions: ['adult', 'youth'],
       formats: ['interactive', 'epub'],
       listPrices: {
-        adult: { interactive: 16.99, epub: 12.99 },
-        youth: { interactive: 16.99, epub: 12.99 }
+        adult: { interactive: 7.99, epub: 5.99 },
+        youth: { interactive: 7.99, epub: 5.99 }
       },
       prices: {
-        adult: { interactive: 15.29, epub: 11.69 },
-        youth: { interactive: 15.29, epub: 11.69 }
+        adult: { interactive: 7.19, epub: 5.39 },
+        youth: { interactive: 7.19, epub: 5.39 }
       },
       salePercent: 10
     },
