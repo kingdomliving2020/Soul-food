@@ -296,6 +296,19 @@ const CheckoutPage = () => {
               <p className="text-xs text-gray-500 text-center mt-4">
                 Secure payment powered by Stripe
               </p>
+
+              {/* Return Policy Notice - Paperback books only */}
+              <div className="mt-6 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                <h4 className="text-xs font-semibold text-slate-700 mb-1">📚 Return Policy (Paperback Books)</h4>
+                <ul className="text-xs text-slate-600 space-y-1">
+                  <li>• Returns accepted if workbook is unmarked</li>
+                  <li>• 15% restocking fee applies</li>
+                  <li>• Damaged in shipping? Contact us for exchange</li>
+                </ul>
+                <p className="text-xs text-slate-500 mt-2 italic">
+                  Digital products (PDF, ePub, Interactive) are non-refundable.
+                </p>
+              </div>
             </div>
           </div>
         </div>
