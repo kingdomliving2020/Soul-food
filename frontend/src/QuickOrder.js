@@ -612,8 +612,197 @@ const QuickOrder = () => {
           </p>
         </div>
 
-        {/* Soul Food Series */}
-        <section className="mb-16">
+        {/* COMPACT AMAZON-STYLE: Soul Food Meals */}
+        <section className="mb-12">
+          <h3 className="text-2xl font-bold mb-6 text-slate-800">📚 Soul Food Meals</h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            {mealSeries.map(meal => {
+              const sel = selections[meal.id] || {};
+              const selectedPkg = sel.package || meal.packages[0].id;
+              const selectedEdition = sel.edition || meal.editions[0];
+              const selectedFormat = sel.format || (selectedPkg === 'subscription' ? 'subscription_monthly' : 'interactive');
+              const selectedMonth = sel.month || (meal.monthOptions?.[0]?.id);
+              const selectedLesson = sel.lesson || (meal.lessonOptions?.[0]?.id);
+              
+              const pkgData = meal.packages.find(p => p.id === selectedPkg);
+              const pricingData = meal.pricing[selectedPkg];
+              
+              // Get price based on selections
+              const getPackagePrice = () => {
+                if (!pricingData?.prices?.[selectedEdition]) return 0;
+                return pricingData.prices[selectedEdition][selectedFormat] || 0;
+              };
+              const getPackageListPrice = () => {
+                if (!pricingData?.listPrices?.[selectedEdition]) return null;
+                return pricingData.listPrices[selectedEdition][selectedFormat] || null;
+              };
+              
+              const price = getPackagePrice();
+              const listPrice = getPackageListPrice();
+              
+              // Available formats for selected package
+              const availableFormats = pkgData?.isSubscription 
+                ? ['subscription_monthly', 'subscription_annual']
+                : meal.formats.filter(f => !f.includes('subscription'));
+
+              return (
+                <Card key={meal.id} className="shadow-lg hover:shadow-xl transition-shadow">
+                  <CardContent className="p-5">
+                    <div className="flex gap-4">
+                      {/* Cover Image */}
+                      <div className="flex-shrink-0">
+                        <img 
+                          src={getCoverImage({ id: meal.id, editions: meal.editions }, 'front')} 
+                          alt={meal.name}
+                          className="w-28 h-40 object-cover rounded-lg border border-slate-200 shadow-sm"
+                        />
+                        {pkgData?.badge && (
+                          <Badge className="mt-2 bg-emerald-500 text-xs w-full justify-center">
+                            {pkgData.badge}
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      {/* Options */}
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-lg text-slate-800">{meal.name}</h4>
+                        <p className="text-xs text-slate-500 mb-3">{meal.tagline}</p>
+                        
+                        {/* Package Size Selector */}
+                        <div className="mb-2">
+                          <label className="block text-xs font-semibold mb-1 text-slate-700">Size:</label>
+                          <select
+                            className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white"
+                            value={selectedPkg}
+                            onChange={(e) => updateSelection(meal.id, 'package', e.target.value)}
+                          >
+                            {meal.packages.map(pkg => (
+                              <option key={pkg.id} value={pkg.id}>
+                                {pkg.name} {pkg.note ? `(${pkg.note})` : ''}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {/* Month Selector - for Snack Packs */}
+                        {pkgData?.selectMonth && meal.monthOptions && (
+                          <div className="mb-2">
+                            <label className="block text-xs font-semibold mb-1 text-purple-700">📅 Select Month:</label>
+                            <select
+                              className="w-full p-2 border border-purple-300 rounded-lg text-sm bg-purple-50"
+                              value={selectedMonth}
+                              onChange={(e) => updateSelection(meal.id, 'month', e.target.value)}
+                            >
+                              {meal.monthOptions.map(month => (
+                                <option key={month.id} value={month.id}>{month.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+
+                        {/* Lesson Selector - for Nibbles */}
+                        {pkgData?.selectLesson && meal.lessonOptions && (
+                          <div className="mb-2">
+                            <label className="block text-xs font-semibold mb-1 text-orange-700">📖 Select Lesson:</label>
+                            <select
+                              className="w-full p-2 border border-orange-300 rounded-lg text-sm bg-orange-50"
+                              value={selectedLesson}
+                              onChange={(e) => updateSelection(meal.id, 'lesson', e.target.value)}
+                            >
+                              {meal.lessonOptions.map(lesson => (
+                                <option key={lesson.id} value={lesson.id}>{lesson.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          {/* Edition Selector */}
+                          <div>
+                            <label className="block text-xs font-semibold mb-1 text-slate-700">Edition:</label>
+                            <select
+                              className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white"
+                              value={selectedEdition}
+                              onChange={(e) => updateSelection(meal.id, 'edition', e.target.value)}
+                            >
+                              {meal.editions.map(ed => (
+                                <option key={ed} value={ed}>
+                                  {ed === 'adult' ? 'Adult' : ed === 'youth' ? 'Youth' : 'Instructor'}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {/* Format Selector */}
+                          <div>
+                            <label className="block text-xs font-semibold mb-1 text-slate-700">Format:</label>
+                            <select
+                              className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white"
+                              value={selectedFormat}
+                              onChange={(e) => updateSelection(meal.id, 'format', e.target.value)}
+                            >
+                              {availableFormats.map(fmt => (
+                                <option key={fmt} value={fmt}>
+                                  {fmt === 'physical' ? 'Paperback' :
+                                   fmt === 'interactive' ? 'i-PDF' :
+                                   fmt === 'epub' ? 'ePub' :
+                                   fmt === 'subscription_monthly' ? 'Monthly' :
+                                   fmt === 'subscription_annual' ? 'Annual' : fmt}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+
+                        {/* Price & Add to Cart */}
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                          <div>
+                            {isSaleActive && listPrice && listPrice !== price && (
+                              <span className="text-xs text-slate-400 line-through mr-2">${listPrice.toFixed(2)}</span>
+                            )}
+                            <span className="text-xl font-bold text-purple-600">
+                              ${price.toFixed(2)}
+                              {selectedFormat.includes('subscription') && (
+                                <span className="text-xs text-slate-500">
+                                  /{selectedFormat === 'subscription_monthly' ? 'mo' : 'yr'}
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                          <Button
+                            onClick={() => {
+                              const itemName = pkgData?.selectMonth 
+                                ? `${meal.name} - ${meal.monthOptions.find(m => m.id === selectedMonth)?.name}`
+                                : pkgData?.selectLesson
+                                ? `${meal.name} - ${meal.lessonOptions.find(l => l.id === selectedLesson)?.name}`
+                                : `${meal.name} - ${pkgData?.name}`;
+                              
+                              addToCart({
+                                productId: `${meal.id}-${selectedPkg}${pkgData?.selectMonth ? `-${selectedMonth}` : ''}${pkgData?.selectLesson ? `-${selectedLesson}` : ''}`,
+                                name: itemName,
+                                edition: selectedEdition,
+                                format: selectedFormat,
+                                price: price,
+                                quantity: 1
+                              });
+                              toast.success(`Added ${itemName} to cart!`);
+                            }}
+                            className="bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700 px-4"
+                          >
+                            Add to Cart
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* Legacy Products - Hidden for now, keeping for backward compatibility */}
+        <section className="mb-16 hidden">
           <h3 className="text-2xl font-bold mb-6 text-slate-800">📚 Soul Food Series</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.map(product => (
