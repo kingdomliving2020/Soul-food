@@ -93,15 +93,50 @@ const CheckoutPage = () => {
     setError(null);
 
     try {
-      // For simplicity, we'll checkout with the first item
-      // In a real scenario, you might want to handle multiple items differently
-      const firstItem = cartItems[0];
-      
-      // Calculate discounted amount if coupon applied
-      let itemAmount = firstItem.salePrice * firstItem.quantity;
+      // Calculate total with coupon discount
+      let totalAmount = cartItems.reduce((sum, item) => sum + (item.salePrice * item.quantity), 0);
       if (couponApplied) {
-        itemAmount = itemAmount - (itemAmount * couponApplied.discount_percent / 100);
+        totalAmount = totalAmount - (totalAmount * couponApplied.discount_percent / 100);
       }
+      
+      // If total is $0 (100% discount), bypass Stripe and go directly to success
+      if (totalAmount <= 0 && couponApplied) {
+        // Record the free order
+        const orderResponse = await fetch(`${BACKEND_URL}/api/payments/free-order`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            items: cartItems.map(item => ({
+              product_id: item.productId || item.uniqueKey,
+              name: item.name,
+              quantity: item.quantity,
+              price: item.salePrice
+            })),
+            coupon_code: couponApplied.code,
+            discount_percent: couponApplied.discount_percent
+          }),
+        });
+
+        if (orderResponse.ok) {
+          const orderData = await orderResponse.json();
+          // Store order info and redirect to success/download page
+          sessionStorage.setItem('orderComplete', JSON.stringify({
+            orderId: orderData.order_id,
+            items: cartItems,
+            coupon: couponApplied
+          }));
+          clearCart();
+          navigate('/order-success?free=true&order=' + orderData.order_id);
+        } else {
+          throw new Error('Failed to process free order');
+        }
+        return;
+      }
+      
+      // For paid orders, use Stripe
+      const firstItem = cartItems[0];
       
       const response = await fetch(`${BACKEND_URL}/api/payments/checkout/session`, {
         method: 'POST',
@@ -109,7 +144,7 @@ const CheckoutPage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          product_id: firstItem.productId,
+          product_id: firstItem.productId || firstItem.uniqueKey,
           quantity: firstItem.quantity,
           origin_url: window.location.origin
         }),
