@@ -11,6 +11,12 @@
 | Nibble/Snack Pack Cover Images | ✅ WORKING | 12/16/24 |
 | Quick Order Page | ✅ WORKING | 12/16/24 |
 | Checkout Page | ✅ WORKING | 12/16/24 |
+| Quick Order Pricing Verification | ✅ WORKING | 12/16/24 |
+| Holiday Nibble Cart Flow | ✅ WORKING | 12/16/24 |
+| Beta1!2!3! Coupon (Exact Case) | ✅ WORKING | 12/16/24 |
+| Coupon Case Sensitivity | ✅ WORKING | 12/16/24 |
+| API Endpoints Availability | ✅ WORKING | 12/16/24 |
+| Series and Editions Data | ✅ WORKING | 12/16/24 |
 
 ## Latest Test Results
 
