@@ -164,7 +164,13 @@ const CheckoutPage = () => {
         }),
       });
 
-      const data = await response.json();
+      // Handle bodyUsed check for interceptor
+      let data;
+      if (response.bodyUsed) {
+        throw new Error('Unable to process checkout. Please refresh and try again.');
+      } else {
+        data = await response.json();
+      }
 
       if (!response.ok) {
         throw new Error(data.detail || 'Failed to create checkout session');
@@ -180,7 +186,12 @@ const CheckoutPage = () => {
       
     } catch (err) {
       console.error('Checkout error:', err);
-      setError(err.message || 'Something went wrong. Please try again.');
+      // Handle the specific body stream error
+      if (err.message && err.message.includes('body stream')) {
+        setError('Unable to process checkout. Please refresh the page and try again.');
+      } else {
+        setError(err.message || 'Something went wrong. Please try again.');
+      }
       setLoading(false);
     }
   };
