@@ -939,8 +939,190 @@ for nibble in HOLIDAY_AE_NIBBLES[:4]:
         nibble["price_interactive"] = 9.99
         nibble["is_free"] = False
 
+# BREAKFAST SERIES - Adult Edition (Preview lessons)
+BREAKFAST_AE_NIBBLES = [
+    # Month 1: Prayer, the First Resort - Esther (Preview)
+    {
+        "id": "breakfast-ae-esther",
+        "lesson_number": 1,
+        "title": "Esther: Second is Best",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 1,
+        "theme": "Prayer, the First Resort",
+        "background_text": "Esther 4:1-17; Esther 5:1-8",
+        "appetizer": "In the Persian Empire, Queen Esther faced an impossible choice: remain silent and survive, or speak up and risk death. Her people's fate hung in the balance. Through fasting, prayer, and courage, Esther discovered that sometimes being second in position means being first in purpose. God had placed her 'for such a time as this.'",
+        "opening_prayer": "Lord, give us the courage of Esther to stand for what is right even when the cost is high. Help us see that Your timing is perfect and Your positioning is purposeful. In Jesus' name, amen.",
+        "key_verse_ref": "Esther 4:14 (WEB)",
+        "key_verse_text": "For if you remain silent now, relief and deliverance will come to the Jews from another place, but you and your father's house will perish. Who knows if you haven't come to the kingdom for such a time as this?",
+        "bites": [
+            {
+                "id": "bkft-ae-esther-1",
+                "title": "For Such a Time",
+                "scripture_ref": "Esther 4:14 (WEB)",
+                "scripture_text": "Who knows if you haven't come to the kingdom for such a time as this?",
+                "teaching": "Mordecai's question to Esther wasn't just about her moment—it's about all of us. Every position we hold, every relationship we have, every skill we've developed may be preparation for a divine appointment we haven't yet recognized.",
+                "question": {"id": "q-bkft-esther-1", "type": "reflection", "prompt": "What 'position' has God placed you in that might be 'for such a time as this'?"}
+            }
+        ],
+        "to_go_box": ["God's timing is purposeful", "Position comes with responsibility", "Prayer precedes breakthrough"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Month 2: The Art of Through - Joseph (Preview)
+    {
+        "id": "breakfast-ae-joseph",
+        "lesson_number": 5,
+        "title": "Joseph: The Young Dreamer",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 2,
+        "theme": "The Art of Through",
+        "background_text": "Genesis 37:1-36; Genesis 39-41",
+        "appetizer": "Joseph's journey from favored son to slave, from prisoner to prime minister, teaches us that God's dreams don't have expiration dates. The pit, the prison, and the palace were all part of God's process. Sometimes we have to go through to get to where God is taking us.",
+        "opening_prayer": "Father, when the path seems long and the wait feels endless, remind us of Joseph. Help us trust that You are working even in the waiting. In Jesus' name, amen.",
+        "key_verse_ref": "Genesis 50:20 (WEB)",
+        "key_verse_text": "As for you, you meant evil against me, but God meant it for good, to bring to pass, as it is today, to save many people alive.",
+        "bites": [
+            {
+                "id": "bkft-ae-joseph-1",
+                "title": "The Dreamer's Journey",
+                "scripture_ref": "Genesis 37:19-20 (WEB)",
+                "scripture_text": "They said to one another, 'Behold, this dreamer comes. Come now therefore, and let's kill him.'",
+                "teaching": "Joseph's brothers saw his dreams as arrogance, but God saw them as prophecy. The very thing that made Joseph a target was the same thing that would eventually save his family. Your God-given vision may be misunderstood by others, but it's still valid.",
+                "question": {"id": "q-bkft-joseph-1", "type": "reflection", "prompt": "What dream has God given you that others may not understand?"}
+            }
+        ],
+        "to_go_box": ["Dreams survive detours", "Betrayal can become blessing", "God's process has purpose"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Month 3: Faith & Foresight - Rahab (Preview)
+    {
+        "id": "breakfast-ae-rahab",
+        "lesson_number": 9,
+        "title": "Rahab: Faith That Took Action",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 3,
+        "theme": "Faith & Foresight",
+        "background_text": "Joshua 2:1-24; Hebrews 11:31; James 2:25",
+        "appetizer": "Rahab was a Canaanite woman with a questionable past, yet she appears in the lineage of Jesus. Her story proves that faith isn't about where you've been—it's about who you're reaching for. When she hid the Israelite spies, she wasn't just saving them; she was stepping into her destiny.",
+        "opening_prayer": "God of second chances, thank You for Rahab's story. Remind us that our past doesn't disqualify us from Your purpose. Give us faith that takes action. In Jesus' name, amen.",
+        "key_verse_ref": "Hebrews 11:31 (WEB)",
+        "key_verse_text": "By faith, Rahab the prostitute didn't perish with those who were disobedient, having received the spies in peace.",
+        "bites": [
+            {
+                "id": "bkft-ae-rahab-1",
+                "title": "Faith in Action",
+                "scripture_ref": "James 2:25 (WEB)",
+                "scripture_text": "In the same way, wasn't Rahab the prostitute also justified by works, in that she received the messengers and sent them out another way?",
+                "teaching": "Rahab's faith wasn't passive. She heard about God's power, believed in His sovereignty, and then acted. True faith always produces movement. She risked everything—her safety, her reputation, her life—because she believed God was who He said He was.",
+                "question": {"id": "q-bkft-rahab-1", "type": "reflection", "prompt": "What action is your faith calling you to take right now?"}
+            }
+        ],
+        "to_go_box": ["Faith requires action", "Your past doesn't define your future", "God uses the unlikely"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    }
+]
+
+# BREAKFAST SERIES - Youth Edition (Preview lessons)
+BREAKFAST_YE_NIBBLES = [
+    # Month 1: Prayer - Esther (Youth)
+    {
+        "id": "breakfast-ye-esther",
+        "lesson_number": 1,
+        "title": "Esther: Second is Best",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 1,
+        "theme": "Prayer, the First Resort",
+        "background_text": "Esther 4:1-17",
+        "appetizer": "Queen Esther was young, beautiful, and living in a palace—but she had a big secret and an even bigger choice to make. Would she stay quiet and safe, or speak up and risk everything? Her story shows us that God puts us in the right place at the right time for a reason!",
+        "opening_prayer": "God, help us be brave like Esther. When we feel scared to speak up or stand out, remind us that You're with us. In Jesus' name, amen.",
+        "key_verse_ref": "Esther 4:14 (WEB)",
+        "key_verse_text": "Who knows if you haven't come to the kingdom for such a time as this?",
+        "bites": [
+            {
+                "id": "bkft-ye-esther-1",
+                "title": "Right Place, Right Time",
+                "scripture_ref": "Esther 4:14 (WEB)",
+                "scripture_text": "Who knows if you haven't come to the kingdom for such a time as this?",
+                "teaching": "Esther didn't become queen by accident. God had a plan! And guess what? God has a plan for you too. The school you're at, the family you're in, the friends you have—God is using all of it to prepare you for something amazing.",
+                "question": {"id": "q-bkft-ye-esther-1", "type": "reflection", "prompt": "Where has God placed you? How might He want to use you there?"}
+            }
+        ],
+        "to_go_box": ["God has a plan for you", "Being brave means trusting God", "You're where you are for a reason"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Month 2: Art of Through - Joseph (Youth)
+    {
+        "id": "breakfast-ye-joseph",
+        "lesson_number": 5,
+        "title": "Joseph: The Young Dreamer",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 2,
+        "theme": "The Art of Through",
+        "background_text": "Genesis 37:1-36",
+        "appetizer": "Joseph was his dad's favorite—and his brothers hated him for it. They threw him in a pit, sold him as a slave, and told their dad he was dead! But Joseph's story didn't end there. God took all the bad stuff and turned it into something incredible.",
+        "opening_prayer": "Lord, when things aren't fair and life gets hard, help us trust You like Joseph did. You can turn our messes into miracles. In Jesus' name, amen.",
+        "key_verse_ref": "Genesis 50:20 (WEB)",
+        "key_verse_text": "You meant evil against me, but God meant it for good.",
+        "bites": [
+            {
+                "id": "bkft-ye-joseph-1",
+                "title": "From Pit to Palace",
+                "scripture_ref": "Genesis 50:20 (WEB)",
+                "scripture_text": "You meant evil against me, but God meant it for good.",
+                "teaching": "Joseph's brothers did something terrible. But years later, Joseph was in charge of all of Egypt and saved his whole family from starving! God didn't waste Joseph's pain—He used it. God can do the same with the hard things you go through.",
+                "question": {"id": "q-bkft-ye-joseph-1", "type": "reflection", "prompt": "Have you ever seen something bad turn into something good?"}
+            }
+        ],
+        "to_go_box": ["God doesn't waste your pain", "Keep dreaming even when it's hard", "What others mean for bad, God can use for good"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Month 3: Faith & Foresight - Rahab (Youth)
+    {
+        "id": "breakfast-ye-rahab",
+        "lesson_number": 9,
+        "title": "Rahab: Faith That Took Action",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 3,
+        "theme": "Faith & Foresight",
+        "background_text": "Joshua 2:1-24",
+        "appetizer": "Rahab wasn't one of 'God's people'—but she believed in God anyway! When Israelite spies came to her city, she made a brave choice. She hid them and asked them to save her family. That one brave decision changed everything for Rahab and her family forever.",
+        "opening_prayer": "God, help us be brave like Rahab. Even when we feel like we don't fit in or belong, remind us that You see us and have a plan for us. In Jesus' name, amen.",
+        "key_verse_ref": "Joshua 2:11 (WEB)",
+        "key_verse_text": "For Yahweh your God, he is God in heaven above, and on earth beneath.",
+        "bites": [
+            {
+                "id": "bkft-ye-rahab-1",
+                "title": "Brave Belief",
+                "scripture_ref": "Joshua 2:11 (WEB)",
+                "scripture_text": "For Yahweh your God, he is God in heaven above, and on earth beneath.",
+                "teaching": "Rahab had heard stories about God. She chose to believe those stories were true—even though everyone around her worshipped fake gods. Her belief led her to action, and that action saved her whole family!",
+                "question": {"id": "q-bkft-ye-rahab-1", "type": "reflection", "prompt": "What's one brave thing you can do this week to show your faith?"}
+            }
+        ],
+        "to_go_box": ["It's never too late to believe", "Faith leads to action", "God can use anyone—including you!"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    }
+]
+
 # Combine all nibbles for lookup
-ALL_NIBBLES = IN_HIS_IMAGE_NIBBLES + HOLIDAY_AE_NIBBLES
+ALL_NIBBLES = IN_HIS_IMAGE_NIBBLES + HOLIDAY_AE_NIBBLES + BREAKFAST_AE_NIBBLES + BREAKFAST_YE_NIBBLES
 
 # Only In His Image has a snack pack - Holiday is individual lessons
 ALL_SNACK_PACKS = [IN_HIS_IMAGE_SNACK_PACK]
