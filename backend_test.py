@@ -1441,7 +1441,19 @@ class SoulFoodQuickOrderTester:
             self.test_api_endpoints_availability,
             self.test_series_and_editions_data,
             
-            # Soul Food Complete Flow Tests (Priority)
+            # Admin Console Tests (Priority)
+            self.test_admin_login_instructor,
+            self.test_admin_dashboard,
+            self.test_admin_content,
+            self.test_admin_users,
+            self.test_admin_orders,
+            self.test_admin_products,
+            self.test_admin_media,
+            self.test_admin_logs,
+            self.test_admin_instructor_content,
+            self.test_admin_unauthorized_access,
+            
+            # Soul Food Complete Flow Tests
             self.test_soul_food_coupon_validation_holiday_covenant,
             self.test_soul_food_free_order_processing,
             self.test_soul_food_pdf_download,
