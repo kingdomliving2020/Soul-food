@@ -412,17 +412,26 @@ async def register(user_data: UserRegister):
     }
 
 @router.post("/login")
-async def login(credentials: UserLogin):
-    """Login with email or username"""
+async def login(credentials: UserLogin, request: Request):
+    """Login with email or username - with enhanced security"""
     
     identifier = credentials.identifier.lower()
+    ip_address = request.client.host if request.client else "unknown"
+    
+    # Check if account is disabled
+    is_disabled, disabled_msg = await check_account_disabled(identifier)
+    if is_disabled:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Login failed"  # Generic message - don't reveal account status
+        )
     
     # Check for account lockout
-    is_locked, remaining_mins = await check_account_lockout(identifier)
+    is_locked, remaining_mins, lockout_msg = await check_lockout_status(identifier)
     if is_locked:
         raise HTTPException(
-            status_code=status.HTTP_423_LOCKED,
-            detail=f"Account locked due to too many failed attempts. Try again in {remaining_mins} minutes."
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Please try again later"  # Generic message
         )
     
     # Find user by email or username
@@ -434,36 +443,41 @@ async def login(credentials: UserLogin):
     }, {"_id": 0})
     
     if not user:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+        # Record failed attempt even for non-existent users (prevent enumeration)
+        await record_login_attempt(identifier, False, ip_address)
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Login failed"  # Generic message
+        )
     
     if not verify_password(credentials.password, user["password_hash"]):
-        await record_failed_login(identifier)
-        remaining_attempts = MAX_FAILED_ATTEMPTS - user.get("failed_login_attempts", 0) - 1
-        
-        if remaining_attempts <= 0:
-            raise HTTPException(
-                status_code=status.HTTP_423_LOCKED,
-                detail=f"Account locked due to too many failed attempts. Try again in {LOCKOUT_DURATION_MINUTES} minutes."
-            )
+        # Record failed login attempt
+        await record_login_attempt(identifier, False, ip_address, user["id"], user.get("role"))
         
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Invalid credentials. {remaining_attempts} attempts remaining."
+            detail="Login failed"  # Generic message - don't reveal remaining attempts
         )
     
-    # Reset failed attempts on successful login
-    await reset_failed_attempts(user["id"])
+    # Successful login - clear any lockouts and record success
+    await clear_lockout(identifier)
+    await record_login_attempt(identifier, True, ip_address, user["id"], user.get("role"))
+    
+    # Update last login and activity
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": {
+            "last_login": datetime.now(timezone.utc).isoformat(),
+            "last_activity": datetime.now(timezone.utc).isoformat()
+        }}
+    )
     
     # Check password expiry
     is_expired, days_remaining = check_password_expiry(user.get("password_changed_at"))
     
-    # Update last login
-    await db.users.update_one(
-        {"id": user["id"]},
-        {"$set": {"last_login": datetime.now(timezone.utc).isoformat()}}
-    )
-    
-    session_timeout = user.get("session_timeout_mins", SESSION_TIMEOUT_MINUTES)
+    # Get role-based session timeout
+    role = user.get("role", "member")
+    session_timeout = get_session_timeout_for_role(role)
     
     access_token = create_access_token(
         data={
