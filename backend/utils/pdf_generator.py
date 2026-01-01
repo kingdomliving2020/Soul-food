@@ -138,24 +138,60 @@ class LessonPDFGenerator:
             textColor=colors.HexColor('#9CA3AF')
         ))
         
-        # TOC entry style
+        # TOC Title - Amazon-style elegant header
+        self.styles.add(ParagraphStyle(
+            name='TOCTitle',
+            parent=self.styles['Heading1'],
+            fontSize=24,
+            spaceBefore=0,
+            spaceAfter=30,
+            alignment=TA_CENTER,
+            fontName='Helvetica-Bold',
+            textColor=colors.HexColor('#1F2937')
+        ))
+        
+        # TOC entry style - Clean, professional like Amazon books
         self.styles.add(ParagraphStyle(
             name='TOCEntry',
             parent=self.styles['Normal'],
             fontSize=12,
-            spaceBefore=4,
-            spaceAfter=4,
-            leftIndent=0
+            spaceBefore=8,
+            spaceAfter=8,
+            leftIndent=0,
+            fontName='Helvetica',
+            leading=18
         ))
         
-        # TOC sub-entry style
+        # TOC Chapter style - Bold section headers
+        self.styles.add(ParagraphStyle(
+            name='TOCChapter',
+            parent=self.styles['Normal'],
+            fontSize=14,
+            spaceBefore=16,
+            spaceAfter=6,
+            leftIndent=0,
+            fontName='Helvetica-Bold',
+            textColor=colors.HexColor('#4F46E5')
+        ))
+        
+        # TOC sub-entry style - Indented lesson items
         self.styles.add(ParagraphStyle(
             name='TOCSubEntry',
             parent=self.styles['Normal'],
-            fontSize=10,
-            spaceBefore=2,
-            spaceAfter=2,
-            leftIndent=20,
+            fontSize=11,
+            spaceBefore=4,
+            spaceAfter=4,
+            leftIndent=24,
+            textColor=colors.HexColor('#4B5563'),
+            leading=16
+        ))
+        
+        # TOC page number style
+        self.styles.add(ParagraphStyle(
+            name='TOCPageNum',
+            parent=self.styles['Normal'],
+            fontSize=11,
+            alignment=TA_RIGHT,
             textColor=colors.HexColor('#6B7280')
         ))
         
