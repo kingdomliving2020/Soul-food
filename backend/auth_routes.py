@@ -583,61 +583,79 @@ async def beta_login(credentials: BetaLogin):
     }
 
 @router.post("/request-password-reset")
-async def request_password_reset(data: PasswordReset, background_tasks: BackgroundTasks):
-    """Request a password reset link"""
+async def request_password_reset(data: PasswordReset, background_tasks: BackgroundTasks, request: Request):
+    """Request a password reset link - with rate limiting"""
+    
+    ip_address = request.client.host if request.client else "unknown"
+    
+    # Check rate limits
+    is_allowed, rate_limit_msg = await check_reset_rate_limit(data.email.lower(), ip_address)
+    if not is_allowed:
+        # Still return generic message to prevent enumeration
+        return {"message": "If that email exists, you'll receive a reset link."}
+    
+    # Record the reset request for rate limiting
+    await record_reset_request(data.email.lower(), ip_address)
     
     user = await db.users.find_one({"email": data.email.lower()}, {"_id": 0})
     
     # Always return success to prevent email enumeration
     if not user:
-        return {"message": "If an account exists with that email, a reset link has been sent."}
+        # Log attempt for non-existent email
+        await log_audit_event(
+            event_type=AuditEventType.PASSWORD_RESET_REQUESTED,
+            user_email=data.email.lower(),
+            ip_address=ip_address,
+            details={"user_exists": False},
+            success=False
+        )
+        return {"message": "If that email exists, you'll receive a reset link."}
     
-    # Create reset token
-    reset_token = str(uuid.uuid4())
-    expires_at = datetime.now(timezone.utc) + timedelta(hours=RESET_TOKEN_EXPIRY_HOURS)
+    # Create secure reset token
+    reset_token = await create_reset_token(user["id"], user["email"])
     
-    # Store reset token
-    await db.password_resets.insert_one({
-        "token": reset_token,
-        "user_id": user["id"],
-        "email": user["email"],
-        "expires_at": expires_at.isoformat(),
-        "used": False,
-        "created_at": datetime.now(timezone.utc).isoformat()
-    })
+    # Log the request
+    await log_audit_event(
+        event_type=AuditEventType.PASSWORD_RESET_REQUESTED,
+        user_id=user["id"],
+        user_email=user["email"],
+        ip_address=ip_address,
+        details={"user_exists": True}
+    )
     
     # Send email in background
     background_tasks.add_task(send_password_reset_email, user["email"], reset_token, user["name"])
     
-    return {"message": "If an account exists with that email, a reset link has been sent."}
+    return {"message": "If that email exists, you'll receive a reset link."}
+
 
 @router.post("/reset-password")
-async def reset_password(data: PasswordResetConfirm):
-    """Reset password using token"""
+async def reset_password(data: PasswordResetConfirm, request: Request):
+    """Reset password using token - single-use, time-limited"""
     
-    # Find valid reset token
-    reset_record = await db.password_resets.find_one({
-        "token": data.token,
-        "used": False
-    }, {"_id": 0})
+    ip_address = request.client.host if request.client else "unknown"
     
-    if not reset_record:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid or expired reset token")
+    # Verify token (checks single-use and expiry)
+    is_valid, user_id, error_msg = await verify_reset_token(data.token)
     
-    # Check expiry
-    expires_at = datetime.fromisoformat(reset_record["expires_at"])
-    if datetime.now(timezone.utc) > expires_at:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Reset token has expired")
+    if not is_valid:
+        await log_audit_event(
+            event_type=AuditEventType.PASSWORD_RESET_COMPLETED,
+            ip_address=ip_address,
+            details={"error": error_msg},
+            success=False
+        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=error_msg)
     
     # Validate new password
-    is_valid, message = validate_password_strength(data.new_password)
-    if not is_valid:
+    is_valid_pwd, message = validate_password_strength(data.new_password)
+    if not is_valid_pwd:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=message)
     
     # Get user
-    user = await db.users.find_one({"id": reset_record["user_id"]}, {"_id": 0})
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
     if not user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid reset link")
     
     # Check password isn't same as last one
     new_hash = get_password_hash(data.new_password)
