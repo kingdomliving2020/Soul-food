@@ -1,0 +1,1402 @@
+"""
+Soul Food Admin Console Routes
+==============================
+Protected admin-only routes for the DevOps back office.
+
+Modules:
+- Content Manager: Create/edit lessons with workflow states
+- Instructor Content: Answer keys, facilitation notes
+- Media Library: PDFs, images, thumbnails
+- Products + Inventory: SKUs, pricing, stock
+- Orders: View purchases, resend download links
+- Users + Roles: User management, role assignment
+- Logs: Audit trail
+"""
+
+from fastapi import APIRouter, HTTPException, Depends, Request, UploadFile, File, Form, Query
+from fastapi.responses import JSONResponse, StreamingResponse
+from pydantic import BaseModel, EmailStr, Field
+from typing import Optional, List, Dict, Any
+from datetime import datetime, timezone, timedelta
+from motor.motor_asyncio import AsyncIOMotorClient
+import os
+import secrets
+import hashlib
+import json
+from io import BytesIO
+from dotenv import load_dotenv
+
+load_dotenv()
+
+router = APIRouter(prefix="/api/admin", tags=["admin"])
+
+# Database connection
+MONGO_URL = os.getenv('MONGO_URL')
+client = AsyncIOMotorClient(MONGO_URL)
+db = client.soul_food_db
+
+# =============================================================================
+# ROLE DEFINITIONS
+# =============================================================================
+
+ROLES = {
+    "admin": {
+        "name": "Admin/Owner",
+        "level": 100,
+        "permissions": ["*"],  # Full access
+        "description": "Full administrative access to all features"
+    },
+    "instructor": {
+        "name": "Instructor",
+        "level": 50,
+        "permissions": [
+            "view_lessons", "view_instructor_content", "view_answer_keys",
+            "view_facilitation_notes", "view_roster", "manage_own_roster"
+        ],
+        "description": "Access to instructor tools and content"
+    },
+    "student": {
+        "name": "Student/Youth",
+        "level": 10,
+        "permissions": ["view_lessons", "submit_activities"],
+        "description": "Access to student lessons and activities"
+    },
+    "adult": {
+        "name": "Adult Reader",
+        "level": 10,
+        "permissions": ["view_lessons", "view_adult_content"],
+        "description": "Access to adult edition content"
+    }
+}
+
+# =============================================================================
+# CONTENT STATES
+# =============================================================================
+
+CONTENT_STATES = {
+    "draft": {"name": "Draft", "color": "gray", "icon": "📝"},
+    "scheduled": {"name": "Scheduled", "color": "blue", "icon": "📅"},
+    "published": {"name": "Published", "color": "green", "icon": "✅"},
+    "archived": {"name": "Archived", "color": "red", "icon": "📦"}
+}
+
+# =============================================================================
+# PYDANTIC MODELS
+# =============================================================================
+
+class AdminUser(BaseModel):
+    id: str
+    email: str
+    role: str
+    permissions: List[str] = []
+
+class ContentItem(BaseModel):
+    id: Optional[str] = None
+    title: str
+    type: str  # "lesson", "page", "announcement"
+    status: str = "draft"  # draft, scheduled, published, archived
+    content: Dict[str, Any] = {}
+    series: Optional[str] = None
+    lesson_number: Optional[int] = None
+    edition: Optional[str] = None
+    scheduled_at: Optional[datetime] = None
+    published_at: Optional[datetime] = None
+    created_by: Optional[str] = None
+    updated_by: Optional[str] = None
+    version: int = 1
+    version_history: List[Dict] = []
+
+class ProductItem(BaseModel):
+    id: Optional[str] = None
+    sku: str
+    name: str
+    description: str = ""
+    price: float
+    compare_price: Optional[float] = None
+    type: str  # "digital", "physical", "subscription"
+    status: str = "active"  # active, inactive, sold_out
+    inventory_count: Optional[int] = None
+    low_stock_threshold: int = 10
+    series: Optional[str] = None
+    edition: Optional[str] = None
+    files: List[str] = []
+    metadata: Dict[str, Any] = {}
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    name: str
+    role: str = "adult"
+    password: Optional[str] = None
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    role: Optional[str] = None
+    disabled: Optional[bool] = None
+
+class InstructorContent(BaseModel):
+    id: Optional[str] = None
+    lesson_id: str
+    type: str  # "answer_key", "facilitation_notes", "faith_nuggets"
+    content: Dict[str, Any]
+    created_by: Optional[str] = None
+
+class MediaItem(BaseModel):
+    id: Optional[str] = None
+    filename: str
+    original_filename: str
+    file_type: str  # "pdf", "image", "video"
+    file_size: int
+    file_path: str
+    series: Optional[str] = None
+    quarter: Optional[str] = None
+    month: Optional[str] = None
+    lesson: Optional[str] = None
+    tags: List[str] = []
+    metadata: Dict[str, Any] = {}
+
+# =============================================================================
+# AUTHENTICATION & AUTHORIZATION HELPERS
+# =============================================================================
+
+from jose import JWTError, jwt
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+security = HTTPBearer(auto_error=False)
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
+ALGORITHM = "HS256"
+
+async def get_current_admin(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    """Verify JWT and ensure user has admin role"""
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: str = payload.get("sub")
+        role: str = payload.get("role", "")
+        access_level: str = payload.get("access_level", "")
+        
+        if user_id is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+            
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid or expired token")
+    
+    # Check if user is admin
+    # Accept both 'admin' role and 'instructor_tester' for development
+    admin_roles = ["admin", "owner", "instructor_tester", "beta_tester"]
+    if role not in admin_roles and access_level not in ["admin", "instructor"]:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Get user from database
+    user = await db.users.find_one({"id": user_id}, {"_id": 0})
+    
+    # For beta testers, create a mock admin user
+    if not user:
+        user = {
+            "id": user_id,
+            "email": f"{role}@beta.soulfood.com",
+            "name": f"Beta Admin ({role})",
+            "role": role,
+            "access_level": access_level
+        }
+    
+    return AdminUser(
+        id=user.get("id", user_id),
+        email=user.get("email", ""),
+        role=user.get("role", role),
+        permissions=ROLES.get(role, {}).get("permissions", [])
+    )
+
+async def log_admin_action(
+    action: str,
+    admin_id: str,
+    resource_type: str,
+    resource_id: str = None,
+    details: Dict = None
+):
+    """Log admin actions for audit trail"""
+    log_entry = {
+        "id": secrets.token_hex(16),
+        "action": action,
+        "admin_id": admin_id,
+        "resource_type": resource_type,
+        "resource_id": resource_id,
+        "details": details or {},
+        "timestamp": datetime.now(timezone.utc),
+        "ip_address": None  # Will be populated from request
+    }
+    await db.admin_audit_logs.insert_one(log_entry)
+    print(f"[ADMIN AUDIT] {action} | Resource: {resource_type}/{resource_id} | By: {admin_id}")
+
+# =============================================================================
+# DASHBOARD
+# =============================================================================
+
+@router.get("/dashboard")
+async def get_admin_dashboard(admin: AdminUser = Depends(get_current_admin)):
+    """Get admin dashboard summary"""
+    
+    # Get counts
+    total_users = await db.users.count_documents({})
+    total_lessons = await db.lessons.count_documents({})
+    total_orders = await db.orders.count_documents({})
+    total_products = await db.products.count_documents({})
+    
+    # Recent activity
+    recent_orders = await db.orders.find({}, {"_id": 0}).sort("created_at", -1).limit(5).to_list(5)
+    recent_users = await db.users.find({}, {"_id": 0, "password_hash": 0}).sort("created_at", -1).limit(5).to_list(5)
+    
+    # Content stats
+    published_lessons = await db.lessons.count_documents({"status": "published"})
+    draft_lessons = await db.lessons.count_documents({"status": "draft"})
+    
+    # Revenue (mock for now)
+    total_revenue = 0
+    for order in await db.orders.find({"status": {"$in": ["completed", "paid"]}}, {"_id": 0}).to_list(1000):
+        total_revenue += order.get("total", 0)
+    
+    return {
+        "summary": {
+            "total_users": total_users,
+            "total_lessons": total_lessons,
+            "total_orders": total_orders,
+            "total_products": total_products,
+            "total_revenue": total_revenue,
+            "published_lessons": published_lessons,
+            "draft_lessons": draft_lessons
+        },
+        "recent_orders": recent_orders,
+        "recent_users": recent_users,
+        "admin": {
+            "id": admin.id,
+            "email": admin.email,
+            "role": admin.role
+        }
+    }
+
+# =============================================================================
+# CONTENT MANAGEMENT
+# =============================================================================
+
+@router.get("/content")
+async def get_content_list(
+    type: Optional[str] = None,
+    status: Optional[str] = None,
+    series: Optional[str] = None,
+    page: int = 1,
+    limit: int = 20,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Get list of content items with filters"""
+    query = {}
+    if type:
+        query["type"] = type
+    if status:
+        query["status"] = status
+    if series:
+        query["series"] = series
+    
+    skip = (page - 1) * limit
+    
+    # Get content from lessons collection
+    content = await db.lessons.find(query, {"_id": 0}).skip(skip).limit(limit).sort("created_at", -1).to_list(limit)
+    total = await db.lessons.count_documents(query)
+    
+    return {
+        "items": content,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": (total + limit - 1) // limit
+    }
+
+@router.get("/content/{content_id}")
+async def get_content_item(content_id: str, admin: AdminUser = Depends(get_current_admin)):
+    """Get a single content item with version history"""
+    content = await db.lessons.find_one({"id": content_id}, {"_id": 0})
+    if not content:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    # Get version history
+    versions = await db.content_versions.find(
+        {"content_id": content_id}, {"_id": 0}
+    ).sort("version", -1).to_list(50)
+    
+    content["version_history"] = versions
+    return content
+
+@router.post("/content")
+async def create_content(
+    item: ContentItem,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Create new content item"""
+    content_id = secrets.token_hex(12)
+    now = datetime.now(timezone.utc)
+    
+    content_doc = {
+        "id": content_id,
+        "title": item.title,
+        "type": item.type,
+        "status": item.status,
+        "content": item.content,
+        "series": item.series,
+        "lesson_number": item.lesson_number,
+        "edition": item.edition,
+        "scheduled_at": item.scheduled_at.isoformat() if item.scheduled_at else None,
+        "published_at": None,
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+        "created_by": admin.id,
+        "updated_by": admin.id,
+        "version": 1
+    }
+    
+    await db.lessons.insert_one(content_doc)
+    
+    # Create initial version
+    await db.content_versions.insert_one({
+        "id": secrets.token_hex(8),
+        "content_id": content_id,
+        "version": 1,
+        "content": item.content,
+        "created_at": now.isoformat(),
+        "created_by": admin.id,
+        "change_summary": "Initial creation"
+    })
+    
+    await log_admin_action("create_content", admin.id, "content", content_id, {"title": item.title})
+    
+    return {"id": content_id, "message": "Content created successfully"}
+
+@router.put("/content/{content_id}")
+async def update_content(
+    content_id: str,
+    item: ContentItem,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Update content item and create new version"""
+    existing = await db.lessons.find_one({"id": content_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    now = datetime.now(timezone.utc)
+    new_version = existing.get("version", 1) + 1
+    
+    # Save current version to history
+    await db.content_versions.insert_one({
+        "id": secrets.token_hex(8),
+        "content_id": content_id,
+        "version": new_version,
+        "content": item.content,
+        "previous_content": existing.get("content"),
+        "created_at": now.isoformat(),
+        "created_by": admin.id,
+        "change_summary": f"Update by {admin.email}"
+    })
+    
+    # Update content
+    update_doc = {
+        "title": item.title,
+        "type": item.type,
+        "status": item.status,
+        "content": item.content,
+        "series": item.series,
+        "lesson_number": item.lesson_number,
+        "edition": item.edition,
+        "scheduled_at": item.scheduled_at.isoformat() if item.scheduled_at else None,
+        "updated_at": now.isoformat(),
+        "updated_by": admin.id,
+        "version": new_version
+    }
+    
+    if item.status == "published" and existing.get("status") != "published":
+        update_doc["published_at"] = now.isoformat()
+    
+    await db.lessons.update_one({"id": content_id}, {"$set": update_doc})
+    
+    await log_admin_action("update_content", admin.id, "content", content_id, {"version": new_version})
+    
+    return {"message": "Content updated successfully", "version": new_version}
+
+@router.post("/content/{content_id}/rollback/{version}")
+async def rollback_content(
+    content_id: str,
+    version: int,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Rollback content to a specific version"""
+    # Get the version to restore
+    version_doc = await db.content_versions.find_one(
+        {"content_id": content_id, "version": version}, {"_id": 0}
+    )
+    if not version_doc:
+        raise HTTPException(status_code=404, detail="Version not found")
+    
+    existing = await db.lessons.find_one({"id": content_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    now = datetime.now(timezone.utc)
+    new_version = existing.get("version", 1) + 1
+    
+    # Create rollback version entry
+    await db.content_versions.insert_one({
+        "id": secrets.token_hex(8),
+        "content_id": content_id,
+        "version": new_version,
+        "content": version_doc.get("content"),
+        "previous_content": existing.get("content"),
+        "created_at": now.isoformat(),
+        "created_by": admin.id,
+        "change_summary": f"Rollback to version {version}",
+        "is_rollback": True,
+        "rollback_from_version": version
+    })
+    
+    # Update content with rolled back version
+    await db.lessons.update_one(
+        {"id": content_id},
+        {"$set": {
+            "content": version_doc.get("content"),
+            "updated_at": now.isoformat(),
+            "updated_by": admin.id,
+            "version": new_version
+        }}
+    )
+    
+    await log_admin_action("rollback_content", admin.id, "content", content_id, 
+                          {"to_version": version, "new_version": new_version})
+    
+    return {"message": f"Content rolled back to version {version}", "new_version": new_version}
+
+@router.patch("/content/{content_id}/status")
+async def update_content_status(
+    content_id: str,
+    status: str,
+    scheduled_at: Optional[datetime] = None,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Update content status (draft, scheduled, published, archived)"""
+    if status not in CONTENT_STATES:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Must be one of: {list(CONTENT_STATES.keys())}")
+    
+    existing = await db.lessons.find_one({"id": content_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    now = datetime.now(timezone.utc)
+    update_doc = {
+        "status": status,
+        "updated_at": now.isoformat(),
+        "updated_by": admin.id
+    }
+    
+    if status == "published":
+        update_doc["published_at"] = now.isoformat()
+    elif status == "scheduled" and scheduled_at:
+        update_doc["scheduled_at"] = scheduled_at.isoformat()
+    
+    await db.lessons.update_one({"id": content_id}, {"$set": update_doc})
+    
+    await log_admin_action("update_content_status", admin.id, "content", content_id, 
+                          {"old_status": existing.get("status"), "new_status": status})
+    
+    return {"message": f"Content status updated to {status}"}
+
+# =============================================================================
+# INSTRUCTOR CONTENT MANAGEMENT
+# =============================================================================
+
+@router.get("/instructor-content")
+async def get_instructor_content_list(
+    lesson_id: Optional[str] = None,
+    type: Optional[str] = None,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Get instructor-only content (answer keys, notes, etc.)"""
+    query = {}
+    if lesson_id:
+        query["lesson_id"] = lesson_id
+    if type:
+        query["type"] = type
+    
+    items = await db.instructor_content.find(query, {"_id": 0}).to_list(1000)
+    return {"items": items}
+
+@router.post("/instructor-content")
+async def create_instructor_content(
+    item: InstructorContent,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Create instructor-only content for a lesson"""
+    content_id = secrets.token_hex(12)
+    now = datetime.now(timezone.utc)
+    
+    doc = {
+        "id": content_id,
+        "lesson_id": item.lesson_id,
+        "type": item.type,
+        "content": item.content,
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+        "created_by": admin.id
+    }
+    
+    await db.instructor_content.insert_one(doc)
+    
+    await log_admin_action("create_instructor_content", admin.id, "instructor_content", content_id,
+                          {"lesson_id": item.lesson_id, "type": item.type})
+    
+    return {"id": content_id, "message": "Instructor content created successfully"}
+
+@router.put("/instructor-content/{content_id}")
+async def update_instructor_content(
+    content_id: str,
+    item: InstructorContent,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Update instructor-only content"""
+    existing = await db.instructor_content.find_one({"id": content_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    now = datetime.now(timezone.utc)
+    
+    await db.instructor_content.update_one(
+        {"id": content_id},
+        {"$set": {
+            "content": item.content,
+            "updated_at": now.isoformat(),
+            "updated_by": admin.id
+        }}
+    )
+    
+    await log_admin_action("update_instructor_content", admin.id, "instructor_content", content_id)
+    
+    return {"message": "Instructor content updated successfully"}
+
+@router.delete("/instructor-content/{content_id}")
+async def delete_instructor_content(
+    content_id: str,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Delete instructor-only content"""
+    result = await db.instructor_content.delete_one({"id": content_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Content not found")
+    
+    await log_admin_action("delete_instructor_content", admin.id, "instructor_content", content_id)
+    
+    return {"message": "Instructor content deleted successfully"}
+
+# =============================================================================
+# MEDIA LIBRARY
+# =============================================================================
+
+@router.get("/media")
+async def get_media_list(
+    file_type: Optional[str] = None,
+    series: Optional[str] = None,
+    page: int = 1,
+    limit: int = 50,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Get media library items"""
+    query = {}
+    if file_type:
+        query["file_type"] = file_type
+    if series:
+        query["series"] = series
+    
+    skip = (page - 1) * limit
+    
+    items = await db.media.find(query, {"_id": 0}).skip(skip).limit(limit).sort("created_at", -1).to_list(limit)
+    total = await db.media.count_documents(query)
+    
+    return {
+        "items": items,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": (total + limit - 1) // limit
+    }
+
+@router.post("/media/upload")
+async def upload_media(
+    file: UploadFile = File(...),
+    series: Optional[str] = Form(None),
+    quarter: Optional[str] = Form(None),
+    month: Optional[str] = Form(None),
+    lesson: Optional[str] = Form(None),
+    tags: Optional[str] = Form(None),
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Upload a media file"""
+    # Determine file type
+    content_type = file.content_type or ""
+    if "pdf" in content_type:
+        file_type = "pdf"
+    elif "image" in content_type:
+        file_type = "image"
+    elif "video" in content_type:
+        file_type = "video"
+    else:
+        file_type = "other"
+    
+    # Generate unique filename
+    file_ext = file.filename.split(".")[-1] if "." in file.filename else ""
+    unique_filename = f"{secrets.token_hex(8)}_{file.filename}"
+    
+    # Save file
+    upload_dir = "/app/backend/media_uploads"
+    os.makedirs(upload_dir, exist_ok=True)
+    file_path = os.path.join(upload_dir, unique_filename)
+    
+    content = await file.read()
+    with open(file_path, "wb") as f:
+        f.write(content)
+    
+    # Create media record
+    media_id = secrets.token_hex(12)
+    now = datetime.now(timezone.utc)
+    
+    media_doc = {
+        "id": media_id,
+        "filename": unique_filename,
+        "original_filename": file.filename,
+        "file_type": file_type,
+        "file_size": len(content),
+        "file_path": file_path,
+        "series": series,
+        "quarter": quarter,
+        "month": month,
+        "lesson": lesson,
+        "tags": tags.split(",") if tags else [],
+        "created_at": now.isoformat(),
+        "uploaded_by": admin.id,
+        "metadata": {
+            "content_type": content_type
+        }
+    }
+    
+    await db.media.insert_one(media_doc)
+    
+    await log_admin_action("upload_media", admin.id, "media", media_id, 
+                          {"filename": file.filename, "size": len(content)})
+    
+    return {"id": media_id, "filename": unique_filename, "message": "File uploaded successfully"}
+
+@router.delete("/media/{media_id}")
+async def delete_media(media_id: str, admin: AdminUser = Depends(get_current_admin)):
+    """Delete a media file"""
+    media = await db.media.find_one({"id": media_id}, {"_id": 0})
+    if not media:
+        raise HTTPException(status_code=404, detail="Media not found")
+    
+    # Delete physical file
+    if os.path.exists(media.get("file_path", "")):
+        os.remove(media["file_path"])
+    
+    # Delete record
+    await db.media.delete_one({"id": media_id})
+    
+    await log_admin_action("delete_media", admin.id, "media", media_id)
+    
+    return {"message": "Media deleted successfully"}
+
+@router.put("/media/{media_id}/replace")
+async def replace_media(
+    media_id: str,
+    file: UploadFile = File(...),
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Replace a media file while preserving its ID (for safe updates)"""
+    existing = await db.media.find_one({"id": media_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Media not found")
+    
+    # Backup old file path
+    old_file_path = existing.get("file_path")
+    
+    # Save new file with same filename pattern
+    content = await file.read()
+    new_filename = f"{secrets.token_hex(8)}_{file.filename}"
+    file_path = os.path.join("/app/backend/media_uploads", new_filename)
+    
+    with open(file_path, "wb") as f:
+        f.write(content)
+    
+    # Update record with version tracking
+    now = datetime.now(timezone.utc)
+    version_history = existing.get("version_history", [])
+    version_history.append({
+        "filename": existing.get("filename"),
+        "file_path": old_file_path,
+        "replaced_at": now.isoformat(),
+        "replaced_by": admin.id
+    })
+    
+    await db.media.update_one(
+        {"id": media_id},
+        {"$set": {
+            "filename": new_filename,
+            "original_filename": file.filename,
+            "file_path": file_path,
+            "file_size": len(content),
+            "updated_at": now.isoformat(),
+            "updated_by": admin.id,
+            "version_history": version_history
+        }}
+    )
+    
+    # Optionally keep old file for rollback, or delete it
+    # For now, we'll keep it
+    
+    await log_admin_action("replace_media", admin.id, "media", media_id,
+                          {"old_filename": existing.get("filename"), "new_filename": new_filename})
+    
+    return {"message": "Media replaced successfully", "new_filename": new_filename}
+
+# =============================================================================
+# PRODUCTS + INVENTORY
+# =============================================================================
+
+@router.get("/products")
+async def get_products_list(
+    status: Optional[str] = None,
+    type: Optional[str] = None,
+    series: Optional[str] = None,
+    page: int = 1,
+    limit: int = 50,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Get products list"""
+    query = {}
+    if status:
+        query["status"] = status
+    if type:
+        query["type"] = type
+    if series:
+        query["series"] = series
+    
+    skip = (page - 1) * limit
+    
+    products = await db.products.find(query, {"_id": 0}).skip(skip).limit(limit).sort("created_at", -1).to_list(limit)
+    total = await db.products.count_documents(query)
+    
+    # Check for low stock alerts
+    low_stock_items = await db.products.count_documents({
+        "inventory_count": {"$ne": None, "$lte": 10},
+        "status": "active"
+    })
+    
+    return {
+        "items": products,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": (total + limit - 1) // limit,
+        "low_stock_count": low_stock_items
+    }
+
+@router.post("/products")
+async def create_product(item: ProductItem, admin: AdminUser = Depends(get_current_admin)):
+    """Create a new product"""
+    # Check if SKU exists
+    existing = await db.products.find_one({"sku": item.sku})
+    if existing:
+        raise HTTPException(status_code=400, detail="SKU already exists")
+    
+    product_id = secrets.token_hex(12)
+    now = datetime.now(timezone.utc)
+    
+    product_doc = {
+        "id": product_id,
+        "sku": item.sku,
+        "name": item.name,
+        "description": item.description,
+        "price": item.price,
+        "compare_price": item.compare_price,
+        "type": item.type,
+        "status": item.status,
+        "inventory_count": item.inventory_count,
+        "low_stock_threshold": item.low_stock_threshold,
+        "series": item.series,
+        "edition": item.edition,
+        "files": item.files,
+        "metadata": item.metadata,
+        "created_at": now.isoformat(),
+        "updated_at": now.isoformat(),
+        "created_by": admin.id
+    }
+    
+    await db.products.insert_one(product_doc)
+    
+    await log_admin_action("create_product", admin.id, "product", product_id, {"sku": item.sku})
+    
+    return {"id": product_id, "message": "Product created successfully"}
+
+@router.put("/products/{product_id}")
+async def update_product(
+    product_id: str,
+    item: ProductItem,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Update a product"""
+    existing = await db.products.find_one({"id": product_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    now = datetime.now(timezone.utc)
+    
+    update_doc = {
+        "name": item.name,
+        "description": item.description,
+        "price": item.price,
+        "compare_price": item.compare_price,
+        "type": item.type,
+        "status": item.status,
+        "inventory_count": item.inventory_count,
+        "low_stock_threshold": item.low_stock_threshold,
+        "series": item.series,
+        "edition": item.edition,
+        "files": item.files,
+        "metadata": item.metadata,
+        "updated_at": now.isoformat(),
+        "updated_by": admin.id
+    }
+    
+    await db.products.update_one({"id": product_id}, {"$set": update_doc})
+    
+    await log_admin_action("update_product", admin.id, "product", product_id)
+    
+    return {"message": "Product updated successfully"}
+
+@router.patch("/products/{product_id}/inventory")
+async def update_inventory(
+    product_id: str,
+    count: int,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Update product inventory"""
+    existing = await db.products.find_one({"id": product_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    now = datetime.now(timezone.utc)
+    old_count = existing.get("inventory_count", 0)
+    
+    # Determine if status should change
+    status = existing.get("status", "active")
+    if count <= 0:
+        status = "sold_out"
+    elif count > 0 and status == "sold_out":
+        status = "active"
+    
+    await db.products.update_one(
+        {"id": product_id},
+        {"$set": {
+            "inventory_count": count,
+            "status": status,
+            "updated_at": now.isoformat(),
+            "updated_by": admin.id
+        }}
+    )
+    
+    await log_admin_action("update_inventory", admin.id, "product", product_id,
+                          {"old_count": old_count, "new_count": count})
+    
+    return {"message": "Inventory updated", "new_count": count, "status": status}
+
+# =============================================================================
+# ORDERS MANAGEMENT
+# =============================================================================
+
+@router.get("/orders")
+async def get_orders_list(
+    status: Optional[str] = None,
+    page: int = 1,
+    limit: int = 50,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Get orders list"""
+    query = {}
+    if status:
+        query["status"] = status
+    
+    skip = (page - 1) * limit
+    
+    orders = await db.orders.find(query, {"_id": 0}).skip(skip).limit(limit).sort("created_at", -1).to_list(limit)
+    total = await db.orders.count_documents(query)
+    
+    return {
+        "items": orders,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": (total + limit - 1) // limit
+    }
+
+@router.get("/orders/{order_id}")
+async def get_order_details(order_id: str, admin: AdminUser = Depends(get_current_admin)):
+    """Get detailed order information"""
+    order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Get download links for this order
+    download_links = await db.download_links.find(
+        {"order_id": order_id}, {"_id": 0, "token_hash": 0}
+    ).to_list(100)
+    
+    # Get delivery logs
+    delivery_logs = await db.delivery_logs.find(
+        {"order_id": order_id}, {"_id": 0}
+    ).sort("timestamp", -1).to_list(100)
+    
+    return {
+        "order": order,
+        "download_links": download_links,
+        "delivery_logs": delivery_logs
+    }
+
+@router.post("/orders/{order_id}/resend-links")
+async def resend_download_links(order_id: str, admin: AdminUser = Depends(get_current_admin)):
+    """Resend download links for an order"""
+    from download_protection import resend_download_links as do_resend
+    
+    order = await db.orders.find_one({"id": order_id}, {"_id": 0})
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    user_email = order.get("email", order.get("customer_email"))
+    if not user_email:
+        raise HTTPException(status_code=400, detail="No email associated with order")
+    
+    # Use admin's IP for rate limiting bypass
+    success, links, message = await do_resend(order_id, user_email, "admin_console")
+    
+    # Log delivery attempt
+    await db.delivery_logs.insert_one({
+        "id": secrets.token_hex(8),
+        "order_id": order_id,
+        "type": "resend_links",
+        "recipient": user_email,
+        "status": "success" if success else "failed",
+        "message": message,
+        "links_count": len(links) if success else 0,
+        "triggered_by": admin.id,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    })
+    
+    await log_admin_action("resend_download_links", admin.id, "order", order_id)
+    
+    return {
+        "success": success,
+        "message": message,
+        "links": links if success else []
+    }
+
+# =============================================================================
+# USER MANAGEMENT
+# =============================================================================
+
+@router.get("/users")
+async def get_users_list(
+    role: Optional[str] = None,
+    disabled: Optional[bool] = None,
+    search: Optional[str] = None,
+    page: int = 1,
+    limit: int = 50,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Get users list"""
+    query = {}
+    if role:
+        query["role"] = role
+    if disabled is not None:
+        query["disabled"] = disabled
+    if search:
+        query["$or"] = [
+            {"email": {"$regex": search, "$options": "i"}},
+            {"name": {"$regex": search, "$options": "i"}},
+            {"username": {"$regex": search, "$options": "i"}}
+        ]
+    
+    skip = (page - 1) * limit
+    
+    users = await db.users.find(
+        query, {"_id": 0, "password_hash": 0, "password_history": 0}
+    ).skip(skip).limit(limit).sort("created_at", -1).to_list(limit)
+    
+    total = await db.users.count_documents(query)
+    
+    return {
+        "items": users,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": (total + limit - 1) // limit,
+        "roles": list(ROLES.keys())
+    }
+
+@router.post("/users")
+async def create_user(user_data: UserCreate, admin: AdminUser = Depends(get_current_admin)):
+    """Create a new user (admin invite)"""
+    from passlib.context import CryptContext
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    
+    # Check if email exists
+    existing = await db.users.find_one({"email": user_data.email.lower()})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already exists")
+    
+    user_id = secrets.token_hex(16)
+    now = datetime.now(timezone.utc)
+    
+    # Generate password if not provided
+    password = user_data.password or secrets.token_urlsafe(12)
+    password_hash = pwd_context.hash(password)
+    
+    user_doc = {
+        "id": user_id,
+        "email": user_data.email.lower(),
+        "username": user_data.email.split("@")[0].lower(),
+        "name": user_data.name,
+        "password_hash": password_hash,
+        "password_history": [password_hash],
+        "password_changed_at": now.isoformat(),
+        "role": user_data.role,
+        "access_level": user_data.role,
+        "created_at": now.isoformat(),
+        "created_by": admin.id,
+        "disabled": False,
+        "invite_pending": True if not user_data.password else False
+    }
+    
+    await db.users.insert_one(user_doc)
+    
+    await log_admin_action("create_user", admin.id, "user", user_id, 
+                          {"email": user_data.email, "role": user_data.role})
+    
+    return {
+        "id": user_id,
+        "message": "User created successfully",
+        "temporary_password": password if not user_data.password else None
+    }
+
+@router.put("/users/{user_id}")
+async def update_user(
+    user_id: str,
+    user_data: UserUpdate,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Update user details"""
+    existing = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    now = datetime.now(timezone.utc)
+    update_doc = {"updated_at": now.isoformat(), "updated_by": admin.id}
+    
+    if user_data.name is not None:
+        update_doc["name"] = user_data.name
+    if user_data.role is not None:
+        update_doc["role"] = user_data.role
+        update_doc["access_level"] = user_data.role
+    if user_data.disabled is not None:
+        update_doc["disabled"] = user_data.disabled
+        if user_data.disabled:
+            update_doc["disabled_at"] = now.isoformat()
+            update_doc["disabled_by"] = admin.id
+    
+    await db.users.update_one({"id": user_id}, {"$set": update_doc})
+    
+    await log_admin_action("update_user", admin.id, "user", user_id, update_doc)
+    
+    return {"message": "User updated successfully"}
+
+@router.post("/users/{user_id}/reset-password")
+async def admin_reset_password(user_id: str, admin: AdminUser = Depends(get_current_admin)):
+    """Admin reset user password"""
+    from passlib.context import CryptContext
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    
+    existing = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Generate new temporary password
+    new_password = secrets.token_urlsafe(12)
+    password_hash = pwd_context.hash(new_password)
+    now = datetime.now(timezone.utc)
+    
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {
+            "password_hash": password_hash,
+            "password_changed_at": now.isoformat(),
+            "must_change_password": True,
+            "password_reset_by": admin.id,
+            "password_reset_at": now.isoformat()
+        }}
+    )
+    
+    await log_admin_action("reset_password", admin.id, "user", user_id)
+    
+    return {
+        "message": "Password reset successfully",
+        "temporary_password": new_password,
+        "user_email": existing.get("email")
+    }
+
+@router.post("/users/{user_id}/lock")
+async def lock_user_account(user_id: str, admin: AdminUser = Depends(get_current_admin)):
+    """Lock a user account"""
+    existing = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    now = datetime.now(timezone.utc)
+    
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {
+            "disabled": True,
+            "disabled_at": now.isoformat(),
+            "disabled_by": admin.id,
+            "lock_reason": "admin_lock"
+        }}
+    )
+    
+    await log_admin_action("lock_account", admin.id, "user", user_id)
+    
+    return {"message": "Account locked successfully"}
+
+@router.post("/users/{user_id}/unlock")
+async def unlock_user_account(user_id: str, admin: AdminUser = Depends(get_current_admin)):
+    """Unlock a user account"""
+    existing = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    now = datetime.now(timezone.utc)
+    
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {
+            "disabled": False,
+            "unlocked_at": now.isoformat(),
+            "unlocked_by": admin.id
+        },
+        "$unset": {
+            "disabled_at": "",
+            "disabled_by": "",
+            "lock_reason": ""
+        }}
+    )
+    
+    # Clear any lockouts
+    from security import clear_lockout
+    await clear_lockout(existing.get("email", ""))
+    
+    await log_admin_action("unlock_account", admin.id, "user", user_id)
+    
+    return {"message": "Account unlocked successfully"}
+
+# =============================================================================
+# AUDIT LOGS
+# =============================================================================
+
+@router.get("/logs")
+async def get_audit_logs(
+    action: Optional[str] = None,
+    resource_type: Optional[str] = None,
+    admin_id: Optional[str] = None,
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
+    page: int = 1,
+    limit: int = 100,
+    current_admin: AdminUser = Depends(get_current_admin)
+):
+    """Get audit logs"""
+    query = {}
+    if action:
+        query["action"] = action
+    if resource_type:
+        query["resource_type"] = resource_type
+    if admin_id:
+        query["admin_id"] = admin_id
+    if start_date:
+        query.setdefault("timestamp", {})["$gte"] = start_date
+    if end_date:
+        query.setdefault("timestamp", {})["$lte"] = end_date
+    
+    skip = (page - 1) * limit
+    
+    logs = await db.admin_audit_logs.find(query, {"_id": 0}).skip(skip).limit(limit).sort("timestamp", -1).to_list(limit)
+    total = await db.admin_audit_logs.count_documents(query)
+    
+    # Also get security audit logs
+    security_logs = await db.audit_logs.find({}, {"_id": 0}).sort("timestamp", -1).limit(50).to_list(50)
+    
+    return {
+        "admin_logs": logs,
+        "security_logs": security_logs,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": (total + limit - 1) // limit
+    }
+
+# =============================================================================
+# VIDEO MANAGEMENT
+# =============================================================================
+
+@router.get("/videos")
+async def get_videos_list(
+    lesson_id: Optional[str] = None,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Get video links/embeds"""
+    query = {}
+    if lesson_id:
+        query["lesson_id"] = lesson_id
+    
+    videos = await db.lesson_videos.find(query, {"_id": 0}).to_list(1000)
+    return {"items": videos}
+
+@router.post("/videos")
+async def add_video(
+    lesson_id: str = Form(...),
+    title: str = Form(...),
+    url: str = Form(...),
+    platform: str = Form(...),  # youtube, vimeo
+    role_visibility: str = Form("all"),  # all, instructor, adult, youth
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Add video link/embed to a lesson"""
+    video_id = secrets.token_hex(12)
+    now = datetime.now(timezone.utc)
+    
+    video_doc = {
+        "id": video_id,
+        "lesson_id": lesson_id,
+        "title": title,
+        "url": url,
+        "platform": platform,
+        "role_visibility": role_visibility.split(",") if "," in role_visibility else [role_visibility],
+        "created_at": now.isoformat(),
+        "created_by": admin.id
+    }
+    
+    await db.lesson_videos.insert_one(video_doc)
+    
+    await log_admin_action("add_video", admin.id, "video", video_id, {"lesson_id": lesson_id})
+    
+    return {"id": video_id, "message": "Video added successfully"}
+
+@router.delete("/videos/{video_id}")
+async def delete_video(video_id: str, admin: AdminUser = Depends(get_current_admin)):
+    """Delete a video"""
+    result = await db.lesson_videos.delete_one({"id": video_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Video not found")
+    
+    await log_admin_action("delete_video", admin.id, "video", video_id)
+    
+    return {"message": "Video deleted successfully"}
+
+# =============================================================================
+# EXPORT FUNCTIONS
+# =============================================================================
+
+@router.get("/export/content")
+async def export_content(admin: AdminUser = Depends(get_current_admin)):
+    """Export all content as JSON"""
+    lessons = await db.lessons.find({}, {"_id": 0}).to_list(10000)
+    instructor_content = await db.instructor_content.find({}, {"_id": 0}).to_list(10000)
+    
+    export_data = {
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+        "exported_by": admin.id,
+        "lessons": lessons,
+        "instructor_content": instructor_content
+    }
+    
+    await log_admin_action("export_content", admin.id, "export", None)
+    
+    return JSONResponse(content=export_data)
+
+@router.get("/export/orders")
+async def export_orders(
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Export orders as JSON"""
+    query = {}
+    if start_date:
+        query.setdefault("created_at", {})["$gte"] = start_date.isoformat()
+    if end_date:
+        query.setdefault("created_at", {})["$lte"] = end_date.isoformat()
+    
+    orders = await db.orders.find(query, {"_id": 0}).to_list(10000)
+    
+    export_data = {
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+        "exported_by": admin.id,
+        "orders": orders
+    }
+    
+    await log_admin_action("export_orders", admin.id, "export", None)
+    
+    return JSONResponse(content=export_data)
+
+@router.get("/export/users")
+async def export_users(admin: AdminUser = Depends(get_current_admin)):
+    """Export users (without passwords) as JSON"""
+    users = await db.users.find({}, {"_id": 0, "password_hash": 0, "password_history": 0}).to_list(10000)
+    
+    export_data = {
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+        "exported_by": admin.id,
+        "users": users
+    }
+    
+    await log_admin_action("export_users", admin.id, "export", None)
+    
+    return JSONResponse(content=export_data)
+
+# =============================================================================
+# SYSTEM HEALTH / BACKUP STATUS
+# =============================================================================
+
+@router.get("/system/health")
+async def get_system_health(admin: AdminUser = Depends(get_current_admin)):
+    """Get system health and stats"""
+    # Get database stats
+    db_stats = await db.command("dbStats")
+    
+    # Get collection counts
+    collections = {
+        "users": await db.users.count_documents({}),
+        "lessons": await db.lessons.count_documents({}),
+        "orders": await db.orders.count_documents({}),
+        "products": await db.products.count_documents({}),
+        "media": await db.media.count_documents({}),
+        "audit_logs": await db.admin_audit_logs.count_documents({})
+    }
+    
+    return {
+        "status": "healthy",
+        "database": {
+            "size_bytes": db_stats.get("dataSize", 0),
+            "storage_bytes": db_stats.get("storageSize", 0),
+            "collections": db_stats.get("collections", 0)
+        },
+        "collection_counts": collections,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
