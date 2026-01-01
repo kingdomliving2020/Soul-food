@@ -1102,6 +1102,66 @@ async def download_nibble_pdf(nibble_id: str):
         }
     )
 
+@router.get("/download/snackpack/{series}/{edition}/{month}")
+async def download_snackpack_pdf(series: str, edition: str, month: int):
+    """
+    Download a Snack Pack PDF (4 lessons for a month)
+    
+    Args:
+        series: 'breakfast' or 'holiday'
+        edition: 'ae' (adult) or 'ye' (youth)
+        month: Month number (1, 2, 3, etc.)
+    """
+    import os
+    from fastapi.responses import FileResponse
+    
+    # Map to file naming convention
+    pdf_folder = "/app/backend/lesson_pdfs"
+    filename = f"{series}-{edition}-month{month}-snackpack.pdf"
+    pdf_path = os.path.join(pdf_folder, filename)
+    
+    if os.path.exists(pdf_path):
+        return FileResponse(
+            pdf_path,
+            media_type="application/pdf",
+            filename=f"SoulFood_{series.title()}_{edition.upper()}_Month{month}_SnackPack.pdf"
+        )
+    
+    raise HTTPException(
+        status_code=404, 
+        detail=f"Snack Pack not found. Expected file: {filename}"
+    )
+
+
+@router.get("/download/full/{series}/{edition}")
+async def download_full_series_pdf(series: str, edition: str):
+    """
+    Download the full series PDF (all lessons)
+    
+    Args:
+        series: 'breakfast' or 'holiday'
+        edition: 'ae' (adult) or 'ye' (youth)
+    """
+    import os
+    from fastapi.responses import FileResponse
+    
+    pdf_folder = "/app/backend/lesson_pdfs"
+    filename = f"{series}-{edition}-full.pdf"
+    pdf_path = os.path.join(pdf_folder, filename)
+    
+    if os.path.exists(pdf_path):
+        return FileResponse(
+            pdf_path,
+            media_type="application/pdf",
+            filename=f"SoulFood_{series.title()}_{edition.upper()}_Complete.pdf"
+        )
+    
+    raise HTTPException(
+        status_code=404, 
+        detail=f"Full series not found. Expected file: {filename}"
+    )
+
+
 @router.get("/download/series/{series_name}")
 async def download_series_pdf(series_name: str):
     """Download all lessons in a series as a single PDF"""
