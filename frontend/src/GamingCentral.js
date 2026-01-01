@@ -163,7 +163,7 @@ const GamingCentral = () => {
               ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50' 
               : 'bg-orange-500/20 text-orange-300 border border-orange-500/50'
           }`}>
-            {edition === 'youth' ? '👦 Ages 8-17 • Family Friendly' : '👨 Ages 18+ • Deeper Content'}
+            {edition === 'youth' ? '👧 Ages 12-20 • Family Friendly' : '👨 Ages 21+ • Deeper Content'}
           </Badge>
         </div>
 
