@@ -146,7 +146,7 @@ const SnackPacksPage = () => {
                       {pack.is_free || pack.price_download === 0 ? (
                         <div className="w-full text-center">
                           <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full font-bold text-lg">
-                            🎁 FREE
+                            🤲 FREE
                           </span>
                         </div>
                       ) : (
@@ -263,7 +263,7 @@ const SnackPacksPage = () => {
                     <div className="flex items-center justify-between text-sm mb-3">
                       {nibble.is_free || nibble.price_download === 0 ? (
                         <span className="w-full text-center bg-green-100 text-green-700 px-3 py-1 rounded-full font-bold">
-                          🎁 FREE
+                          🤲 FREE
                         </span>
                       ) : (
                         <>

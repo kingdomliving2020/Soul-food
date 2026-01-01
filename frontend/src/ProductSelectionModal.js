@@ -259,7 +259,7 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
           ) : (
             <div className="bg-green-50 rounded-lg p-3 sm:p-4 border-2 border-green-300">
               <p className="text-green-800 font-bold text-base sm:text-lg text-center">
-                🎁 100% FREE - Names of God & Times and Seasons
+                🤲 100% FREE - Names of God & Times and Seasons
               </p>
               <p className="text-green-700 text-xs sm:text-sm text-center mt-2">
                 No restrictions on distribution - share the Word freely!
