@@ -62,6 +62,27 @@ const InteractiveLesson = () => {
   const [currentBiteIndex, setCurrentBiteIndex] = useState(0);
   const [completedBites, setCompletedBites] = useState([]);
   const [savingProgress, setSavingProgress] = useState(false);
+  const [hasPurchased, setHasPurchased] = useState(false);
+
+  // Check if lesson is FREE (In His Image series, Bonus lessons)
+  const isFreelesson = (lessonData) => {
+    if (!lessonData) return false;
+    const freeSeriesKeywords = ['in his image', 'self-worth', 'bonus', 'free'];
+    const seriesName = (lessonData.series_name || '').toLowerCase();
+    const title = (lessonData.title || '').toLowerCase();
+    
+    // Check if it's a free series
+    if (freeSeriesKeywords.some(keyword => seriesName.includes(keyword) || title.includes(keyword))) {
+      return true;
+    }
+    
+    // Check if price is 0 or explicitly marked as free
+    if (lessonData.price === 0 || lessonData.price_download === 0 || lessonData.is_free) {
+      return true;
+    }
+    
+    return false;
+  };
 
   useEffect(() => {
     fetchNibble();
