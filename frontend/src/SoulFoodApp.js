@@ -1139,10 +1139,10 @@ const SoulFoodLanding = () => {
                 }}
                 className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-2xl p-6 flex items-center gap-4 transition-all transform hover:scale-[1.02] shadow-lg"
               >
-                <div className="text-5xl">👦</div>
+                <div className="text-5xl">👧</div>
                 <div className="text-left flex-1">
                   <div className="text-2xl font-bold">Youth Edition</div>
-                  <div className="text-cyan-100 text-sm">Ages 8-17 • Family-friendly content</div>
+                  <div className="text-cyan-100 text-sm">Ages 12-20 • Family-friendly content</div>
                 </div>
                 <div className="text-3xl">→</div>
               </button>
