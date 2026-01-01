@@ -480,46 +480,44 @@ const InteractiveLesson = () => {
               >
                 Next <ArrowRightIcon />
               </Button>
-            Next <ArrowRightIcon />
-          </Button>
-        </div>
+            </div>
 
-        {/* To-Go Box (Key Takeaways) */}
-        <Card className="mb-6 border-teal-200 bg-teal-50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg flex items-center text-teal-800">
-              <span className="mr-2">🥡</span> To-Go Box (Key Takeaways)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {nibble.to_go_box.map((item, index) => (
-                <li key={index} className="flex items-start">
-                  <span className="text-teal-600 mr-2">✓</span>
-                  <span className="text-slate-700">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+            {/* To-Go Box (Key Takeaways) */}
+            <Card className="mb-6 border-teal-200 bg-teal-50">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg flex items-center text-teal-800">
+                  <span className="mr-2">🥡</span> To-Go Box (Key Takeaways)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {nibble.to_go_box.map((item, index) => (
+                    <li key={index} className="flex items-start">
+                      <span className="text-teal-600 mr-2">✓</span>
+                      <span className="text-slate-700">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
 
-        {/* Activity Section */}
-        {nibble.activity && (
-          <Card className="mb-6 border-pink-200 bg-pink-50">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg flex items-center text-pink-800">
-                <span className="mr-2">✏️</span> {nibble.activity.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-slate-600 mb-4">{nibble.activity.instructions}</p>
-              
-              <div className="space-y-4">
-                {nibble.activity.questions.map((question, index) => (
-                  <div key={question.id} className="bg-white rounded-lg p-4 border border-pink-200">
-                    <label className="block font-medium text-slate-700 mb-2">
-                      {index + 1}. {question.prompt}
-                    </label>
+            {/* Activity Section */}
+            {nibble.activity && (
+              <Card className="mb-6 border-pink-200 bg-pink-50">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center text-pink-800">
+                    <span className="mr-2">✏️</span> {nibble.activity.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-slate-600 mb-4">{nibble.activity.instructions}</p>
+                  
+                  <div className="space-y-4">
+                    {nibble.activity.questions.map((question, index) => (
+                      <div key={question.id} className="bg-white rounded-lg p-4 border border-pink-200">
+                        <label className="block font-medium text-slate-700 mb-2">
+                          {index + 1}. {question.prompt}
+                        </label>
                     
                     {question.type === 'fill_in_blank' ? (
                       <Input
