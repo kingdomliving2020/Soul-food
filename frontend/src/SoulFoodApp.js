@@ -813,10 +813,10 @@ const SoulFoodLanding = () => {
                 Celebrate your faith through the seasons with special lessons on <strong>The Covenant</strong>, <strong>The Cradle</strong>, <strong>The Cross</strong>, and <strong>The Comforter</strong>.
               </p>
               <div className="mt-4 space-y-3">
-                {/* Gift Certificate */}
+                {/* Game Pass Certificate */}
                 <div className="bg-amber-50 border-2 border-amber-300 rounded-lg p-4">
                   <p className="text-amber-900 font-semibold flex items-center">
-                    <span className="text-2xl mr-2">🎁</span>
+                    <span className="text-2xl mr-2">🎮</span>
                     <span>Includes Gift Certificate for 8-Hour Game Pass!</span>
                   </p>
                   <p className="text-sm text-amber-700 mt-1 ml-9">
@@ -824,14 +824,14 @@ const SoulFoodLanding = () => {
                   </p>
                 </div>
                 
-                {/* Delivery Notice */}
+                {/* Delivery Notice - Updated dates by 30 days */}
                 <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4">
                   <p className="text-blue-900 font-semibold flex items-center">
                     <span className="text-xl mr-2">📦</span>
-                    <span>Holiday Delivery: Order by December 15th</span>
+                    <span>Paperback Delivery: Order by January 15th</span>
                   </p>
                   <p className="text-sm text-blue-700 mt-1 ml-8">
-                    Delivery between December 23-30th for US locations (timing depends on shipping option selected)
+                    Delivery between January 23-30th for US locations (timing depends on shipping option selected)
                   </p>
                 </div>
               </div>
