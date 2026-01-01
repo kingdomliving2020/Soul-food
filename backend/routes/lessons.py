@@ -1133,6 +1133,83 @@ async def download_snackpack_pdf(series: str, edition: str, month: int):
     )
 
 
+# Nibble (individual lesson) ID mapping
+NIBBLE_FILES = {
+    # Adult Breakfast - Month 1: Prayer
+    "breakfast-ae-esther": "breakfast-ae-esther.pdf",
+    "breakfast-ae-solomon": "breakfast-ae-solomon.pdf",
+    "breakfast-ae-jesus": "breakfast-ae-jesus.pdf",
+    "breakfast-ae-paul-silas": "breakfast-ae-paul-silas.pdf",
+    # Adult Breakfast - Month 2: Art of Through
+    "breakfast-ae-joseph": "breakfast-ae-joseph.pdf",
+    "breakfast-ae-hannah": "breakfast-ae-hannah.pdf",
+    "breakfast-ae-abram": "breakfast-ae-abram.pdf",
+    "breakfast-ae-chronic": "breakfast-ae-chronic.pdf",
+    # Adult Breakfast - Month 3: Faith & Foresight
+    "breakfast-ae-rahab": "breakfast-ae-rahab.pdf",
+    "breakfast-ae-abigail": "breakfast-ae-abigail.pdf",
+    "breakfast-ae-centurion": "breakfast-ae-centurion.pdf",
+    "breakfast-ae-joseph-arimathea": "breakfast-ae-joseph-arimathea.pdf",
+}
+
+# Friendly names for download filenames
+NIBBLE_NAMES = {
+    "breakfast-ae-esther": "Esther_Second_Is_Best",
+    "breakfast-ae-solomon": "Solomon_Wisdom_In_Response",
+    "breakfast-ae-jesus": "Jesus_Prayer_First_Resort",
+    "breakfast-ae-paul-silas": "Paul_Silas_Faith_In_Dark",
+    "breakfast-ae-joseph": "Joseph_Young_Dreamer",
+    "breakfast-ae-hannah": "Hannah_Barren_Not_Lifeless",
+    "breakfast-ae-abram": "Abram_No_Heir_Wait_Here",
+    "breakfast-ae-chronic": "Chronic_Conditions",
+    "breakfast-ae-rahab": "Rahab_Faith_That_Took_Action",
+    "breakfast-ae-abigail": "Abigail_Wisdom_On_Move",
+    "breakfast-ae-centurion": "Centurion_Faith_Commands_Results",
+    "breakfast-ae-joseph-arimathea": "Joseph_Arimathea_Trust_Process",
+}
+
+
+@router.get("/download/nibble-file/{nibble_id}")
+async def download_nibble_file(nibble_id: str):
+    """
+    Download an individual lesson (Nibble) PDF
+    
+    Args:
+        nibble_id: e.g., 'breakfast-ae-esther', 'breakfast-ae-joseph'
+    """
+    import os
+    from fastapi.responses import FileResponse
+    
+    pdf_folder = "/app/backend/lesson_pdfs"
+    
+    # Check if nibble_id is in our mapping
+    if nibble_id in NIBBLE_FILES:
+        filename = NIBBLE_FILES[nibble_id]
+        pdf_path = os.path.join(pdf_folder, filename)
+        
+        if os.path.exists(pdf_path):
+            friendly_name = NIBBLE_NAMES.get(nibble_id, nibble_id)
+            return FileResponse(
+                pdf_path,
+                media_type="application/pdf",
+                filename=f"SoulFood_{friendly_name}.pdf"
+            )
+    
+    # Fallback: try direct file match
+    direct_path = os.path.join(pdf_folder, f"{nibble_id}.pdf")
+    if os.path.exists(direct_path):
+        return FileResponse(
+            direct_path,
+            media_type="application/pdf",
+            filename=f"SoulFood_{nibble_id}.pdf"
+        )
+    
+    raise HTTPException(
+        status_code=404, 
+        detail=f"Nibble not found: {nibble_id}"
+    )
+
+
 @router.get("/download/full/{series}/{edition}")
 async def download_full_series_pdf(series: str, edition: str):
     """
