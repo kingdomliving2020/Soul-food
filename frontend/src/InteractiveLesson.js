@@ -310,93 +310,176 @@ const InteractiveLesson = () => {
           </CardContent>
         </Card>
 
-        {/* Bites Navigation */}
-        <div className="flex justify-center gap-2 mb-6">
-          {nibble.bites.map((bite, index) => (
-            <button
-              key={bite.id}
-              onClick={() => setCurrentBiteIndex(index)}
-              className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                index === currentBiteIndex
-                  ? 'bg-indigo-600 text-white shadow-lg scale-110'
-                  : completedBites.includes(bite.id)
-                  ? 'bg-emerald-500 text-white'
-                  : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
-              }`}
-            >
-              {completedBites.includes(bite.id) && index !== currentBiteIndex ? '✓' : index + 1}
-            </button>
-          ))}
-        </div>
+        {/* FREE PREVIEW CUTOFF - Content below is blurred for paid lessons */}
+        {!isFreelesson(nibble) && !hasPurchased ? (
+          /* BLURRED PREVIEW FOR PAID LESSONS */
+          <div className="relative">
+            {/* Blurred Background Content (just visual hint) */}
+            <div className="filter blur-md opacity-50 pointer-events-none select-none">
+              {/* Bites Navigation Preview */}
+              <div className="flex justify-center gap-2 mb-6">
+                {nibble.bites.slice(0, 4).map((bite, index) => (
+                  <div
+                    key={bite.id}
+                    className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold"
+                  >
+                    {index + 1}
+                  </div>
+                ))}
+              </div>
 
-        {/* Current Bite */}
-        <Card className="mb-6 border-indigo-200 shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-indigo-100 to-purple-100">
-            <CardTitle className="text-xl text-indigo-800 flex items-center">
-              <BookIcon />
-              <span className="ml-2">Bite {currentBiteIndex + 1}: {currentBite.title}</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            {/* Scripture */}
-            <div className="bg-slate-50 border-l-4 border-indigo-500 p-4 rounded-r-lg mb-6">
-              <p className="text-sm font-semibold text-indigo-600 mb-1">{currentBite.scripture_ref}</p>
-              <p className="text-slate-700 italic">"{currentBite.scripture_text}"</p>
+              {/* Preview of Bite Card */}
+              <Card className="mb-6 border-indigo-200">
+                <CardHeader className="bg-gradient-to-r from-indigo-100 to-purple-100">
+                  <CardTitle className="text-xl text-indigo-800">
+                    Bite 1: {nibble.bites[0]?.title || 'Lesson Content'}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <div className="h-4 bg-slate-200 rounded w-3/4"></div>
+                    <div className="h-4 bg-slate-200 rounded w-full"></div>
+                    <div className="h-4 bg-slate-200 rounded w-5/6"></div>
+                    <div className="h-4 bg-slate-200 rounded w-2/3"></div>
+                    <div className="h-20 bg-slate-100 rounded mt-4"></div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
-            {/* Teaching */}
-            <div className="mb-6">
-              <h4 className="font-semibold text-slate-800 mb-3 flex items-center">
-                <LightBulbIcon />
-                <span className="ml-2">Teaching</span>
-              </h4>
-              <p className="text-slate-700 leading-relaxed">{currentBite.teaching}</p>
+            {/* Purchase Overlay */}
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-white/80 to-white">
+              <Card className="max-w-md mx-4 shadow-2xl border-2 border-indigo-300 bg-white">
+                <CardContent className="p-8 text-center">
+                  <div className="text-6xl mb-4">🔒</div>
+                  <h3 className="text-2xl font-bold text-slate-800 mb-3">
+                    Preview Ends Here
+                  </h3>
+                  <p className="text-slate-600 mb-6">
+                    You've seen the appetizer! Purchase this lesson to unlock the full teaching, 
+                    Bible study content, reflection questions, and downloadable materials.
+                  </p>
+                  <div className="space-y-3">
+                    <Button
+                      onClick={() => navigate('/quick-order')}
+                      className="w-full bg-gradient-to-r from-orange-500 to-purple-600 hover:from-orange-600 hover:to-purple-700 text-white font-bold py-3"
+                    >
+                      🛒 Purchase Full Lesson
+                    </Button>
+                    <Button
+                      onClick={() => navigate('/snack-packs')}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Browse All Lessons
+                    </Button>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-4">
+                    Want to try first? Check out our <a href="/snack-packs" className="text-indigo-600 underline">FREE "In His Image" lessons</a>!
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        ) : (
+          /* FULL CONTENT FOR FREE LESSONS OR PURCHASED */
+          <>
+            {/* Bites Navigation */}
+            <div className="flex justify-center gap-2 mb-6">
+              {nibble.bites.map((bite, index) => (
+                <button
+                  key={bite.id}
+                  onClick={() => setCurrentBiteIndex(index)}
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
+                    index === currentBiteIndex
+                      ? 'bg-indigo-600 text-white shadow-lg scale-110'
+                      : completedBites.includes(bite.id)
+                      ? 'bg-emerald-500 text-white'
+                      : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                  }`}
+                >
+                  {completedBites.includes(bite.id) && index !== currentBiteIndex ? '✓' : index + 1}
+                </button>
+              ))}
             </div>
 
-            {/* Core Shared Truth */}
-            {currentBite.cst && (
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
-                <p className="font-semibold text-purple-800 flex items-center">
-                  <CheckCircleIcon />
-                  <span className="ml-2">Core Shared Truth:</span>
-                </p>
-                <p className="text-purple-700 mt-1">{currentBite.cst}</p>
-              </div>
-            )}
+            {/* Current Bite */}
+            <Card className="mb-6 border-indigo-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-indigo-100 to-purple-100">
+                <CardTitle className="text-xl text-indigo-800 flex items-center">
+                  <BookIcon />
+                  <span className="ml-2">Bite {currentBiteIndex + 1}: {currentBite.title}</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                {/* Scripture with proper citation */}
+                <div className="bg-slate-50 border-l-4 border-indigo-500 p-4 rounded-r-lg mb-6">
+                  <p className="text-slate-700 italic text-lg leading-relaxed">"{currentBite.scripture_text}"</p>
+                  <p className="text-sm font-semibold text-indigo-600 mt-2">
+                    — {currentBite.scripture_ref}
+                    {currentBite.scripture_ref?.toLowerCase().includes('nog') || currentBite.scripture_ref?.toLowerCase().includes('names of god') ? (
+                      <span className="text-xs text-slate-500 ml-2">(Names of God Bible™)</span>
+                    ) : currentBite.scripture_ref?.toLowerCase().includes('tlv') ? (
+                      <span className="text-xs text-slate-500 ml-2">(Tree of Life Version™)</span>
+                    ) : null}
+                  </p>
+                </div>
 
-            {/* Reflection Question */}
-            {currentBite.question && (
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                <p className="font-semibold text-amber-800 mb-3">
-                  💭 {currentBite.question.type === 'reflection' ? 'Reflection Question' : 'Question'}
-                </p>
-                <p className="text-slate-700 mb-3">{currentBite.question.prompt}</p>
-                <Textarea
-                  value={answers[currentBite.question.id] || ''}
-                  onChange={(e) => handleAnswerChange(currentBite.question.id, e.target.value)}
-                  placeholder="Write your thoughts here..."
-                  className="min-h-[100px]"
-                />
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                {/* Teaching */}
+                <div className="mb-6">
+                  <h4 className="font-semibold text-slate-800 mb-3 flex items-center">
+                    <LightBulbIcon />
+                    <span className="ml-2">Teaching</span>
+                  </h4>
+                  <div className="text-slate-700 leading-relaxed whitespace-pre-line">{currentBite.teaching}</div>
+                </div>
 
-        {/* Bite Navigation Buttons */}
-        <div className="flex justify-between mb-8">
-          <Button
-            onClick={handlePrevBite}
-            disabled={currentBiteIndex === 0}
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <ArrowLeftIcon /> Previous
-          </Button>
-          <Button
-            onClick={handleNextBite}
-            disabled={currentBiteIndex === nibble.bites.length - 1}
-            className="bg-indigo-600 hover:bg-indigo-700 flex items-center gap-2"
-          >
+                {/* Core Shared Truth */}
+                {currentBite.cst && (
+                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
+                    <p className="font-semibold text-purple-800 flex items-center">
+                      <CheckCircleIcon />
+                      <span className="ml-2">Core Shared Truth:</span>
+                    </p>
+                    <p className="text-purple-700 mt-1">{currentBite.cst}</p>
+                  </div>
+                )}
+
+                {/* Reflection Question */}
+                {currentBite.question && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <p className="font-semibold text-amber-800 mb-3">
+                      💭 {currentBite.question.type === 'reflection' ? 'Reflection Question' : 'Question'}
+                    </p>
+                    <p className="text-slate-700 mb-3">{currentBite.question.prompt}</p>
+                    <Textarea
+                      value={answers[currentBite.question.id] || ''}
+                      onChange={(e) => handleAnswerChange(currentBite.question.id, e.target.value)}
+                      placeholder="Write your thoughts here..."
+                      className="min-h-[100px]"
+                    />
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Bite Navigation Buttons */}
+            <div className="flex justify-between mb-8">
+              <Button
+                onClick={handlePrevBite}
+                disabled={currentBiteIndex === 0}
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                <ArrowLeftIcon /> Previous
+              </Button>
+              <Button
+                onClick={handleNextBite}
+                disabled={currentBiteIndex === nibble.bites.length - 1}
+                className="bg-indigo-600 hover:bg-indigo-700 flex items-center gap-2"
+              >
+                Next <ArrowRightIcon />
+              </Button>
             Next <ArrowRightIcon />
           </Button>
         </div>
