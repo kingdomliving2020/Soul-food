@@ -1860,26 +1860,61 @@ const SoulFoodLanding = () => {
 
                     {/* Lessons for this theme */}
                     <div className="space-y-3 pl-2">
-                      {theme.lessons.map((lesson) => (
-                        <div
-                          key={`${themeIndex}-${lesson.number}`}
-                          className={`bg-gradient-to-r ${selectedSeries.bgColor} border-2 border-slate-200 rounded-xl p-5 hover:shadow-lg transition-all hover:scale-[1.02] cursor-pointer`}
-                        >
-                          <div className="flex items-start space-x-4">
-                            <div className={`flex-shrink-0 w-12 h-12 bg-gradient-to-br ${selectedSeries.gradient} rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md`}>
-                              {lesson.number}
-                            </div>
-                            <div className="flex-1">
-                              <h5 className="text-lg font-bold text-slate-800 mb-1">
-                                Lesson {lesson.number}: {lesson.title}
-                              </h5>
-                              <p className="text-sm text-slate-600 leading-relaxed">
-                                {lesson.description}
-                              </p>
+                      {theme.lessons.map((lesson, lessonIndex) => {
+                        // Build the lesson ID for linking - first lesson of each theme can be explored
+                        const isFirstLessonOfTheme = lessonIndex === 0;
+                        const seriesIdMap = {
+                          'holiday': 'holiday-ae',
+                          'breakfast': 'breakfast-ae',
+                          'lunch': 'lunch-ae',
+                          'dinner': 'dinner-ae'
+                        };
+                        const seriesPrefix = seriesIdMap[selectedSeries.id] || selectedSeries.id;
+                        const lessonSlug = lesson.title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+                        const interactiveLessonUrl = `/interactive-lesson/${seriesPrefix}-${lessonSlug}`;
+                        
+                        return (
+                          <div
+                            key={`${themeIndex}-${lesson.number}`}
+                            onClick={() => {
+                              if (isFirstLessonOfTheme && selectedSeries.available) {
+                                window.location.href = interactiveLessonUrl;
+                              }
+                            }}
+                            className={`bg-gradient-to-r ${selectedSeries.bgColor} border-2 border-slate-200 rounded-xl p-5 hover:shadow-lg transition-all ${
+                              isFirstLessonOfTheme && selectedSeries.available 
+                                ? 'hover:scale-[1.02] cursor-pointer hover:border-purple-300' 
+                                : 'opacity-90'
+                            }`}
+                          >
+                            <div className="flex items-start space-x-4">
+                              <div className={`flex-shrink-0 w-12 h-12 bg-gradient-to-br ${selectedSeries.gradient} rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-md`}>
+                                {lesson.number}
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <h5 className="text-lg font-bold text-slate-800">
+                                    Lesson {lesson.number}: {lesson.title}
+                                  </h5>
+                                  {isFirstLessonOfTheme && selectedSeries.available && (
+                                    <span className="bg-purple-500 text-white text-xs font-bold px-2 py-0.5 rounded">
+                                      👁️ PREVIEW
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-sm text-slate-600 leading-relaxed">
+                                  {lesson.description}
+                                </p>
+                                {isFirstLessonOfTheme && selectedSeries.available && (
+                                  <p className="text-xs text-purple-600 mt-2 font-semibold">
+                                    Click to explore this lesson (preview includes Appetizer section)
+                                  </p>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
