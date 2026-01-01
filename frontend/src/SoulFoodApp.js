@@ -196,8 +196,8 @@ const SOUL_FOOD_SERIES = [
           { number: 2, title: "The Cradle", description: "The birth of our Savior and King" },
           { number: 3, title: "The Cross", description: "The ultimate sacrifice for our redemption" },
           { number: 4, title: "The Comforter", description: "The gift of the Holy Spirit to believers" },
-          { number: 5, title: "Bonus Lesson - The Names of God", description: "Discovering God's character through His names" },
-          { number: 6, title: "Bonus Lesson - Times & Seasons", description: "God's perfect timing in our lives" }
+          { number: 5, title: "Bonus Lesson - The Names of God", description: "Discovering God's character through His names", icon: "✝️" },
+          { number: 6, title: "Bonus Lesson - Times & Seasons", description: "God's perfect timing in our lives", icon: "⏳" }
         ]
       }
     ]
@@ -529,7 +529,7 @@ const SoulFoodLanding = () => {
                 
                 <div className="flex items-center justify-between pt-4">
                   <Badge className="bg-amber-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
-                    ✨ Try Before You Buy
+                    🫴🏽 Try Before You Buy
                   </Badge>
                   
                   <Button
