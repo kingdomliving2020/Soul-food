@@ -661,6 +661,8 @@ const InteractiveLesson = () => {
             🎓 Next Lesson
           </Button>
         </div>
+          </>
+        )}
       </div>
 
       {/* Footer */}
