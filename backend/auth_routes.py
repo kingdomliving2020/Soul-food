@@ -742,7 +742,18 @@ async def change_password(data: ChangePassword, user = Depends(get_current_user)
         }
     )
     
-    return {"message": "Password changed successfully"}
+    # Log the password change
+    await log_audit_event(
+        event_type=AuditEventType.PASSWORD_CHANGED,
+        user_id=user["id"],
+        user_email=user["email"]
+    )
+    
+    # Return response requiring re-login
+    return {
+        "message": "Password changed successfully. Please log in again.",
+        "require_relogin": True  # Frontend should force re-login
+    }
 
 @router.get("/me")
 async def get_current_user_info(user = Depends(get_current_user)):
