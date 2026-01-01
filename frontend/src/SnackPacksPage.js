@@ -290,13 +290,17 @@ const SnackPacksPage = () => {
         {holidayBonusNibbles.length > 0 && (
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-slate-800 mb-2 flex items-center">
-              <span className="mr-2">🎁</span> Bonus Lessons
+              <span className="mr-2">📖</span> Bonus Lessons
               <Badge className="ml-3 bg-emerald-500 text-white">FREE</Badge>
             </h2>
             <p className="text-slate-600 mb-6">Foundational teachings to deepen your faith journey</p>
             
             <div className="grid sm:grid-cols-2 gap-4">
-              {holidayBonusNibbles.map((nibble) => (
+              {holidayBonusNibbles.map((nibble) => {
+                // Use specific icons for each bonus lesson
+                const lessonIcon = nibble.title.toLowerCase().includes('names') ? '✝️' : '⏳';
+                
+                return (
                 <Card 
                   key={nibble.id}
                   className="border-2 border-emerald-200 hover:border-emerald-400 transition-all hover:shadow-lg group bg-gradient-to-br from-white to-emerald-50"
@@ -304,7 +308,7 @@ const SnackPacksPage = () => {
                   <CardContent className="p-5">
                     <div className="flex items-start gap-4">
                       <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg">
-                        <span className="text-2xl">🎁</span>
+                        <span className="text-2xl">{lessonIcon}</span>
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
