@@ -980,6 +980,456 @@ class SoulFoodQuickOrderTester:
             self.log_test("Series and Editions Data", False, f"Exception: {str(e)}")
             return False
 
+    # =============================================================================
+    # ADMIN CONSOLE TESTS
+    # =============================================================================
+
+    def test_admin_login_instructor(self):
+        """Test admin login with instructor credentials and store token"""
+        try:
+            test_data = {
+                "username": "instructor",
+                "password": "test123"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/auth/beta-login",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Admin Login - Instructor", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["access_token", "token_type", "user"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Admin Login - Instructor", False, f"Missing field: {field}")
+                    return False
+            
+            # Store admin token for subsequent tests
+            self.admin_token = data["access_token"]
+            
+            user = data["user"]
+            
+            # Verify instructor-specific values
+            if user.get("role") != "instructor_tester":
+                self.log_test("Admin Login - Instructor", False, f"Wrong role: {user.get('role')}, expected: instructor_tester")
+                return False
+                
+            if user.get("access_level") != "instructor":
+                self.log_test("Admin Login - Instructor", False, f"Wrong access_level: {user.get('access_level')}, expected: instructor")
+                return False
+            
+            self.log_test("Admin Login - Instructor", True, "Instructor login successful, admin token stored")
+            return True
+            
+        except Exception as e:
+            self.log_test("Admin Login - Instructor", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_dashboard(self):
+        """Test GET /api/admin/dashboard endpoint"""
+        if not self.admin_token:
+            self.log_test("Admin Dashboard", False, "No admin token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.admin_token}",
+                "Content-Type": "application/json"
+            }
+            
+            response = self.session.get(
+                f"{self.base_url}/admin/dashboard",
+                headers=headers
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Admin Dashboard", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["summary", "recent_orders", "recent_users", "admin"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Admin Dashboard", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify summary structure
+            summary = data["summary"]
+            summary_fields = ["total_users", "total_lessons", "total_orders", "total_products", "total_revenue"]
+            for field in summary_fields:
+                if field not in summary:
+                    self.log_test("Admin Dashboard", False, f"Missing summary field: {field}")
+                    return False
+                    
+                # Verify it's a number
+                if not isinstance(summary[field], (int, float)):
+                    self.log_test("Admin Dashboard", False, f"Summary field {field} is not a number: {summary[field]}")
+                    return False
+            
+            # Verify admin info
+            admin_info = data["admin"]
+            if "id" not in admin_info or "email" not in admin_info or "role" not in admin_info:
+                self.log_test("Admin Dashboard", False, "Missing admin info fields")
+                return False
+            
+            self.log_test("Admin Dashboard", True, f"Dashboard data retrieved successfully - {summary['total_users']} users, {summary['total_lessons']} lessons")
+            return True
+            
+        except Exception as e:
+            self.log_test("Admin Dashboard", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_content(self):
+        """Test GET /api/admin/content endpoint"""
+        if not self.admin_token:
+            self.log_test("Admin Content", False, "No admin token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.admin_token}",
+                "Content-Type": "application/json"
+            }
+            
+            response = self.session.get(
+                f"{self.base_url}/admin/content",
+                headers=headers
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Admin Content", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["items", "total", "page", "limit", "pages"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Admin Content", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify items is a list
+            if not isinstance(data["items"], list):
+                self.log_test("Admin Content", False, "Items field is not a list")
+                return False
+            
+            # If there are items, verify structure
+            if data["items"]:
+                item = data["items"][0]
+                item_fields = ["id", "title", "series", "lesson_number"]
+                for field in item_fields:
+                    if field not in item:
+                        self.log_test("Admin Content", False, f"Missing item field: {field}")
+                        return False
+            
+            self.log_test("Admin Content", True, f"Content list retrieved successfully - {data['total']} items")
+            return True
+            
+        except Exception as e:
+            self.log_test("Admin Content", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_users(self):
+        """Test GET /api/admin/users endpoint"""
+        if not self.admin_token:
+            self.log_test("Admin Users", False, "No admin token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.admin_token}",
+                "Content-Type": "application/json"
+            }
+            
+            response = self.session.get(
+                f"{self.base_url}/admin/users",
+                headers=headers
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Admin Users", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["items", "total", "page", "limit", "pages", "roles"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Admin Users", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify items is a list
+            if not isinstance(data["items"], list):
+                self.log_test("Admin Users", False, "Items field is not a list")
+                return False
+            
+            # Verify roles is a list
+            if not isinstance(data["roles"], list):
+                self.log_test("Admin Users", False, "Roles field is not a list")
+                return False
+            
+            self.log_test("Admin Users", True, f"Users list retrieved successfully - {data['total']} users")
+            return True
+            
+        except Exception as e:
+            self.log_test("Admin Users", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_orders(self):
+        """Test GET /api/admin/orders endpoint"""
+        if not self.admin_token:
+            self.log_test("Admin Orders", False, "No admin token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.admin_token}",
+                "Content-Type": "application/json"
+            }
+            
+            response = self.session.get(
+                f"{self.base_url}/admin/orders",
+                headers=headers
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Admin Orders", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["items", "total", "page", "limit", "pages"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Admin Orders", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify items is a list
+            if not isinstance(data["items"], list):
+                self.log_test("Admin Orders", False, "Items field is not a list")
+                return False
+            
+            self.log_test("Admin Orders", True, f"Orders list retrieved successfully - {data['total']} orders")
+            return True
+            
+        except Exception as e:
+            self.log_test("Admin Orders", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_products(self):
+        """Test GET /api/admin/products endpoint"""
+        if not self.admin_token:
+            self.log_test("Admin Products", False, "No admin token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.admin_token}",
+                "Content-Type": "application/json"
+            }
+            
+            response = self.session.get(
+                f"{self.base_url}/admin/products",
+                headers=headers
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Admin Products", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["items", "total", "page", "limit", "pages"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Admin Products", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify items is a list
+            if not isinstance(data["items"], list):
+                self.log_test("Admin Products", False, "Items field is not a list")
+                return False
+            
+            # Check for low_stock_count field
+            if "low_stock_count" not in data:
+                self.log_test("Admin Products", False, "Missing low_stock_count field")
+                return False
+            
+            self.log_test("Admin Products", True, f"Products list retrieved successfully - {data['total']} products")
+            return True
+            
+        except Exception as e:
+            self.log_test("Admin Products", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_media(self):
+        """Test GET /api/admin/media endpoint"""
+        if not self.admin_token:
+            self.log_test("Admin Media", False, "No admin token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.admin_token}",
+                "Content-Type": "application/json"
+            }
+            
+            response = self.session.get(
+                f"{self.base_url}/admin/media",
+                headers=headers
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Admin Media", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["items", "total", "page", "limit", "pages"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Admin Media", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify items is a list
+            if not isinstance(data["items"], list):
+                self.log_test("Admin Media", False, "Items field is not a list")
+                return False
+            
+            self.log_test("Admin Media", True, f"Media list retrieved successfully - {data['total']} media files")
+            return True
+            
+        except Exception as e:
+            self.log_test("Admin Media", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_logs(self):
+        """Test GET /api/admin/logs endpoint"""
+        if not self.admin_token:
+            self.log_test("Admin Logs", False, "No admin token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.admin_token}",
+                "Content-Type": "application/json"
+            }
+            
+            response = self.session.get(
+                f"{self.base_url}/admin/logs",
+                headers=headers
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Admin Logs", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["admin_logs", "security_logs", "total", "page", "limit", "pages"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Admin Logs", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify logs are lists
+            if not isinstance(data["admin_logs"], list):
+                self.log_test("Admin Logs", False, "Admin logs field is not a list")
+                return False
+                
+            if not isinstance(data["security_logs"], list):
+                self.log_test("Admin Logs", False, "Security logs field is not a list")
+                return False
+            
+            self.log_test("Admin Logs", True, f"Audit logs retrieved successfully - {data['total']} admin logs, {len(data['security_logs'])} security logs")
+            return True
+            
+        except Exception as e:
+            self.log_test("Admin Logs", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_instructor_content(self):
+        """Test GET /api/admin/instructor-content endpoint"""
+        if not self.admin_token:
+            self.log_test("Admin Instructor Content", False, "No admin token available")
+            return False
+            
+        try:
+            headers = {
+                "Authorization": f"Bearer {self.admin_token}",
+                "Content-Type": "application/json"
+            }
+            
+            response = self.session.get(
+                f"{self.base_url}/admin/instructor-content",
+                headers=headers
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Admin Instructor Content", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["items"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Admin Instructor Content", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify items is a list
+            if not isinstance(data["items"], list):
+                self.log_test("Admin Instructor Content", False, "Items field is not a list")
+                return False
+            
+            self.log_test("Admin Instructor Content", True, f"Instructor content retrieved successfully - {len(data['items'])} items")
+            return True
+            
+        except Exception as e:
+            self.log_test("Admin Instructor Content", False, f"Exception: {str(e)}")
+            return False
+
+    def test_admin_unauthorized_access(self):
+        """Test that admin endpoints reject requests without proper authorization"""
+        try:
+            # Test without any token
+            response = self.session.get(f"{self.base_url}/admin/dashboard")
+            
+            if response.status_code != 401:
+                self.log_test("Admin Unauthorized Access", False, f"Expected 401, got {response.status_code}")
+                return False
+            
+            # Test with invalid token
+            headers = {"Authorization": "Bearer invalid_token"}
+            response = self.session.get(f"{self.base_url}/admin/dashboard", headers=headers)
+            
+            if response.status_code != 401:
+                self.log_test("Admin Unauthorized Access", False, f"Expected 401 for invalid token, got {response.status_code}")
+                return False
+            
+            self.log_test("Admin Unauthorized Access", True, "Admin endpoints properly reject unauthorized access")
+            return True
+            
+        except Exception as e:
+            self.log_test("Admin Unauthorized Access", False, f"Exception: {str(e)}")
+            return False
+
     def run_all_tests(self):
         """Run all Soul Food Quick Order and Checkout Tests"""
         print("🧪 Starting Soul Food Complete Checkout and Download Flow Tests")
