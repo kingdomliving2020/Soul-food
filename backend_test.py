@@ -19,6 +19,7 @@ class SoulFoodQuickOrderTester:
         self.session = requests.Session()
         self.test_results = []
         self.auth_tokens = {}  # Store tokens for cleanup
+        self.admin_token = None  # Store admin token for admin tests
         
     def log_test(self, test_name: str, success: bool, details: str = ""):
         """Log test results"""
