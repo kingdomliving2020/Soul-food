@@ -242,13 +242,25 @@ const InteractiveLesson = () => {
               <ArrowLeftIcon />
               <span className="hidden sm:inline">Back to Lessons</span>
             </Button>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 flex-wrap justify-center gap-1">
               <Badge className="bg-indigo-100 text-indigo-800">
                 Lesson {nibble.lesson_number}
               </Badge>
               <Badge className="bg-purple-100 text-purple-800">
                 {nibble.series_name}
               </Badge>
+              {nibble.edition && (
+                <Badge className={nibble.edition === 'Youth' 
+                  ? "bg-cyan-100 text-cyan-800" 
+                  : "bg-orange-100 text-orange-800"}>
+                  {nibble.edition === 'Youth' ? '🧢✨ Youth' : '👨 Adult'} Edition
+                </Badge>
+              )}
+              {nibble.month && (
+                <Badge className="bg-amber-100 text-amber-800">
+                  Month {nibble.month}: {nibble.theme}
+                </Badge>
+              )}
             </div>
             <Button
               onClick={handleSaveProgress}
