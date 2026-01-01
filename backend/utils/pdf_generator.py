@@ -72,7 +72,7 @@ class LessonPDFGenerator:
             textColor=colors.HexColor('#4F46E5')
         ))
         
-        # Scripture style
+        # Scripture style - increased leading for readability
         self.styles.add(ParagraphStyle(
             name='Scripture',
             parent=self.styles['Normal'],
@@ -86,7 +86,8 @@ class LessonPDFGenerator:
             borderColor=colors.HexColor('#4F46E5'),
             borderWidth=0,
             borderPadding=8,
-            backColor=colors.HexColor('#F1F5F9')
+            backColor=colors.HexColor('#F1F5F9'),
+            leading=17  # 1.5x line height
         ))
         
         # Body text style - increased leading for better readability (1.5x line height)
