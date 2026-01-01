@@ -1893,7 +1893,8 @@ const SoulFoodLanding = () => {
                         // Build the lesson ID for linking - first lesson of each theme can be explored
                         const isFirstLessonOfTheme = lessonIndex === 0;
                         
-                        // Map lesson titles to actual backend lesson IDs
+                        // Map lesson titles to actual backend lesson IDs based on edition
+                        const editionSuffix = previewEdition === 'youth' ? 'ye' : 'ae';
                         const lessonIdMap = {
                           // Holiday Series
                           'The Covenant': 'holiday-ae-covenant',
@@ -1906,10 +1907,10 @@ const SoulFoodLanding = () => {
                           'Made in His Image': 'in-his-image-1',
                           'Accepted and Loved': 'in-his-image-2',
                           'Chosen of God': 'in-his-image-3',
-                          // Breakfast Adult
-                          'Esther': 'breakfast-ae-esther',
-                          'Joseph': 'breakfast-ae-joseph',
-                          'Rahab': 'breakfast-ae-rahab',
+                          // Breakfast - dynamically use edition
+                          'Esther': `breakfast-${editionSuffix}-esther`,
+                          'Joseph': `breakfast-${editionSuffix}-joseph`,
+                          'Rahab': `breakfast-${editionSuffix}-rahab`,
                         };
                         
                         const lessonId = lessonIdMap[lesson.title];
