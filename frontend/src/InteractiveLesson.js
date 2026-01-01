@@ -252,7 +252,7 @@ const InteractiveLesson = () => {
               {nibble.edition && (
                 <Badge className={nibble.edition === 'Youth' 
                   ? "bg-cyan-100 text-cyan-800" 
-                  : "bg-orange-100 text-orange-800"}>
+                  : "bg-blue-600 text-white"}>
                   {nibble.edition === 'Youth' ? '🧢✨ Youth' : '👨 Adult'} Edition
                 </Badge>
               )}
