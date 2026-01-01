@@ -1924,6 +1924,7 @@ function App() {
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancel" element={<PaymentCancel />} />
             <Route path="/order-success" element={<OrderSuccess />} />
+            <Route path="/admin/*" element={<AdminConsole />} />
           </Routes>
         </BrowserRouter>
       </CartProvider>
