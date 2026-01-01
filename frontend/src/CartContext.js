@@ -67,18 +67,26 @@ export const CartProvider = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load cart from localStorage on mount
+  // Load cart from localStorage on mount - with robust error handling
   useEffect(() => {
-    const savedCart = localStorage.getItem('soulFoodCart');
-    if (savedCart) {
-      try {
+    try {
+      const savedCart = localStorage.getItem('soulFoodCart');
+      console.log('[Cart] Loading from localStorage:', savedCart ? 'found' : 'empty');
+      
+      if (savedCart) {
         const parsed = JSON.parse(savedCart);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setCartItems(parsed);
+          // Validate each item has required fields
+          const validItems = parsed.filter(item => 
+            item && (item.productId || item.id) && (item.salePrice !== undefined || item.price !== undefined)
+          );
+          console.log('[Cart] Loaded', validItems.length, 'valid items');
+          setCartItems(validItems);
         }
-      } catch (e) {
-        console.error('Error loading cart:', e);
       }
+    } catch (e) {
+      console.error('[Cart] Error loading cart:', e);
+      localStorage.removeItem('soulFoodCart'); // Clear corrupted data
     }
     setIsInitialized(true);
   }, []);
@@ -86,6 +94,7 @@ export const CartProvider = ({ children }) => {
   // Save cart to localStorage whenever it changes (but only after initial load)
   useEffect(() => {
     if (isInitialized) {
+      console.log('[Cart] Saving to localStorage:', cartItems.length, 'items');
       localStorage.setItem('soulFoodCart', JSON.stringify(cartItems));
     }
   }, [cartItems, isInitialized]);
