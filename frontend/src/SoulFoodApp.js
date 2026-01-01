@@ -223,6 +223,7 @@ const SoulFoodLanding = () => {
   const [selectedSeries, setSelectedSeries] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
   const [showProductModal, setShowProductModal] = useState(false);
+  const [showGamingModal, setShowGamingModal] = useState(false);
   const [products, setProducts] = useState({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { addToCart } = useCart();
