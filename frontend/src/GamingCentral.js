@@ -141,7 +141,7 @@ const GamingCentral = () => {
                   : 'text-purple-300 hover:text-white hover:bg-white/10'
               }`}
             >
-              👦 Youth Edition
+              🧢✨ Youth Edition
             </button>
             <button
               onClick={() => setEdition('adult')}
