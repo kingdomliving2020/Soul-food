@@ -444,11 +444,11 @@ const SoulFoodLanding = () => {
             </Button>
           </div>
 
-          {/* Christmas Launch Badge */}
-          <div className="mt-8 inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full shadow-2xl border border-green-200">
-            <span className="text-2xl">🎀</span>
+          {/* New Year's Launch Badge */}
+          <div className="mt-8 inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full shadow-2xl border border-amber-300">
+            <span className="text-2xl">🎉</span>
             <span className="text-slate-800 font-semibold">
-              Launching Christmas 2025 - Celebrate the season with Soul Food!
+              New Year, New Growth! Start your spiritual journey with Soul Food 2026
             </span>
           </div>
         </div>
