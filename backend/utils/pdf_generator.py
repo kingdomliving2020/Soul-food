@@ -89,7 +89,7 @@ class LessonPDFGenerator:
             backColor=colors.HexColor('#F1F5F9')
         ))
         
-        # Body text style
+        # Body text style - increased leading for better readability (1.5x line height)
         self.styles.add(ParagraphStyle(
             name='LessonBodyText',
             parent=self.styles['Normal'],
@@ -97,7 +97,7 @@ class LessonPDFGenerator:
             spaceBefore=4,
             spaceAfter=8,
             alignment=TA_JUSTIFY,
-            leading=16
+            leading=18  # Increased from 16 to 18 (1.5x line height for 11pt font)
         ))
         
         # Prayer style
