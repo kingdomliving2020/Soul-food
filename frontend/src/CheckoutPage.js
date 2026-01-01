@@ -237,7 +237,14 @@ const CheckoutPage = () => {
               {cartItems.map((item) => (
                 <div key={item.uniqueKey || item.productId} className="flex justify-between items-center py-4 border-b last:border-b-0">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                      {(item.isPreOrder || item.name?.includes('[PRE-ORDER]')) && (
+                        <span className="bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded">
+                          PRE-ORDER
+                        </span>
+                      )}
+                    </div>
                     <p className="text-sm text-gray-500">{item.description}</p>
                     <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
                   </div>
