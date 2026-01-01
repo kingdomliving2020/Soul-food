@@ -71,6 +71,14 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load authentication routes: {e}")
 
+# Import admin routes
+try:
+    from routes.admin_routes import router as admin_router
+    app.include_router(admin_router)
+    print("✅ Admin routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load admin routes: {e}")
+
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
