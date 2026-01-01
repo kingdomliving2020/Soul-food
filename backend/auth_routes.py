@@ -4,12 +4,14 @@ Soul Food Authentication Routes - Enhanced Security
 - Username + Email login
 - Strong password requirements
 - Password expiry (120 days)
-- Account lockout (3 failed attempts)
-- Password reset via email
+- Account lockout (5 failed attempts, escalating timeouts)
+- Password reset via email with rate limiting
 - Beta user login (username/password, relaxed rules)
+- Session security with role-based timeouts
+- Audit logging for all security events
 """
 
-from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, status, BackgroundTasks, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, EmailStr, validator
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -23,6 +25,16 @@ import re
 import httpx
 from dotenv import load_dotenv
 
+# Import security module
+from security import (
+    check_lockout_status, record_login_attempt, clear_lockout,
+    check_reset_rate_limit, record_reset_request,
+    create_reset_token, verify_reset_token, mark_token_used,
+    update_last_activity, check_session_timeout, get_session_timeout_for_role,
+    check_account_disabled, log_audit_event, AuditEventType,
+    ensure_security_indexes
+)
+
 load_dotenv()
 
 router = APIRouter(prefix="/api/auth", tags=["authentication"])
@@ -34,11 +46,7 @@ security = HTTPBearer(auto_error=False)
 # JWT Settings
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
 ALGORITHM = "HS256"
-SESSION_TIMEOUT_MINUTES = 60  # Logout after 60 mins inactivity
 PASSWORD_EXPIRY_DAYS = 120
-MAX_FAILED_ATTEMPTS = 3
-LOCKOUT_DURATION_MINUTES = 30
-RESET_TOKEN_EXPIRY_HOURS = 1
 
 # Database connection
 MONGO_URL = os.getenv('MONGO_URL')
