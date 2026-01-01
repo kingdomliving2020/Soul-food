@@ -111,7 +111,7 @@ const GamingCentral = () => {
             <img 
               src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/k75fu34t_Gaming%20Central%20Test%20Your%20Knowledge%20Logo.png"
               alt="Gaming Central"
-              className="h-12 w-12 rounded-xl"
+              className="h-14 w-14 rounded-xl"
             />
             <div className="w-24"></div>
           </div>
