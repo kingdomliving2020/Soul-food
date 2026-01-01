@@ -692,7 +692,7 @@ const QuickOrder = () => {
 
         {/* FREE LESSONS CARD - Same style as Holiday/Breakfast cards */}
         <section className="mb-12">
-          <h3 className="text-2xl font-bold mb-6 text-slate-800">🎁 Free Lessons</h3>
+          <h3 className="text-2xl font-bold mb-6 text-slate-800">🤲 Free Lessons</h3>
           <div className="grid md:grid-cols-2 gap-6">
             {/* Free Lessons Card */}
             <Card className="shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
