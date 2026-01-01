@@ -889,7 +889,7 @@ const SoulFoodLanding = () => {
               <Badge className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 text-lg font-bold shadow-lg mb-4">
                 🎮 Youth Edition (Ages 12-20)
               </Badge>
-              <h4 className="text-3xl font-bold text-white mb-2">👧 Games for Young Believers</h4>
+              <h4 className="text-3xl font-bold text-white mb-2">🧢✨ Games for Young Believers</h4>
               <p className="text-purple-300">Engage your youth group with fun, age-appropriate Bible trivia!</p>
             </div>
             
@@ -1139,7 +1139,7 @@ const SoulFoodLanding = () => {
                 }}
                 className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-2xl p-6 flex items-center gap-4 transition-all transform hover:scale-[1.02] shadow-lg"
               >
-                <div className="text-5xl">👧</div>
+                <div className="text-5xl">🧢✨</div>
                 <div className="text-left flex-1">
                   <div className="text-2xl font-bold">Youth Edition</div>
                   <div className="text-cyan-100 text-sm">Ages 12-20 • Family-friendly content</div>
