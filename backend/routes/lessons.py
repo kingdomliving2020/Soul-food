@@ -1162,6 +1162,41 @@ async def download_full_series_pdf(series: str, edition: str):
     )
 
 
+@router.get("/download/in-his-image/{edition}")
+async def download_in_his_image(edition: str):
+    """
+    Download the FREE In His Image (Self-Worth) series
+    
+    Args:
+        edition: 'adult' or 'youth' (or 'ae'/'ye')
+    """
+    import os
+    from fastapi.responses import FileResponse
+    
+    pdf_folder = "/app/backend/lesson_pdfs"
+    
+    # Normalize edition
+    if edition.lower() in ['adult', 'ae']:
+        filename = "in-his-image-adult-full.pdf"
+        edition_label = "Adult"
+    elif edition.lower() in ['youth', 'ye']:
+        filename = "in-his-image-youth-full.pdf"
+        edition_label = "Youth"
+    else:
+        raise HTTPException(status_code=400, detail="Invalid edition. Use 'adult' or 'youth'")
+    
+    pdf_path = os.path.join(pdf_folder, filename)
+    
+    if os.path.exists(pdf_path):
+        return FileResponse(
+            pdf_path,
+            media_type="application/pdf",
+            filename=f"SoulFood_InHisImage_{edition_label}_FREE.pdf"
+        )
+    
+    raise HTTPException(status_code=404, detail=f"In His Image {edition_label} Edition not found")
+
+
 @router.get("/download/series/{series_name}")
 async def download_series_pdf(series_name: str):
     """Download all lessons in a series as a single PDF"""
