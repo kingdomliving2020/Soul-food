@@ -1871,12 +1871,16 @@ const SoulFoodLanding = () => {
                           'The Cradle': 'holiday-ae-cradle',
                           'The Cross': 'holiday-ae-cross',
                           'The Comforter': 'holiday-ae-comforter',
-                          'Names of God': 'holiday-ae-bonus-names',
-                          'Times and Seasons': 'holiday-ae-bonus-times',
+                          'Bonus Lesson - The Names of God': 'holiday-ae-bonus-names',
+                          'Bonus Lesson - Times & Seasons': 'holiday-ae-bonus-times',
                           // In His Image (Free)
                           'Made in His Image': 'in-his-image-1',
                           'Accepted and Loved': 'in-his-image-2',
                           'Chosen of God': 'in-his-image-3',
+                          // Breakfast Adult
+                          'Esther': 'breakfast-ae-esther',
+                          'Joseph': 'breakfast-ae-joseph',
+                          'Rahab': 'breakfast-ae-rahab',
                         };
                         
                         const lessonId = lessonIdMap[lesson.title];
