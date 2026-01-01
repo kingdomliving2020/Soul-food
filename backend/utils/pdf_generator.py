@@ -338,59 +338,93 @@ class LessonPDFGenerator:
         toc_entries.append(("Quick Start Guide", 4))
         story.append(PageBreak())
         
-        # === TABLE OF CONTENTS ===
-        story.append(Paragraph("Table of Contents", self.styles['SectionHeader']))
-        story.append(Spacer(1, 0.3*inch))
+        # === TABLE OF CONTENTS (Amazon-style) ===
+        story.append(Paragraph("Contents", self.styles['TOCTitle']))
         
-        # Build TOC entries
+        # Decorative line under title
+        story.append(HRFlowable(width="50%", thickness=1, color=colors.HexColor('#E5E7EB'), spaceBefore=0, spaceAfter=20))
+        
+        # Build TOC entries with professional dotted leaders
         toc_data = [
-            ("Title Page", "1"),
-            ("Copyright", "2"),
-            ("Dedication", "3"),
-            ("Quick Start Guide", "4"),
+            ("Title Page", "i"),
+            ("Copyright & Dedication", "ii"),
+            ("How to Use This Study", "iii"),
         ]
         
         # Calculate page numbers for lesson content
-        current_page = 5
-        lesson_start = current_page
+        current_page = 1
         
-        toc_data.append((f"Lesson: {nibble['title']}", str(current_page)))
+        # Main lesson entry
+        lesson_title = f"{nibble['title']}"
+        toc_data.append((lesson_title, str(current_page)))
+        
+        # Create professional TOC with dotted leaders
+        from reportlab.platypus import Table, TableStyle
+        
+        toc_table_data = []
+        
+        # Front matter section
+        toc_table_data.append([Paragraph("<b>FRONT MATTER</b>", self.styles['TOCChapter']), ""])
+        for entry, page in toc_data[:3]:
+            # Create dotted leader effect
+            entry_text = f"<font color='#374151'>{entry}</font>"
+            toc_table_data.append([
+                Paragraph(entry_text, self.styles['TOCSubEntry']),
+                Paragraph(f"<font color='#6B7280'>{page}</font>", self.styles['TOCPageNum'])
+            ])
+        
+        # Lesson section
+        toc_table_data.append([Paragraph("", self.styles['TOCEntry']), ""])  # Spacer row
+        toc_table_data.append([Paragraph("<b>THE LESSON</b>", self.styles['TOCChapter']), ""])
+        
+        # Lesson title
+        toc_table_data.append([
+            Paragraph(f"<b>{nibble['title']}</b>", self.styles['TOCEntry']),
+            Paragraph("<font color='#4F46E5'><b>1</b></font>", self.styles['TOCPageNum'])
+        ])
         
         # Sub-entries for the lesson
         sub_entries = [
-            "Opening Prayer",
-            "Appetizer (Background)",
-            "Key Verse"
+            ("🙏 Opening Prayer", "1"),
+            ("🍽️ Appetizer (Background)", "1"),
+            ("📖 Key Verse", "2"),
         ]
         
-        # Add bites
+        # Add bites with page estimates
+        page_num = 2
         for i, bite in enumerate(nibble.get('bites', []), 1):
-            sub_entries.append(f"Bite {i}: {bite.get('title', '')}")
+            sub_entries.append((f"📚 Bite {i}: {bite.get('title', '')}", str(page_num)))
+            page_num += 1
         
+        # Add remaining sections
         sub_entries.extend([
-            "To-Go Box (Key Takeaways)",
-            "Activity",
-            "Your Prayer",
-            "Closing Prayer"
+            ("🥡 To-Go Box (Key Takeaways)", str(page_num)),
+            ("✏️ Activity", str(page_num)),
+            ("🙏 Your Personal Prayer", str(page_num + 1)),
+            ("🙏 Closing Prayer", str(page_num + 1))
         ])
         
         # Add word study if present
         if nibble.get('word_study'):
-            sub_entries.append("Word Study")
+            sub_entries.append(("📝 Word Study", str(page_num + 2)))
         
-        # Create TOC table
-        for entry, page in toc_data:
-            story.append(Paragraph(
-                f"{entry} {'.' * (60 - len(entry))} {page}",
-                self.styles['TOCEntry']
-            ))
+        for entry, page in sub_entries:
+            toc_table_data.append([
+                Paragraph(entry, self.styles['TOCSubEntry']),
+                Paragraph(f"<font color='#6B7280'>{page}</font>", self.styles['TOCPageNum'])
+            ])
         
-        # Add sub-entries under the lesson
-        for sub in sub_entries:
-            story.append(Paragraph(
-                f"    • {sub}",
-                self.styles['TOCSubEntry']
-            ))
+        # Create the TOC table with proper column widths
+        toc_table = Table(toc_table_data, colWidths=[5.5*inch, 0.75*inch])
+        toc_table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (0, -1), 'LEFT'),
+            ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+            ('TOPPADDING', (0, 0), (-1, -1), 4),
+        ]))
+        
+        story.append(toc_table)
         
         story.append(PageBreak())
         
