@@ -968,25 +968,29 @@ const QuickOrder = () => {
                           </div>
                           <Button
                             onClick={() => {
-                              if (meal.preOrder || pkgData?.preOrder) {
-                                toast.info('Pre-orders coming soon! Sign up for notifications.');
-                                return;
-                              }
                               const itemName = pkgData?.selectMonth 
                                 ? `${meal.name} - ${meal.monthOptions.find(m => m.id === selectedMonth)?.name}`
                                 : pkgData?.selectLesson
                                 ? `${meal.name} - ${meal.lessonOptions.find(l => l.id === selectedLesson)?.name}`
                                 : `${meal.name} - ${pkgData?.name}`;
                               
+                              const isPreOrder = meal.preOrder || pkgData?.preOrder;
+                              
                               addToCart({
                                 id: `${meal.id}-${selectedPkg}${pkgData?.selectMonth ? `-${selectedMonth}` : ''}${pkgData?.selectLesson ? `-${selectedLesson}` : ''}-${selectedEdition}-${selectedFormat}`,
-                                name: `${itemName} - ${selectedEdition.toUpperCase()} - ${selectedFormat.toUpperCase()}`,
+                                name: isPreOrder ? `[PRE-ORDER] ${itemName} - ${selectedEdition.toUpperCase()} - ${selectedFormat.toUpperCase()}` : `${itemName} - ${selectedEdition.toUpperCase()} - ${selectedFormat.toUpperCase()}`,
                                 edition: selectedEdition,
                                 format: selectedFormat,
                                 price: price,
-                                quantity: 1
+                                quantity: 1,
+                                isPreOrder: isPreOrder
                               });
-                              toast.success(`Added ${itemName} to cart!`);
+                              
+                              if (isPreOrder) {
+                                toast.success(`Pre-order added! ${itemName} will be available soon.`);
+                              } else {
+                                toast.success(`Added ${itemName} to cart!`);
+                              }
                             }}
                             className={meal.preOrder || pkgData?.preOrder 
                               ? "bg-amber-500 hover:bg-amber-600 px-4" 
