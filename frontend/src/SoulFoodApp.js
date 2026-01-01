@@ -1103,7 +1103,7 @@ const SoulFoodLanding = () => {
               </div>
               <div className="mt-8 flex justify-center">
                 <Button
-                  onClick={() => window.location.href = '/gaming-central'}
+                  onClick={() => setShowGamingModal(true)}
                   className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold px-6 sm:px-10 lg:px-12 py-3 sm:py-4 rounded-xl text-base sm:text-lg shadow-2xl transform hover:scale-105 transition-all w-full sm:w-auto max-w-md"
                 >
                   Enter Gaming Central →
@@ -1113,6 +1113,67 @@ const SoulFoodLanding = () => {
           </div>
         </div>
       </section>
+
+      {/* Gaming Edition Selection Modal */}
+      {showGamingModal && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4" onClick={() => setShowGamingModal(false)}>
+          <div className="bg-gradient-to-br from-purple-900 via-indigo-900 to-purple-800 rounded-3xl max-w-lg w-full p-8 shadow-2xl border-2 border-purple-400" onClick={(e) => e.stopPropagation()}>
+            {/* Header */}
+            <div className="text-center mb-8">
+              <img 
+                src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/k75fu34t_Gaming%20Central%20Test%20Your%20Knowledge%20Logo.png"
+                alt="Gaming Central"
+                className="w-24 h-24 mx-auto mb-4 rounded-2xl"
+              />
+              <h3 className="text-3xl font-bold text-white mb-2">Choose Your Edition</h3>
+              <p className="text-purple-200">Select the age-appropriate game experience</p>
+            </div>
+            
+            {/* Edition Buttons */}
+            <div className="space-y-4">
+              {/* Youth Edition */}
+              <button
+                onClick={() => {
+                  setShowGamingModal(false);
+                  window.location.href = '/gaming-central?edition=youth';
+                }}
+                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white rounded-2xl p-6 flex items-center gap-4 transition-all transform hover:scale-[1.02] shadow-lg"
+              >
+                <div className="text-5xl">👦</div>
+                <div className="text-left flex-1">
+                  <div className="text-2xl font-bold">Youth Edition</div>
+                  <div className="text-cyan-100 text-sm">Ages 8-17 • Family-friendly content</div>
+                </div>
+                <div className="text-3xl">→</div>
+              </button>
+              
+              {/* Adult Edition */}
+              <button
+                onClick={() => {
+                  setShowGamingModal(false);
+                  window.location.href = '/gaming-central?edition=adult';
+                }}
+                className="w-full bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white rounded-2xl p-6 flex items-center gap-4 transition-all transform hover:scale-[1.02] shadow-lg"
+              >
+                <div className="text-5xl">👨</div>
+                <div className="text-left flex-1">
+                  <div className="text-2xl font-bold">Adult Edition</div>
+                  <div className="text-orange-100 text-sm">Ages 18+ • Deeper theological content</div>
+                </div>
+                <div className="text-3xl">→</div>
+              </button>
+            </div>
+            
+            {/* Close Button */}
+            <button
+              onClick={() => setShowGamingModal(false)}
+              className="mt-6 w-full text-purple-300 hover:text-white py-3 font-medium transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Holiday Box Set Pre-Order Section */}
       {/* Holiday Box Set Pre-Order Section - Updated for January Shipping */}
