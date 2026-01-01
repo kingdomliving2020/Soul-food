@@ -101,7 +101,7 @@ class LessonPDFGenerator:
             leading=18  # Increased from 16 to 18 (1.5x line height for 11pt font)
         ))
         
-        # Prayer style
+        # Prayer style - increased leading for readability
         self.styles.add(ParagraphStyle(
             name='Prayer',
             parent=self.styles['Normal'],
@@ -113,7 +113,8 @@ class LessonPDFGenerator:
             fontName='Helvetica-Oblique',
             textColor=colors.HexColor('#059669'),
             backColor=colors.HexColor('#ECFDF5'),
-            borderPadding=10
+            borderPadding=10,
+            leading=17  # 1.5x line height
         ))
         
         # Question/Prompt style
