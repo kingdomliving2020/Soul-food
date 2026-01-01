@@ -375,7 +375,7 @@ const SoulFoodLanding = () => {
                   📚 Explore Series
                 </a>
                 <a href="#series" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                  🎁 Free Sample
+                  🤲 Free Sample
                 </a>
                 <a href="/gift-certificates" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors">
                   🔔 Gift Certificates
@@ -497,7 +497,7 @@ const SoulFoodLanding = () => {
             <Card className="relative overflow-hidden border-2 border-amber-300 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-white">
               <div className="absolute top-4 right-4 z-10">
                 <Badge className="bg-amber-500 text-white px-4 py-2 text-sm font-bold shadow-lg">
-                  🎁 FREE
+                  🤲 FREE
                 </Badge>
               </div>
               
@@ -537,7 +537,7 @@ const SoulFoodLanding = () => {
                     variant="outline"
                     className="border-2 border-amber-400 hover:border-amber-600 text-amber-700 hover:bg-amber-50 font-semibold px-4 py-2 rounded-lg transition-all shadow-md"
                   >
-                    🎁 Get Free Lesson
+                    🤲 Get Free Lesson
                   </Button>
                 </div>
                 
@@ -1769,7 +1769,7 @@ const SoulFoodLanding = () => {
           </div>
           <div className="mt-8 pt-8 border-t border-slate-700">
             <p className="text-slate-500 text-sm">
-              © 2025 Kingdom Living Project. All rights reserved. | Launching Christmas 2025
+              © 2025 Kingdom Living Project. All rights reserved. | New Year 2026 Launch
             </p>
           </div>
           
