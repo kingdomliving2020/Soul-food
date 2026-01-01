@@ -12,7 +12,7 @@ router = APIRouter(prefix="/api/coupons", tags=["coupons"])
 # Database connection
 MONGO_URL = os.getenv('MONGO_URL')
 client = AsyncIOMotorClient(MONGO_URL)
-db = client.soul_food_db
+db = client[os.environ.get('DB_NAME', 'soul_food_db')]
 
 # Coupon definitions
 COUPONS = {

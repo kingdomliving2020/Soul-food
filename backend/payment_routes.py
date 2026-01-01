@@ -19,7 +19,7 @@ router = APIRouter(prefix="/api/payments", tags=["payments"])
 # Database connection
 MONGO_URL = os.getenv('MONGO_URL')
 client = AsyncIOMotorClient(MONGO_URL)
-db = client.soul_food_db
+db = client[os.environ.get('DB_NAME', 'soul_food_db')]
 
 # Product catalog with list and sale prices
 # Cost = wholesale/production cost, List Price = MSRP, Sale Price = current selling price
