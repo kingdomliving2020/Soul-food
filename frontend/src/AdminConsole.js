@@ -47,7 +47,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const navigate = useNavigate();
   
   const handleLogout = () => {
-    localStorage.removeItem('sf_token');
+    localStorage.removeItem('soul_food_token');
     navigate('/');
   };
   
