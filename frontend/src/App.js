@@ -1898,6 +1898,7 @@ import TrickyTestamentGame from './TrickyTestamentGame';
 import QuickOrder from './QuickOrder';
 import GiftCertificate from './GiftCertificate';
 import OrderSuccess from './OrderSuccess';
+import GamingCentral from './GamingCentral';
 
 function App() {
   return (
@@ -1915,6 +1916,7 @@ function App() {
             <Route path="/snack-packs" element={<SnackPacksPage />} />
             <Route path="/interactive-lesson/:nibbleId" element={<InteractiveLesson />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/gaming-central" element={<GamingCentral />} />
             <Route path="/game/mixup" element={<MixUpGame />} />
             <Route path="/game/tricky-testament" element={<TrickyTestamentGame />} />
             <Route path="/checkout" element={<CheckoutPage />} />
