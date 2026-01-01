@@ -686,10 +686,18 @@ async def reset_password(data: PasswordResetConfirm, request: Request):
         }
     )
     
-    # Mark token as used
-    await db.password_resets.update_one(
-        {"token": data.token},
-        {"$set": {"used": True}}
+    # Mark token as used (single-use)
+    await mark_token_used(data.token)
+    
+    # Clear any lockouts
+    await clear_lockout(user["email"])
+    
+    # Log the password reset
+    await log_audit_event(
+        event_type=AuditEventType.PASSWORD_RESET_COMPLETED,
+        user_id=user["id"],
+        user_email=user["email"],
+        ip_address=ip_address
     )
     
     return {"message": "Password has been reset successfully. You can now log in."}
