@@ -1326,7 +1326,7 @@ const AuditLogs = () => {
 
 const AdminConsole = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem('sf_token') || '');
+  const [token, setToken] = useState(localStorage.getItem('soul_food_token') || '');
   const navigate = useNavigate();
   
   useEffect(() => {
