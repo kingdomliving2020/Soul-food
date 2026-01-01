@@ -1821,6 +1821,34 @@ const SoulFoodLanding = () => {
 
             {/* Content - Multiple Themes */}
             <div className="p-8 overflow-y-auto max-h-[calc(90vh-280px)]">
+              {/* Edition Toggle */}
+              {selectedSeries.available && (
+                <div className="mb-6 flex justify-center">
+                  <div className="bg-slate-100 p-1 rounded-xl inline-flex gap-1">
+                    <button
+                      onClick={() => setPreviewEdition && setPreviewEdition('adult')}
+                      className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                        (!previewEdition || previewEdition === 'adult')
+                          ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md'
+                          : 'text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      👨 Adult Edition
+                    </button>
+                    <button
+                      onClick={() => setPreviewEdition && setPreviewEdition('youth')}
+                      className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                        previewEdition === 'youth'
+                          ? 'bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-md'
+                          : 'text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      🧢✨ Youth Edition
+                    </button>
+                  </div>
+                </div>
+              )}
+              
               {/* Coming Soon Badge for Locked Series */}
               {!selectedSeries.available && (
                 <div className="mb-6 bg-gradient-to-r from-amber-100 to-orange-100 border-2 border-amber-400 rounded-xl p-4">
