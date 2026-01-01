@@ -19,6 +19,7 @@ import PaymentCancel from './PaymentCancel';
 import InteractiveLesson from './InteractiveLesson';
 import SnackPacksPage from './SnackPacksPage';
 import AuthPage from './AuthPage';
+import AdminConsole from './AdminConsole';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
