@@ -10,8 +10,8 @@ import sys
 from typing import Dict, Any
 
 # Frontend URL from .env
-FRONTEND_URL = "https://nibbles-platform.preview.emergentagent.com"
-BACKEND_URL = "https://nibbles-platform.preview.emergentagent.com/api"
+FRONTEND_URL = "https://soulfood-ecom.preview.emergentagent.com"
+BACKEND_URL = "https://soulfood-ecom.preview.emergentagent.com/api"
 
 class FrontendE2ETester:
     def __init__(self):
