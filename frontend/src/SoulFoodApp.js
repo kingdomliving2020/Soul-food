@@ -1863,26 +1863,36 @@ const SoulFoodLanding = () => {
                       {theme.lessons.map((lesson, lessonIndex) => {
                         // Build the lesson ID for linking - first lesson of each theme can be explored
                         const isFirstLessonOfTheme = lessonIndex === 0;
-                        const seriesIdMap = {
-                          'holiday': 'holiday-ae',
-                          'breakfast': 'breakfast-ae',
-                          'lunch': 'lunch-ae',
-                          'dinner': 'dinner-ae'
+                        
+                        // Map lesson titles to actual backend lesson IDs
+                        const lessonIdMap = {
+                          // Holiday Series
+                          'The Covenant': 'holiday-ae-covenant',
+                          'The Cradle': 'holiday-ae-cradle',
+                          'The Cross': 'holiday-ae-cross',
+                          'The Comforter': 'holiday-ae-comforter',
+                          'Names of God': 'holiday-ae-bonus-names',
+                          'Times and Seasons': 'holiday-ae-bonus-times',
+                          // In His Image (Free)
+                          'Made in His Image': 'in-his-image-1',
+                          'Accepted and Loved': 'in-his-image-2',
+                          'Chosen of God': 'in-his-image-3',
                         };
-                        const seriesPrefix = seriesIdMap[selectedSeries.id] || selectedSeries.id;
-                        const lessonSlug = lesson.title.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
-                        const interactiveLessonUrl = `/interactive-lesson/${seriesPrefix}-${lessonSlug}`;
+                        
+                        const lessonId = lessonIdMap[lesson.title];
+                        const interactiveLessonUrl = lessonId ? `/interactive-lesson/${lessonId}` : null;
+                        const canPreview = isFirstLessonOfTheme && selectedSeries.available && lessonId;
                         
                         return (
                           <div
                             key={`${themeIndex}-${lesson.number}`}
                             onClick={() => {
-                              if (isFirstLessonOfTheme && selectedSeries.available) {
+                              if (canPreview) {
                                 window.location.href = interactiveLessonUrl;
                               }
                             }}
                             className={`bg-gradient-to-r ${selectedSeries.bgColor} border-2 border-slate-200 rounded-xl p-5 hover:shadow-lg transition-all ${
-                              isFirstLessonOfTheme && selectedSeries.available 
+                              canPreview 
                                 ? 'hover:scale-[1.02] cursor-pointer hover:border-purple-300' 
                                 : 'opacity-90'
                             }`}
@@ -1896,7 +1906,7 @@ const SoulFoodLanding = () => {
                                   <h5 className="text-lg font-bold text-slate-800">
                                     Lesson {lesson.number}: {lesson.title}
                                   </h5>
-                                  {isFirstLessonOfTheme && selectedSeries.available && (
+                                  {canPreview && (
                                     <span className="bg-purple-500 text-white text-xs font-bold px-2 py-0.5 rounded">
                                       👁️ PREVIEW
                                     </span>
@@ -1905,7 +1915,7 @@ const SoulFoodLanding = () => {
                                 <p className="text-sm text-slate-600 leading-relaxed">
                                   {lesson.description}
                                 </p>
-                                {isFirstLessonOfTheme && selectedSeries.available && (
+                                {canPreview && (
                                   <p className="text-xs text-purple-600 mt-2 font-semibold">
                                     Click to explore this lesson (preview includes Appetizer section)
                                   </p>
