@@ -333,7 +333,8 @@ const SnackPacksPage = () => {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+              );
+              })}
             </div>
           </div>
         )}
