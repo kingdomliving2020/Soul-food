@@ -113,25 +113,25 @@ const QuickOrder = () => {
     },
     holiday: {
       adult: {
-        physical: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-adult-back.jpg' },
-        ebook: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-adult-back.jpg' },
-        subscription_monthly: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-adult-back.jpg' },
-        subscription_annual: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-adult-back.jpg' }
+        physical: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-adult-back.jpg' },
+        ebook: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-adult-back.jpg' },
+        subscription_monthly: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-adult-back.jpg' },
+        subscription_annual: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-adult-back.jpg' }
       },
       youth: {
-        physical: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-youth-back.jpg' },
-        ebook: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-youth-ebook-back.jpg' },
-        subscription_monthly: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-youth-back.jpg' },
-        subscription_annual: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-youth-back.jpg' }
+        physical: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-youth-back.jpg' },
+        ebook: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-youth-ebook-back.jpg' },
+        subscription_monthly: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-youth-back.jpg' },
+        subscription_annual: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-youth-back.jpg' }
       },
       instructor: {
-        physical: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-adult-back.jpg' },
-        ebook: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-instructor-ebook-back.jpg' },
-        subscription_monthly: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-adult-back.jpg' },
-        subscription_annual: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-adult-back.jpg' }
+        physical: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-adult-back.jpg' },
+        ebook: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-instructor-ebook-back.jpg' },
+        subscription_monthly: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-adult-back.jpg' },
+        subscription_annual: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-adult-back.jpg' }
       },
       bundle: {
-        physical: { front: '/covers/holiday-neutral-cover.png', back: '/covers/holiday-adult-back.jpg' }
+        physical: { front: '/covers/holiday-ae-front-new.png', back: '/covers/holiday-adult-back.jpg' }
       }
     }
   };
