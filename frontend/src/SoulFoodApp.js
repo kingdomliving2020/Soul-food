@@ -1764,8 +1764,8 @@ const SoulFoodLanding = () => {
             Spiritual nourishment for every season of life - one meal at a time
           </p>
           <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-400">
-            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
+            <a href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</a>
             <a href="#" className="hover:text-white transition-colors">Contact Us</a>
           </div>
           <div className="mt-8 pt-8 border-t border-slate-700">
