@@ -801,10 +801,10 @@ const LandingPage = () => {
             Putting on the whole armor of God and transforming lives through Kingdom principles for ALL nations
           </p>
           <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm mb-4">
-            <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
+            <a href="/privacy-policy" className="text-slate-400 hover:text-white transition-colors duration-200">
               Privacy Policy
             </a>
-            <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
+            <a href="/terms-of-service" className="text-slate-400 hover:text-white transition-colors duration-200">
               Terms of Service
             </a>
             <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
