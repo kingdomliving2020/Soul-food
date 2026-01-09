@@ -1007,10 +1007,6 @@ const QuickOrder = () => {
                             </div>
                           )}
                         </div>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
 
                         {/* Price & Action Buttons - Amazon style stacked layout */}
                         <div className="pt-3 border-t border-slate-100 mt-auto">
