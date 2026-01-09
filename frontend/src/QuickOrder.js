@@ -897,9 +897,9 @@ const QuickOrder = () => {
                       </div>
                       
                       {/* Options */}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-lg text-slate-800">{meal.name}</h4>
-                        <p className="text-xs text-slate-500 mb-3">{meal.tagline}</p>
+                      <div className="flex-1 min-w-0 flex flex-col">
+                        <h4 className="font-bold text-lg text-slate-800 leading-tight">{meal.name}</h4>
+                        <p className="text-xs text-slate-500 mb-2 line-clamp-2">{meal.tagline}</p>
                         
                         {/* Package Size Selector */}
                         <div className="mb-2">
