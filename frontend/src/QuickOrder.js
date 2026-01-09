@@ -966,38 +966,47 @@ const QuickOrder = () => {
                         )}
 
                         <div className="grid grid-cols-2 gap-2 mb-3">
-                          {/* Edition Selector */}
-                          <div>
-                            <label className="block text-xs font-semibold mb-1 text-slate-700">Edition:</label>
-                            <select
-                              className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white"
-                              value={selectedEdition}
-                              onChange={(e) => updateSelection(meal.id, 'edition', e.target.value)}
-                            >
-                              {meal.editions.map(ed => (
-                                <option key={ed} value={ed}>
-                                  {ed === 'adult' ? 'Adult' : ed === 'youth' ? 'Youth' : 'Instructor'}
-                                </option>
-                              ))}
-                            </select>
-                          </div>
+                          {/* Edition Selector - only show if multiple editions */}
+                          {meal.editions.length > 1 && (
+                            <div>
+                              <label className="block text-xs font-semibold mb-1 text-slate-700">Edition:</label>
+                              <select
+                                className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white"
+                                value={selectedEdition}
+                                onChange={(e) => updateSelection(meal.id, 'edition', e.target.value)}
+                              >
+                                {meal.editions.map(ed => (
+                                  <option key={ed} value={ed}>
+                                    {ed === 'adult' ? 'Adult' : ed === 'youth' ? 'Youth' : 'Instructor'}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
 
-                          {/* Format Selector */}
-                          <div>
-                            <label className="block text-xs font-semibold mb-1 text-slate-700">Format:</label>
-                            <select
-                              className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white"
-                              value={selectedFormat}
-                              onChange={(e) => updateSelection(meal.id, 'format', e.target.value)}
-                            >
-                              {availableFormats.map(fmt => (
-                                <option key={fmt} value={fmt}>
-                                  {fmt === 'physical' ? 'Paperback' :
-                                   fmt === 'interactive' ? 'i-PDF' :
-                                   fmt === 'epub' ? 'ePub' :
-                                   fmt === 'subscription_monthly' ? 'Monthly' :
-                                   fmt === 'subscription_annual' ? 'Annual' : fmt}
-                                </option>
+                          {/* Format Selector - only show if package doesn't have direct price and has formats */}
+                          {!pkgData?.price && availableFormats.length > 0 && (
+                            <div>
+                              <label className="block text-xs font-semibold mb-1 text-slate-700">Format:</label>
+                              <select
+                                className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white"
+                                value={selectedFormat}
+                                onChange={(e) => updateSelection(meal.id, 'format', e.target.value)}
+                              >
+                                {availableFormats.map(fmt => (
+                                  <option key={fmt} value={fmt}>
+                                    {fmt === 'physical' ? 'Paperback' :
+                                     fmt === 'interactive' ? 'i-PDF' :
+                                     fmt === 'epub' ? 'ePub' :
+                                     fmt === 'digital' ? 'Digital' :
+                                     fmt === 'subscription_monthly' ? 'Monthly' :
+                                     fmt === 'subscription_annual' ? 'Annual' : fmt}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+                        </div>
                               ))}
                             </select>
                           </div>
