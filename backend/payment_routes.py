@@ -670,7 +670,9 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
                 'source': 'soul_food_cart',
                 'items': ', '.join(item_names)[:500],  # Stripe metadata limit
                 'coupon': request.coupon_code or '',
-                'discount': str(request.discount_percent)
+                'discount': str(request.discount_percent),
+                'is_gift': 'true' if request.is_gift else 'false',
+                'order_notes': (request.order_notes or '')[:500]  # Stripe limit
             }
         )
         
