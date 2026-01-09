@@ -836,7 +836,11 @@ const QuickOrder = () => {
               const defaultPkg = meal.packages?.[0]?.id || 'full';
               const selectedPkg = sel.package || defaultPkg;
               const selectedEdition = sel.edition || meal.editions?.[0] || 'adult';
-              const selectedFormat = sel.format || (selectedPkg === 'subscription' ? 'subscription_monthly' : 'interactive');
+              // Get the default format based on what's available for the selected package
+              const defaultFormat = selectedPkg === 'subscription' 
+                ? 'subscription_monthly' 
+                : (meal.formats?.[0] || 'interactive');
+              const selectedFormat = sel.format || defaultFormat;
               const selectedMonth = sel.month || (meal.monthOptions?.[0]?.id || 'month-1');
               const selectedLesson = sel.lesson || (meal.lessonOptions?.[0]?.id || 'covenant');
               
