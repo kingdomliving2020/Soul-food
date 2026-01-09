@@ -1652,6 +1652,357 @@ class SoulFoodQuickOrderTester:
             self.log_test("Download Protection - Link Info", False, f"Exception: {str(e)}")
             return False
 
+    # =============================================================================
+    # GAMING SESSION MANAGEMENT TESTS
+    # =============================================================================
+
+    def test_gaming_tiers_endpoint(self):
+        """Test GET /api/gaming/tiers - Should return all gaming tier configurations"""
+        try:
+            response = self.session.get(f"{self.base_url}/gaming/tiers")
+            
+            if response.status_code != 200:
+                self.log_test("Gaming Tiers Endpoint", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            if "tiers" not in data:
+                self.log_test("Gaming Tiers Endpoint", False, "Missing 'tiers' field in response")
+                return False
+            
+            tiers = data["tiers"]
+            
+            # Expected tiers
+            expected_tiers = ["game_pass_30", "game_pass_90", "ministry_group", "all_day_pass"]
+            
+            for tier_id in expected_tiers:
+                if tier_id not in tiers:
+                    self.log_test("Gaming Tiers Endpoint", False, f"Missing tier: {tier_id}")
+                    return False
+                
+                tier = tiers[tier_id]
+                required_fields = ["name", "daily_limit_hours", "idle_timeout_minutes", "category_selection", "description"]
+                
+                for field in required_fields:
+                    if field not in tier:
+                        self.log_test("Gaming Tiers Endpoint", False, f"Missing field '{field}' in tier {tier_id}")
+                        return False
+            
+            # Verify specific tier configurations
+            if tiers["game_pass_30"]["daily_limit_hours"] != 4.0:
+                self.log_test("Gaming Tiers Endpoint", False, f"30-Day Pass should have 4hr/day limit, got {tiers['game_pass_30']['daily_limit_hours']}")
+                return False
+                
+            if tiers["game_pass_90"]["daily_limit_hours"] != 5.0:
+                self.log_test("Gaming Tiers Endpoint", False, f"90-Day Pass should have 5hr/day limit, got {tiers['game_pass_90']['daily_limit_hours']}")
+                return False
+                
+            if tiers["ministry_group"]["daily_limit_hours"] != 6.0:
+                self.log_test("Gaming Tiers Endpoint", False, f"Ministry/Small Group should have 6hr/day limit, got {tiers['ministry_group']['daily_limit_hours']}")
+                return False
+                
+            if tiers["all_day_pass"]["daily_limit_hours"] is not None:
+                self.log_test("Gaming Tiers Endpoint", False, f"All-Day Pass should have unlimited access, got {tiers['all_day_pass']['daily_limit_hours']}")
+                return False
+            
+            self.log_test("Gaming Tiers Endpoint", True, f"All gaming tiers configured correctly: 30-Day (4hr), 90-Day (5hr), Ministry (6hr), All-Day (unlimited)")
+            return True
+            
+        except Exception as e:
+            self.log_test("Gaming Tiers Endpoint", False, f"Exception: {str(e)}")
+            return False
+
+    def test_gaming_categories_endpoint(self):
+        """Test GET /api/gaming/categories - Should return 6 game categories"""
+        try:
+            response = self.session.get(f"{self.base_url}/gaming/categories")
+            
+            if response.status_code != 200:
+                self.log_test("Gaming Categories Endpoint", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            if "categories" not in data:
+                self.log_test("Gaming Categories Endpoint", False, "Missing 'categories' field in response")
+                return False
+            
+            categories = data["categories"]
+            
+            # Should have exactly 6 categories
+            if len(categories) != 6:
+                self.log_test("Gaming Categories Endpoint", False, f"Expected 6 categories, got {len(categories)}")
+                return False
+            
+            # Verify category structure
+            expected_categories = ["jeopardy", "word_search", "crossword", "matching", "quiz", "group_challenge"]
+            
+            for category in categories:
+                if "id" not in category or "name" not in category or "description" not in category:
+                    self.log_test("Gaming Categories Endpoint", False, f"Category missing required fields: {category}")
+                    return False
+            
+            # Verify specific categories exist
+            category_ids = [cat["id"] for cat in categories]
+            for expected_id in expected_categories:
+                if expected_id not in category_ids:
+                    self.log_test("Gaming Categories Endpoint", False, f"Missing expected category: {expected_id}")
+                    return False
+            
+            self.log_test("Gaming Categories Endpoint", True, f"All 6 game categories returned: {', '.join(category_ids)}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Gaming Categories Endpoint", False, f"Exception: {str(e)}")
+            return False
+
+    def test_gaming_can_play_endpoint(self):
+        """Test GET /api/gaming/can-play?user_id=test123 - Check if user can play"""
+        try:
+            response = self.session.get(f"{self.base_url}/gaming/can-play?user_id=test123")
+            
+            if response.status_code != 200:
+                self.log_test("Gaming Can Play Endpoint", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["can_play", "message"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Gaming Can Play Endpoint", False, f"Missing field: {field}")
+                    return False
+            
+            # Should be able to play (free beta tier)
+            if not isinstance(data["can_play"], bool):
+                self.log_test("Gaming Can Play Endpoint", False, f"can_play should be boolean, got {type(data['can_play'])}")
+                return False
+            
+            self.log_test("Gaming Can Play Endpoint", True, f"Can play check successful: {data['can_play']} - {data['message']}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Gaming Can Play Endpoint", False, f"Exception: {str(e)}")
+            return False
+
+    def test_gaming_start_session_endpoint(self):
+        """Test POST /api/gaming/start?user_id=test-session-user - Start a gaming session"""
+        try:
+            test_data = {
+                "game_type": "jeopardy"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/gaming/start?user_id=test-session-user",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Gaming Start Session", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["success", "message", "session_id", "tier", "tier_name"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Gaming Start Session", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify success
+            if not data.get("success"):
+                self.log_test("Gaming Start Session", False, f"Session start failed: {data.get('message')}")
+                return False
+            
+            # Store session ID for subsequent tests
+            self.gaming_session_id = data.get("session_id")
+            
+            # Verify session ID format
+            if not self.gaming_session_id or len(self.gaming_session_id) < 10:
+                self.log_test("Gaming Start Session", False, f"Invalid session ID: {self.gaming_session_id}")
+                return False
+            
+            self.log_test("Gaming Start Session", True, f"Gaming session started successfully: {self.gaming_session_id} ({data.get('tier_name')})")
+            return True
+            
+        except Exception as e:
+            self.log_test("Gaming Start Session", False, f"Exception: {str(e)}")
+            return False
+
+    def test_gaming_status_endpoint(self):
+        """Test GET /api/gaming/status?user_id=test-session-user - Get session status"""
+        try:
+            response = self.session.get(f"{self.base_url}/gaming/status?user_id=test-session-user")
+            
+            if response.status_code != 200:
+                self.log_test("Gaming Status Endpoint", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["tier", "tier_name", "has_active_session"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Gaming Status Endpoint", False, f"Missing field: {field}")
+                    return False
+            
+            # Should have active session if previous test passed
+            if hasattr(self, 'gaming_session_id') and self.gaming_session_id:
+                if not data.get("has_active_session"):
+                    self.log_test("Gaming Status Endpoint", False, "Should have active session but has_active_session is False")
+                    return False
+                
+                if "active_session" not in data or not data["active_session"]:
+                    self.log_test("Gaming Status Endpoint", False, "Missing active_session details")
+                    return False
+                
+                active_session = data["active_session"]
+                if active_session.get("session_id") != self.gaming_session_id:
+                    self.log_test("Gaming Status Endpoint", False, f"Session ID mismatch: expected {self.gaming_session_id}, got {active_session.get('session_id')}")
+                    return False
+            
+            self.log_test("Gaming Status Endpoint", True, f"Session status retrieved: {data.get('tier_name')}, Active: {data.get('has_active_session')}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Gaming Status Endpoint", False, f"Exception: {str(e)}")
+            return False
+
+    def test_gaming_heartbeat_endpoint(self):
+        """Test POST /api/gaming/heartbeat - Send heartbeat"""
+        if not hasattr(self, 'gaming_session_id') or not self.gaming_session_id:
+            self.log_test("Gaming Heartbeat", False, "No active session ID available")
+            return False
+            
+        try:
+            test_data = {
+                "session_id": self.gaming_session_id
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/gaming/heartbeat",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Gaming Heartbeat", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["active", "message"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Gaming Heartbeat", False, f"Missing field: {field}")
+                    return False
+            
+            # Should be active
+            if not data.get("active"):
+                self.log_test("Gaming Heartbeat", False, f"Session not active: {data.get('message')}")
+                return False
+            
+            self.log_test("Gaming Heartbeat", True, f"Heartbeat successful: {data.get('message')}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Gaming Heartbeat", False, f"Exception: {str(e)}")
+            return False
+
+    def test_gaming_end_session_endpoint(self):
+        """Test POST /api/gaming/end - End session"""
+        if not hasattr(self, 'gaming_session_id') or not self.gaming_session_id:
+            self.log_test("Gaming End Session", False, "No active session ID available")
+            return False
+            
+        try:
+            test_data = {
+                "session_id": self.gaming_session_id,
+                "reason": "test_complete"
+            }
+            
+            response = self.session.post(
+                f"{self.base_url}/gaming/end",
+                json=test_data,
+                headers={"Content-Type": "application/json"}
+            )
+            
+            if response.status_code != 200:
+                self.log_test("Gaming End Session", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["success", "message"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Gaming End Session", False, f"Missing field: {field}")
+                    return False
+            
+            # Should be successful
+            if not data.get("success"):
+                self.log_test("Gaming End Session", False, f"Session end failed: {data.get('message')}")
+                return False
+            
+            self.log_test("Gaming End Session", True, f"Session ended successfully: {data.get('message')}")
+            return True
+            
+        except Exception as e:
+            self.log_test("Gaming End Session", False, f"Exception: {str(e)}")
+            return False
+
+    def test_gaming_admin_active_sessions_endpoint(self):
+        """Test GET /api/gaming/admin/active-sessions - Admin endpoint to view active sessions"""
+        try:
+            response = self.session.get(f"{self.base_url}/gaming/admin/active-sessions")
+            
+            if response.status_code != 200:
+                self.log_test("Gaming Admin Active Sessions", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            required_fields = ["total_active", "by_tier"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Gaming Admin Active Sessions", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify by_tier structure
+            by_tier = data["by_tier"]
+            expected_tiers = ["game_pass_30", "game_pass_90", "ministry_group", "all_day_pass", "free_beta"]
+            
+            for tier in expected_tiers:
+                if tier not in by_tier:
+                    self.log_test("Gaming Admin Active Sessions", False, f"Missing tier in by_tier: {tier}")
+                    return False
+                
+                if not isinstance(by_tier[tier], int):
+                    self.log_test("Gaming Admin Active Sessions", False, f"Tier count should be integer: {tier} = {by_tier[tier]}")
+                    return False
+            
+            # Verify total_active is integer
+            if not isinstance(data["total_active"], int):
+                self.log_test("Gaming Admin Active Sessions", False, f"total_active should be integer, got {type(data['total_active'])}")
+                return False
+            
+            self.log_test("Gaming Admin Active Sessions", True, f"Active sessions retrieved: {data['total_active']} total sessions")
+            return True
+            
+        except Exception as e:
+            self.log_test("Gaming Admin Active Sessions", False, f"Exception: {str(e)}")
+            return False
+
     def run_all_tests(self):
         """Run all Soul Food Product Catalog and Download Protection Tests"""
         print("🧪 Starting Soul Food Product Catalog and Download Protection Tests")
