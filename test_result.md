@@ -319,18 +319,17 @@ backend:
 
 metadata:
   created_by: "testing_agent"
-  version: "1.1"
-  test_sequence: 1
+  version: "1.2"
+  test_sequence: 2
   run_ui: false
 
 test_plan:
   current_focus:
-    - "Quick Order Page - Product Catalog Sync"
-    - "Holiday Series pricing verification"
-    - "Lunch Series Pre-Order functionality"
-    - "Instructor Edition pricing verification"
-    - "Full Workbooks pricing verification"
-    - "Add to Cart and Pre-Order flows"
+    - "Gaming Session Management API - All Endpoints"
+    - "Gaming Tier Configuration Verification"
+    - "Gaming Categories API Testing"
+    - "Gaming Session Lifecycle Testing"
+    - "Gaming Admin Monitoring API"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
