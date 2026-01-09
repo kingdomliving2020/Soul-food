@@ -754,14 +754,15 @@ const QuickOrder = () => {
             {/* Free Lessons Card - PINNED LAYOUT: Do not modify structure */}
             <Card className="shadow-lg hover:shadow-xl transition-shadow overflow-hidden border-2 border-green-200">
               <CardContent className="p-0">
-                <div className="flex flex-row" style={{ minHeight: '320px' }}>
-                  {/* Cover Image - Fixed width */}
-                  <div className="w-32 flex-shrink-0 flex-grow-0 bg-green-50">
+                {/* Stack vertically on mobile, horizontal on desktop */}
+                <div className="flex flex-col sm:flex-row" style={{ minHeight: '280px' }}>
+                  {/* Cover Image - Full width on mobile, fixed width on desktop */}
+                  <div className="w-full sm:w-32 flex-shrink-0 bg-green-50">
                     <img 
                       src="/images/free-lessons-card.png" 
                       alt="Free Lessons - Made in His Image, Names of God, Times & Seasons"
-                      className="w-full h-full object-cover"
-                      style={{ minHeight: '320px', maxWidth: '128px' }}
+                      className="w-full h-40 sm:h-full object-cover"
+                      style={{ maxHeight: '280px' }}
                     />
                   </div>
                   
@@ -774,12 +775,12 @@ const QuickOrder = () => {
                     </div>
                     <p className="text-xs text-slate-500 mb-3 flex-shrink-0">Self-Worth Series + Holiday Bonus Lessons</p>
                     
-                    {/* Lesson List - Scrollable if needed */}
-                    <div className="space-y-2 mb-3 flex-1 overflow-y-auto" style={{ maxHeight: '180px' }}>
+                    {/* Lesson List */}
+                    <div className="space-y-2 mb-3 flex-1">
                       {freeLessons.map(lesson => (
                         <div key={lesson.id} className="flex items-center justify-between bg-green-50 rounded-lg p-2 border border-green-100">
                           <div className="flex-1 min-w-0 mr-2">
-                            <p className="text-sm font-medium text-slate-800 truncate">{lesson.name}</p>
+                            <p className="text-sm font-medium text-slate-800 leading-tight">{lesson.name}</p>
                             <p className="text-xs text-green-600">{lesson.series}</p>
                           </div>
                           <div className="flex gap-1 flex-shrink-0">
