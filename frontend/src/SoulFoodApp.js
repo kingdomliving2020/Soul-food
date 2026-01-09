@@ -591,7 +591,8 @@ const SoulFoodLanding = () => {
                 <CardContent className="relative space-y-4 p-6">
                   <p className="text-slate-700 leading-relaxed">{s.description}</p>
                   
-                  <div className="flex items-center justify-between pt-4">
+                  {/* Status Badge */}
+                  <div className="pt-2">
                     {s.available ? (
                       <Badge className="bg-emerald-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
                         ✅ Available Now
@@ -601,36 +602,39 @@ const SoulFoodLanding = () => {
                         🔒 Unlocks {s.unlockDate}
                       </Badge>
                     )}
-                    
+                  </div>
+                  
+                  {/* Action Buttons - Stacked like Amazon */}
+                  <div className="space-y-2 pt-2">
                     <Button
                       onClick={() => openProductModal(s)}
-                      variant="outline"
-                      className="border-2 border-slate-400 hover:border-slate-600 text-slate-700 hover:bg-slate-50 font-semibold px-4 py-2 rounded-lg transition-all shadow-md"
+                      className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-3 rounded-lg transition-all shadow-md"
                     >
                       🛒 Add to Cart
                     </Button>
-                  </div>
-                  
-                  <Button
-                    onClick={() => {
-                      setSelectedSeries(s);
-                      setShowPreview(true);
-                    }}
-                    className={`w-full bg-gradient-to-r ${s.gradient} hover:opacity-90 shadow-lg text-white font-semibold py-3 rounded-xl transition-all`}
-                  >
-                    {s.available ? `Explore Full Series 📚` : `Preview Coming Lessons 📖`}
-                  </Button>
-                  
-                  {/* Interactive Lessons Link - Only for available series */}
-                  {s.available && (
+                    
                     <Button
-                      onClick={() => window.location.href = '/snack-packs'}
+                      onClick={() => {
+                        setSelectedSeries(s);
+                        setShowPreview(true);
+                      }}
                       variant="outline"
-                      className="w-full mt-2 border-2 border-purple-400 text-purple-700 hover:bg-purple-50 font-semibold py-2 rounded-xl"
+                      className={`w-full border-2 border-slate-300 hover:border-slate-400 text-slate-700 hover:bg-slate-50 font-semibold py-2.5 rounded-lg transition-all`}
                     >
-                      ✨ Try Interactive Lessons
+                      {s.available ? `Explore Full Series 📚` : `Preview Coming Lessons 📖`}
                     </Button>
-                  )}
+                    
+                    {/* Interactive Lessons Link - Only for available series */}
+                    {s.available && (
+                      <Button
+                        onClick={() => window.location.href = '/snack-packs'}
+                        variant="outline"
+                        className="w-full border-2 border-purple-300 text-purple-600 hover:bg-purple-50 font-semibold py-2 rounded-lg"
+                      >
+                        ✨ Try Interactive Lessons
+                      </Button>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
