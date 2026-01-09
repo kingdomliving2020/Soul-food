@@ -919,7 +919,7 @@ const QuickOrder = () => {
                                 disabled={pkg.available === false}
                                 className={pkg.available === false ? 'text-slate-400' : ''}
                               >
-                                {pkg.name} {pkg.preOrder ? '(Pre-Order)' : ''} {pkg.note && !pkg.preOrder ? `(${pkg.note})` : ''}
+                                {pkg.name} {pkg.note ? `(${pkg.note})` : ''}
                               </option>
                             ))}
                           </select>
