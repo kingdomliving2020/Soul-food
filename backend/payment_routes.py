@@ -204,8 +204,8 @@ PRODUCTS = {
         "sku": "GAMEPASS-90D",
         "stripe_id": "prod_Tl7mje38Mzyynu",
         "description": "90-day access to Soul Food game content for churches, small groups, and quarterly study cycles",
-        "list_price": 24.99,
-        "sale_price": 24.99,
+        "list_price": 19.99,
+        "sale_price": 19.99,
         "currency": "usd",
         "unit": "ea"
     },
