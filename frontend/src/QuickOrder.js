@@ -207,14 +207,14 @@ const QuickOrder = () => {
         },
         full: {
           listPrices: { 
-            adult: { physical: 16.99, interactive: 16.99, epub: 16.99 }, 
-            youth: { physical: 16.99, interactive: 16.99, epub: 16.99 },
-            instructor: { physical: 19.99, interactive: 19.99, epub: 19.99 }
+            adult: { physical: 16.99, interactive: 14.99, epub: 14.99 }, 
+            youth: { physical: 16.99, interactive: 14.99, epub: 14.99 },
+            instructor: { physical: 19.99, interactive: 17.99, epub: 17.99 }
           },
           prices: { 
-            adult: { physical: 16.99, interactive: 16.99, epub: 16.99 }, 
-            youth: { physical: 16.99, interactive: 16.99, epub: 16.99 },
-            instructor: { physical: 19.99, interactive: 19.99, epub: 19.99 }
+            adult: { physical: 16.99, interactive: 14.99, epub: 14.99 }, 
+            youth: { physical: 16.99, interactive: 14.99, epub: 14.99 },
+            instructor: { physical: 19.99, interactive: 17.99, epub: 17.99 }
           }
         }
       },
