@@ -234,7 +234,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "All admin console endpoints tested and working"
+    - "Product Catalog API - All 34 products with correct pricing"
+    - "Download Protection API - 72h expiry, 3 max downloads, 3 resend limit"
+    - "Lunch Series Pre-Order pricing verification"
+    - "Holiday Series pricing verification"
+    - "Breakfast workbooks pricing verification"
+    - "Game Passes pricing verification"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
