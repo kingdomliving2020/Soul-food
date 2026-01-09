@@ -178,7 +178,9 @@ const CheckoutPage = () => {
           })),
           origin_url: window.location.origin,
           coupon_code: couponApplied?.code || null,
-          discount_percent: couponApplied?.discount_percent || 0
+          discount_percent: couponApplied?.discount_percent || 0,
+          is_gift: isGift,
+          order_notes: orderNotes.trim() || null
         }),
       });
 
