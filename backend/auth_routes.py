@@ -629,7 +629,7 @@ async def request_password_reset(data: PasswordReset, background_tasks: Backgrou
     )
     
     # Send email in background
-    background_tasks.add_task(send_password_reset_email, user["email"], reset_token, user["name"])
+    background_tasks.add_task(send_password_reset_email, user["email"], reset_token, user["name"], origin_url)
     
     return {"message": "If that email exists, you'll receive a reset link."}
 
