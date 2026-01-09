@@ -834,12 +834,17 @@ const QuickOrder = () => {
               const pkgData = meal.packages?.find(p => p.id === selectedPkg) || meal.packages?.[0];
               const pricingData = meal.pricing?.[selectedPkg] || {};
               
-              // Get price based on selections
+              // Get price based on selections - supports both complex pricing and simple package pricing
               const getPackagePrice = () => {
+                // If package has direct price, use it
+                if (pkgData?.price !== undefined) return pkgData.price;
+                // Otherwise use complex pricing structure
                 if (!pricingData?.prices?.[selectedEdition]) return 0;
                 return pricingData.prices[selectedEdition][selectedFormat] || 0;
               };
               const getPackageListPrice = () => {
+                // If package has direct price, no list price needed
+                if (pkgData?.price !== undefined) return null;
                 if (!pricingData?.listPrices?.[selectedEdition]) return null;
                 return pricingData.listPrices[selectedEdition][selectedFormat] || null;
               };
