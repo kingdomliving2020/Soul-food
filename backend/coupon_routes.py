@@ -16,53 +16,75 @@ db = client[os.environ.get('DB_NAME', 'soul_food_db')]
 
 # Coupon definitions
 COUPONS = {
+    # ==================== CONTRIBUTOR COUPONS ====================
     "SoulX1079": {
         "code": "SoulX1079",
+        "contributor": "Dee",
         "max_uses": 50,
         "discount_percent": 15,
         "conditions": "All items, single purchase transaction"
     },
-    "SoulX1003": {
-        "code": "SoulX1003",
+    "SoulZ1003": {
+        "code": "SoulZ1003",
+        "contributor": "Jafari",
         "max_uses": 50,
         "discount_percent": 15,
         "conditions": "All items, single purchase transaction"
     },
     "SoulX1060": {
         "code": "SoulX1060",
+        "contributor": "Rose",
         "max_uses": 50,
         "discount_percent": 10,
         "conditions": "All items, single purchase transaction"
     },
     "SoulX1072": {
         "code": "SoulX1072",
+        "contributor": "Temia",
         "max_uses": 50,
         "discount_percent": 10,
         "conditions": "All items, single purchase transaction"
     },
     "SoulX1080": {
         "code": "SoulX1080",
+        "contributor": "Mike",
         "max_uses": 50,
         "discount_percent": 10,
         "conditions": "All items, single purchase transaction"
     },
     "SoulX1059": {
         "code": "SoulX1059",
+        "contributor": "Vicky",
         "max_uses": 50,
         "discount_percent": 10,
         "conditions": "All items, single purchase transaction"
     },
     "SoulX1073": {
         "code": "SoulX1073",
+        "contributor": "Lee",
         "max_uses": 50,
         "discount_percent": 10,
         "conditions": "All items, single purchase transaction"
     },
+    
+    # ==================== BETA TEST COUPONS ====================
     "Beta1!2!3!": {
         "code": "Beta1!2!3!",
-        "max_uses": 100,
+        "max_uses": 20,
         "discount_percent": 100,
-        "conditions": "Beta tester full access - all items"
+        "conditions": "Games, holiday, breakfast set 24hr pass, single login session"
+    },
+    "Beta123abc": {
+        "code": "Beta123abc",
+        "max_uses": 20,
+        "discount_percent": 100,
+        "conditions": "Games, holiday, breakfast set 24hr pass, single login session"
+    },
+    "Beta123abcd": {
+        "code": "Beta123abcd",
+        "max_uses": 20,
+        "discount_percent": 100,
+        "conditions": "Games, holiday, breakfast set 24hr pass, single login session"
     },
     "BETATEST": {
         "code": "BETATEST",
@@ -70,25 +92,35 @@ COUPONS = {
         "discount_percent": 100,
         "conditions": "Beta tester full access - all items"
     },
-    "test123": {
-        "code": "test123",
+    
+    # ==================== RBAC TEST ACCOUNTS ====================
+    # test_ie (Instructor): 2wk access, can select game categories, users, lessons
+    "test12345": {
+        "code": "test12345",
+        "role": "instructor",
         "max_uses": 100,
         "discount_percent": 100,
-        "conditions": "Instructor beta tester access"
+        "session_limit_mins": 120,
+        "conditions": "IE test - can select game categories, users and lessons to unlock, 2hr session limit"
     },
     "test1234": {
         "code": "test1234",
-        "max_uses": 100,
+        "role": "youth",
+        "max_uses": 3,
         "discount_percent": 100,
-        "conditions": "Youth beta tester access"
+        "session_limit_mins": 45,
+        "conditions": "YE test - single or one month download, access to current youth game content, 45min session"
     },
-    "test12345": {
-        "code": "test12345",
-        "max_uses": 100,
+    "test123": {
+        "code": "test123",
+        "role": "adult",
+        "max_uses": 5,
         "discount_percent": 100,
-        "conditions": "Adult beta tester access"
+        "session_limit_mins": 90,
+        "conditions": "AE test - single or one month download, access to current adult game content, 90min session"
     },
-    # Bulk purchase discount codes
+    
+    # ==================== BULK PURCHASE DISCOUNT CODES ====================
     "BOOK10": {
         "code": "BOOK10",
         "max_uses": 1000,
