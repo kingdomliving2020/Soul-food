@@ -1,17 +1,24 @@
-# Test Results - Admin Console Implementation
+# Test Results - Product Catalog Sync & Download Protection
 
 ## Current Test Focus
-Test the new Admin Console backend API endpoints at `/api/admin/*`
+Test the updated Product Catalog and Download Protection features
 
-## Endpoints to Test
-1. `GET /api/admin/dashboard` - Get admin dashboard summary
-2. `GET /api/admin/content` - Get content list
-3. `GET /api/admin/users` - Get users list 
-4. `GET /api/admin/orders` - Get orders list
-5. `GET /api/admin/products` - Get products list
-6. `GET /api/admin/media` - Get media library
-7. `GET /api/admin/logs` - Get audit logs
-8. `GET /api/admin/instructor-content` - Get instructor-only content
+## New Endpoints to Test
+1. `GET /api/payments/products` - Get all products with updated pricing
+2. `GET /api/downloads/link-info` - Get download link configuration
+3. `GET /api/downloads/remaining/{token}` - Get remaining downloads for a token
+4. `POST /api/downloads/resend-links` - Request new download links for an order
+5. `POST /api/downloads/status` - Get download status for an order
+
+## Frontend Pages to Test
+1. `/quick-order` - Verify all products display with correct prices:
+   - Holiday Series: Adult/Youth/Instructor editions with correct pricing
+   - Break*fast Series: Nibbles, Snack Packs, Full Workbooks
+   - Lunch Series (Pre-Order): Adult $27.99, Youth $24.99, Instructor $29.99
+   - Instructor Edition: Digital $19.99, Paperback $29.99
+   - Full Workbooks: AE Digital $14.99, AE Paperback $27.99, YE Digital $12.99, YE Paperback $24.99
+   - Game Passes: 30-Day $7.99, 90-Day $24.99
+   - Merchandise with correct prices
 
 ## Auth Credentials for Testing
 - Beta username: `instructor`
