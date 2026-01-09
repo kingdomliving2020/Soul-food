@@ -263,7 +263,7 @@ async def create_checkout_session(request: CheckoutRequest, http_request: Reques
     currency = product["currency"]
     
     # Get Stripe API key
-    api_key = os.getenv('STRIPE_API_KEY')
+    api_key = os.getenv('STRIPE_SECRET_KEY')
     if not api_key:
         raise HTTPException(status_code=500, detail="Stripe API key not configured")
     
@@ -330,7 +330,7 @@ async def get_checkout_status(session_id: str):
     """Check the status of a checkout session"""
     
     # Get Stripe API key
-    api_key = os.getenv('STRIPE_API_KEY')
+    api_key = os.getenv('STRIPE_SECRET_KEY')
     if not api_key:
         raise HTTPException(status_code=500, detail="Stripe API key not configured")
     
@@ -395,7 +395,7 @@ async def stripe_webhook(request: Request):
     """Handle Stripe webhook events"""
     
     # Get Stripe API key
-    api_key = os.getenv('STRIPE_API_KEY')
+    api_key = os.getenv('STRIPE_SECRET_KEY')
     if not api_key:
         raise HTTPException(status_code=500, detail="Stripe API key not configured")
     
