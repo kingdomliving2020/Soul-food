@@ -187,7 +187,7 @@ const QuickOrder = () => {
       tagline: '4 C\'s of Christianity + 2 FREE Bonus Lessons',
       description: 'Covenant, Cradle, Cross, Comforter - celebrating faith through the seasons',
       available: true,
-      editions: ['adult', 'youth'],
+      editions: ['adult', 'youth', 'instructor'],
       formats: ['interactive', 'epub', 'physical'],
       packages: [
         { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, selectLesson: true, available: true },
@@ -195,16 +195,24 @@ const QuickOrder = () => {
       ],
       pricing: {
         nibble: {
-          listPrices: { adult: { interactive: 3.99, epub: 3.99 }, youth: { interactive: 3.99, epub: 3.99 } },
-          prices: { adult: { interactive: 3.99, epub: 3.99 }, youth: { interactive: 3.99, epub: 3.99 } }
+          listPrices: { adult: { interactive: 3.99, epub: 3.99 }, youth: { interactive: 3.99, epub: 3.99 }, instructor: { interactive: 3.99, epub: 3.99 } },
+          prices: { adult: { interactive: 3.99, epub: 3.99 }, youth: { interactive: 3.99, epub: 3.99 }, instructor: { interactive: 3.99, epub: 3.99 } }
         },
         full: {
-          listPrices: { adult: { physical: 24.99, interactive: 12.99, epub: 12.99 }, youth: { physical: 24.99, interactive: 12.99, epub: 12.99 } },
-          prices: { adult: { physical: 21.99, interactive: 12.99, epub: 12.99 }, youth: { physical: 21.99, interactive: 12.99, epub: 12.99 } }
+          listPrices: { 
+            adult: { physical: 16.99, interactive: 16.99, epub: 16.99 }, 
+            youth: { physical: 16.99, interactive: 16.99, epub: 16.99 },
+            instructor: { physical: 19.99, interactive: 19.99, epub: 19.99 }
+          },
+          prices: { 
+            adult: { physical: 16.99, interactive: 16.99, epub: 16.99 }, 
+            youth: { physical: 16.99, interactive: 16.99, epub: 16.99 },
+            instructor: { physical: 19.99, interactive: 19.99, epub: 19.99 }
+          }
         }
       },
       lessonOptions: holidayLessons,
-      salePercent: 10
+      salePercent: 0
     },
     {
       id: 'breakfast',
@@ -244,33 +252,31 @@ const QuickOrder = () => {
     {
       id: 'lunch',
       name: 'Lunch Series',
-      tagline: 'Spiritual Maturity & Growth',
-      description: 'Deeper lessons for continued spiritual development',
-      available: false,
+      tagline: 'Kingdom Relationships',
+      description: 'Deeper lessons exploring relationships through Scripture',
+      available: true,
       preOrder: true,
-      comingSoon: 'Q3 2026',
-      editions: ['adult', 'youth'],
-      formats: ['interactive', 'epub', 'physical'],
+      comingSoon: 'Q2 2026',
+      editions: ['adult', 'youth', 'instructor'],
+      formats: ['physical'],
       packages: [
-        { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, available: false, preOrder: true },
-        { id: 'snack', name: 'Snack Pack (4 Lessons)', lessons: 4, available: false, preOrder: true },
-        { id: 'meal', name: 'Meal Bundle (12 Lessons)', lessons: 12, available: false, preOrder: true }
+        { id: 'workbook', name: 'Full Workbook (Pre-Order)', lessons: 12, available: true, preOrder: true }
       ],
       pricing: {
-        nibble: {
-          listPrices: { adult: { interactive: 3.99, epub: 2.99 }, youth: { interactive: 3.99, epub: 2.99 } },
-          prices: { adult: { interactive: 3.59, epub: 2.69 }, youth: { interactive: 3.59, epub: 2.69 } }
-        },
-        snack: {
-          listPrices: { adult: { interactive: 7.99, epub: 5.99 }, youth: { interactive: 7.99, epub: 5.99 } },
-          prices: { adult: { interactive: 7.19, epub: 5.39 }, youth: { interactive: 7.19, epub: 5.39 } }
-        },
-        meal: {
-          listPrices: { adult: { interactive: 16.99, epub: 12.99 }, youth: { interactive: 16.99, epub: 12.99 } },
-          prices: { adult: { interactive: 15.29, epub: 11.69 }, youth: { interactive: 15.29, epub: 11.69 } }
+        workbook: {
+          listPrices: { 
+            adult: { physical: 27.99 }, 
+            youth: { physical: 24.99 },
+            instructor: { physical: 29.99 }
+          },
+          prices: { 
+            adult: { physical: 27.99 }, 
+            youth: { physical: 24.99 },
+            instructor: { physical: 29.99 }
+          }
         }
       },
-      salePercent: 10
+      salePercent: 0
     },
     {
       id: 'instructor',
