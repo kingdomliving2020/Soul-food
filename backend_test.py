@@ -2004,20 +2004,30 @@ class SoulFoodQuickOrderTester:
             return False
 
     def run_all_tests(self):
-        """Run all Soul Food Product Catalog and Download Protection Tests"""
-        print("🧪 Starting Soul Food Product Catalog and Download Protection Tests")
+        """Run all Soul Food Gaming Session Management Tests"""
+        print("🎮 Starting Soul Food Gaming Session Management Tests")
         print(f"🌐 Testing against: {self.base_url}")
         print("=" * 70)
         
         tests = [
-            # Product Catalog Tests (Priority)
+            # Gaming Session Management Tests (Priority)
+            self.test_gaming_tiers_endpoint,
+            self.test_gaming_categories_endpoint,
+            self.test_gaming_can_play_endpoint,
+            self.test_gaming_start_session_endpoint,
+            self.test_gaming_status_endpoint,
+            self.test_gaming_heartbeat_endpoint,
+            self.test_gaming_end_session_endpoint,
+            self.test_gaming_admin_active_sessions_endpoint,
+            
+            # Product Catalog Tests (Previously tested)
             self.test_products_api_all_34_products,
             self.test_products_api_lunch_series_pricing,
             self.test_products_api_holiday_series_pricing,
             self.test_products_api_breakfast_workbooks_pricing,
             self.test_products_api_game_passes_pricing,
             
-            # Download Protection Tests (Priority)
+            # Download Protection Tests (Previously tested)
             self.test_download_protection_link_info,
             
             # Core API Tests
