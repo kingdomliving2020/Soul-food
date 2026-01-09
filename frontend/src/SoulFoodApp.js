@@ -960,7 +960,7 @@ const SoulFoodLanding = () => {
                     <img 
                       src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/dgncbaxl_Soul%20Food%27s%20Tricky%20Testaments%20-%20Bold%20Modern%20%281%29.png"
                       alt="Tricky Testaments Youth"
-                      className="h-32 w-auto object-contain"
+                      className="h-36 w-auto object-contain"
                     />
                   </div>
                 </CardHeader>
@@ -1051,7 +1051,7 @@ const SoulFoodLanding = () => {
                   <img 
                     src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/29d8ivo6_Soul%20Food%27s%20Tricky%20Testaments%20Logo%20%281%29.png"
                     alt="Tricky Testaments Adult"
-                    className="h-32 w-auto object-contain"
+                    className="h-36 w-auto object-contain"
                   />
                 </div>
               </CardHeader>
