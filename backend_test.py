@@ -1430,18 +1430,250 @@ class SoulFoodQuickOrderTester:
             self.log_test("Admin Unauthorized Access", False, f"Exception: {str(e)}")
             return False
 
+    # =============================================================================
+    # PRODUCT CATALOG AND DOWNLOAD PROTECTION TESTS
+    # =============================================================================
+
+    def test_products_api_all_34_products(self):
+        """Test GET /api/payments/products returns all 34 products"""
+        try:
+            response = self.session.get(f"{self.base_url}/payments/products")
+            
+            if response.status_code != 200:
+                self.log_test("Products API - All 34 Products", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify response structure
+            if "products" not in data:
+                self.log_test("Products API - All 34 Products", False, "Missing 'products' field in response")
+                return False
+            
+            products = data["products"]
+            
+            # Verify we have exactly 34 products
+            if len(products) != 34:
+                self.log_test("Products API - All 34 Products", False, f"Expected 34 products, got {len(products)}")
+                return False
+            
+            self.log_test("Products API - All 34 Products", True, f"Successfully returned all {len(products)} products")
+            return True
+            
+        except Exception as e:
+            self.log_test("Products API - All 34 Products", False, f"Exception: {str(e)}")
+            return False
+
+    def test_products_api_lunch_series_pricing(self):
+        """Test Lunch Series products have correct prices"""
+        try:
+            response = self.session.get(f"{self.base_url}/payments/products")
+            
+            if response.status_code != 200:
+                self.log_test("Products API - Lunch Series Pricing", False, f"Status code: {response.status_code}")
+                return False
+                
+            data = response.json()
+            products = data["products"]
+            
+            # Expected Lunch Series prices
+            expected_prices = {
+                "lunch_ie_paperback": 29.99,
+                "lunch_ae_paperback": 27.99,
+                "lunch_ye_paperback": 24.99
+            }
+            
+            for product_id, expected_price in expected_prices.items():
+                if product_id not in products:
+                    self.log_test("Products API - Lunch Series Pricing", False, f"Missing product: {product_id}")
+                    return False
+                
+                product = products[product_id]
+                actual_price = product.get("sale_price", product.get("list_price", 0))
+                
+                if actual_price != expected_price:
+                    self.log_test("Products API - Lunch Series Pricing", False, f"{product_id}: Expected ${expected_price}, got ${actual_price}")
+                    return False
+            
+            self.log_test("Products API - Lunch Series Pricing", True, "All Lunch Series products have correct prices")
+            return True
+            
+        except Exception as e:
+            self.log_test("Products API - Lunch Series Pricing", False, f"Exception: {str(e)}")
+            return False
+
+    def test_products_api_holiday_series_pricing(self):
+        """Test Holiday Series products have correct prices"""
+        try:
+            response = self.session.get(f"{self.base_url}/payments/products")
+            
+            if response.status_code != 200:
+                self.log_test("Products API - Holiday Series Pricing", False, f"Status code: {response.status_code}")
+                return False
+                
+            data = response.json()
+            products = data["products"]
+            
+            # Expected Holiday Series prices
+            expected_prices = {
+                "holiday_ie": 19.99,
+                "holiday_ae": 16.99,
+                "holiday_ye": 16.99
+            }
+            
+            for product_id, expected_price in expected_prices.items():
+                if product_id not in products:
+                    self.log_test("Products API - Holiday Series Pricing", False, f"Missing product: {product_id}")
+                    return False
+                
+                product = products[product_id]
+                actual_price = product.get("sale_price", product.get("list_price", 0))
+                
+                if actual_price != expected_price:
+                    self.log_test("Products API - Holiday Series Pricing", False, f"{product_id}: Expected ${expected_price}, got ${actual_price}")
+                    return False
+            
+            self.log_test("Products API - Holiday Series Pricing", True, "All Holiday Series products have correct prices")
+            return True
+            
+        except Exception as e:
+            self.log_test("Products API - Holiday Series Pricing", False, f"Exception: {str(e)}")
+            return False
+
+    def test_products_api_breakfast_workbooks_pricing(self):
+        """Test Breakfast workbooks have correct prices"""
+        try:
+            response = self.session.get(f"{self.base_url}/payments/products")
+            
+            if response.status_code != 200:
+                self.log_test("Products API - Breakfast Workbooks Pricing", False, f"Status code: {response.status_code}")
+                return False
+                
+            data = response.json()
+            products = data["products"]
+            
+            # Expected Breakfast workbook prices
+            expected_prices = {
+                "breakfast_ae_digital": 14.99,
+                "breakfast_ye_digital": 12.99
+            }
+            
+            for product_id, expected_price in expected_prices.items():
+                if product_id not in products:
+                    self.log_test("Products API - Breakfast Workbooks Pricing", False, f"Missing product: {product_id}")
+                    return False
+                
+                product = products[product_id]
+                actual_price = product.get("sale_price", product.get("list_price", 0))
+                
+                if actual_price != expected_price:
+                    self.log_test("Products API - Breakfast Workbooks Pricing", False, f"{product_id}: Expected ${expected_price}, got ${actual_price}")
+                    return False
+            
+            self.log_test("Products API - Breakfast Workbooks Pricing", True, "All Breakfast workbooks have correct prices")
+            return True
+            
+        except Exception as e:
+            self.log_test("Products API - Breakfast Workbooks Pricing", False, f"Exception: {str(e)}")
+            return False
+
+    def test_products_api_game_passes_pricing(self):
+        """Test Game Passes have correct prices"""
+        try:
+            response = self.session.get(f"{self.base_url}/payments/products")
+            
+            if response.status_code != 200:
+                self.log_test("Products API - Game Passes Pricing", False, f"Status code: {response.status_code}")
+                return False
+                
+            data = response.json()
+            products = data["products"]
+            
+            # Expected Game Pass prices
+            expected_prices = {
+                "game_pass_30": 7.99,
+                "game_pass_90": 24.99
+            }
+            
+            for product_id, expected_price in expected_prices.items():
+                if product_id not in products:
+                    self.log_test("Products API - Game Passes Pricing", False, f"Missing product: {product_id}")
+                    return False
+                
+                product = products[product_id]
+                actual_price = product.get("sale_price", product.get("list_price", 0))
+                
+                if actual_price != expected_price:
+                    self.log_test("Products API - Game Passes Pricing", False, f"{product_id}: Expected ${expected_price}, got ${actual_price}")
+                    return False
+            
+            self.log_test("Products API - Game Passes Pricing", True, "All Game Passes have correct prices")
+            return True
+            
+        except Exception as e:
+            self.log_test("Products API - Game Passes Pricing", False, f"Exception: {str(e)}")
+            return False
+
+    def test_download_protection_link_info(self):
+        """Test GET /api/downloads/link-info returns correct configuration"""
+        try:
+            response = self.session.get(f"{self.base_url}/downloads/link-info")
+            
+            if response.status_code != 200:
+                self.log_test("Download Protection - Link Info", False, f"Status code: {response.status_code}, Response: {response.text}")
+                return False
+                
+            data = response.json()
+            
+            # Verify required fields
+            required_fields = ["expiry_hours", "max_downloads", "resend_rate_limit"]
+            for field in required_fields:
+                if field not in data:
+                    self.log_test("Download Protection - Link Info", False, f"Missing field: {field}")
+                    return False
+            
+            # Verify expected values
+            expected_values = {
+                "expiry_hours": 72,
+                "max_downloads": 3,
+                "resend_rate_limit": 3
+            }
+            
+            for field, expected_value in expected_values.items():
+                actual_value = data.get(field)
+                if actual_value != expected_value:
+                    self.log_test("Download Protection - Link Info", False, f"{field}: Expected {expected_value}, got {actual_value}")
+                    return False
+            
+            self.log_test("Download Protection - Link Info", True, "Download protection configuration correct: 72h expiry, 3 max downloads, 3 resend limit")
+            return True
+            
+        except Exception as e:
+            self.log_test("Download Protection - Link Info", False, f"Exception: {str(e)}")
+            return False
+
     def run_all_tests(self):
-        """Run all Soul Food Quick Order and Checkout Tests"""
-        print("🧪 Starting Soul Food Complete Checkout and Download Flow Tests")
+        """Run all Soul Food Product Catalog and Download Protection Tests"""
+        print("🧪 Starting Soul Food Product Catalog and Download Protection Tests")
         print(f"🌐 Testing against: {self.base_url}")
         print("=" * 70)
         
         tests = [
+            # Product Catalog Tests (Priority)
+            self.test_products_api_all_34_products,
+            self.test_products_api_lunch_series_pricing,
+            self.test_products_api_holiday_series_pricing,
+            self.test_products_api_breakfast_workbooks_pricing,
+            self.test_products_api_game_passes_pricing,
+            
+            # Download Protection Tests (Priority)
+            self.test_download_protection_link_info,
+            
             # Core API Tests
             self.test_api_endpoints_availability,
             self.test_series_and_editions_data,
             
-            # Admin Console Tests (Priority)
+            # Admin Console Tests (Previously tested)
             self.test_admin_login_instructor,
             self.test_admin_dashboard,
             self.test_admin_content,
