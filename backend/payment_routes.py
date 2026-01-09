@@ -768,6 +768,7 @@ async def get_checkout_status(session_id: str):
 @router.post("/webhook/stripe")
 async def stripe_webhook(request: Request):
     """Handle Stripe webhook events"""
+    from download_protection import create_download_link
     
     # Get Stripe API key
     api_key = os.getenv('STRIPE_SECRET_KEY')
@@ -792,20 +793,46 @@ async def stripe_webhook(request: Request):
         
         # Process the webhook event
         if webhook_response.event_type == "checkout.session.completed":
-            # Update transaction in database
-            await db.payment_transactions.update_one(
-                {"session_id": webhook_response.session_id, "payment_status": {"$ne": "paid"}},
-                {
-                    "$set": {
-                        "payment_status": "paid",
-                        "status": "completed",
-                        "webhook_processed": True,
-                        "updated_at": datetime.utcnow()
-                    }
-                }
-            )
+            # Get session ID and find transaction
+            session_id = webhook_response.session_id
+            transaction = await db.payment_transactions.find_one({"session_id": session_id}, {"_id": 0})
             
-            # TODO: Grant access to purchased content
+            if transaction:
+                # Update transaction status
+                await db.payment_transactions.update_one(
+                    {"session_id": session_id, "payment_status": {"$ne": "paid"}},
+                    {
+                        "$set": {
+                            "payment_status": "paid",
+                            "status": "completed",
+                            "webhook_processed": True,
+                            "updated_at": datetime.utcnow()
+                        }
+                    }
+                )
+                
+                # Create download links for digital products
+                product_id = transaction.get("product_id")
+                if product_id:
+                    pdf_path = get_pdf_path(product_id)
+                    if pdf_path:
+                        # Get customer info from metadata
+                        customer_email = webhook_response.metadata.get("customer_email", "")
+                        user_id = webhook_response.metadata.get("user_id", "")
+                        
+                        try:
+                            token, expires_at = await create_download_link(
+                                order_id=session_id,
+                                user_id=user_id or session_id,
+                                user_email=customer_email or "no-email@placeholder.com",
+                                product_id=product_id,
+                                product_name=PRODUCTS.get(product_id, {}).get("name", product_id),
+                                file_path=pdf_path,
+                                payment_verified=True
+                            )
+                            print(f"[Webhook] Download link created for {product_id}, expires: {expires_at}")
+                        except Exception as dl_error:
+                            print(f"[Webhook] Error creating download link: {dl_error}")
         
         return {"status": "success", "event_type": webhook_response.event_type}
         
