@@ -303,11 +303,10 @@ async def update_session_activity(session_id: str) -> Tuple[bool, str, Optional[
     tier_config = GAMING_TIERS.get(session.get("tier", "free_beta"), GAMING_TIERS["free_beta"])
     
     # Calculate elapsed time
-    start_time = session.get("started_at")
-    if isinstance(start_time, str):
-        start_time = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
-    
-    elapsed_minutes = int((datetime.now(timezone.utc) - start_time).total_seconds() / 60)
+    start_time = ensure_utc_datetime(session.get("started_at"))
+    elapsed_minutes = 0
+    if start_time:
+        elapsed_minutes = int((datetime.now(timezone.utc) - start_time).total_seconds() / 60)
     
     # Check daily limit
     daily_limit = tier_config.get("daily_limit_minutes")
@@ -324,17 +323,15 @@ async def update_session_activity(session_id: str) -> Tuple[bool, str, Optional[
     # Check idle timeout
     idle_timeout = tier_config.get("idle_timeout_minutes")
     if idle_timeout is not None:
-        last_activity = session.get("last_activity")
-        if isinstance(last_activity, str):
-            last_activity = datetime.fromisoformat(last_activity.replace('Z', '+00:00'))
-        
-        idle_minutes = (datetime.now(timezone.utc) - last_activity).total_seconds() / 60
-        if idle_minutes >= idle_timeout:
-            await end_gaming_session(session_id, "idle_timeout")
-            return False, f"Session ended due to {idle_timeout} minute idle timeout.", {
-                "reason": "idle_timeout",
-                "idle_minutes": int(idle_minutes)
-            }
+        last_activity = ensure_utc_datetime(session.get("last_activity"))
+        if last_activity:
+            idle_minutes = (datetime.now(timezone.utc) - last_activity).total_seconds() / 60
+            if idle_minutes >= idle_timeout:
+                await end_gaming_session(session_id, "idle_timeout")
+                return False, f"Session ended due to {idle_timeout} minute idle timeout.", {
+                    "reason": "idle_timeout",
+                    "idle_minutes": int(idle_minutes)
+                }
     
     # Update activity timestamp
     await db.gaming_sessions.update_one(
