@@ -15,13 +15,26 @@ const CheckoutPage = () => {
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponError, setCouponError] = useState('');
   
+  // Gift & Order Notes
+  const [isGift, setIsGift] = useState(false);
+  const [orderNotes, setOrderNotes] = useState('');
+  
   const subtotal = getCartTotal();
   const discount = couponApplied ? (subtotal * couponApplied.discount_percent / 100) : 0;
   const total = subtotal - discount;
+  
+  // Minimum order for coupon discount
+  const COUPON_MINIMUM = 7.00;
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
       setCouponError('Please enter a coupon code');
+      return;
+    }
+    
+    // Check minimum order requirement
+    if (subtotal < COUPON_MINIMUM) {
+      setCouponError(`Coupons require a minimum order of $${COUPON_MINIMUM.toFixed(2)}`);
       return;
     }
 
