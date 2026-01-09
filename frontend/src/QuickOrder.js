@@ -196,12 +196,12 @@ const QuickOrder = () => {
       ],
       pricing: {
         nibble: {
-          listPrices: { adult: { interactive: 3.99, epub: 2.99 }, youth: { interactive: 3.99, epub: 2.99 } },
-          prices: { adult: { interactive: 3.59, epub: 2.69 }, youth: { interactive: 3.59, epub: 2.69 } }
+          listPrices: { adult: { interactive: 2.99, epub: 2.99 }, youth: { interactive: 2.99, epub: 2.99 } },
+          prices: { adult: { interactive: 2.49, epub: 2.49 }, youth: { interactive: 2.49, epub: 2.49 } }
         },
         full: {
-          listPrices: { adult: { physical: 11.99, interactive: 7.99, epub: 5.99 }, youth: { physical: 11.99, interactive: 7.99, epub: 5.99 } },
-          prices: { adult: { physical: 10.79, interactive: 7.19, epub: 5.39 }, youth: { physical: 10.79, interactive: 7.19, epub: 5.39 } }
+          listPrices: { adult: { physical: 24.99, interactive: 12.99, epub: 12.99 }, youth: { physical: 24.99, interactive: 12.99, epub: 12.99 } },
+          prices: { adult: { physical: 21.99, interactive: 12.99, epub: 12.99 }, youth: { physical: 21.99, interactive: 12.99, epub: 12.99 } }
         }
       },
       lessonOptions: holidayLessons,
