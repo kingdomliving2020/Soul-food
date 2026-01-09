@@ -754,39 +754,40 @@ const QuickOrder = () => {
             {/* Free Lessons Card - PINNED LAYOUT: Do not modify structure */}
             <Card className="shadow-lg hover:shadow-xl transition-shadow overflow-hidden border-2 border-green-200">
               <CardContent className="p-0">
-                {/* Stack vertically on mobile, horizontal on desktop */}
-                <div className="flex flex-col sm:flex-row" style={{ minHeight: '280px' }}>
-                  {/* Cover Image - Full width on mobile, fixed width on desktop */}
-                  <div className="w-full sm:w-32 flex-shrink-0 bg-green-50">
+                {/* Desktop: Horizontal with image | Mobile: Simple list, no image */}
+                <div className="flex flex-row">
+                  {/* Cover Image - HIDDEN on mobile, shown on sm+ */}
+                  <div className="hidden sm:block w-32 flex-shrink-0 bg-green-50">
                     <img 
                       src="/images/free-lessons-card.png" 
-                      alt="Free Lessons - Made in His Image, Names of God, Times & Seasons"
-                      className="w-full h-40 sm:h-full object-cover"
-                      style={{ maxHeight: '280px' }}
+                      alt="Free Lessons"
+                      className="w-full h-full object-cover"
+                      style={{ minHeight: '280px' }}
                     />
                   </div>
                   
-                  {/* Content - Flexible width */}
+                  {/* Content */}
                   <div className="flex-1 p-4 flex flex-col min-w-0">
                     {/* Header */}
-                    <div className="flex items-center gap-2 mb-2 flex-shrink-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-2xl sm:hidden">📖</span>
                       <h4 className="font-bold text-lg text-slate-800">Free Lesson Collection</h4>
                       <Badge className="bg-green-500 text-white text-xs flex-shrink-0">FREE</Badge>
                     </div>
-                    <p className="text-xs text-slate-500 mb-3 flex-shrink-0">Self-Worth Series + Holiday Bonus Lessons</p>
+                    <p className="text-xs text-slate-500 mb-3">Self-Worth Series + Holiday Bonus Lessons</p>
                     
-                    {/* Lesson List */}
-                    <div className="space-y-2 mb-3 flex-1">
+                    {/* Lesson List - Compact on mobile */}
+                    <div className="space-y-1.5 sm:space-y-2 mb-3 flex-1">
                       {freeLessons.map(lesson => (
                         <div key={lesson.id} className="flex items-center justify-between bg-green-50 rounded-lg p-2 border border-green-100">
                           <div className="flex-1 min-w-0 mr-2">
                             <p className="text-sm font-medium text-slate-800 leading-tight">{lesson.name}</p>
-                            <p className="text-xs text-green-600">{lesson.series}</p>
+                            <p className="text-xs text-green-600 hidden sm:block">{lesson.series}</p>
                           </div>
                           <div className="flex gap-1 flex-shrink-0">
                             <a
                               href={`/interactive-lesson/${lesson.id}`}
-                              className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded font-medium transition-colors whitespace-nowrap"
+                              className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded font-medium transition-colors"
                             >
                               Start
                             </a>
@@ -821,10 +822,10 @@ const QuickOrder = () => {
                       ))}
                     </div>
                     
-                    {/* Price Display - Fixed at bottom */}
+                    {/* Price Display */}
                     <div className="text-center py-2 bg-green-100 rounded-lg flex-shrink-0 mt-auto">
-                      <span className="text-2xl font-bold text-green-700">$0.00</span>
-                      <span className="text-sm text-green-600 ml-2">All 5 Lessons FREE!</span>
+                      <span className="text-xl sm:text-2xl font-bold text-green-700">$0.00</span>
+                      <span className="text-xs sm:text-sm text-green-600 ml-2">All FREE!</span>
                     </div>
                   </div>
                 </div>
