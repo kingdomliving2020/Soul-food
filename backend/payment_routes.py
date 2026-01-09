@@ -249,6 +249,13 @@ async def process_free_order(request: FreeOrderRequest):
     }
 
 
+class CartCheckoutRequest(BaseModel):
+    items: list
+    origin_url: str
+    coupon_code: Optional[str] = None
+    discount_percent: int = 0
+
+
 @router.post("/checkout/session")
 async def create_checkout_session(request: CheckoutRequest, http_request: Request):
     """Create a Stripe checkout session for a product"""
@@ -323,6 +330,101 @@ async def create_checkout_session(request: CheckoutRequest, http_request: Reques
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create checkout session: {str(e)}")
+
+
+@router.post("/checkout/cart")
+async def create_cart_checkout_session(request: CartCheckoutRequest, http_request: Request):
+    """Create a Stripe checkout session for cart items (flexible product IDs)"""
+    import stripe
+    
+    if not request.items:
+        raise HTTPException(status_code=400, detail="Cart is empty")
+    
+    # Get Stripe API key
+    api_key = os.getenv('STRIPE_SECRET_KEY')
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Stripe API key not configured")
+    
+    stripe.api_key = api_key
+    
+    # Calculate total from cart items
+    line_items = []
+    total_amount = 0
+    item_names = []
+    
+    for item in request.items:
+        item_price = item.get('salePrice', item.get('price', 0))
+        item_qty = item.get('quantity', 1)
+        item_name = item.get('name', 'Soul Food Product')
+        
+        total_amount += item_price * item_qty
+        item_names.append(f"{item_name} x{item_qty}")
+        
+        # Create line item for Stripe
+        line_items.append({
+            'price_data': {
+                'currency': 'usd',
+                'product_data': {
+                    'name': item_name,
+                    'description': item.get('description', 'Soul Food Digital Content'),
+                },
+                'unit_amount': int(item_price * 100),  # Stripe uses cents
+            },
+            'quantity': item_qty,
+        })
+    
+    # Apply discount if coupon provided
+    if request.discount_percent > 0:
+        discount_amount = total_amount * (request.discount_percent / 100)
+        total_amount -= discount_amount
+    
+    # Build URLs
+    origin_url = request.origin_url.rstrip('/')
+    success_url = f"{origin_url}/payment-success?session_id={{CHECKOUT_SESSION_ID}}"
+    cancel_url = f"{origin_url}/payment-cancel"
+    
+    try:
+        # Create Stripe Checkout Session directly
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=line_items,
+            mode='payment',
+            success_url=success_url,
+            cancel_url=cancel_url,
+            metadata={
+                'source': 'soul_food_cart',
+                'items': ', '.join(item_names)[:500],  # Stripe metadata limit
+                'coupon': request.coupon_code or '',
+                'discount': str(request.discount_percent)
+            }
+        )
+        
+        # Store pending transaction
+        transaction = {
+            "session_id": session.id,
+            "items": request.items,
+            "total_amount": total_amount,
+            "currency": "usd",
+            "payment_status": "pending",
+            "status": "initiated",
+            "coupon_code": request.coupon_code,
+            "discount_percent": request.discount_percent,
+            "created_at": datetime.utcnow(),
+            "updated_at": datetime.utcnow()
+        }
+        
+        await db.payment_transactions.insert_one(transaction)
+        
+        return {
+            "url": session.url,
+            "session_id": session.id,
+            "amount": total_amount
+        }
+        
+    except stripe.error.StripeError as e:
+        raise HTTPException(status_code=500, detail=f"Stripe error: {str(e)}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create checkout: {str(e)}")
 
 
 @router.get("/checkout/status/{session_id}")
