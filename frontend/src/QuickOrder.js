@@ -371,8 +371,8 @@ const QuickOrder = () => {
       subtitle: '90-Day Access - Best Value!',
       description: '90-day access to all game modes for churches, small groups, and quarterly study cycles',
       image: '/images/bounty-stack-token.png',
-      listPrice: 24.99,
-      price: 24.99,
+      listPrice: 19.99,
+      price: 19.99,
       editions: ['adult', 'youth', 'instructor'],
       badge: 'Best Value'
     }
