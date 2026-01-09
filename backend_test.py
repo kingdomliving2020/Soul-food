@@ -1714,7 +1714,7 @@ class SoulFoodQuickOrderTester:
         print(f"📊 Test Results: {passed}/{total} tests passed")
         
         if passed == total:
-            print("🎉 All Soul Food Complete Checkout and Download Flow tests PASSED!")
+            print("🎉 All Soul Food Product Catalog and Download Protection tests PASSED!")
             return True
         else:
             print(f"⚠️  {total - passed} test(s) FAILED")
