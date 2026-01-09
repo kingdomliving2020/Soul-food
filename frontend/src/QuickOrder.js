@@ -283,30 +283,68 @@ const QuickOrder = () => {
       name: 'Instructor Edition',
       tagline: 'Complete Teaching Resources',
       description: 'Full curriculum with teaching guides, answer keys, and group activities',
-      available: false,
-      preOrder: true,
+      available: true,
       editions: ['instructor'],
-      formats: ['interactive', 'epub', 'physical'],
+      formats: ['digital', 'physical'],
       packages: [
-        { id: 'holiday-full', name: 'Holiday Set (6 Lessons)', lessons: 6, available: false, preOrder: true },
-        { id: 'meal', name: 'Meal Bundle (12 Lessons)', lessons: 12, available: false, preOrder: true },
-        { id: 'full-set', name: 'Full Curriculum (36 Lessons)', lessons: 36, available: false, preOrder: true, badge: '15% Off' }
+        { id: 'breakfast-digital', name: 'Break*fast IE (Digital)', lessons: 12, available: true },
+        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback)', lessons: 12, available: true },
+        { id: 'holiday-ie', name: 'Holiday IE (Workbook)', lessons: 6, available: true },
+        { id: 'lunch-ie-preorder', name: 'Lunch IE (Pre-Order)', lessons: 12, available: true, preOrder: true, note: 'Q2 2026' }
       ],
       pricing: {
-        'holiday-full': {
-          listPrices: { instructor: { physical: 14.99, interactive: 9.99, epub: 7.99 } },
-          prices: { instructor: { physical: 13.49, interactive: 8.99, epub: 7.19 } }
+        'breakfast-digital': {
+          listPrices: { instructor: { digital: 19.99 } },
+          prices: { instructor: { digital: 19.99 } }
         },
-        meal: {
-          listPrices: { instructor: { physical: 24.99, interactive: 19.99, epub: 15.99 } },
-          prices: { instructor: { physical: 22.49, interactive: 17.99, epub: 14.39 } }
+        'breakfast-paperback': {
+          listPrices: { instructor: { physical: 29.99 } },
+          prices: { instructor: { physical: 29.99 } }
         },
-        'full-set': {
-          listPrices: { instructor: { physical: 45.99, interactive: 35.99, epub: 29.99 } },
-          prices: { instructor: { physical: 39.09, interactive: 30.59, epub: 25.49 } }
+        'holiday-ie': {
+          listPrices: { instructor: { physical: 19.99, digital: 19.99 } },
+          prices: { instructor: { physical: 19.99, digital: 19.99 } }
+        },
+        'lunch-ie-preorder': {
+          listPrices: { instructor: { physical: 29.99 } },
+          prices: { instructor: { physical: 29.99 } }
         }
       },
-      salePercent: 15
+      salePercent: 0
+    },
+    {
+      id: 'workbooks',
+      name: 'Full Workbooks',
+      tagline: 'Complete Study Workbooks',
+      description: 'Full-length workbooks for in-depth study - Digital and Paperback options',
+      available: true,
+      editions: ['adult', 'youth'],
+      formats: ['digital', 'physical'],
+      packages: [
+        { id: 'breakfast-ae-digital', name: 'Break*fast AE Digital', available: true },
+        { id: 'breakfast-ae-paperback', name: 'Break*fast AE Paperback', available: true },
+        { id: 'breakfast-ye-digital', name: 'Break*fast YE Digital', available: true },
+        { id: 'breakfast-ye-paperback', name: 'Break*fast YE Paperback', available: true }
+      ],
+      pricing: {
+        'breakfast-ae-digital': {
+          listPrices: { adult: { digital: 14.99 } },
+          prices: { adult: { digital: 14.99 } }
+        },
+        'breakfast-ae-paperback': {
+          listPrices: { adult: { physical: 27.99 } },
+          prices: { adult: { physical: 27.99 } }
+        },
+        'breakfast-ye-digital': {
+          listPrices: { youth: { digital: 12.99 } },
+          prices: { youth: { digital: 12.99 } }
+        },
+        'breakfast-ye-paperback': {
+          listPrices: { youth: { physical: 24.99 } },
+          prices: { youth: { physical: 24.99 } }
+        }
+      },
+      salePercent: 0
     }
   ];
 
