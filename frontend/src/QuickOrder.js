@@ -316,15 +316,17 @@ const QuickOrder = () => {
       id: 'workbooks',
       name: 'Full Workbooks',
       tagline: 'Complete Study Workbooks',
-      description: 'Full-length workbooks for in-depth study - Digital and Paperback options',
+      description: 'Full-length workbooks for in-depth study - Digital and Paperback options. Pre-order now, eBooks delivered February!',
       available: true,
+      preOrder: true,
+      comingSoon: 'Feb 2026',
       editions: ['adult', 'youth'],
       formats: ['digital', 'physical'],
       packages: [
-        { id: 'breakfast-ae-digital', name: 'Break*fast AE Digital', available: true },
-        { id: 'breakfast-ae-paperback', name: 'Break*fast AE Paperback', available: true },
-        { id: 'breakfast-ye-digital', name: 'Break*fast YE Digital', available: true },
-        { id: 'breakfast-ye-paperback', name: 'Break*fast YE Paperback', available: true }
+        { id: 'breakfast-ae-digital', name: 'Break*fast AE Digital', available: true, preOrder: true },
+        { id: 'breakfast-ae-paperback', name: 'Break*fast AE Paperback', available: true, preOrder: true },
+        { id: 'breakfast-ye-digital', name: 'Break*fast YE Digital', available: true, preOrder: true },
+        { id: 'breakfast-ye-paperback', name: 'Break*fast YE Paperback', available: true, preOrder: true }
       ],
       pricing: {
         'breakfast-ae-digital': {
