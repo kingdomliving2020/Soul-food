@@ -145,8 +145,7 @@ const QuickOrder = () => {
   const breakfastMonths = [
     { id: 'month-1', name: 'Month 1: Prayer, the First Resort', lessons: 4, available: true },
     { id: 'month-2', name: 'Month 2: The Art of Through', lessons: 4, available: true },
-    { id: 'month-3', name: 'Month 3: Faith & Foresight', lessons: 4, available: true },
-    { id: 'month-4', name: 'Month 4: Coming Q2 2026', lessons: 4, available: false, comingSoon: true }
+    { id: 'month-3', name: 'Month 3: Faith & Foresight', lessons: 4, available: true }
   ];
 
   // Breakfast individual lessons for Nibble selection (organized by month)
