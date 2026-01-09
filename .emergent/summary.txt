@@ -1,184 +1,267 @@
 <analysis>**original_problem_statement:**
-The user's goal is to build a full-stack e-commerce and learning platform called Soul Food. The project started from a GitHub repository and has evolved to include: an interactive lesson system (Nibbles and Snack Packs) processed from DOCX files, a complete UI/UX overhaul, and a sophisticated Role-Based Access Control (RBAC) system.
+The user's goal is to build a full-stack e-commerce and learning platform called Soul Food. The project involves creating an interactive lesson system, a complete UI/UX overhaul, a sophisticated Role-Based Access Control (RBAC) system, and a full e-commerce flow with Stripe.
 
-Recent feature requests include:
-1.  **Advanced Authentication Security**: Implement a comprehensive security system with NIST-compliant standards. This includes allowing users to register and log in with either a username or email. It also requires strict password policies (8+ characters, complexity rules, 120-day expiry, no reuse), account lockout after 3 failed attempts, a 60-minute session timeout, and a secure password reset flow via an email link that expires in 1 hour.
-2.  **Beta Tester Access**: Provide two ways for beta testers to log in:
-    *   **Registration**: A Beta Code field on the sign-up form that assigns a specific RBAC role.
-    *   **Quick Access**: A dedicated tab for Beta Code Only login, granting instant, temporary access without creating a permanent account. The password rules do not apply to this method.
-3.  **UI/UX Refinements**: Address visual issues, including cleaning up the mobile shopping cart, aligning buttons on the Quick Order page, adjusting the theme to a purple/blue palette, removing pagan symbols like pine trees, and enlarging the logo on the auth page.
-4.  **Interactive PDF Downloads**: Enhance the downloadable PDF versions of lessons to include a fully interactive Table of Contents with clickable links to all major sections (Title Page, Copyright, Dedication, Lesson Headers, Activities, etc.).
-5.  **Guest Checkout**: Allow users to build a shopping cart as a guest and then be prompted to sign up or log in to complete the purchase and track their order.
+Key feature requests from the user during this session include:
+1.  **Admin Console:** Build a comprehensive DevOps back office for the owner/admin to manage content, users, products, orders, and media while the site is live.
+2.  **Stripe Integration:** Integrate Stripe for real payment processing, replacing the mocked checkout flow.
+3.  **Pricing & Product Catalog Update:** Update all product prices and add new products based on a  file and Stripe  exports provided by the user.
+4.  **UI/UX Fixes:** Correct the Holiday series cover image, fix off-center buttons and layout issues on the Quick Order page, and ensure a clean mobile experience.
+5.  **Coupon Management:** Add a new set of bulk purchase coupons and contributor-specific coupon codes.
+6.  **Legal Pages:** Create Privacy Policy and Terms of Service pages as required by Stripe.
+7.  **Domain Linking:** The user wants to link their custom domain () to the deployed application.
 
 **User's preferred language**: English
 
 **what currently exists?**
 The application is a full-stack project using React, FastAPI, and MongoDB.
--   **Interactive Content**: Two complete lesson series, In His Image and Holiday AE, are available. The frontend features an  component for engaging with content and a  that serves as the lesson catalog, displaying snack packs and individual lessons with correct pricing.
--   **Authentication**: A comprehensive authentication system has been built. It includes backend routes () for registration, login (email/username), and password management (hashing, JWT tokens). The frontend () provides a tabbed UI for Sign In, Sign Up, and a Beta Code Only quick access, styled with a purple and blue theme. RBAC is linked to beta codes.
--   **PDF Generation**: A backend utility () using  generates downloadable PDF versions of the lessons, accessible via a Download PDF button.
--   **E-commerce UI**: The shopping cart () and Quick Order page () have been fixed for mobile responsiveness and button alignment. The cart logic () now supports adding custom merchandise.
--   **Integrations**: MailerLite is integrated for sending emails (contact form, password resets), and Google Sign-In is available as a login option.
+-   **Admin Console**: A new, fully-featured Admin Console exists at . It is protected by authentication and provides modules for a Dashboard, Content Manager, User Management, and placeholders for other sections. It fetches and displays live data from the backend.
+-   **E-commerce Flow**: Stripe has been integrated for payment processing using the user's test keys. The application can create Stripe Checkout sessions for both single items and the entire shopping cart.
+-   **Product Catalog**: The backend  and frontend  have undergone significant updates to reflect new pricing and product offerings based on user-provided files. New bulk discount coupons (, , ) and several contributor coupons have been added.
+-   **UI/UX**: The  page has been fixed to show the correct neutral Holiday Series cover, display updated prices, and show coupon code information. Layout issues on product cards for both mobile and desktop have been addressed.
+-   **Legal Pages**: Functional  and  pages have been created and are linked in the site's footer.
+-   **Security**: The application uses JWT for authentication. The agent fixed a hardcoded password reset URL to use a dynamic origin from the request headers.
 
 **Last working item**:
--   **Last item agent was working**: The agent was in the middle of a major security overhaul for the authentication system. It had just overwritten  and  to implement NIST-compliant password policies, username/email login options, password expiry, account lockout, and a secure password reset flow. The final user instruction was to ensure usernames and passwords adhere to safe character sets.
+-   **Last item agent was working**: The agent was performing a comprehensive update of the product and pricing catalog based on the latest CSV files (, ) provided by the user. The agent updated the backend  with the full list of products from Stripe but only partially updated the frontend  before the session ended.
 -   **Status**: IN PROGRESS
 -   **Agent Testing Done**: N
--   **Which testing method agent to use?**: both. The backend testing agent is crucial for verifying all the new, complex security rules (password complexity, expiry, lockout, reset links). The frontend testing agent is needed to test the updated  UI, including username input, password validation feedback, and the different login flows.
+-   **Which testing method agent to use?**: both. The backend testing agent needs to verify that checkout sessions can be created for all the *new* products (Lunch Series, Workbooks). The frontend testing agent must verify that all new products and their correct prices are displayed on the  page.
 -   **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1**: The advanced authentication system is implemented but completely untested. It is the highest priority to verify its functionality against all user-specified security requirements. (P0)
+-   **Issue 1**: Complete and Verify Product Catalog Update (P0)
+-   **Issue 2**: PDF Generation Quality is Inferior (P1)
+-   **Issue 3**: User is Blocked from Linking Custom Domain (P1)
+-   **Issue 4**: Cart state is sometimes lost on refresh/navigation (P2)
+-   **Issue 5**: Buttons on some cards were off-centered or spilling over (P2)
 
-    **Issues Detail**:
-    -   **Issue 1**: Test and Stabilize Advanced Authentication System
-        -   **Attempted fixes**: The agent wrote the code in  and  but did not perform any testing.
-        -   **Next debug checklist**:
-            1.  **Backend ()**:
-                -   Verify password complexity rules (length, char types) are enforced during registration.
-                -   Test account lockout after 3 failed login attempts.
-                -   Test password reset flow: request link, email sending (mock or check logs), reset with token, and token expiry.
-                -   Confirm username and email can both be used for login.
-                -   Verify username and password validation (safe characters per NIST).
-                -   Test beta login with username/password (ensure relaxed password rules apply).
-                -   Test password expiry logic (this may require manual DB date changes or a dedicated test endpoint).
-            2.  **Frontend ()**:
-                -   Confirm the UI correctly prompts for a username during registration.
-                -   Ensure password validation messages are user-friendly.
-                -   Test all three tabs: Sign In, Sign Up, and Beta access.
-        -   **Why fix this issue and what will be achieved with the fix?**: This will deliver a secure, production-ready authentication system that meets the user's explicit and stringent security requirements, enabling safe user registration and access control.
-        -   **Status**: IN PROGRESS
-        -   **Is recurring issue?**: N
-        -   **Should Test frontend/backend/both after fix?**: Both
-        -   **Blocked on other issue**: None
+**Issues Detail**:
+-   **Issue 1**: Complete and Verify Product Catalog Update
+    -   **Description**: The agent updated the backend product catalog in  with new items like the Lunch Series and various Workbooks from the user's Stripe CSV. However, these new products have **not** been added to the frontend  component, meaning they are not visible or purchasable by users.
+    -   **Next debug checklist**:
+        1.  View  and identify all the new products (e.g., , , etc.).
+        2.  Edit  to add new product cards and sections for these items, ensuring they display the correct prices and pre-order status.
+        3.  Test the full flow: add one of the new items to the cart, proceed to checkout, and verify that it correctly redirects to Stripe with the right price.
+    -   **Why fix this issue and what will be achieved with the fix?**: The site's product offerings are incomplete and inconsistent between the frontend and backend. This fix will make all products available for purchase.
+    -   **Status**: IN PROGRESS
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: both
+    -   **Blocked on other issue**: None
+
+-   **Issue 2**: PDF Generation Quality is Inferior
+    -   **Description**: A long-standing issue where the user is unsatisfied with the quality of auto-generated PDFs, especially the Table of Contents (TOC).
+    -   **Attempted fixes**: Previous agent improved the TOC with dotted leaders, but it was never verified if the fix was successful. The current workaround is to use user-uploaded PDFs.
+    -   **Next debug checklist**:
+        1.  Identify a lesson that does *not* have a user-provided PDF.
+        2.  Trigger the backend to generate a PDF for that lesson.
+        3.  Download and inspect the generated PDF to see if the improved TOC is present.
+    -   **Why fix this issue and what will be achieved with the fix?**: Ensures a professional look for all downloadable content, removing dependency on pre-designed PDFs.
+    -   **Status**: NOT STARTED
+    -   **Is recurring issue?**: Y
+    -   **Should Test frontend/backend/both after fix?**: Backend
+
+-   **Issue 3**: User is Blocked from Linking Custom Domain
+    -   **Description**: The user cannot find the Link domain button in their Emergent dashboard for their deployed app, preventing them from associating .
+    -   **Attempted fixes**: The agent, via the , instructed the user on where the button *should* be and advised them to hard refresh, try incognito, or use a different browser. The agent then advised the user to contact Emergent support directly via email.
+    -   **Next debug checklist**: This is an external issue. The next agent should ask the user for an update from Emergent support.
+    -   **Why fix this issue and what will be achieved with the fix?**: Allows the user to use their professional, branded domain for their live application.
+    -   **Status**: BLOCKED
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: N/A
+    -   **Blocked on other issue**: Blocked on Emergent Support.
+
+-   **Issue 4**: Cart state is sometimes lost on refresh/navigation
+    -   **Description**: A recurring issue where the cart contents do not persist reliably across page loads.
+    -   **Status**: NOT STARTED
+    -   **Is recurring issue?**: Y
+    -   **Should Test frontend/backend/both after fix?**: Frontend
+
+-   **Issue 5**: Buttons on some cards were off-centered or spilling over
+    -   **Description**: The user reported layout issues on the Quick Order page cards.
+    -   **Attempted fixes**: The agent made several CSS adjustments in  to improve flexbox wrapping, padding, and font sizes. Screenshots confirm the desktop and mobile views look much cleaner.
+    -   **Status**: USER VERIFICATION PENDING
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: Frontend (Screenshot)
 
 **In progress Task List**:
--   **Task 1**: Complete and Test Advanced Authentication Security (P0)
-    -   **Where to resume**: The core logic is in  and . The agent must now create and execute a thorough testing plan covering all security features.
-    -   **What will be achieved with this?**: A fully functional and secure user authentication system that meets all specified requirements, including NIST standards.
+-   **Task 1**: Implement the 6 Must-Have Download Protections (P0)
+    -   **Where to resume**: This task from the previous handoff was not started in this session. The agent needs to start by creating  and implementing the logic from .
+    -   **What will be achieved with this?**: Secures paid digital content from unauthorized sharing, a critical pre-launch requirement.
+    -   **Status**: NOT STARTED
+    -   **Should Test frontend/backend/both after fix?**: Backend
+    -   **Blocked on something**: None
+
+-   **Task 2**: Finalize Stripe Integration (P1)
+    -   **Where to resume**: The initial integration using test keys is complete. The next steps are to implement a webhook handler in the backend to fulfill orders automatically after a successful payment (e.g., record the purchase in the DB, send a confirmation email).
+    -   **What will be achieved with this?**: A fully automated, production-ready payment and order fulfillment system.
     -   **Status**: IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?**: Both
+    -   **Should Test frontend/backend/both after fix?**: Backend
     -   **Blocked on something**: None
 
 **Upcoming and Future Tasks**
-
 -   **Upcoming Tasks**:
-    -   **P0**: **Enhance PDF with Interactive TOC**: Modify  to create a clickable Table of Contents in the downloaded PDFs, linking to the Title Page, Copyright, Dedication, Quick Start guide, and all major lesson sections.
-    -   **P1**: **Implement Guest Checkout Flow**: Update the frontend cart and checkout process to allow guests to add items and be prompted to sign up or log in only when they are ready to complete the purchase.
-    -   **P2**: **Create Admin View for Beta Stats**: Build a simple, protected frontend route that calls the  endpoint and displays the remaining session slots for each beta test group.
-
+    -   **P0: Implement Full Instructor Role Functionality**: Begin work on the features in .
+    -   **P1: Implement RBAC Rules for Test Users**: Implement the session limits, download limits, and access controls described in the user's table for , , and  roles.
+    -   **P1: Implement Word Search Game**: Create the game and integrate it into .
+    -   **P2: Connect Quick Order UI to PDF Downloads**: Ensure purchasing an item grants access to the correct PDF download.
+    -   **P2: Split Remaining PDFs**: Split  into Nibbles and  into two files.
 -   **Future Tasks**:
-    -   Implement Stripe for payment processing.
-    -   Create a comprehensive admin dashboard to manage users, view coupon usage, and analyze marketing effectiveness.
-    -   Migrate all hardcoded product and lesson data from Python files into MongoDB collections for scalability.
-    -   Expand the 5th week content concept to other mealtime series.
+    -   Migrate all hardcoded product and lesson data from Python/JS files into MongoDB.
+    -   Develop a mobile app strategy (PWA is the recommended first step).
 
 **Completed work in this session**
--   **Interactive Lesson System**: Built and integrated two full lesson series (In His Image, Holiday AE) from DOCX files, including backend APIs and frontend interactive components.
--   **Holiday Lesson Refinement**: Restructured the Holiday series into individual paid and free bonus lessons with correct pricing, and updated the UI accordingly.
--   **Full Authentication System**: Created a complete user authentication system from scratch, featuring email/password login, Google Sign-In, and a Beta Code Only access method, with a new purple/blue theme.
--   **UI/UX Fixes**:
-    -   Resolved multiple UI bugs, including the mobile shopping cart layout, merchandise button alignment on the Quick Order page, and incorrect login redirects.
-    -   Fixed the  logic to support custom merchandise.
-    -   Removed all pine tree icons sitewide and replaced them with bell icons as per user's strict instructions.
--   **PDF Generation**: Implemented a -based system to generate downloadable PDFs for lessons.
--   **MailerLite Integration**: Successfully integrated the MailerLite API to enable the contact form and password reset emails.
--   **Beta User Management**: Implemented a backend session counter and an admin endpoint to track beta code usage.
+-   **Admin Console**: Created a fully functional admin console at  for managing content and users.
+-   **Stripe Integration**: Successfully integrated Stripe Checkout with user's test keys and created a new backend endpoint () to handle cart payments.
+-   **Pricing & Catalog Overhaul**: Updated backend and frontend with multiple rounds of pricing changes and new coupon codes (, , , and contributor codes) based on user files.
+-   **UI Fixes**:
+    -   Updated the Holiday Series cover image on the  page.
+    -   Resolved button and card layout issues on  for desktop and mobile.
+    -   Removed month 4 from the Break*fast series card.
+-   **Legal Pages**: Created and routed  and  pages.
+-   **Deployment Readiness**: Fixed a hardcoded password reset URL to be dynamic and ran multiple health checks to prepare for deployment.
+-   **User Support**: Answered user questions about custom domains, deployment costs, and mobile app strategy by invoking the .
 
 **Earlier issues found/mentioned but not fixed**
--   **Issue 1**: PDF Orphan/Widow Prevention
-    -   **Debug checklist**: Investigate  features or custom flowable logic within  to prevent single lines of a paragraph from being left at the top or bottom of a page.
-    -   **Why to solve this issue and what will be achieved with this?**: This will meet a specific user requirement for professional-quality typography in the downloadable workbooks, enhancing the user experience.
-    -   **Should Test frontend/backend/both after fix?**: Backend (by generating and inspecting the PDF).
-    -   **Is recurring issue?**: N
+- The core list of pending issues covers all major items mentioned by the user that were not fully resolved in this session.
 
 **Known issue recurrence from previous fork**
--   None
+-   **Cart Persistence**: This issue was present in the previous fork and remains a concern.
+-   **PDF Generation Quality**: The root cause of poor quality from  has not been solved; the app relies on a workaround.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend**: React, React Router, Tailwind CSS, Context API
--   **Backend**: FastAPI, Pydantic, JWT
--   **Database**: MongoDB (for users); lesson content is currently hardcoded.
--   **Authentication**:  for hashing,  for JWTs, RBAC linked to beta codes, account lockout, password policies (complexity, expiry), and password reset flows.
--   **Integrations**: MailerLite (Email), Google Auth,  (PDF Generation).
+-   **Stripe Integration**: Using the Stripe Python library to create  objects. The frontend uses  to redirect to the Stripe-hosted checkout page.
+-   **Admin Dashboard**: Building a comprehensive, authenticated single-page application within the main React app for site administration.
+-   **Dynamic Configuration**: Refactoring hardcoded values (like DB name and password reset URL) to use environment variables and request headers for better portability.
+-   **PDF to Image Conversion**: Using  (from ) to convert an uploaded PDF cover into a PNG for display on the web.
 
 **key DB schema**
--   **users**: 
--   **coupons**: (Hardcoded in ) 
+-   No new collections were added. The  collection is now more heavily utilized by the Admin Console for listing and managing users.
 
 **changes in tech stack**
--    added for PDF generation.
--    and  added for the authentication system.
+-   **python-jose**: Installed in the backend for JWT decoding in the admin routes.
+-   **poppler-utils**: Installed via apt 2.6.1 (arm64)
+Usage: apt-get [options] command
+       apt-get [options] install|remove pkg1 [pkg2 ...]
+       apt-get [options] source pkg1 [pkg2 ...]
+
+apt-get is a command line interface for retrieval of packages
+and information about them from authenticated sources and
+for installation, upgrade and removal of packages together
+with their dependencies.
+
+Most used commands:
+  update - Retrieve new lists of packages
+  upgrade - Perform an upgrade
+  install - Install new packages (pkg is libc6 not libc6.deb)
+  reinstall - Reinstall packages (pkg is libc6 not libc6.deb)
+  remove - Remove packages
+  purge - Remove packages and config files
+  autoremove - Remove automatically all unused packages
+  dist-upgrade - Distribution upgrade, see apt-get(8)
+  dselect-upgrade - Follow dselect selections
+  build-dep - Configure build-dependencies for source packages
+  satisfy - Satisfy dependency strings
+  clean - Erase downloaded archive files
+  autoclean - Erase old downloaded archive files
+  check - Verify that there are no broken dependencies
+  source - Download source archives
+  download - Download the binary package into the current directory
+  changelog - Download and display the changelog for the given package
+
+See apt-get(8) for more information about the available commands.
+Configuration options and syntax is detailed in apt.conf(5).
+Information about how to configure sources can be found in sources.list(5).
+Package and version choices can be expressed via apt_preferences(5).
+Security details are available in apt-secure(8).
+                                        This APT has Super Cow Powers. to support PDF-to-image conversion for the holiday cover.
+-   **stripe**: Python library version was confirmed/used for payment integration.
 
 **All files of reference**
--   : **Overwritten & Untested**. Contains all new, complex security logic.
--   : **Overwritten & Untested**. Supports username input and new auth flows.
--   : **Newly created**. Generates lesson PDFs; needs TOC enhancement.
--   : **Heavily modified**. Contains hardcoded data for all lessons.
--   : **Heavily modified**. Displays the lesson catalog.
--   : **Overwritten**. Logic updated to handle custom merchandise.
+-   : New backend for the admin panel.
+-   : New frontend for the admin panel.
+-   : Contains the entire new product catalog and Stripe logic.
+-   : Contains all the frontend product rendering logic and pricing.
+-   : Contains all new coupon codes.
+-   : Contains the new privacy/terms pages.
+-   : The user's source-of-truth for pricing.
+-    & : The user's Stripe export files.
 
 **Areas that need refactoring**:
--   **Hardcoded Data**: The lesson content in  and product data in various frontend components should be migrated to MongoDB to improve scalability and maintainability.
+-   **Hardcoded Product Catalog**: The application's technical debt has grown significantly. The entire product catalog, including dozens of items, prices, and IDs, is hardcoded in a massive dictionary in  and duplicated in parts on the frontend in . This is unsustainable and must be migrated to a  collection in MongoDB.
 
 **key api endpoints**
--   : Create a new user with password policy checks.
--   : Log in with email/username; checks for account lockout.
--   : Quick login with just a beta username and password.
--   : Initiates the password reset flow by sending an email.
--   : Completes the password reset using a token.
--   : (Admin) Returns usage statistics for beta codes.
--   : Get all individual lessons.
--   : Download a lesson as a PDF.
+-   : Fetches dashboard statistics.
+-   : Lists all users for the admin panel.
+-   : Lists all lessons for the admin panel.
+-   : Creates a Stripe checkout session from a list of cart items.
+-   : Frontend route for the Privacy Policy page.
+-   : Frontend route for the Terms of Service page.
 
 **Critical Info for New Agent**
--   **PRIORITY ONE**: Thoroughly test and stabilize the advanced authentication system. The code has been written but is completely unverified. The user has high expectations for security.
--   **User Preferences**: The user is highly visual and detail-oriented. Maintain the purple/blue theme, confirm UI changes with screenshots, and strictly adhere to the no pine trees rule.
--   **Next Major Feature**: After securing authentication, focus on enhancing the PDF downloads with a fully interactive Table of Contents.
--   **Testing Credentials**: Use the provided beta codes (, , etc.) to test the different RBAC roles and registration flows.
+-   **PRIORITIZE PRODUCT CATALOG SYNC**: The most immediate task is to add the missing new products (Lunch series, Workbooks) to the  frontend to match the backend. The current state is broken from a user's perspective.
+-   **DOWNLOAD SECURITY IS NEXT**: The P0 task from the original handoff, securing digital downloads, has still not been started and is critical for launch.
+-   **AWAIT USER FEEDBACK ON DOMAIN**: The user has contacted Emergent support about the missing Link domain button. Await an update from the user before attempting any further action on this.
+-   **RBAC FOR TEST USERS**: The user provided a table with specific rules for test roles (, , ). This is a new, high-priority requirement that should be tackled soon.
+-   **ACRONYMS**: The user specified a strict acronym key that must be followed: **AE/Ae/ae** (Adult Edition), **YE/ye** (Youth Edition), **IE** (Instructor Edition).
 
-**documents created in this job**
--   None.
+**documents and test reports created in this job**
+-   
+-   
+-   
+-   User artifacts downloaded to the workspace:
+    -   
+    -   
+    -   
+    -   ,  (and subsequent versions)
+    -   
 
-**Last 10 User Messages and any pending user messages**
-1.  **Request:** Hide test codes, change theme to purple/blue, add session counter. **Status:** Completed.
-2.  **Request:** Remove all pine tree icons. **Status:** Completed.
-3.  **Request:** Fix login redirect, broken shopping cart, and button alignment. **Status:** Completed.
-4.  **Request:** Enlarge auth page logo; asked how to share preview URL. **Status:** Completed.
-5.  **Question:** Couldn't find the beta login option. **Status:** Clarified (was on sign-up form).
-6.  **Request:** Confirmed desire for a Beta Code Only login without email. **Status:** Completed.
-7.  **Request:** Specified comprehensive security requirements (username/email login, strong password policies, expiry, lockout, password reset). **Status:** In Progress.
-8.  **Request:** Added NIST standards for safe characters in usernames/passwords. **Status:** In Progress.
-9.  **Pending User Need:** The user wants to start testing the RBAC functions and lesson quality (interactive and downloadable) as soon as the platform is stable.
-10. **Pending User Need:** The user wants a guest checkout flow.
+**Last 10 User Messages and any pending HUMAN messages**
+10. **(LATEST)** Please review these new CSVs and add whatever is missing or changed since the last upload. **Status: Partially Addressed.** (Agent updated backend but not fully frontend).
+9.  Corrected prices for Game Day Pass 90-days (9.99) and Small Group Subscription (4.99). **Status: Completed.**
+8.  Provided new contributor coupon codes and RBAC rules in a table format. **Status: Partially Addressed.** (Coupons added, RBAC not implemented).
+7.  Clarified pricing, removed Month 4 from Breakfast series, specified merchandise pricing logic, and reported UI layout issues. **Status: Completed.**
+6.  Provided a DOCX file with updated MSRP for all items and new bulk coupon codes. **Status: Completed.**
+5.  Asked for pricing to be updated from a Stripe  file. **Status: Completed.**
+4.  Provided Stripe public and secret test keys. **Status: Completed.**
+3.  Asked about a privacy policy, which was missing. **Status: Completed.**
+2.  Reported being unable to find the Link domain button in the Emergent UI. **Status: Blocked.** (User contacted support).
+1.  Confirmed readiness to associate DNS and start Stripe integration. **Status: Addressed.**
 
 **Project Health Check:**
--   **Broken**: The newly implemented advanced authentication system is completely untested and should be considered non-functional until verified.
--   **Mocked**: Most product data (excluding lessons) is hardcoded on the frontend. The final checkout and payment flow is not implemented.
+-   **Broken**:
+    -   The product catalog is inconsistent between the frontend and backend; new products are not purchasable.
+    -   The digital download process remains insecure.
+-   **Mocked**:
+    -   Stripe order fulfillment (post-payment webhooks).
+    -   All instructor and RBAC features.
+-   **Fragile**:
+    -   The cart's state persistence remains a recurring problem.
+    -   The entire product catalog is hardcoded, making future updates difficult and error-prone.
 
 **3rd Party Integrations**
--   **MailerLite**: Integrated for sending emails (contact form, password reset). Requires User API Key.
--   **Google Auth**: Integrated as a sign-in option. Uses Emergent-managed keys.
--   **reportlab**: A Python library used for server-side PDF generation.
--   **Stripe**: Planned for future payment processing.
+-   **Stripe**: For payment processing. Integrated with test keys.
+-   **reportlab**: For server-side PDF generation.
+-   **Tally.so**: For an embedded feedback form.
+-   **pypdf**: Used for splitting and manipulating PDF files.
+-   **libreoffice**: Used via shell command for DOCX-to-PDF conversion.
 
 **Testing status**
--   **Testing agent used after significant changes**: YES, for the initial interactive lesson feature, but NOT for the recent authentication overhaul.
+-   **Testing agent used after significant changes**: YES (for Admin Console)
 -   **Troubleshoot agent used after agent stuck in loop**: NO
 -   **Test files created**: None
--   **Known regressions**: None
+-   **Known regressions**: Cart persistence.
 
 **Credentials to test flow:**
--   **Beta/Test Codes**:
-    -    (Username: , Role: , 120 min session)
-    -    (Username: , Role: , 90 min session)
-    -    (Username: , Role: , 45 min session)
-    -    (Username: , Role: , 90 min session)
--   **MailerLite API Key**: Stored in the environment.
+-   **Beta Usernames/Passwords**: /, /, /, /
+-   **New Bulk Coupons**:  (10%),  (15%),  (30%)
+-   **New Contributor Coupons**:  (15%),  (15%),  (10%),  (10%),  (10%),  (10%),  (10%)
+-   **Stripe Test Keys**:
+    -   **Publishable**: 
+    -   **Secret**: 
 
 **What agent forgot to execute**
--   The agent did not test the extensive authentication security changes after implementing them. This is the most critical pending action.
--   The specific user request to prevent orphan and widow lines in the generated PDFs has been acknowledged but not yet implemented.</analysis>
+-   The agent did not add the new Lunch Series, Holiday Workbooks, and Full Breakfast Workbooks products to the frontend  component, even after adding them to the backend product catalog. This is the highest priority gap.
+-   The agent did not implement the RBAC rules for test users (, , ) that the user provided in a table.</analysis>
