@@ -398,38 +398,30 @@ const QuickOrder = () => {
     {
       id: 'pen-lighted',
       name: 'SOFU Journal Pen - Lighted',
-      subtitle: 'Branded lighted journal pen',
+      subtitle: 'Branded lighted journal pen with stylus',
       image: '/covers/soul-food-pen.png',
-      price: 9.99,
-      checkoutDiscount: 10,
-      note: '10% off applied at checkout'
+      price: 9.99
     },
     {
       id: 'pen-standard',
       name: 'SOFU Journal Pen',
       subtitle: 'Branded journal pen',
       image: '/covers/soul-food-pen.png',
-      price: 7.99,
-      checkoutDiscount: 10,
-      note: '10% off applied at checkout'
+      price: 7.99
     },
     {
       id: 'bookmarks-set',
       name: 'Magnetic Bookmarks (Set of 3)',
       subtitle: 'Decorative magnetic bookmarks',
       image: '/covers/magnetic-bookmark-1.png',
-      price: 6.99,
-      checkoutDiscount: 10,
-      note: '10% off applied at checkout'
+      price: 6.99
     },
     {
       id: 'bookmark-leather',
       name: 'Magnetic Leather Bookmark',
       subtitle: 'Premium magnetic leather bookmark',
       image: '/covers/leather-bookmark-1.png',
-      price: 6.99,
-      checkoutDiscount: 10,
-      note: '10% off applied at checkout'
+      price: 4.99
     }
   ];
 
