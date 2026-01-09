@@ -179,7 +179,7 @@ const GamingCentral = () => {
             >
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
-                  <div className="text-5xl">{game.icon}</div>
+                  <div className="w-14 h-14 flex items-center justify-center text-5xl flex-shrink-0">{game.icon}</div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
                       <h3 className="text-xl font-bold text-white">{game.name}</h3>
