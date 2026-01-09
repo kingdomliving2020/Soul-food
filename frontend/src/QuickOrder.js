@@ -290,15 +290,15 @@ const QuickOrder = () => {
       name: 'Instructor Edition',
       tagline: 'Complete Teaching Resources',
       description: 'Full curriculum with teaching guides, answer keys, and group activities',
-      available: false,
-      comingSoon: 'Q2 2026',
+      available: true,
+      preOrder: true,
       editions: ['instructor'],
       formats: ['digital', 'physical'],
       packages: [
-        { id: 'breakfast-digital', name: 'Break*fast IE (Digital)', price: 19.99, format: 'digital', available: false, comingSoon: true },
-        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback)', price: 29.99, format: 'physical', available: false, comingSoon: true },
-        { id: 'holiday-ie', name: 'Holiday IE (Workbook)', price: 19.99, format: 'physical', available: false, comingSoon: true },
-        { id: 'lunch-ie-preorder', name: 'Lunch IE (Pre-Order)', price: 29.99, format: 'physical', available: false, preOrder: true, comingSoon: true }
+        { id: 'breakfast-digital', name: 'Break*fast IE (Digital)', price: 19.99, format: 'digital', available: true, preOrder: true },
+        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback)', price: 29.99, format: 'physical', available: true, preOrder: true },
+        { id: 'holiday-ie', name: 'Holiday IE (Workbook)', price: 19.99, format: 'physical', available: true, preOrder: true },
+        { id: 'lunch-ie-preorder', name: 'Lunch IE', price: 29.99, format: 'physical', available: true, preOrder: true }
       ],
       salePercent: 0
     },
