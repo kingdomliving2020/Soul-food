@@ -726,8 +726,6 @@ const SoulFoodLanding = () => {
                     )}
                   </div>
                 </CardContent>
-                  )}
-                </CardContent>
               </Card>
             ))}
 
