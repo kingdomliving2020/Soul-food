@@ -751,40 +751,41 @@ const QuickOrder = () => {
         <section className="mb-12">
           <h3 className="text-2xl font-bold mb-6 text-slate-800">🤲 Free Lessons</h3>
           <div className="grid md:grid-cols-2 gap-6">
-            {/* Free Lessons Card */}
-            <Card className="shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+            {/* Free Lessons Card - PINNED LAYOUT: Do not modify structure */}
+            <Card className="shadow-lg hover:shadow-xl transition-shadow overflow-hidden border-2 border-green-200">
               <CardContent className="p-0">
-                <div className="flex">
-                  {/* Cover Image */}
-                  <div className="flex-shrink-0 w-36">
+                <div className="flex flex-row" style={{ minHeight: '320px' }}>
+                  {/* Cover Image - Fixed width */}
+                  <div className="w-32 flex-shrink-0 flex-grow-0 bg-green-50">
                     <img 
                       src="/images/free-lessons-card.png" 
                       alt="Free Lessons - Made in His Image, Names of God, Times & Seasons"
                       className="w-full h-full object-cover"
-                      style={{ minHeight: '280px' }}
+                      style={{ minHeight: '320px', maxWidth: '128px' }}
                     />
                   </div>
                   
-                  {/* Content */}
-                  <div className="flex-1 p-4">
-                    <div className="flex items-center gap-2 mb-2">
+                  {/* Content - Flexible width */}
+                  <div className="flex-1 p-4 flex flex-col min-w-0">
+                    {/* Header */}
+                    <div className="flex items-center gap-2 mb-2 flex-shrink-0">
                       <h4 className="font-bold text-lg text-slate-800">Free Lesson Collection</h4>
-                      <Badge className="bg-green-500 text-white text-xs">FREE</Badge>
+                      <Badge className="bg-green-500 text-white text-xs flex-shrink-0">FREE</Badge>
                     </div>
-                    <p className="text-xs text-slate-500 mb-3">Self-Worth Series + Holiday Bonus Lessons</p>
+                    <p className="text-xs text-slate-500 mb-3 flex-shrink-0">Self-Worth Series + Holiday Bonus Lessons</p>
                     
-                    {/* Lesson List */}
-                    <div className="space-y-2 mb-4">
+                    {/* Lesson List - Scrollable if needed */}
+                    <div className="space-y-2 mb-3 flex-1 overflow-y-auto" style={{ maxHeight: '180px' }}>
                       {freeLessons.map(lesson => (
                         <div key={lesson.id} className="flex items-center justify-between bg-green-50 rounded-lg p-2 border border-green-100">
-                          <div className="flex-1 min-w-0">
+                          <div className="flex-1 min-w-0 mr-2">
                             <p className="text-sm font-medium text-slate-800 truncate">{lesson.name}</p>
                             <p className="text-xs text-green-600">{lesson.series}</p>
                           </div>
-                          <div className="flex gap-1 ml-2">
+                          <div className="flex gap-1 flex-shrink-0">
                             <a
                               href={`/interactive-lesson/${lesson.id}`}
-                              className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded font-medium transition-colors"
+                              className="text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded font-medium transition-colors whitespace-nowrap"
                             >
                               Start
                             </a>
@@ -819,8 +820,8 @@ const QuickOrder = () => {
                       ))}
                     </div>
                     
-                    {/* Price Display */}
-                    <div className="text-center py-2 bg-green-100 rounded-lg">
+                    {/* Price Display - Fixed at bottom */}
+                    <div className="text-center py-2 bg-green-100 rounded-lg flex-shrink-0 mt-auto">
                       <span className="text-2xl font-bold text-green-700">$0.00</span>
                       <span className="text-sm text-green-600 ml-2">All 5 Lessons FREE!</span>
                     </div>
