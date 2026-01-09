@@ -161,10 +161,11 @@ PRODUCTS = {
     # ==================== NIBBLES (SINGLE LESSONS) ====================
     "nibble_adult": {
         "name": "Nibble - Adult Edition",
-        "sku": "prod_Tl2gCET5t1sDEi",
+        "sku": "BKFT-NIB-AE-DIG",
+        "stripe_id": "prod_Tl6dXzvc89fzpU",
         "description": "Single lesson PDF - explore a taste of the Foundation in Christ Modules",
-        "list_price": 2.99,
-        "sale_price": 2.49,
+        "list_price": 3.99,
+        "sale_price": 3.99,
         "currency": "usd",
         "unit": "ea",
         "options": {
@@ -174,10 +175,11 @@ PRODUCTS = {
     },
     "nibble_youth": {
         "name": "Nibble - Youth Edition",
-        "sku": "prod_Tl2OMdWlra6iy2",
+        "sku": "BKFT-NIB-YE-DIG",
+        "stripe_id": "prod_Tl6hePoHzLo5pi",
         "description": "Breakfast Series Foundation in Christ, Single Lesson PDF",
-        "list_price": 2.99,
-        "sale_price": 2.49,
+        "list_price": 3.99,
+        "sale_price": 3.99,
         "currency": "usd",
         "unit": "ea",
         "options": {
