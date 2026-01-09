@@ -1031,42 +1031,57 @@ const QuickOrder = () => {
                                 </span>
                               )}
                             </span>
+                            {pkgData?.note && (
+                              <span className="text-xs text-slate-500 ml-2">({pkgData.note})</span>
+                            )}
                           </div>
                           
                           {/* Action Buttons - equal width, stacked */}
                           <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              onClick={() => {
-                                const itemName = pkgData?.selectMonth 
-                                  ? `${meal.name} - ${meal.monthOptions.find(m => m.id === selectedMonth)?.name}`
-                                  : pkgData?.selectLesson
-                                  ? `${meal.name} - ${meal.lessonOptions.find(l => l.id === selectedLesson)?.name}`
-                                  : `${meal.name} - ${pkgData?.name}`;
-                                
-                                const isPreOrder = meal.preOrder || pkgData?.preOrder;
-                                
-                                addToCart({
-                                  id: `${meal.id}-${selectedPkg}${pkgData?.selectMonth ? `-${selectedMonth}` : ''}${pkgData?.selectLesson ? `-${selectedLesson}` : ''}-${selectedEdition}-${selectedFormat}`,
-                                  name: isPreOrder ? `[PRE-ORDER] ${itemName} - ${selectedEdition.toUpperCase()} - ${selectedFormat.toUpperCase()}` : `${itemName} - ${selectedEdition.toUpperCase()} - ${selectedFormat.toUpperCase()}`,
-                                  edition: selectedEdition,
-                                  format: selectedFormat,
-                                  price: price,
-                                  quantity: 1,
-                                  isPreOrder: isPreOrder
-                                });
-                                
-                                if (isPreOrder) {
-                                  toast.success(`Pre-order added! ${itemName} will be available soon.`);
-                                } else {
-                                  toast.success(`Added ${itemName} to cart!`);
-                                }
-                              }}
-                              className={`flex-1 text-xs py-2 ${meal.preOrder || pkgData?.preOrder 
-                                ? "bg-amber-500 hover:bg-amber-600" 
-                                : "bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700"}`}
-                            >
-                              {meal.preOrder || pkgData?.preOrder ? '🛒 Pre-Order' : '🛒 Add to Cart'}
+                            {(meal.comingSoon && !meal.available) || pkgData?.comingSoon ? (
+                              <Button
+                                size="sm"
+                                disabled
+                                className="flex-1 text-xs py-2 bg-slate-400 cursor-not-allowed"
+                              >
+                                🔒 Coming Soon
+                              </Button>
+                            ) : (
+                              <Button
+                                size="sm"
+                                onClick={() => {
+                                  const itemName = pkgData?.selectMonth 
+                                    ? `${meal.name} - ${meal.monthOptions.find(m => m.id === selectedMonth)?.name}`
+                                    : pkgData?.selectLesson
+                                    ? `${meal.name} - ${meal.lessonOptions.find(l => l.id === selectedLesson)?.name}`
+                                    : `${meal.name} - ${pkgData?.name}`;
+                                  
+                                  const isPreOrder = meal.preOrder || pkgData?.preOrder;
+                                  const shipNote = pkgData?.note ? ` (${pkgData.note})` : '';
+                                  
+                                  addToCart({
+                                    id: `${meal.id}-${selectedPkg}${pkgData?.selectMonth ? `-${selectedMonth}` : ''}${pkgData?.selectLesson ? `-${selectedLesson}` : ''}-${selectedEdition}-${selectedFormat}`,
+                                    name: isPreOrder ? `[PRE-ORDER] ${itemName} - ${selectedEdition.toUpperCase()}${shipNote}` : `${itemName} - ${selectedEdition.toUpperCase()}${shipNote}`,
+                                    edition: selectedEdition,
+                                    format: selectedFormat,
+                                    price: price,
+                                    quantity: 1,
+                                    isPreOrder: isPreOrder
+                                  });
+                                  
+                                  if (isPreOrder) {
+                                    toast.success(`Pre-order added! ${itemName} will be available soon.`);
+                                  } else {
+                                    toast.success(`Added ${itemName} to cart!`);
+                                  }
+                                }}
+                                className={`flex-1 text-xs py-2 ${meal.preOrder || pkgData?.preOrder 
+                                  ? "bg-amber-500 hover:bg-amber-600" 
+                                  : "bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700"}`}
+                              >
+                                {meal.preOrder || pkgData?.preOrder ? '🛒 Pre-Order' : '🛒 Add to Cart'}
+                              </Button>
+                            )}
                             </Button>
                           </div>
                         </div>
