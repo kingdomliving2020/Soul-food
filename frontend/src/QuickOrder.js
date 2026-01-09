@@ -994,6 +994,34 @@ const QuickOrder = () => {
                           </div>
                         )}
 
+                        {/* Bundle Option Selector - for Book Club */}
+                        {meal.bundleOptions && (
+                          <div className="mb-3">
+                            <label className="block text-xs font-semibold mb-1 text-purple-700">📦 Select Bundle Type:</label>
+                            <div className="space-y-2">
+                              {meal.bundleOptions.map(opt => (
+                                <label key={opt.id} className="flex items-center gap-2 p-2 bg-purple-50 rounded-lg border border-purple-200 cursor-pointer hover:bg-purple-100">
+                                  <input
+                                    type="radio"
+                                    name={`bundle-${meal.id}`}
+                                    value={opt.id}
+                                    checked={(selections[meal.id]?.bundleType || meal.bundleOptions[0].id) === opt.id}
+                                    onChange={() => updateSelection(meal.id, 'bundleType', opt.id)}
+                                    className="text-purple-600"
+                                  />
+                                  <div>
+                                    <p className="text-sm font-medium text-slate-800">{opt.name}</p>
+                                    <p className="text-xs text-slate-500">{opt.description}</p>
+                                  </div>
+                                </label>
+                              ))}
+                            </div>
+                            {pkgData?.emailRequired && (
+                              <p className="text-xs text-amber-600 mt-2">📧 Email {meal.contactEmail} for invoice & custom ratios</p>
+                            )}
+                          </div>
+                        )}
+
                         <div className="grid grid-cols-2 gap-2 mb-3">
                           {/* Edition Selector - only show if multiple editions */}
                           {meal.editions.length > 1 && (
