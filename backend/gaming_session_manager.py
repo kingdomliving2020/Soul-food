@@ -367,17 +367,10 @@ async def end_gaming_session(session_id: str, reason: str = "user_ended") -> boo
         return False
     
     # Calculate final duration
-    start_time = session.get("started_at")
-    if isinstance(start_time, str):
-        start_time = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
-    elif start_time and start_time.tzinfo is None:
-        # Make naive datetime timezone-aware (assume UTC)
-        start_time = start_time.replace(tzinfo=timezone.utc)
-    
+    start_time = ensure_utc_datetime(session.get("started_at"))
+    duration_minutes = 0
     if start_time:
         duration_minutes = int((datetime.now(timezone.utc) - start_time).total_seconds() / 60)
-    else:
-        duration_minutes = 0
     
     await db.gaming_sessions.update_one(
         {"session_id": session_id},
