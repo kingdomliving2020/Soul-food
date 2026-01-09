@@ -23,231 +23,384 @@ db = client[os.environ.get('DB_NAME', 'soul_food_db')]
 
 # Product catalog with list and sale prices
 # Cost = wholesale/production cost, List Price = MSRP, Sale Price = current selling price
-# Updated: January 2026 per SOFU_Full_Catalog_Pricing
+# Updated: January 2026 per Stripe Product Catalog
 PRODUCTS = {
-    # ==================== SNACK PACKS (MODULES) ====================
-    "snack_pack_m1": {
-        "name": "Snack Pack Module 1 (4 Lessons)",
-        "sku": "BKFT-SP-M1-DIG",
-        "description": "Module 1 Digital for quick-start study—lesson content, journaling space, and activities. Theme: Prayer is the first resort",
+    # ==================== SNACK PACKS - ADULT EDITION ====================
+    "snack_pack_ae_m1": {
+        "name": "Break*fast Snack Pack AE M1",
+        "sku": "BKFT-SP-AE-M1",
+        "stripe_id": "prod_Tl6meQRKMfxtOq",
+        "description": "Adult Edition. Module 1 (4 Lessons) PDF for quick-start study—lesson content, journaling space, and activities. Theme: Prayer, the First Resort",
         "list_price": 8.99,
         "sale_price": 8.99,
         "currency": "usd",
         "unit": "set",
-        "options": {
-            "edition": ["adult", "youth"],
-            "medium": ["pdf"]
-        }
-    },
-    "snack_pack_m2": {
-        "name": "Snack Pack Module 2 (4 Lessons)",
-        "sku": "BKFT-SP-M2-DIG",
-        "description": "Module 2 PDF—guided prompts, reflection space, and group-ready activities. Theme: Art of Through",
-        "list_price": 8.99,
-        "sale_price": 8.99,
-        "currency": "usd",
-        "unit": "set",
-        "options": {
-            "edition": ["adult", "youth"],
-            "medium": ["pdf"]
-        }
-    },
-    "snack_pack_m3": {
-        "name": "Snack Pack Module 3 (4 Lessons)",
-        "sku": "BKFT-SP-M3-DIG",
-        "description": "Module 3 PDF for continued growth—structured lessons with journaling space. Theme: Faith & Foresight",
-        "list_price": 8.99,
-        "sale_price": 8.99,
-        "currency": "usd",
-        "unit": "set",
-        "options": {
-            "edition": ["adult", "youth"],
-            "medium": ["pdf"]
-        }
-    },
-    "snack_pack_bundle": {
-        "name": "Snack Pack Bundle (M1+M2+M3)",
-        "sku": "BKFT-SP-BUNDLE-DIG",
-        "description": "Best value for groups—all 3 modules (12 lessons) in digital format",
-        "list_price": 26.97,
-        "sale_price": 21.99,
-        "currency": "usd",
-        "unit": "set",
-        "options": {
-            "edition": ["adult", "youth"],
-            "medium": ["pdf"]
-        },
-        "note": "Best value for groups or readers who want the full sequence"
-    },
-    
-    # ==================== FULL WORKBOOKS ====================
-    "breakfast_instructor": {
-        "name": "Break*fast Instructor Edition",
-        "sku": "BKFT-IE-PB-COL",
-        "stripe_id": "prod_TkyiFSioq2XGD3",
-        "description": "Leader-focused edition with teaching support, discussion guidance, and answer helps. Includes maps plus cultural/historical notes.",
-        "list_price": {"paperback": 29.99, "digital": 19.99},
-        "sale_price": {"paperback": 26.99, "digital": 19.99},
-        "preorder_discount": 10,
-        "currency": "usd",
-        "unit": "ea",
-        "options": {
-            "medium": ["paperback", "digital"]
-        },
-        "edition": "IE"
-    },
-    "breakfast_adult": {
-        "name": "Break*fast Adult Edition",
-        "sku": "BKFT-AE-PB-COL",
-        "stripe_id": "prod_TkyWMfuMLXq0je",
-        "description": "Adult workbook centered on Foundation in Christ. Journal-style space with reflective prompts and group-ready activities.",
-        "list_price": {"paperback": 27.99, "digital": 14.99},
-        "sale_price": {"paperback": 23.99, "digital": 14.99},
-        "preorder_discount": 15,
-        "currency": "usd",
-        "unit": "ea",
-        "options": {
-            "medium": ["paperback", "digital"]
-        },
         "edition": "AE"
     },
-    "breakfast_youth": {
-        "name": "Break*fast Youth Edition",
-        "sku": "BKFT-YE-PB-COL",
-        "stripe_id": "prod_TkySkHdyBvH3jp",
-        "description": "Youth workbook built to strengthen identity and growth in Christ. Guided prompts, journaling space, and engaging activities for teens.",
-        "list_price": {"paperback": 24.99, "digital": 12.99},
-        "sale_price": {"paperback": 21.99, "digital": 12.99},
-        "preorder_discount": 15,
+    "snack_pack_ae_m2": {
+        "name": "Break*fast Snack Pack AE M2",
+        "sku": "BKFT-SP-AE-M2",
+        "stripe_id": "prod_Tl6wX9CvgMB8Tz",
+        "description": "Adult Edition. Module 2 (4 Lessons) PDF—guided prompts, reflection space, and group-ready activities. Theme: The Art of Through",
+        "list_price": 8.99,
+        "sale_price": 8.99,
         "currency": "usd",
-        "unit": "ea",
-        "options": {
-            "medium": ["paperback", "digital"]
-        },
+        "unit": "set",
+        "edition": "AE"
+    },
+    "snack_pack_ae_m3": {
+        "name": "Break*fast Snack Pack AE M3",
+        "sku": "BKFT-SP-AE-M3",
+        "stripe_id": "prod_Tl6zPmnPaSE4iQ",
+        "description": "Adult Edition. Module 3 (4 Lessons) PDF for continued growth—structured lessons with journaling space. Theme: Faith & Foresight",
+        "list_price": 8.99,
+        "sale_price": 8.99,
+        "currency": "usd",
+        "unit": "set",
+        "edition": "AE"
+    },
+    
+    # ==================== SNACK PACKS - YOUTH EDITION ====================
+    "snack_pack_ye_m1": {
+        "name": "Break*fast Snack Pack YE M1",
+        "sku": "BKFT-SP-YE-M1",
+        "stripe_id": "prod_Tl5jzNmDkKJnth",
+        "description": "Youth Edition. Module 1 (4 Lessons) PDF for quick-start study—lesson content, journaling space, and activities. Theme: Prayer, the First Resort",
+        "list_price": 8.99,
+        "sale_price": 8.99,
+        "currency": "usd",
+        "unit": "set",
+        "edition": "YE"
+    },
+    "snack_pack_ye_m2": {
+        "name": "Break*fast Snack Pack YE M2",
+        "sku": "BKFT-SP-YE-M2",
+        "stripe_id": "prod_Tl5oCtBvc2kGHX",
+        "description": "Youth Edition. Module 2 (4 Lessons) PDF—guided prompts, reflection space, and group-ready activities. Theme: The Art of Through",
+        "list_price": 8.99,
+        "sale_price": 8.99,
+        "currency": "usd",
+        "unit": "set",
+        "edition": "YE"
+    },
+    "snack_pack_ye_m3": {
+        "name": "Break*fast Snack Pack YE M3",
+        "sku": "BKFT-SP-YE-M3",
+        "stripe_id": "prod_Tl5vC3AqFX0CBp",
+        "description": "Youth Edition. Module 3 (4 Lessons) PDF for continued growth—structured lessons with journaling space. Theme: Faith & Foresight",
+        "list_price": 8.99,
+        "sale_price": 8.99,
+        "currency": "usd",
+        "unit": "set",
         "edition": "YE"
     },
     
-    # ==================== HOLIDAY SERIES ====================
-    "holiday_adult": {
-        "name": "Holiday: 4 C's of Christianity (AE)",
-        "sku": "HOL-AE-PB-COL",
-        "stripe_id": "prod_TkyqsEGwOalBcj",
-        "description": "Seasonal workbook exploring Covenant, Cradle, Cross, and Comforter. Reflection space and group-friendly activities.",
-        "list_price": {"paperback": 24.99, "digital": 12.99},
-        "sale_price": {"paperback": 21.99, "digital": 12.99},
-        "preorder_discount": 15,
+    # ==================== BREAKFAST WORKBOOKS ====================
+    "breakfast_ie_digital": {
+        "name": "Break*fast IE (Digital)",
+        "sku": "BKFT-IE-DIG",
+        "stripe_id": "prod_Tl5P17AYZd8eAR",
+        "description": "Leader-focused edition with teaching support, discussion guidance, and answer helps. Includes maps plus cultural/historical notes.",
+        "list_price": 19.99,
+        "sale_price": 19.99,
         "currency": "usd",
-        "unit": "ea",
-        "options": {
-            "medium": ["paperback", "digital"]
-        },
+        "edition": "IE",
+        "medium": "digital"
+    },
+    "breakfast_ie_paperback": {
+        "name": "Break*fast Instructor Edition (WBK)",
+        "sku": "BKFT-IE-PB",
+        "stripe_id": "prod_Tl5DmbgIRsGRbR",
+        "description": "Leader-focused edition with teaching support, discussion guidance, and answer helps. Includes maps plus cultural/historical notes.",
+        "list_price": 29.99,
+        "sale_price": 29.99,
+        "currency": "usd",
+        "edition": "IE",
+        "medium": "paperback"
+    },
+    "breakfast_ae_digital": {
+        "name": "Break*fast AE (Digital)",
+        "sku": "BKFT-AE-DIG",
+        "stripe_id": "prod_Tl5TzIALgCR5AX",
+        "description": "Adult workbook centered on Foundation in Christ. Journal-style space with reflective prompts and group-ready activities.",
+        "list_price": 14.99,
+        "sale_price": 14.99,
+        "currency": "usd",
+        "edition": "AE",
+        "medium": "digital"
+    },
+    "breakfast_ae_paperback": {
+        "name": "Break*fast Adult Edition (WBK)",
+        "sku": "BKFT-AE-PB",
+        "stripe_id": "prod_Tl5GHVPeUEeqRH",
+        "description": "Adult workbook centered on Foundation in Christ. Journal-style space with reflective prompts and group-ready activities.",
+        "list_price": 27.99,
+        "sale_price": 27.99,
+        "currency": "usd",
+        "edition": "AE",
+        "medium": "paperback"
+    },
+    "breakfast_ye_digital": {
+        "name": "Break*fast YE (Digital)",
+        "sku": "BKFT-YE-DIG",
+        "stripe_id": "prod_Tl5WM3aZcWrBB1",
+        "description": "Youth workbook built to strengthen identity and growth in Christ. Guided prompts, journaling space, and engaging activities for teens.",
+        "list_price": 12.99,
+        "sale_price": 12.99,
+        "currency": "usd",
+        "edition": "YE",
+        "medium": "digital"
+    },
+    "breakfast_ye_paperback": {
+        "name": "Break*fast Youth Edition (WBK)",
+        "sku": "BKFT-YE-PB",
+        "stripe_id": "prod_Tl5KYUQVq7fgKd",
+        "description": "Youth workbook built to strengthen identity and growth in Christ. Guided prompts, journaling space, and engaging activities for teens.",
+        "list_price": 24.99,
+        "sale_price": 24.99,
+        "currency": "usd",
+        "edition": "YE",
+        "medium": "paperback"
+    },
+    
+    # ==================== LUNCH WORKBOOKS (PRE-ORDER) ====================
+    "lunch_ie_paperback": {
+        "name": "Lunch Instructor Edition (WBK)",
+        "sku": "LNCH-IE-PB",
+        "stripe_id": "prod_Tl5bF463nMytFx",
+        "description": "Instructor workbook built to provide kingdom relationship examples. Guided prompts, journaling space, and engaging activities designed for leading various types of groups.",
+        "list_price": 29.99,
+        "sale_price": 29.99,
+        "currency": "usd",
+        "edition": "IE",
+        "medium": "paperback",
+        "preorder": True
+    },
+    "lunch_ae_paperback": {
+        "name": "Lunch Adult Edition (WBK)",
+        "sku": "LNCH-AE-PB",
+        "stripe_id": "prod_Tl5dMEyGFDitEf",
+        "description": "Adult workbook built to show Kingdom Relationship in the bible. Guided prompts, journaling space, and engaging activities designed for mature groups and family study.",
+        "list_price": 27.99,
+        "sale_price": 27.99,
+        "currency": "usd",
+        "edition": "AE",
+        "medium": "paperback",
+        "preorder": True
+    },
+    "lunch_ye_paperback": {
+        "name": "Lunch Youth Edition (WBK)",
+        "sku": "LNCH-YE-PB",
+        "stripe_id": "prod_Tl5hAx8RL8Vvjh",
+        "description": "Youth workbook built to provide inspiring examples about Kingdom Relationships. Guided prompts, journaling space, and engaging activities designed for teens, youth groups, and family study.",
+        "list_price": 24.99,
+        "sale_price": 24.99,
+        "currency": "usd",
+        "edition": "YE",
+        "medium": "paperback",
+        "preorder": True
+    },
+    
+    # ==================== HOLIDAY WORKBOOKS ====================
+    "holiday_ie": {
+        "name": "Holiday Instructor Edition (WBK)",
+        "sku": "HOL-IE-WBK",
+        "stripe_id": "prod_Tl6IOtuiMAgrwC",
+        "description": "Instructor. Seasonal workbook exploring the 4Cs—Covenant, Cradle, Cross, and Comforter. Reflection space and group-friendly activities.",
+        "list_price": 19.99,
+        "sale_price": 19.99,
+        "currency": "usd",
+        "edition": "IE"
+    },
+    "holiday_ae": {
+        "name": "Holiday Adult Edition (WBK)",
+        "sku": "HOL-AE-WBK",
+        "stripe_id": "prod_Tl6LmJkJxDrzLA",
+        "description": "Adult. Seasonal workbook exploring the 4Cs—Covenant, Cradle, Cross, and Comforter. Reflection space and group-friendly activities.",
+        "list_price": 16.99,
+        "sale_price": 16.99,
+        "currency": "usd",
         "edition": "AE"
     },
-    "holiday_instructor": {
-        "name": "Holiday: 4 C's of Christianity (IE)",
-        "sku": "HOL-IE-EPUB",
-        "stripe_id": "prod_TkynA6cc3JztEw",
-        "description": "Leader-focused edition with teaching support, discussion guidance, answer helps, maps and cultural/historical notes.",
-        "list_price": {"epub": 19.99},
-        "sale_price": {"epub": 19.99},
+    "holiday_ye": {
+        "name": "Holiday Youth Edition (WBK)",
+        "sku": "HOL-YE-WBK",
+        "stripe_id": "prod_Tl6WIl0O7XFFgg",
+        "description": "Youth Edition. Seasonal workbook exploring the 4Cs—Covenant, Cradle, Cross, and Comforter. Reflection space and group-friendly activities.",
+        "list_price": 16.99,
+        "sale_price": 16.99,
         "currency": "usd",
-        "unit": "ea",
-        "options": {
-            "medium": ["epub"]
-        },
-        "edition": "IE"
+        "edition": "YE"
     },
     
     # ==================== NIBBLES (SINGLE LESSONS) ====================
-    "nibble_adult": {
-        "name": "Nibble - Adult Edition",
+    "nibble_ae": {
+        "name": "Break*fast Nibble AE",
         "sku": "BKFT-NIB-AE-DIG",
         "stripe_id": "prod_Tl6dXzvc89fzpU",
-        "description": "Single lesson PDF - explore a taste of the Foundation in Christ Modules",
+        "description": "Single lesson from the Foundation in Christ series. A great sampler with Journal-style space with reflective prompts and group-ready activities.",
         "list_price": 3.99,
         "sale_price": 3.99,
         "currency": "usd",
-        "unit": "ea",
-        "options": {
-            "medium": ["pdf"]
-        },
         "edition": "AE"
     },
-    "nibble_youth": {
-        "name": "Nibble - Youth Edition",
+    "nibble_ye": {
+        "name": "Break*fast Nibble YE",
         "sku": "BKFT-NIB-YE-DIG",
         "stripe_id": "prod_Tl6hePoHzLo5pi",
-        "description": "Breakfast Series Foundation in Christ, Single Lesson PDF",
+        "description": "Single lesson from the Foundation in Christ series. A great sampler with Journal-style space with reflective prompts and group-ready activities for youth.",
         "list_price": 3.99,
         "sale_price": 3.99,
         "currency": "usd",
-        "unit": "ea",
-        "options": {
-            "medium": ["pdf"]
-        },
         "edition": "YE"
     },
     
     # ==================== GAME PASSES ====================
     "game_pass_30": {
-        "name": "Game Pass (30-Day Access)",
+        "name": "Digital Games Subscription (30-Day)",
         "sku": "GAMEPASS-30D",
-        "stripe_id": "prod_Tl1WjpGERc2Jss",
-        "description": "30-day access to Soul Food game content (Jeopardy-style, group activities, and review challenges)",
+        "stripe_id": "prod_Tl7ZEakAImOyVc",
+        "description": "30‑day access to SOFU game content (Jeopardy‑style, group activities, and review challenges) for study groups and family nights.",
         "list_price": 7.99,
         "sale_price": 7.99,
-        "currency": "usd",
-        "unit": "ea"
+        "currency": "usd"
     },
     "game_pass_90": {
         "name": "Game Pass (90-Day Access)",
         "sku": "GAMEPASS-90D",
         "stripe_id": "prod_Tl7mje38Mzyynu",
-        "description": "90-day access to Soul Food game content for churches, small groups, and quarterly study cycles",
-        "list_price": 19.99,
-        "sale_price": 19.99,
-        "currency": "usd",
-        "unit": "ea"
+        "description": "90‑day access to SOFU game content—best for churches, small groups, and quarterly study cycles.",
+        "list_price": 24.99,
+        "sale_price": 24.99,
+        "currency": "usd"
     },
     
     # ==================== SUBSCRIPTIONS ====================
-    "subscription_monthly": {
-        "name": "Digital Subscriber (Monthly)",
-        "sku": "SUB-DIG-MO",
-        "stripe_id": "prod_Tl0kH2PyhK9CQX",
-        "description": "Monthly membership—subscriber-only content and access to game tools while active",
+    "subscription_ye_monthly": {
+        "name": "Digital Subscriber Youth (Monthly)",
+        "sku": "SUB-DIG-YE-MO",
+        "stripe_id": "prod_Tl7prlu7F5iyEO",
+        "description": "Monthly membership for ongoing digital study support—includes subscriber-only content and access to game tools while active.",
         "list_price": 9.99,
         "sale_price": 9.99,
         "currency": "usd",
         "type": "subscription",
-        "billing_cycle": "monthly",
-        "coupon_eligible": False
+        "billing_cycle": "monthly"
+    },
+    "subscription_ae_monthly": {
+        "name": "Digital Subscriber Adult (Monthly)",
+        "sku": "SUB-DIG-AE-MO",
+        "stripe_id": "prod_Tl7rxDr2e2mEJD",
+        "description": "Monthly membership for ongoing digital study support—includes subscriber-only content and access to game tools while active.",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "type": "subscription",
+        "billing_cycle": "monthly"
     },
     "subscription_annual": {
         "name": "Digital Subscriber (Annual)",
         "sku": "SUB-DIG-YR",
-        "stripe_id": "prod_Tl1Ew8ARYBTaJE",
-        "description": "Annual membership—Best value! 2 months free + subscriber-only content and game tools",
+        "stripe_id": "prod_Tl7u6eq2D4eq2l",
+        "description": "Annual membership (best value)—subscriber-only digital content plus game tools access while active.",
         "list_price": 99.00,
         "sale_price": 99.00,
         "currency": "usd",
         "type": "subscription",
         "billing_cycle": "annual",
-        "coupon_eligible": False,
         "note": "Best value (2 months free)"
     },
-    "subscription_instructor": {
-        "name": "Instructor Edition Subscription",
-        "sku": "SUB-DIG-IE",
-        "stripe_id": "prod_Tl16PJLWwiDwYD",
-        "description": "Instructor edition—includes group-use game tools and leader resources",
-        "list_price": 14.99,
-        "sale_price": 14.99,
+    "subscription_group": {
+        "name": "Ministry/Small Group (Monthly)",
+        "sku": "SUB-GROUP-MO",
+        "stripe_id": "prod_Tl7xoZNf3clBV7",
+        "description": "Instructor Edition. Group plan for leaders—includes group-use game tools and leader resources to support one active study group.",
+        "list_price": 24.99,
+        "sale_price": 24.99,
         "currency": "usd",
         "type": "subscription",
-        "billing_cycle": "monthly",
-        "coupon_eligible": False
+        "billing_cycle": "monthly"
     },
+    
+    # ==================== MERCHANDISE ====================
+    "pen_lighted": {
+        "name": "SOFU Journal Pen - Lighted",
+        "sku": "MERCH-PEN-LIT",
+        "stripe_id": "prod_Tl7Opou94EsuJ5",
+        "description": "Smooth-write pen for journaling and workbook activities—perfect companion for daily study and note-taking. Stylus with light.",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd"
+    },
+    "pen_standard": {
+        "name": "SOFU Journal Pen (Branded)",
+        "sku": "MERCH-PEN-STD",
+        "stripe_id": "prod_Tl7P1p5sTgCvlS",
+        "description": "Smooth-write pen for journaling and workbook activities—perfect companion for daily study and note-taking.",
+        "list_price": 7.99,
+        "sale_price": 7.99,
+        "currency": "usd"
+    },
+    "bookmarks_set": {
+        "name": "Magnetic Bookmarks (Set of 3)",
+        "sku": "MAG-BMK-3PK",
+        "stripe_id": "prod_Tl7RVhKKT4hXht",
+        "description": "Magnetic page markers to keep your place—durable, gift-able, and ideal for quick returns to key verses and activities.",
+        "list_price": 6.99,
+        "sale_price": 6.99,
+        "currency": "usd"
+    },
+    "bookmark_leather": {
+        "name": "Magnetic Leather Bookmarks",
+        "sku": "MAG-LEA-BMK",
+        "stripe_id": "prod_Tl7VKMwhaPnq8t",
+        "description": "Magnetic page markers to keep your place—durable, giftable, and ideal for quick returns to key verses and activities.",
+        "list_price": 4.99,
+        "sale_price": 4.99,
+        "currency": "usd"
+    },
+    "study_kit": {
+        "name": "Study Kit Add-On (Pen + Bookmark Set)",
+        "sku": "MERCH-STUDYKIT",
+        "stripe_id": "prod_Tl7Xhx1eHZIomZ",
+        "description": "Quick study add-on for your workbook—includes one journal pen plus a 3-pack of magnetic bookmarks.",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd"
+    },
+    
+    # ==================== FREE / BONUS LESSONS ====================
+    "bonus_names_of_god": {
+        "name": "Bonus Lessons: Names of God",
+        "sku": "BONUS-NOG",
+        "stripe_id": "prod_Tl7I5X9MoZQt1S",
+        "description": "These lessons are great to help readers understand the attributes of God and the importance of how God has ordained seasons and times.",
+        "list_price": 0.00,
+        "sale_price": 0.00,
+        "currency": "usd",
+        "free": True
+    },
+    "bonus_times_seasons": {
+        "name": "Bonus Lessons: Times and Seasons",
+        "sku": "BONUS-TAS",
+        "stripe_id": "prod_Tl7J55jWsk72EY",
+        "description": "These lessons are great to help readers understand the attributes of God and the importance of how God has ordained seasons and times.",
+        "list_price": 0.00,
+        "sale_price": 0.00,
+        "currency": "usd",
+        "free": True
+    },
+    "bonus_in_his_image": {
+        "name": "Bonus Lesson: In His Image",
+        "sku": "BONUS-IHI",
+        "stripe_id": "prod_Tl7LiH0xsvjnHp",
+        "description": "With everything going on and the narrative of the world, it is important to know what God says about you and how he views you.",
+        "list_price": 0.00,
+        "sale_price": 0.00,
+        "currency": "usd",
+        "free": True
+    }
+}
     "subscription_group": {
         "name": "Ministry/Small Group Subscription",
         "sku": "SUB-GROUP-MO",
