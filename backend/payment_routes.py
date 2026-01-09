@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 from dotenv import load_dotenv
@@ -20,6 +20,45 @@ router = APIRouter(prefix="/api/payments", tags=["payments"])
 MONGO_URL = os.getenv('MONGO_URL')
 client = AsyncIOMotorClient(MONGO_URL)
 db = client[os.environ.get('DB_NAME', 'soul_food_db')]
+
+# PDF files directory
+PDF_DIR = os.path.join(os.path.dirname(__file__), "lesson_pdfs")
+
+# Product ID to PDF file mapping
+PRODUCT_FILES = {
+    # Snack Packs
+    "snack_pack_ae_m1": "breakfast-ae-month1-snackpack.pdf",
+    "snack_pack_ae_m2": "breakfast-ae-month2-snackpack.pdf",
+    "snack_pack_ae_m3": "breakfast-ae-month3-snackpack.pdf",
+    "snack_pack_ye_m1": "breakfast-ye-month1-snackpack.pdf",
+    "snack_pack_ye_m2": "breakfast-ye-month2-snackpack.pdf",
+    "snack_pack_ye_m3": "breakfast-ye-month3-snackpack.pdf",
+    # Full Workbooks
+    "breakfast_ae_digital": "breakfast-ae-full.pdf",
+    "breakfast_ye_digital": "breakfast-ye-full.pdf",
+    "breakfast_ie_digital": "breakfast-ie-full.pdf",
+    # Holiday
+    "holiday_ae": "holiday-ae-full.pdf",
+    "holiday_ye": "holiday-ye-full.pdf",
+    "holiday_ie": "holiday-ie-full.pdf",
+    # Nibbles (single lessons)
+    "nibble_ae": "breakfast-ae-esther.pdf",  # Sample nibble
+    "nibble_ye": "breakfast-ye-esther.pdf",  # Sample nibble
+    # Free bonus lessons
+    "bonus_names_of_god": "holiday-bonus-names-seasons.pdf",
+    "bonus_times_seasons": "holiday-bonus-names-seasons.pdf",
+    "bonus_in_his_image": "in-his-image-adult-full.pdf",
+}
+
+def get_pdf_path(product_id: str) -> Optional[str]:
+    """Get the full path to a product's PDF file"""
+    filename = PRODUCT_FILES.get(product_id)
+    if not filename:
+        return None
+    full_path = os.path.join(PDF_DIR, filename)
+    if os.path.exists(full_path):
+        return full_path
+    return None
 
 # Product catalog with list and sale prices
 # Cost = wholesale/production cost, List Price = MSRP, Sale Price = current selling price
