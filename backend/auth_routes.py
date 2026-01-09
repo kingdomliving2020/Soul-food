@@ -44,9 +44,10 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer(auto_error=False)
 
 # JWT Settings
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY") or "soul-food-jwt-secret-" + os.urandom(16).hex()
 ALGORITHM = "HS256"
 PASSWORD_EXPIRY_DAYS = 120
+SESSION_TIMEOUT_MINUTES = 60  # Default session timeout
 
 # Database connection
 MONGO_URL = os.getenv('MONGO_URL')
@@ -301,8 +302,11 @@ def check_password_expiry(password_changed_at: str) -> tuple[bool, int]:
 
 async def send_password_reset_email(email: str, reset_token: str, name: str, origin_url: str = None):
     """Send password reset email via MailerLite"""
-    # Use provided origin_url or fall back to environment variable or default
-    frontend_url = origin_url or os.getenv('FRONTEND_URL', 'https://kingdom-soul.com')
+    # Use provided origin_url or fall back to environment variable
+    frontend_url = origin_url or os.getenv('FRONTEND_URL')
+    if not frontend_url:
+        print("WARNING: No FRONTEND_URL set, using origin_url from request")
+        frontend_url = origin_url or "https://example.com"
     reset_link = f"{frontend_url}/reset-password?token={reset_token}"
     
     print(f"""
