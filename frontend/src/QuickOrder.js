@@ -287,65 +287,45 @@ const QuickOrder = () => {
       editions: ['instructor'],
       formats: ['digital', 'physical'],
       packages: [
-        { id: 'breakfast-digital', name: 'Break*fast IE (Digital)', lessons: 12, available: true },
-        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback)', lessons: 12, available: true },
-        { id: 'holiday-ie', name: 'Holiday IE (Workbook)', lessons: 6, available: true },
-        { id: 'lunch-ie-preorder', name: 'Lunch IE', lessons: 12, available: true, preOrder: true, note: 'Pre-Order Q2 2026' }
+        { id: 'breakfast-digital', name: 'Break*fast IE (Digital)', price: 19.99, format: 'digital', available: true },
+        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback)', price: 29.99, format: 'physical', available: true },
+        { id: 'holiday-ie', name: 'Holiday IE (Workbook)', price: 19.99, format: 'physical', available: true },
+        { id: 'lunch-ie-preorder', name: 'Lunch IE (Pre-Order)', price: 29.99, format: 'physical', available: true, preOrder: true }
       ],
-      pricing: {
-        'breakfast-digital': {
-          listPrices: { instructor: { digital: 19.99 } },
-          prices: { instructor: { digital: 19.99 } }
-        },
-        'breakfast-paperback': {
-          listPrices: { instructor: { physical: 29.99 } },
-          prices: { instructor: { physical: 29.99 } }
-        },
-        'holiday-ie': {
-          listPrices: { instructor: { physical: 19.99, digital: 19.99 } },
-          prices: { instructor: { physical: 19.99, digital: 19.99 } }
-        },
-        'lunch-ie-preorder': {
-          listPrices: { instructor: { physical: 29.99 } },
-          prices: { instructor: { physical: 29.99 } }
-        }
-      },
+      // Simplified pricing - price directly on package
       salePercent: 0
     },
     {
       id: 'workbooks',
       name: 'Full Workbooks',
       tagline: 'Complete Study Workbooks',
-      description: 'Full-length workbooks for in-depth study - Digital and Paperback options. Pre-order now, eBooks delivered February!',
+      description: 'Full-length workbooks for in-depth study. Pre-order now, eBooks delivered February!',
       available: true,
       preOrder: true,
       comingSoon: 'Feb 2026',
       editions: ['adult', 'youth'],
       formats: ['digital', 'physical'],
       packages: [
-        { id: 'breakfast-ae-digital', name: 'Break*fast AE Digital', available: true, preOrder: true },
-        { id: 'breakfast-ae-paperback', name: 'Break*fast AE Paperback', available: true, preOrder: true },
-        { id: 'breakfast-ye-digital', name: 'Break*fast YE Digital', available: true, preOrder: true },
-        { id: 'breakfast-ye-paperback', name: 'Break*fast YE Paperback', available: true, preOrder: true }
+        { id: 'breakfast-ae-digital', name: 'Break*fast AE Digital', price: 14.99, edition: 'adult', format: 'digital', available: true, preOrder: true },
+        { id: 'breakfast-ae-paperback', name: 'Break*fast AE Paperback', price: 27.99, edition: 'adult', format: 'physical', available: true, preOrder: true },
+        { id: 'breakfast-ye-digital', name: 'Break*fast YE Digital', price: 12.99, edition: 'youth', format: 'digital', available: true, preOrder: true },
+        { id: 'breakfast-ye-paperback', name: 'Break*fast YE Paperback', price: 24.99, edition: 'youth', format: 'physical', available: true, preOrder: true }
       ],
-      pricing: {
-        'breakfast-ae-digital': {
-          listPrices: { adult: { digital: 14.99 } },
-          prices: { adult: { digital: 14.99 } }
-        },
-        'breakfast-ae-paperback': {
-          listPrices: { adult: { physical: 27.99 } },
-          prices: { adult: { physical: 27.99 } }
-        },
-        'breakfast-ye-digital': {
-          listPrices: { youth: { digital: 12.99 } },
-          prices: { youth: { digital: 12.99 } }
-        },
-        'breakfast-ye-paperback': {
-          listPrices: { youth: { physical: 24.99 } },
-          prices: { youth: { physical: 24.99 } }
-        }
-      },
+      salePercent: 0
+    },
+    {
+      id: 'subscriptions',
+      name: 'Subscriptions',
+      tagline: 'All-Access Plans',
+      description: 'Unlimited access to interactive lessons, games, and new content',
+      available: true,
+      editions: ['adult', 'youth', 'instructor'],
+      formats: ['subscription'],
+      packages: [
+        { id: 'monthly', name: 'Monthly Plan', price: 9.99, billing: 'month', available: true },
+        { id: 'annual', name: 'Annual Plan (Save 17%)', price: 99.00, billing: 'year', available: true, badge: 'Best Value' },
+        { id: 'ministry', name: 'Ministry/Small Group', price: 24.99, billing: 'month', available: true, note: 'For groups & leaders' }
+      ],
       salePercent: 0
     }
   ];
