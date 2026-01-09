@@ -25,6 +25,17 @@ MONGO_URL = os.getenv('MONGO_URL')
 client = AsyncIOMotorClient(MONGO_URL)
 db = client[os.environ.get('DB_NAME', 'soul_food_db')]
 
+
+def ensure_utc_datetime(dt) -> Optional[datetime]:
+    """Ensure a datetime object is timezone-aware (UTC)."""
+    if dt is None:
+        return None
+    if isinstance(dt, str):
+        dt = datetime.fromisoformat(dt.replace('Z', '+00:00'))
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
+
 # =============================================================================
 # GAMING TIER CONFIGURATION
 # =============================================================================
