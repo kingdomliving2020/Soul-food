@@ -260,7 +260,7 @@ const QuickOrder = () => {
       editions: ['adult', 'youth', 'instructor'],
       formats: ['physical'],
       packages: [
-        { id: 'workbook', name: 'Full Workbook (Pre-Order)', lessons: 12, available: true, preOrder: true }
+        { id: 'workbook', name: 'Full Workbook', lessons: 12, available: true, preOrder: true, note: 'Pre-Order' }
       ],
       pricing: {
         workbook: {
