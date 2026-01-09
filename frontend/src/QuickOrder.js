@@ -969,12 +969,12 @@ const QuickOrder = () => {
                         </div>
 
                         {/* Price & Add to Cart */}
-                        <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                          <div>
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-100 gap-2">
+                          <div className="flex-shrink-0">
                             {isSaleActive && listPrice && listPrice !== price && (
-                              <span className="text-xs text-slate-400 line-through mr-2">${listPrice.toFixed(2)}</span>
+                              <span className="text-xs text-slate-400 line-through mr-1">${listPrice.toFixed(2)}</span>
                             )}
-                            <span className="text-xl font-bold text-purple-600">
+                            <span className="text-lg font-bold text-purple-600">
                               ${price.toFixed(2)}
                               {selectedFormat.includes('subscription') && (
                                 <span className="text-xs text-slate-500">
@@ -984,6 +984,7 @@ const QuickOrder = () => {
                             </span>
                           </div>
                           <Button
+                            size="sm"
                             onClick={() => {
                               const itemName = pkgData?.selectMonth 
                                 ? `${meal.name} - ${meal.monthOptions.find(m => m.id === selectedMonth)?.name}`
@@ -1009,9 +1010,9 @@ const QuickOrder = () => {
                                 toast.success(`Added ${itemName} to cart!`);
                               }
                             }}
-                            className={meal.preOrder || pkgData?.preOrder 
-                              ? "bg-amber-500 hover:bg-amber-600 px-4" 
-                              : "bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700 px-4"}
+                            className={`flex-shrink-0 text-sm ${meal.preOrder || pkgData?.preOrder 
+                              ? "bg-amber-500 hover:bg-amber-600" 
+                              : "bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700"}`}
                           >
                             {meal.preOrder || pkgData?.preOrder ? 'Pre-Order' : 'Add to Cart'}
                           </Button>
