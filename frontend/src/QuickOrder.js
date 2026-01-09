@@ -1271,9 +1271,9 @@ const QuickOrder = () => {
                     {/* Price Info */}
                     <div className="mb-3 text-xs text-slate-600">
                       <div className="font-semibold">${item.price.toFixed(2)} each</div>
-                      {item.bundlePrice && (
-                        <div className="text-emerald-600 font-semibold">
-                          {item.bundlePrice.qty} for ${item.bundlePrice.price.toFixed(2)}
+                      {item.checkoutDiscount && (
+                        <div className="text-emerald-600 text-xs mt-1">
+                          ✨ {item.checkoutDiscount}% off at checkout!
                         </div>
                       )}
                     </div>
