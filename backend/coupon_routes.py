@@ -87,6 +87,28 @@ COUPONS = {
         "max_uses": 100,
         "discount_percent": 100,
         "conditions": "Adult beta tester access"
+    },
+    # Bulk purchase discount codes
+    "BOOK10": {
+        "code": "BOOK10",
+        "max_uses": 1000,
+        "discount_percent": 10,
+        "min_quantity": 5,
+        "conditions": "Book Club Special - 10% off for 5+ items"
+    },
+    "BULK15": {
+        "code": "BULK15",
+        "max_uses": 1000,
+        "discount_percent": 15,
+        "min_quantity": 10,
+        "conditions": "Small Bulk Order - 15% off for 10+ items"
+    },
+    "MEGA30": {
+        "code": "MEGA30",
+        "max_uses": 500,
+        "discount_percent": 30,
+        "min_quantity": 25,
+        "conditions": "Mega Bulk Order - 30% off for 25+ items"
     }
 }
 
