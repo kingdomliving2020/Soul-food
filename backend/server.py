@@ -87,6 +87,14 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load download routes: {e}")
 
+# Import gaming session routes
+try:
+    from routes.gaming_routes import router as gaming_router
+    app.include_router(gaming_router)
+    print("✅ Gaming session routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load gaming routes: {e}")
+
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
