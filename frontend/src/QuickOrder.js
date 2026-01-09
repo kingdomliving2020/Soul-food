@@ -290,33 +290,34 @@ const QuickOrder = () => {
       name: 'Instructor Edition',
       tagline: 'Complete Teaching Resources',
       description: 'Full curriculum with teaching guides, answer keys, and group activities',
-      available: true,
+      available: false,
+      comingSoon: 'Q2 2026',
       editions: ['instructor'],
       formats: ['digital', 'physical'],
       packages: [
-        { id: 'breakfast-digital', name: 'Break*fast IE (Digital)', price: 19.99, format: 'digital', available: true },
-        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback)', price: 29.99, format: 'physical', available: true },
-        { id: 'holiday-ie', name: 'Holiday IE (Workbook)', price: 19.99, format: 'physical', available: true },
-        { id: 'lunch-ie-preorder', name: 'Lunch IE (Pre-Order)', price: 29.99, format: 'physical', available: true, preOrder: true }
+        { id: 'breakfast-digital', name: 'Break*fast IE (Digital)', price: 19.99, format: 'digital', available: false, comingSoon: true },
+        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback)', price: 29.99, format: 'physical', available: false, comingSoon: true },
+        { id: 'holiday-ie', name: 'Holiday IE (Workbook)', price: 19.99, format: 'physical', available: false, comingSoon: true },
+        { id: 'lunch-ie-preorder', name: 'Lunch IE (Pre-Order)', price: 29.99, format: 'physical', available: false, preOrder: true, comingSoon: true }
       ],
-      // Simplified pricing - price directly on package
       salePercent: 0
     },
     {
       id: 'workbooks',
       name: 'Full Workbooks',
       tagline: 'Complete Study Workbooks',
-      description: 'Full-length workbooks for in-depth study. Pre-order now, eBooks delivered February!',
+      description: 'Full-length digital workbooks available now! Paperbacks ship in 2-3 weeks.',
       available: true,
-      preOrder: true,
-      comingSoon: 'Feb 2026',
       editions: ['adult', 'youth'],
       formats: ['digital', 'physical'],
       packages: [
-        { id: 'breakfast-ae-digital', name: 'Break*fast AE Digital', price: 14.99, edition: 'adult', format: 'digital', available: true, preOrder: true },
-        { id: 'breakfast-ae-paperback', name: 'Break*fast AE Paperback', price: 27.99, edition: 'adult', format: 'physical', available: true, preOrder: true },
-        { id: 'breakfast-ye-digital', name: 'Break*fast YE Digital', price: 12.99, edition: 'youth', format: 'digital', available: true, preOrder: true },
-        { id: 'breakfast-ye-paperback', name: 'Break*fast YE Paperback', price: 24.99, edition: 'youth', format: 'physical', available: true, preOrder: true }
+        { id: 'breakfast-ae-digital', name: 'Break*fast AE Digital', price: 14.99, edition: 'adult', format: 'digital', available: true },
+        { id: 'breakfast-ae-paperback', name: 'Break*fast AE Paperback', price: 27.99, edition: 'adult', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'breakfast-ye-digital', name: 'Break*fast YE Digital', price: 12.99, edition: 'youth', format: 'digital', available: true },
+        { id: 'breakfast-ye-paperback', name: 'Break*fast YE Paperback', price: 24.99, edition: 'youth', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'holiday-ae-digital', name: 'Holiday AE Digital', price: 14.99, edition: 'adult', format: 'digital', available: true },
+        { id: 'holiday-ae-paperback', name: 'Holiday AE Paperback', price: 16.99, edition: 'adult', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'holiday-ye-paperback', name: 'Holiday YE Paperback', price: 16.99, edition: 'youth', format: 'physical', available: true, note: '2-3 wk ship' }
       ],
       salePercent: 0
     },
