@@ -290,7 +290,7 @@ const QuickOrder = () => {
         { id: 'breakfast-digital', name: 'Break*fast IE (Digital)', lessons: 12, available: true },
         { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback)', lessons: 12, available: true },
         { id: 'holiday-ie', name: 'Holiday IE (Workbook)', lessons: 6, available: true },
-        { id: 'lunch-ie-preorder', name: 'Lunch IE (Pre-Order)', lessons: 12, available: true, preOrder: true, note: 'Q2 2026' }
+        { id: 'lunch-ie-preorder', name: 'Lunch IE', lessons: 12, available: true, preOrder: true, note: 'Pre-Order Q2 2026' }
       ],
       pricing: {
         'breakfast-digital': {
