@@ -340,6 +340,41 @@ const CheckoutPage = () => {
                 {couponError && (
                   <p className="text-red-500 text-xs mt-2">{couponError}</p>
                 )}
+                {subtotal < COUPON_MINIMUM && !couponApplied && (
+                  <p className="text-amber-600 text-xs mt-2">💡 Coupons require minimum order of ${COUPON_MINIMUM.toFixed(2)}</p>
+                )}
+              </div>
+              
+              {/* Gift & Order Notes Section */}
+              <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                <div className="flex items-start gap-3 mb-3">
+                  <input
+                    type="checkbox"
+                    id="isGift"
+                    checked={isGift}
+                    onChange={(e) => setIsGift(e.target.checked)}
+                    className="mt-1 w-4 h-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
+                  />
+                  <label htmlFor="isGift" className="flex-1">
+                    <span className="text-sm font-semibold text-slate-700">🎁 This is a gift</span>
+                    <p className="text-xs text-slate-500 mt-0.5">We'll include a gift message and remove pricing</p>
+                  </label>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                    Order Notes <span className="text-slate-400 font-normal">(optional)</span>
+                  </label>
+                  <textarea
+                    value={orderNotes}
+                    onChange={(e) => setOrderNotes(e.target.value)}
+                    placeholder="Color preferences, gift message, special instructions..."
+                    rows={3}
+                    maxLength={500}
+                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                  />
+                  <p className="text-xs text-slate-400 mt-1 text-right">{orderNotes.length}/500</p>
+                </div>
               </div>
 
               <div className="space-y-2 mb-4">
