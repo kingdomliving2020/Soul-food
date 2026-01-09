@@ -79,6 +79,14 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load admin routes: {e}")
 
+# Import download protection routes
+try:
+    from routes.download_routes import router as download_router
+    app.include_router(download_router)
+    print("✅ Download protection routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load download routes: {e}")
+
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
