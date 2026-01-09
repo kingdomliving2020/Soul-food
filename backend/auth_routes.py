@@ -590,6 +590,9 @@ async def request_password_reset(data: PasswordReset, background_tasks: Backgrou
     
     ip_address = request.client.host if request.client else "unknown"
     
+    # Get origin URL from request headers for dynamic reset link
+    origin_url = request.headers.get('origin') or request.headers.get('referer', '').split('/reset')[0]
+    
     # Check rate limits
     is_allowed, rate_limit_msg = await check_reset_rate_limit(data.email.lower(), ip_address)
     if not is_allowed:
