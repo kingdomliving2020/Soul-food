@@ -1012,9 +1012,9 @@ const QuickOrder = () => {
                             )}
                             <span className="text-xl font-bold text-purple-600">
                               ${price.toFixed(2)}
-                              {selectedFormat.includes('subscription') && (
+                              {(pkgData?.billing || selectedFormat.includes('subscription')) && (
                                 <span className="text-xs text-slate-500 font-normal">
-                                  /{selectedFormat === 'subscription_monthly' ? 'mo' : 'yr'}
+                                  /{pkgData?.billing || (selectedFormat === 'subscription_monthly' ? 'mo' : 'yr')}
                                 </span>
                               )}
                             </span>
