@@ -357,25 +357,25 @@ const QuickOrder = () => {
   // Gaming passes - $30 Adult/Youth all-day, $40 Instructor (category selection)
   const gamingPasses = [
     {
-      id: 'gaming-day-pass-standard',
-      name: 'Gaming Day Pass',
-      subtitle: 'All-Day Access (Adult/Youth)',
-      description: '8+ hours of all game modes and categories',
+      id: 'gaming-pass-30',
+      name: 'Game Pass (30-Day)',
+      subtitle: '30-Day Access (Adult/Youth)',
+      description: '30-day access to Soul Food game content for study groups and family nights',
       image: '/images/bounty-stack-token.png',
-      listPrice: 35.00,
-      price: 30.00,
+      listPrice: 7.99,
+      price: 7.99,
       editions: ['adult', 'youth']
     },
     {
-      id: 'gaming-day-pass-instructor',
-      name: 'Instructor Gaming Pass',
-      subtitle: 'All-Day Access with Category Selection',
-      description: 'Select specific categories, topics, and questions for your group',
+      id: 'gaming-pass-90',
+      name: 'Game Pass (90-Day)',
+      subtitle: '90-Day Access - Best Value!',
+      description: '90-day access to all game modes, categories, and review challenges',
       image: '/images/bounty-stack-token.png',
-      listPrice: 40.00,
-      price: 40.00,
-      editions: ['instructor'],
-      badge: 'Full Control'
+      listPrice: 19.99,
+      price: 19.99,
+      editions: ['adult', 'youth', 'instructor'],
+      badge: 'Best Value'
     }
   ];
 
@@ -390,29 +390,47 @@ const QuickOrder = () => {
       link: '/gift-certificates'
     },
     {
-      id: 'leather-bookmark',
-      name: 'Bygone Leather Bookmark',
-      subtitle: 'Personalized with your initial (includes pen holder)',
-      image: '/covers/leather-bookmark-1.png',
-      price: 1.50,
-      bundlePrice: { qty: 3, price: 3.00 }
-    },
-    {
-      id: 'magnetic-bookmark',
-      name: 'Magnetic Artistic Bookmark',
-      subtitle: 'Decorative rubber magnet design',
-      image: '/covers/magnetic-bookmark-1.png',
-      price: 1.50,
-      bundlePrice: { qty: 3, price: 3.00 }
-    },
-    {
-      id: 'soul-food-pen',
-      name: 'Soul Food "Truth Served Daily" Pen',
-      subtitle: 'Medium tip with stylus (Black or Blue ink)',
+      id: 'study-kit',
+      name: 'Study Kit Add-On',
+      subtitle: 'Pen + Magnetic Bookmark Set',
       image: '/covers/soul-food-pen.png',
-      price: 4.00,
-      bundlePrice: { qty: 6, price: 20.00 },
-      bulkBonus: 'FREE with book orders: 2 pens (10+ books), 5 pens (25+ books), 10 pens (50+ books)'
+      price: 9.99
+    },
+    {
+      id: 'pen-lighted',
+      name: 'SOFU Journal Pen - Lighted',
+      subtitle: 'Branded lighted journal pen',
+      image: '/covers/soul-food-pen.png',
+      listPrice: 9.99,
+      price: 9.09,
+      badge: '10% Launch'
+    },
+    {
+      id: 'pen-standard',
+      name: 'SOFU Journal Pen',
+      subtitle: 'Branded journal pen',
+      image: '/covers/soul-food-pen.png',
+      listPrice: 7.99,
+      price: 7.29,
+      badge: '10% Launch'
+    },
+    {
+      id: 'bookmarks-set',
+      name: 'Magnetic Bookmarks (Set of 3)',
+      subtitle: 'Decorative magnetic bookmarks',
+      image: '/covers/magnetic-bookmark-1.png',
+      listPrice: 6.99,
+      price: 6.29,
+      badge: '10% Launch'
+    },
+    {
+      id: 'bookmark-leather',
+      name: 'Magnetic Leather Bookmark',
+      subtitle: 'Premium magnetic leather bookmark',
+      image: '/covers/leather-bookmark-1.png',
+      listPrice: 6.99,
+      price: 6.29,
+      badge: '10% Launch'
     }
   ];
 
