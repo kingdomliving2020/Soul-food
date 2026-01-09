@@ -527,6 +527,8 @@ class CartCheckoutRequest(BaseModel):
     origin_url: str
     coupon_code: Optional[str] = None
     discount_percent: int = 0
+    is_gift: bool = False
+    order_notes: Optional[str] = None
 
 
 @router.post("/checkout/session")
