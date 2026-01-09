@@ -149,18 +149,23 @@ const CheckoutPage = () => {
         return;
       }
       
-      // For paid orders, use Stripe
-      const firstItem = cartItems[0];
-      
-      const response = await fetch(`${BACKEND_URL}/api/payments/checkout/session`, {
+      // For paid orders, use Stripe with full cart
+      const response = await fetch(`${BACKEND_URL}/api/payments/checkout/cart`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          product_id: firstItem.productId || firstItem.uniqueKey,
-          quantity: firstItem.quantity,
-          origin_url: window.location.origin
+          items: cartItems.map(item => ({
+            productId: item.productId || item.uniqueKey || item.id,
+            name: item.name,
+            quantity: item.quantity,
+            salePrice: item.salePrice,
+            price: item.salePrice
+          })),
+          origin_url: window.location.origin,
+          coupon_code: couponApplied?.code || null,
+          discount_percent: couponApplied?.discount_percent || 0
         }),
       });
 
