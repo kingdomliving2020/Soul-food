@@ -195,8 +195,8 @@ const QuickOrder = () => {
       ],
       pricing: {
         nibble: {
-          listPrices: { adult: { interactive: 2.99, epub: 2.99 }, youth: { interactive: 2.99, epub: 2.99 } },
-          prices: { adult: { interactive: 2.49, epub: 2.49 }, youth: { interactive: 2.49, epub: 2.49 } }
+          listPrices: { adult: { interactive: 3.99, epub: 3.99 }, youth: { interactive: 3.99, epub: 3.99 } },
+          prices: { adult: { interactive: 3.99, epub: 3.99 }, youth: { interactive: 3.99, epub: 3.99 } }
         },
         full: {
           listPrices: { adult: { physical: 24.99, interactive: 12.99, epub: 12.99 }, youth: { physical: 24.99, interactive: 12.99, epub: 12.99 } },
