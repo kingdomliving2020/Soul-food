@@ -234,12 +234,12 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Product Catalog API - All 34 products with correct pricing"
-    - "Download Protection API - 72h expiry, 3 max downloads, 3 resend limit"
-    - "Lunch Series Pre-Order pricing verification"
+    - "Quick Order Page - Product Catalog Sync"
     - "Holiday Series pricing verification"
-    - "Breakfast workbooks pricing verification"
-    - "Game Passes pricing verification"
+    - "Lunch Series Pre-Order functionality"
+    - "Instructor Edition pricing verification"
+    - "Full Workbooks pricing verification"
+    - "Add to Cart and Pre-Order flows"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
