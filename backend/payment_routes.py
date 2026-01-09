@@ -23,130 +23,196 @@ db = client[os.environ.get('DB_NAME', 'soul_food_db')]
 
 # Product catalog with list and sale prices
 # Cost = wholesale/production cost, List Price = MSRP, Sale Price = current selling price
+# Updated: January 2026 per SOFU_Full_Catalog_Pricing
 PRODUCTS = {
-    "nibble": {
-        "name": "Nibble (Single Lesson)",
-        "description": "One lesson - choose your mealtime, edition, and format",
-        "cost": 1.09,
-        "list_price": 4.99,
-        "sale_price": 1.99,
+    # ==================== SNACK PACKS (MODULES) ====================
+    "snack_pack_m1": {
+        "name": "Snack Pack Module 1 (4 Lessons)",
+        "sku": "BKFT-SP-M1-DIG",
+        "description": "Module 1 Digital for quick-start study—lesson content, journaling space, and activities. Theme: Prayer is the first resort",
+        "list_price": 8.99,
+        "sale_price": 8.99,
+        "currency": "usd",
+        "unit": "set",
+        "options": {
+            "edition": ["adult", "youth"],
+            "medium": ["pdf"]
+        }
+    },
+    "snack_pack_m2": {
+        "name": "Snack Pack Module 2 (4 Lessons)",
+        "sku": "BKFT-SP-M2-DIG",
+        "description": "Module 2 PDF—guided prompts, reflection space, and group-ready activities. Theme: Art of Through",
+        "list_price": 8.99,
+        "sale_price": 8.99,
+        "currency": "usd",
+        "unit": "set",
+        "options": {
+            "edition": ["adult", "youth"],
+            "medium": ["pdf"]
+        }
+    },
+    "snack_pack_m3": {
+        "name": "Snack Pack Module 3 (4 Lessons)",
+        "sku": "BKFT-SP-M3-DIG",
+        "description": "Module 3 PDF for continued growth—structured lessons with journaling space. Theme: Faith & Foresight",
+        "list_price": 8.99,
+        "sale_price": 8.99,
+        "currency": "usd",
+        "unit": "set",
+        "options": {
+            "edition": ["adult", "youth"],
+            "medium": ["pdf"]
+        }
+    },
+    "snack_pack_bundle": {
+        "name": "Snack Pack Bundle (M1+M2+M3)",
+        "sku": "BKFT-SP-BUNDLE-DIG",
+        "description": "Best value for groups—all 3 modules (12 lessons) in digital format",
+        "list_price": 26.97,
+        "sale_price": 21.99,
+        "currency": "usd",
+        "unit": "set",
+        "options": {
+            "edition": ["adult", "youth"],
+            "medium": ["pdf"]
+        },
+        "note": "Best value for groups or readers who want the full sequence"
+    },
+    
+    # ==================== FULL WORKBOOKS ====================
+    "breakfast_instructor": {
+        "name": "Break*fast Instructor Edition",
+        "sku": "BKFT-IE-PB-COL",
+        "stripe_id": "prod_TkyiFSioq2XGD3",
+        "description": "Leader-focused edition with teaching support, discussion guidance, and answer helps. Includes maps plus cultural/historical notes.",
+        "list_price": {"paperback": 29.99, "digital": 19.99},
+        "sale_price": {"paperback": 26.99, "digital": 19.99},
+        "preorder_discount": 10,
         "currency": "usd",
         "unit": "ea",
         "options": {
-            "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
-            "edition": ["adult", "youth", "instructor"],
+            "medium": ["paperback", "digital"]
+        },
+        "edition": "IE"
+    },
+    "breakfast_adult": {
+        "name": "Break*fast Adult Edition",
+        "sku": "BKFT-AE-PB-COL",
+        "stripe_id": "prod_TkyWMfuMLXq0je",
+        "description": "Adult workbook centered on Foundation in Christ. Journal-style space with reflective prompts and group-ready activities.",
+        "list_price": {"paperback": 27.99, "digital": 14.99},
+        "sale_price": {"paperback": 23.99, "digital": 14.99},
+        "preorder_discount": 15,
+        "currency": "usd",
+        "unit": "ea",
+        "options": {
+            "medium": ["paperback", "digital"]
+        },
+        "edition": "AE"
+    },
+    "breakfast_youth": {
+        "name": "Break*fast Youth Edition",
+        "sku": "BKFT-YE-PB-COL",
+        "stripe_id": "prod_TkySkHdyBvH3jp",
+        "description": "Youth workbook built to strengthen identity and growth in Christ. Guided prompts, journaling space, and engaging activities for teens.",
+        "list_price": {"paperback": 24.99, "digital": 12.99},
+        "sale_price": {"paperback": 21.99, "digital": 12.99},
+        "preorder_discount": 15,
+        "currency": "usd",
+        "unit": "ea",
+        "options": {
+            "medium": ["paperback", "digital"]
+        },
+        "edition": "YE"
+    },
+    
+    # ==================== HOLIDAY SERIES ====================
+    "holiday_adult": {
+        "name": "Holiday: 4 C's of Christianity (AE)",
+        "sku": "HOL-AE-PB-COL",
+        "stripe_id": "prod_TkyqsEGwOalBcj",
+        "description": "Seasonal workbook exploring Covenant, Cradle, Cross, and Comforter. Reflection space and group-friendly activities.",
+        "list_price": {"paperback": 24.99, "digital": 12.99},
+        "sale_price": {"paperback": 21.99, "digital": 12.99},
+        "preorder_discount": 15,
+        "currency": "usd",
+        "unit": "ea",
+        "options": {
+            "medium": ["paperback", "digital"]
+        },
+        "edition": "AE"
+    },
+    "holiday_instructor": {
+        "name": "Holiday: 4 C's of Christianity (IE)",
+        "sku": "HOL-IE-EPUB",
+        "stripe_id": "prod_TkynA6cc3JztEw",
+        "description": "Leader-focused edition with teaching support, discussion guidance, answer helps, maps and cultural/historical notes.",
+        "list_price": {"epub": 19.99},
+        "sale_price": {"epub": 19.99},
+        "currency": "usd",
+        "unit": "ea",
+        "options": {
+            "medium": ["epub"]
+        },
+        "edition": "IE"
+    },
+    
+    # ==================== NIBBLES (SINGLE LESSONS) ====================
+    "nibble_adult": {
+        "name": "Nibble - Adult Edition",
+        "sku": "prod_Tl2gCET5t1sDEi",
+        "description": "Single lesson PDF - explore a taste of the Foundation in Christ Modules",
+        "list_price": 2.99,
+        "sale_price": 2.49,
+        "currency": "usd",
+        "unit": "ea",
+        "options": {
             "medium": ["pdf"]
         },
-        "note": "PDF download only - no print available for single lessons"
+        "edition": "AE"
     },
-    "snack_pack": {
-        "name": "Snack Pack (4 Lessons)",
-        "description": "Monthly pack of 4 lessons - choose your mealtime, edition, and format",
-        "cost": 3.99,
-        "list_price": {
-            "pdf": 6.75
-        },
-        "sale_price": {
-            "pdf": 5.99
-        },
+    "nibble_youth": {
+        "name": "Nibble - Youth Edition",
+        "sku": "prod_Tl2OMdWlra6iy2",
+        "description": "Breakfast Series Foundation in Christ, Single Lesson PDF",
+        "list_price": 2.99,
+        "sale_price": 2.49,
         "currency": "usd",
-        "unit": "set",
+        "unit": "ea",
         "options": {
-            "mealtime": ["breakfast", "lunch", "dinner", "supper"],
-            "edition": ["adult", "youth", "instructor"],
-            "medium": ["pdf", "online"]
+            "medium": ["pdf"]
         },
-        "medium_rules": {
-            "online": "Monthly subscribers only",
-            "note": "PDF download only - no print for Snack Pack"
-        }
+        "edition": "YE"
     },
-    "holiday_bundle": {
-        "name": "Holiday Bundle (6 Lessons)",
-        "description": "Holiday Series: The 4 C's of Christianity - Covenant, Cradle, Cross, Comforter",
-        "cost": 3.99,
-        "list_price": {
-            "pdf": 6.75,
-            "paperback": 8.75
-        },
-        "sale_price": {
-            "pdf": 5.99,
-            "paperback": 7.99
-        },
+    
+    # ==================== GAME PASSES ====================
+    "game_pass_30": {
+        "name": "Game Pass (30-Day Access)",
+        "sku": "GAMEPASS-30D",
+        "stripe_id": "prod_Tl1WjpGERc2Jss",
+        "description": "30-day access to Soul Food game content (Jeopardy-style, group activities, and review challenges)",
+        "list_price": 7.99,
+        "sale_price": 7.99,
         "currency": "usd",
-        "unit": "set",
-        "options": {
-            "mealtime": ["holiday"],
-            "edition": ["adult", "youth", "instructor"],
-            "medium": ["pdf", "paperback"]
-        },
-        "medium_rules": {
-            "paperback": "Print available - POD fulfillment"
-        }
+        "unit": "ea"
     },
-    "mealtime_bundle": {
-        "name": "Mealtime Bundle (12 Lessons)",
-        "description": "Complete mealtime series - choose your mealtime, edition, and format",
-        "cost": 11.99,
-        "list_price": {
-            "pdf": 13.99,
-            "paperback": 15.99
-        },
-        "sale_price": {
-            "pdf": 12.99,
-            "paperback": 14.99
-        },
+    "game_pass_90": {
+        "name": "Game Pass (90-Day Access)",
+        "sku": "GAMEPASS-90D",
+        "description": "90-day access to Soul Food game content for study groups and family nights",
+        "list_price": 19.99,
+        "sale_price": 19.99,
         "currency": "usd",
-        "unit": "set",
-        "options": {
-            "mealtime": ["breakfast", "lunch", "dinner", "supper"],
-            "edition": ["adult", "youth", "instructor"],
-            "medium": ["pdf", "paperback", "online"]
-        },
-        "medium_rules": {
-            "online": "Monthly subscribers only",
-            "paperback": "Print available - POD fulfillment for complete series"
-        }
+        "unit": "ea"
     },
-    "combo_bundle": {
-        "name": "Combo Bundle (24 Lessons)",
-        "description": "Two complete mealtime series - choose your mealtimes, edition, and format",
-        "cost": 19.99,
-        "list_price": 24.99,
-        "sale_price": 22.99,
-        "currency": "usd",
-        "unit": "set",
-        "options": {
-            "mealtime": ["breakfast", "lunch", "dinner", "supper", "holiday"],
-            "edition": ["adult", "youth", "instructor"],
-            "medium": ["ebook", "paperback"]
-        }
-    },
-    "instructor_set": {
-        "name": "Instructor Set (36 Lessons)",
-        "description": "Box set: Breakfast, Lunch, Dinner, Supper (all editions available)",
-        "cost": 36.99,
-        "list_price": 44.99,
-        "sale_price": 39.99,
-        "currency": "usd",
-        "unit": "set",
-        "options": {
-            "edition": ["adult", "youth", "instructor"],
-            "medium": ["ebook", "paperback"]
-        }
-    },
-    "gaming_day_pass": {
-        "name": "Gaming Day Pass",
-        "description": "24-hour access to all game modes",
-        "cost": 25.00,
-        "list_price": {"day_pass": 40.00},
-        "sale_price": {"day_pass": 29.99},
-        "currency": "usd",
-        "unit": "set"
-    },
-    "subscription_adult": {
-        "name": "Adult Edition Subscription",
-        "description": "Monthly subscription with all Soul Food series lessons",
+    
+    # ==================== SUBSCRIPTIONS ====================
+    "subscription_monthly": {
+        "name": "Digital Subscriber (Monthly)",
+        "sku": "SUB-DIG-MO",
+        "stripe_id": "prod_Tl0kH2PyhK9CQX",
+        "description": "Monthly membership—subscriber-only content and access to game tools while active",
         "list_price": 9.99,
         "sale_price": 9.99,
         "currency": "usd",
@@ -154,19 +220,24 @@ PRODUCTS = {
         "billing_cycle": "monthly",
         "coupon_eligible": False
     },
-    "subscription_youth": {
-        "name": "Youth Edition Subscription",
-        "description": "Monthly subscription for ages 12-20",
-        "list_price": 9.99,
-        "sale_price": 9.99,
+    "subscription_annual": {
+        "name": "Digital Subscriber (Annual)",
+        "sku": "SUB-DIG-YR",
+        "stripe_id": "prod_Tl1Ew8ARYBTaJE",
+        "description": "Annual membership—Best value! 2 months free + subscriber-only content and game tools",
+        "list_price": 99.00,
+        "sale_price": 99.00,
         "currency": "usd",
         "type": "subscription",
-        "billing_cycle": "monthly",
-        "coupon_eligible": False
+        "billing_cycle": "annual",
+        "coupon_eligible": False,
+        "note": "Best value (2 months free)"
     },
     "subscription_instructor": {
         "name": "Instructor Edition Subscription",
-        "description": "Monthly subscription with teaching toolkit",
+        "sku": "SUB-DIG-IE",
+        "stripe_id": "prod_Tl16PJLWwiDwYD",
+        "description": "Instructor edition—includes group-use game tools and leader resources",
         "list_price": 14.99,
         "sale_price": 14.99,
         "currency": "usd",
@@ -174,12 +245,76 @@ PRODUCTS = {
         "billing_cycle": "monthly",
         "coupon_eligible": False
     },
+    "subscription_group": {
+        "name": "Ministry/Small Group Subscription",
+        "sku": "SUB-GROUP-MO",
+        "stripe_id": "prod_Tl14UhRAbaJ8vC",
+        "description": "Group plan for leaders—includes group-use game tools and leader resources",
+        "list_price": 24.99,
+        "sale_price": 24.99,
+        "currency": "usd",
+        "type": "subscription",
+        "billing_cycle": "monthly",
+        "coupon_eligible": False
+    },
+    
+    # ==================== MERCH ====================
+    "pen_lighted": {
+        "name": "SOFU Journal Pen - Lighted",
+        "sku": "MERCH-PEN-01",
+        "description": "Branded lighted journal pen",
+        "list_price": 9.99,
+        "sale_price": 9.09,
+        "currency": "usd",
+        "unit": "ea",
+        "note": "10% launch offer"
+    },
+    "pen_standard": {
+        "name": "SOFU Journal Pen",
+        "sku": "MERCH-PEN-02",
+        "description": "Branded journal pen",
+        "list_price": 7.99,
+        "sale_price": 7.29,
+        "currency": "usd",
+        "unit": "ea",
+        "note": "10% launch offer"
+    },
+    "bookmarks_melamine": {
+        "name": "Magnetic Bookmarks (Set of 3)",
+        "sku": "MAG-MEL-3PK",
+        "description": "Set of 3 magnetic bookmarks",
+        "list_price": 6.99,
+        "sale_price": 6.29,
+        "currency": "usd",
+        "unit": "set",
+        "note": "10% launch offer"
+    },
+    "bookmarks_leather": {
+        "name": "Magnetic Leather Bookmarks",
+        "sku": "MAG-LEA-BMK",
+        "description": "Premium magnetic leather bookmarks",
+        "list_price": 6.99,
+        "sale_price": 6.29,
+        "currency": "usd",
+        "unit": "ea",
+        "note": "10% launch offer"
+    },
+    "study_kit": {
+        "name": "Study Kit Add-On",
+        "sku": "MERCH-STUDYKIT-ADDON",
+        "description": "Pen + Magnetic Bookmark Set bundle",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "unit": "set"
+    },
+    
+    # ==================== FREE / BONUS ====================
     "bonus_free": {
         "name": "Bonus Lessons (Free)",
         "description": "Names of God & Times and Seasons - Free download with no restrictions",
-        "cost": 0.00,
-        "list_price": {"pdf": 0.00},
-        "sale_price": {"pdf": 0.00},
+        "list_price": 0.00,
+        "sale_price": 0.00,
         "currency": "usd",
         "unit": "set",
         "options": {
@@ -187,6 +322,28 @@ PRODUCTS = {
             "medium": ["pdf"]
         },
         "note": "Free to download and distribute - no restrictions"
+    }
+}
+
+# Bulk discount coupon codes
+BULK_COUPONS = {
+    "BOOK10": {
+        "name": "Book Club Special",
+        "discount_percent": 10,
+        "min_quantity": 5,
+        "description": "10% off for book clubs (5+ items)"
+    },
+    "BULK15": {
+        "name": "Small Bulk Order",
+        "discount_percent": 15,
+        "min_quantity": 10,
+        "description": "15% off for bulk orders (10+ items)"
+    },
+    "MEGA30": {
+        "name": "Mega Bulk Order",
+        "discount_percent": 30,
+        "min_quantity": 25,
+        "description": "30% off for mega orders (25+ items)"
     }
 }
 
