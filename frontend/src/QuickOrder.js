@@ -346,8 +346,8 @@ const QuickOrder = () => {
       formats: ['physical'],
       packages: [
         { id: 'club-5', name: 'Book Club (5-9 sets)', price: 64.95, note: 'Save $15/set', available: true, minQty: 5, maxQty: 9 },
-        { id: 'small-bulk', name: 'Small Bulk (10-24 sets)', price: 62.95, note: 'Save $17/set', available: true, minQty: 10, maxQty: 24 },
-        { id: 'mega-bulk', name: 'Mega Bulk (25+ sets)', price: 60.95, note: 'Save $19/set - Email for invoice', available: true, minQty: 25, emailRequired: true }
+        { id: 'small-bulk', name: 'Small Bulk (10-24 sets)', price: 62.95, note: 'Save $17/set + FREE Quarter Gaming ($75 value)', available: true, minQty: 10, maxQty: 24, freeGaming: true },
+        { id: 'mega-bulk', name: 'Mega Bulk (25+ sets)', price: 60.95, note: 'Save $19/set + FREE Quarter Gaming ($75 value)', available: true, minQty: 25, emailRequired: true, freeGaming: true }
       ],
       bundleOptions: [
         { id: 'ie-2ye', name: '1 Instructor + 2 Youth Edition', description: 'Best for youth groups' },
