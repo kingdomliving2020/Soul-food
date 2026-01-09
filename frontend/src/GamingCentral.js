@@ -16,7 +16,7 @@ const GamingCentral = () => {
         id: 'mixup',
         name: 'Bible Mix-Up',
         description: 'Unscramble the letters to reveal Bible words and verses!',
-        icon: '🔤',
+        icon: '📝',
         difficulty: 'Easy',
         route: '/game/mixup?edition=youth',
         available: true
@@ -44,7 +44,7 @@ const GamingCentral = () => {
         id: 'memory-match',
         name: 'Memory Match',
         description: 'Match Bible verses with their references!',
-        icon: '🎴',
+        icon: '🃏',
         difficulty: 'Medium',
         route: '/game/memory-match?edition=youth',
         available: false,
@@ -56,7 +56,7 @@ const GamingCentral = () => {
         id: 'mixup',
         name: 'Bible Mix-Up',
         description: 'Unscramble theological terms and deeper Bible concepts!',
-        icon: '🔤',
+        icon: '📝',
         difficulty: 'Medium',
         route: '/game/mixup?edition=adult',
         available: true
