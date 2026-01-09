@@ -171,10 +171,8 @@ async def get_daily_usage(user_id: str) -> int:
             total_minutes += session.get("duration_minutes", 0)
         elif session["status"] == "active":
             # Calculate ongoing session time
-            start_time = session.get("started_at")
+            start_time = ensure_utc_datetime(session.get("started_at"))
             if start_time:
-                if isinstance(start_time, str):
-                    start_time = datetime.fromisoformat(start_time.replace('Z', '+00:00'))
                 elapsed = (datetime.now(timezone.utc) - start_time).total_seconds() / 60
                 total_minutes += int(elapsed)
     
