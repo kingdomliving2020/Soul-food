@@ -299,9 +299,11 @@ def check_password_expiry(password_changed_at: str) -> tuple[bool, int]:
     days_remaining = (expiry_dt - datetime.now(timezone.utc)).days
     return False, days_remaining
 
-async def send_password_reset_email(email: str, reset_token: str, name: str):
+async def send_password_reset_email(email: str, reset_token: str, name: str, origin_url: str = None):
     """Send password reset email via MailerLite"""
-    reset_link = f"https://ecomm-lessons.preview.emergentagent.com/reset-password?token={reset_token}"
+    # Use provided origin_url or fall back to environment variable or default
+    frontend_url = origin_url or os.getenv('FRONTEND_URL', 'https://kingdom-soul.com')
+    reset_link = f"{frontend_url}/reset-password?token={reset_token}"
     
     print(f"""
     ========================================
