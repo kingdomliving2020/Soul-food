@@ -1307,30 +1307,45 @@ const QuickOrder = () => {
         <section className="mt-12">
           <Card className="bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200">
             <CardHeader>
-              <CardTitle className="text-2xl text-purple-900">🎉 Bulk Order Bonuses!</CardTitle>
+              <CardTitle className="text-2xl text-purple-900">🎉 Bulk Order Discounts!</CardTitle>
+              <p className="text-purple-700 mt-2">Enter promo code at checkout for instant savings!</p>
             </CardHeader>
             <CardContent>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
-                <div className="bg-white p-4 rounded-xl shadow">
-                  <div className="text-3xl mb-2">📦</div>
-                  <div className="font-bold text-base mb-1">10+ Books</div>
-                  <div className="text-emerald-600 font-semibold text-sm">2 FREE Pens</div>
+              <div className="grid sm:grid-cols-3 gap-4 text-center mb-6">
+                <div className="bg-white p-4 rounded-xl shadow border-2 border-amber-200">
+                  <div className="text-3xl mb-2">📖</div>
+                  <div className="font-bold text-lg mb-1 text-amber-700">Book Club Special</div>
+                  <div className="text-2xl font-bold text-amber-600 mb-2">10% OFF</div>
+                  <div className="text-sm text-slate-600 mb-2">5+ items</div>
+                  <div className="bg-amber-100 rounded-lg px-3 py-2">
+                    <span className="text-xs text-slate-500">Use code: </span>
+                    <span className="font-mono font-bold text-amber-800">BOOK10</span>
+                  </div>
                 </div>
-                <div className="bg-white p-4 rounded-xl shadow">
+                <div className="bg-white p-4 rounded-xl shadow border-2 border-emerald-200">
                   <div className="text-3xl mb-2">📚</div>
-                  <div className="font-bold text-base mb-1">25+ Books</div>
-                  <div className="text-emerald-600 font-semibold text-sm">5 FREE Pens</div>
+                  <div className="font-bold text-lg mb-1 text-emerald-700">Small Bulk Order</div>
+                  <div className="text-2xl font-bold text-emerald-600 mb-2">15% OFF</div>
+                  <div className="text-sm text-slate-600 mb-2">10+ items</div>
+                  <div className="bg-emerald-100 rounded-lg px-3 py-2">
+                    <span className="text-xs text-slate-500">Use code: </span>
+                    <span className="font-mono font-bold text-emerald-800">BULK15</span>
+                  </div>
                 </div>
-                <div className="bg-white p-4 rounded-xl shadow">
+                <div className="bg-white p-4 rounded-xl shadow border-2 border-purple-300">
+                  <Badge className="bg-purple-600 text-white mb-2">Best Value!</Badge>
                   <div className="text-3xl mb-2">🏢</div>
-                  <div className="font-bold text-base mb-1">50+ Books</div>
-                  <div className="text-emerald-600 font-semibold text-sm">10 FREE Pens</div>
+                  <div className="font-bold text-lg mb-1 text-purple-700">Mega Bulk Order</div>
+                  <div className="text-2xl font-bold text-purple-600 mb-2">30% OFF</div>
+                  <div className="text-sm text-slate-600 mb-2">25+ items</div>
+                  <div className="bg-purple-100 rounded-lg px-3 py-2">
+                    <span className="text-xs text-slate-500">Use code: </span>
+                    <span className="font-mono font-bold text-purple-800">MEGA30</span>
+                  </div>
                 </div>
-                <div className="bg-white p-4 rounded-xl shadow">
-                  <div className="text-3xl mb-2">🎁</div>
-                  <div className="font-bold text-base mb-1">Holiday Box Set</div>
-                  <div className="text-emerald-600 font-semibold text-sm">1 FREE Bookmark</div>
-                </div>
+              </div>
+              <div className="text-center text-sm text-slate-500">
+                💡 Perfect for churches, study groups, homeschool co-ops, and ministries!
               </div>
             </CardContent>
           </Card>
