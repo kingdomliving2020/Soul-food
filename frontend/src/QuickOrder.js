@@ -868,8 +868,10 @@ const QuickOrder = () => {
                       {/* Cover Image */}
                       <div className="flex-shrink-0 relative">
                         <img 
-                          src={meal.id === 'holiday' ? '/covers/holiday-adult-front.jpg' : 
+                          src={meal.id === 'holiday' ? '/covers/holiday-ae-front-new.png' : 
                                meal.id === 'lunch' ? '/soul-food-logo.png' :
+                               meal.id === 'instructor' ? '/covers/breakfast-instructor-front.jpg' :
+                               meal.id === 'workbooks' ? '/covers/breakfast-adult-front.jpg' :
                                '/covers/breakfast-adult-front.jpg'} 
                           alt={meal.name}
                           className={`w-28 h-40 object-cover rounded-lg border border-slate-200 shadow-sm ${meal.preOrder ? 'opacity-60 grayscale-[30%]' : ''}`}
