@@ -95,6 +95,14 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load gaming routes: {e}")
 
+# Import referral code routes
+try:
+    from routes.referral_routes import router as referral_router
+    app.include_router(referral_router)
+    print("✅ Referral code routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load referral routes: {e}")
+
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
