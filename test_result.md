@@ -154,6 +154,78 @@ backend:
         - agent: "testing"
         - comment: "Admin endpoints properly reject unauthorized access (401) for both missing tokens and invalid tokens."
 
+  - task: "Products API - All 34 Products"
+    implemented: true
+    working: true
+    file: "payment_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "testing"
+        - comment: "GET /api/payments/products successfully returns all 34 products with complete product catalog including Snack Packs, Workbooks, Holiday Series, Game Passes, Subscriptions, and Merchandise."
+
+  - task: "Products API - Lunch Series Pricing"
+    implemented: true
+    working: true
+    file: "payment_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "testing"
+        - comment: "Lunch Series products have correct pre-order prices: lunch_ie_paperback ($29.99), lunch_ae_paperback ($27.99), lunch_ye_paperback ($24.99). All pricing verified against product catalog."
+
+  - task: "Products API - Holiday Series Pricing"
+    implemented: true
+    working: true
+    file: "payment_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "testing"
+        - comment: "Holiday Series products have correct prices: holiday_ie ($19.99), holiday_ae ($16.99), holiday_ye ($16.99). All pricing matches expected values."
+
+  - task: "Products API - Breakfast Workbooks Pricing"
+    implemented: true
+    working: true
+    file: "payment_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "testing"
+        - comment: "Breakfast workbooks have correct digital prices: breakfast_ae_digital ($14.99), breakfast_ye_digital ($12.99). Pricing verification successful."
+
+  - task: "Products API - Game Passes Pricing"
+    implemented: true
+    working: true
+    file: "payment_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "testing"
+        - comment: "Game Passes have correct subscription prices: game_pass_30 ($7.99), game_pass_90 ($24.99). All pricing verified successfully."
+
+  - task: "Download Protection API"
+    implemented: true
+    working: true
+    file: "routes/download_routes.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+        - working: true
+        - agent: "testing"
+        - comment: "GET /api/downloads/link-info returns correct configuration: expiry_hours=72, max_downloads=3, resend_rate_limit=3. Download protection system properly configured."
+
 metadata:
   created_by: "testing_agent"
   version: "1.1"
