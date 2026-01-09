@@ -223,19 +223,19 @@ const QuickOrder = () => {
       ],
       pricing: {
         nibble: {
-          listPrices: { adult: { interactive: 3.99, epub: 2.99 }, youth: { interactive: 3.99, epub: 2.99 } },
-          prices: { adult: { interactive: 3.59, epub: 2.69 }, youth: { interactive: 3.59, epub: 2.69 } }
+          listPrices: { adult: { interactive: 2.99, epub: 2.99 }, youth: { interactive: 2.99, epub: 2.99 } },
+          prices: { adult: { interactive: 2.49, epub: 2.49 }, youth: { interactive: 2.49, epub: 2.49 } }
         },
         snack: {
-          listPrices: { adult: { interactive: 7.99, epub: 5.99 }, youth: { interactive: 7.99, epub: 5.99 } },
-          prices: { adult: { interactive: 7.19, epub: 5.39 }, youth: { interactive: 7.19, epub: 5.39 } }
+          listPrices: { adult: { interactive: 8.99, epub: 8.99 }, youth: { interactive: 8.99, epub: 8.99 } },
+          prices: { adult: { interactive: 8.99, epub: 8.99 }, youth: { interactive: 8.99, epub: 8.99 } }
         },
         meal: {
-          listPrices: { adult: { interactive: 16.99, epub: 12.99 }, youth: { interactive: 16.99, epub: 12.99 } },
-          prices: { adult: { interactive: 15.29, epub: 11.69 }, youth: { interactive: 15.29, epub: 11.69 } }
+          listPrices: { adult: { interactive: 26.97, epub: 26.97 }, youth: { interactive: 26.97, epub: 26.97 } },
+          prices: { adult: { interactive: 21.99, epub: 21.99 }, youth: { interactive: 21.99, epub: 21.99 } }
         },
         subscription: {
-          prices: { adult: { subscription_monthly: 7.99, subscription_annual: 79.99 }, youth: { subscription_monthly: 7.99, subscription_annual: 79.99 } }
+          prices: { adult: { subscription_monthly: 9.99, subscription_annual: 99.00 }, youth: { subscription_monthly: 9.99, subscription_annual: 99.00 } }
         }
       },
       monthOptions: breakfastMonths,
