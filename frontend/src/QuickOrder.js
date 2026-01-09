@@ -868,9 +868,10 @@ const QuickOrder = () => {
                                meal.id === 'lunch' ? '/soul-food-logo.png' :
                                meal.id === 'instructor' ? '/covers/breakfast-instructor-front.jpg' :
                                meal.id === 'workbooks' ? '/covers/breakfast-adult-front.jpg' :
+                               meal.id === 'subscriptions' ? '/soul-food-logo.png' :
                                '/covers/breakfast-adult-front.jpg'} 
                           alt={meal.name}
-                          className={`w-28 h-40 object-cover rounded-lg border border-slate-200 shadow-sm ${meal.preOrder ? 'opacity-60 grayscale-[30%]' : ''}`}
+                          className={`w-24 h-32 object-contain rounded-lg border border-slate-200 shadow-sm bg-white ${meal.preOrder ? 'opacity-80' : ''}`}
                         />
                         {meal.preOrder && (
                           <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">
