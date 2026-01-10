@@ -167,9 +167,10 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 - ~~Email notifications for orders~~ ✅ IMPLEMENTED
 - ~~Amazon-like checkout flow~~ ✅ IMPLEMENTED
 - ~~PDF Table of Contents quality~~ ✅ IMPROVED
+- ~~Gift certificate blank success page~~ ✅ FIXED
 
 ### P1 - High Priority
-- [ ] Frontend for Gaming Session Management
+- [ ] Gift certificates added to main cart (not separate transaction)
 - [ ] Frontend for Referral System
 
 ### P2 - Medium Priority
