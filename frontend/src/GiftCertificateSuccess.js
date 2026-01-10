@@ -152,16 +152,37 @@ const GiftCertificateSuccess = () => {
         </div>
 
         {/* Actions */}
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button
+            onClick={() => navigate('/quick-order')}
+            className="flex-1 bg-white border-2 border-orange-500 text-orange-600 font-bold py-3 px-6 rounded-lg hover:bg-orange-50 transition-colors"
+            data-testid="continue-shopping-btn"
+          >
+            Continue Shopping
+          </button>
+          <button
+            onClick={() => navigate('/cart')}
+            className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            data-testid="proceed-to-checkout-btn"
+          >
+            Proceed to Checkout
+          </button>
+        </div>
+        
+        {/* Secondary Actions */}
+        <div className="flex justify-center gap-4 mt-4">
           <button
             onClick={() => navigate('/gift-certificates')}
-            className="flex-1 bg-white border-2 border-orange-500 text-orange-600 font-bold py-3 px-6 rounded-lg hover:bg-orange-50 transition-colors"
+            className="text-orange-600 hover:text-orange-700 text-sm font-medium underline"
+            data-testid="send-another-gift-btn"
           >
             Send Another Gift
           </button>
+          <span className="text-gray-300">|</span>
           <button
             onClick={() => navigate('/')}
-            className="flex-1 bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+            className="text-gray-600 hover:text-gray-700 text-sm font-medium underline"
+            data-testid="return-home-btn"
           >
             Return Home
           </button>
