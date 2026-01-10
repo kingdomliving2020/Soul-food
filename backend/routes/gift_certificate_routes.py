@@ -311,6 +311,10 @@ async def activate_gift_certificate(pending_id: str, session_id: str = None):
         <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <p style="color: #64748b; margin-bottom: 10px;">Your Gift Certificate Code:</p>
             <p style="font-size: 24px; font-weight: bold; color: #0f172a; letter-spacing: 2px; font-family: monospace;">{certificate_code}</p>
+            <a href="{FRONTEND_URL}/api/gift-certificates/download/{certificate_code}" 
+               style="display: inline-block; margin-top: 15px; padding: 10px 20px; background: #1a472a; color: white; text-decoration: none; border-radius: 6px; font-size: 14px;">
+                📄 Download Certificate PDF
+            </a>
         </div>
         
         <div style="background: #ecfdf5; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #a7f3d0;">
