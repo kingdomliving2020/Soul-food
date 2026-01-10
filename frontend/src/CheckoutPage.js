@@ -487,6 +487,13 @@ const CheckoutPage = () => {
   if (checkoutStep === 'guest-prompt') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 py-12 px-4">
+        {/* Login Modal */}
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+          onLoginSuccess={handleLoginSuccess}
+        />
+        
         <div className="max-w-lg mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
