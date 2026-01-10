@@ -342,13 +342,19 @@ const CheckoutPage = () => {
     }
 
     try {
-      // Calculate total with discount
+      // Calculate total with discount (handle both percentage and dollar amounts)
       let totalAmount = subtotal;
       if (couponApplied) {
-        totalAmount = totalAmount - (totalAmount * couponApplied.discount_percent / 100);
+        if (couponApplied.is_gift_certificate && couponApplied.discount_dollars > 0) {
+          // Gift certificate: fixed dollar discount
+          totalAmount = Math.max(0, totalAmount - couponApplied.discount_dollars);
+        } else {
+          // Regular coupon: percentage discount
+          totalAmount = totalAmount - (totalAmount * couponApplied.discount_percent / 100);
+        }
       }
       
-      // If total is $0 (100% discount), bypass Stripe and go directly to success
+      // If total is $0 (100% discount or gift cert covers full amount), bypass Stripe and go directly to success
       if (totalAmount <= 0 && couponApplied) {
         // Record the free order with customer email for confirmation
         const orderResponse = await fetch(`${BACKEND_URL}/api/payments/free-order`, {
@@ -364,7 +370,8 @@ const CheckoutPage = () => {
               price: item.salePrice
             })),
             coupon_code: couponApplied.code,
-            discount_percent: couponApplied.discount_percent,
+            discount_percent: couponApplied.discount_percent || 100,
+            discount_dollars: couponApplied.discount_dollars || 0,
             customer_email: customerEmail || null,
             customer_name: customerName || null,
             shipping_address: hasPhysicalItems ? shippingAddress : null
