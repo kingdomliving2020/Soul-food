@@ -114,12 +114,12 @@ const PaymentSuccess = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Order ID:</span>
-                    <span className="font-mono text-gray-900">{sessionId.slice(0, 20)}...</span>
+                    <span className="font-mono text-gray-900">{paymentData.transaction?.order_number || sessionId.slice(0, 20)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Amount:</span>
                     <span className="font-bold text-gray-900">
-                      ${(paymentData.amount_total / 100).toFixed(2)} {paymentData.currency.toUpperCase()}
+                      ${(paymentData.amount_total / 100).toFixed(2)} {paymentData.currency?.toUpperCase() || 'USD'}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -130,22 +130,61 @@ const PaymentSuccess = () => {
               </div>
             )}
 
+            {/* Download Links Section */}
+            {downloadLinks.length > 0 ? (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Download className="w-5 h-5 text-blue-600" />
+                  <h3 className="font-semibold text-gray-900">Your Downloads</h3>
+                </div>
+                <div className="space-y-3">
+                  {downloadLinks.map((link, index) => (
+                    <a
+                      key={index}
+                      href={`${BACKEND_URL}/api/download/${link.token}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-between p-3 bg-white rounded-lg border border-blue-100 hover:border-blue-300 hover:shadow-md transition-all"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Package className="w-5 h-5 text-blue-600" />
+                        <span className="font-medium text-gray-900">{link.product_name}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-blue-600">
+                        <span className="text-sm">Download</span>
+                        <ExternalLink className="w-4 h-4" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+                <p className="text-xs text-blue-600 mt-3">
+                  Downloads expire in 7 days. You can download each file up to 3 times.
+                </p>
+              </div>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <p className="text-yellow-800 text-sm">
+                  Your download links are being generated. Check your email for the download links, or refresh this page in a moment.
+                </p>
+              </div>
+            )}
+
             <p className="text-gray-600 mb-6">
-              You now have access to your purchased content. Check your email for the receipt.
+              A confirmation email has been sent to your email address.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/quick-order')}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all"
               >
-                Back to Home
+                Continue Shopping
               </button>
               <button
-                onClick={() => navigate('/dashboard')}
+                onClick={() => window.location.reload()}
                 className="bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-8 rounded-lg border border-gray-300 transition-all"
               >
-                View My Content
+                Refresh Downloads
               </button>
             </div>
           </div>
