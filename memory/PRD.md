@@ -10,7 +10,8 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 - 100% discount coupon support for promotional access
 - Gaming center with session management
 - Referral system for user growth
-- **Email notifications for orders and contact forms (NEW)**
+- **Email notifications for orders and contact forms**
+- **Order lookup and refund system (NEW)**
 
 ## Tech Stack
 - **Frontend**: React with Tailwind CSS, Shadcn UI components
@@ -29,6 +30,48 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 ---
 
 ## What's Been Implemented
+
+### January 10, 2026 - Order Lookup & Refund System
+**Status: COMPLETED**
+
+**Feature**: Complete refund system with customer order lookup and admin refund processing.
+
+**Customer-Facing Features**:
+- `/orders/lookup` - Order lookup page (order number + email verification)
+- Shows order details, items, download links, and refund eligibility
+- "Request Refund" flow with reason selection and item condition
+- Pre-order cancellation with automatic Stripe refund
+- 30-day return window tracking
+
+**Admin Features**:
+- `/admin/orders` - Orders dashboard with search/filter
+- View all orders with refund status badges
+- Process refunds via Stripe (full, 15% restocking, custom amount)
+- Pending refund requests alert
+
+**Refund Policy Page**:
+- `/refund-policy` - Complete policy with quick summary
+- Digital items: Non-refundable after access/download
+- Physical items: 100% unopened, 85% opened (15% restocking)
+- Pre-orders: 100% refundable before shipping
+- Subscriptions: Cancel 3 days before renewal
+
+**Friendly Order Numbers**:
+- New format: `SF-2026-XXXXX` (e.g., SF-2026-ABC12)
+- Easier for customers to reference
+
+**Files Created**:
+- `/app/backend/routes/order_routes.py` - Order management API
+- `/app/frontend/src/OrderLookup.js` - Customer order lookup
+- `/app/frontend/src/RefundPolicy.js` - Refund policy page
+- `/app/frontend/src/AdminOrders.js` - Admin orders dashboard
+
+**Files Modified**:
+- `/app/backend/payment_routes.py` - Added friendly order numbers
+- `/app/backend/server.py` - Added order routes
+- `/app/frontend/src/App.js` - Added new routes
+
+---
 
 ### January 10, 2026 - Gift Certificate Success Page Fix
 **Status: COMPLETED**
