@@ -23,13 +23,13 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
       const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ identifier: email, password }),  // Backend expects 'identifier' not 'email'
       });
 
       const data = await response.json();
 
-      if (response.ok && data.token) {
-        localStorage.setItem('token', data.token);
+      if (response.ok && data.access_token) {
+        localStorage.setItem('token', data.access_token);
         localStorage.setItem('user', JSON.stringify(data.user));
         onLoginSuccess(data.user);
       } else {
