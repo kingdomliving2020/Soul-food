@@ -414,7 +414,8 @@ const CheckoutPage = () => {
           is_gift: isGift,
           order_notes: orderNotes,
           customer_email: customerEmail || null,
-          customer_name: customerName || null
+          customer_name: customerName || null,
+          shipping_address: hasPhysicalItems ? shippingAddress : null
         }),
       });
 
