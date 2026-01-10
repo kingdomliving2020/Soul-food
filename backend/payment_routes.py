@@ -491,6 +491,7 @@ class FreeOrderRequest(BaseModel):
 async def process_free_order(request: FreeOrderRequest):
     """Process a free order (100% discount coupon)"""
     import uuid
+    from download_protection import create_download_link
     
     # Validate coupon
     if request.discount_percent != 100:
@@ -514,11 +515,40 @@ async def process_free_order(request: FreeOrderRequest):
     
     await db.orders.insert_one(order)
     
+    # Create download links for digital products in the free order
+    download_links = []
+    for item in request.items:
+        product_id = item.product_id
+        # Try to get PDF path for this product
+        pdf_path = get_pdf_path(product_id)
+        
+        if pdf_path:
+            try:
+                token, expires_at = await create_download_link(
+                    order_id=order_id,
+                    user_id=order_id,  # Use order_id as user_id for guests
+                    user_email="guest@soulfood.com",  # Placeholder for guest
+                    product_id=product_id,
+                    product_name=item.name,
+                    file_path=pdf_path,
+                    payment_verified=True  # Free order is auto-verified
+                )
+                download_links.append({
+                    "product_id": product_id,
+                    "product_name": item.name,
+                    "token": token,
+                    "expires_at": expires_at.isoformat()
+                })
+                print(f"[Free Order] Download link created for {product_id}")
+            except Exception as dl_error:
+                print(f"[Free Order] Error creating download link for {product_id}: {dl_error}")
+    
     return {
         "success": True,
         "order_id": order_id,
         "message": "Free order processed successfully",
-        "items": [item.dict() for item in request.items]
+        "items": [item.dict() for item in request.items],
+        "download_links": download_links
     }
 
 
