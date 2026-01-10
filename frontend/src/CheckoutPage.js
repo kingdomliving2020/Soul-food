@@ -694,13 +694,21 @@ const CheckoutPage = () => {
             {/* Coupon Code Section */}
             <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-orange-50 rounded-lg border border-purple-100">
               <label className="block text-sm font-semibold text-purple-700 mb-2">
-                Have a coupon?
+                Have a coupon or gift certificate?
               </label>
               {couponApplied ? (
                 <div className="flex items-center justify-between bg-green-100 p-3 rounded-lg">
                   <div>
                     <span className="font-bold text-green-700">{couponApplied.code}</span>
-                    <span className="text-green-600 ml-2">({couponApplied.discount_percent}% off)</span>
+                    <span className="text-green-600 ml-2">
+                      {couponApplied.is_gift_certificate 
+                        ? `($${couponApplied.discount_dollars?.toFixed(2)} off)`
+                        : `(${couponApplied.discount_percent}% off)`
+                      }
+                    </span>
+                    {couponApplied.is_gift_certificate && (
+                      <span className="ml-2 text-xs bg-green-200 text-green-800 px-2 py-0.5 rounded">🎁 Gift Certificate</span>
+                    )}
                   </div>
                   <button
                     onClick={handleRemoveCoupon}
@@ -715,7 +723,7 @@ const CheckoutPage = () => {
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                    placeholder="Enter code"
+                    placeholder="Coupon or gift certificate code"
                     className="flex-1 px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 uppercase"
                     disabled={subtotal < COUPON_MINIMUM}
                   />
