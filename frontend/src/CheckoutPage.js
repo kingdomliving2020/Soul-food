@@ -139,14 +139,16 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {mode === 'login' ? 'Email or Username' : 'Email'}
+              </label>
               <input
-                type="email"
+                type={mode === 'register' ? 'email' : 'text'}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="you@example.com"
+                placeholder={mode === 'login' ? 'you@example.com or username' : 'you@example.com'}
               />
             </div>
 
