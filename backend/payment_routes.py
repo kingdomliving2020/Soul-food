@@ -587,6 +587,8 @@ class FreeOrderRequest(BaseModel):
 async def process_free_order(request: FreeOrderRequest):
     """Process a free order (100% discount coupon)"""
     import uuid
+    import secrets
+    import string
     from download_protection import create_download_link
     from email_service import send_order_confirmation
     
@@ -594,12 +596,18 @@ async def process_free_order(request: FreeOrderRequest):
     if request.discount_percent != 100:
         raise HTTPException(status_code=400, detail="This endpoint is for free orders only (100% discount)")
     
-    # Generate order ID
-    order_id = f"FREE-{str(uuid.uuid4())[:8].upper()}"
+    # Generate friendly order number: SF-2026-XXXXX
+    year = datetime.utcnow().year
+    chars = string.ascii_uppercase + string.digits
+    chars = chars.replace('0', '').replace('O', '').replace('I', '').replace('L', '').replace('1', '')
+    random_part = ''.join(secrets.choice(chars) for _ in range(5))
+    order_number = f"SF-{year}-{random_part}"
+    order_id = order_number  # Use order_number as order_id for consistency
     
     # Store the order
     order = {
         "order_id": order_id,
+        "order_number": order_number,
         "items": [item.dict() for item in request.items],
         "coupon_code": request.coupon_code,
         "discount_percent": request.discount_percent,
