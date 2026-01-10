@@ -908,40 +908,37 @@ async def get_products():
 @router.post("/notify-large-order")
 async def notify_large_order(request: Request):
     """Send email notification for large print orders (>25 items)"""
+    from email_service import send_bulk_order_notification
+    
     try:
         data = await request.json()
         quantity = data.get('quantity', 0)
         product_name = data.get('product_name', 'Unknown')
         customer_email = data.get('customer_email', 'Not provided')
         selections = data.get('selections', {})
+        bundle_type = data.get('bundle_type')
+        total_price = data.get('total_price')
         
         if quantity >= 25:
-            # Here you would integrate with an email service
-            # For now, we'll log it and return success
-            # TODO: Integrate with SendGrid, AWS SES, or similar
+            # Send email notification to support@kingdom-soul.com
+            result = await send_bulk_order_notification(
+                quantity=quantity,
+                product_name=product_name,
+                customer_email=customer_email,
+                selections=selections,
+                bundle_type=bundle_type,
+                total_price=total_price
+            )
             
-            message = f"""
-            LARGE ORDER ALERT
-            
-            Quantity: {quantity} items
-            Product: {product_name}
-            Customer Email: {customer_email}
-            
-            Selections:
-            - Mealtime: {selections.get('mealtime', 'N/A')}
-            - Edition: {selections.get('edition', 'N/A')}
-            - Medium: {selections.get('medium', 'N/A')}
-            
-            Please review and process this bulk order.
-            Sent to: kingdomlivingproject@gmail.com
-            """
-            
-            print(f"[LARGE ORDER ALERT] {message}")
+            if result.get("success"):
+                print(f"[BULK ORDER] Email sent to support for {quantity} items from {customer_email}")
+            else:
+                print(f"[BULK ORDER] Email failed: {result.get('error')}")
             
             return {
                 "status": "success",
-                "message": "Large order notification sent",
-                "alert": "Orders over 25 items require manual review. We'll contact you shortly."
+                "message": "Large order notification sent to support@kingdom-soul.com",
+                "alert": "Orders over 25 items require manual review. We'll contact you within 24 hours."
             }
         
         return {"status": "ok", "message": "No alert needed"}
