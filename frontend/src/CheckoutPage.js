@@ -206,7 +206,19 @@ const CheckoutPage = () => {
         }),
       });
 
-      const data = await response.json();
+      // Handle response - check if body was already consumed
+      let data;
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        // Body might already be read by an interceptor
+        console.warn('Response body already read, checking response status');
+        if (!response.ok) {
+          throw new Error('Checkout failed. Please try again.');
+        }
+        // If response was OK but body consumed, something went wrong
+        throw new Error('Unexpected error during checkout. Please try again.');
+      }
 
       if (data.checkout_url) {
         // Clear cart before redirect
