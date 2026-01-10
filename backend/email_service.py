@@ -41,6 +41,9 @@ else:
 
 EMAIL_FOOTER = f"""
 <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; color: #6b7280; font-size: 12px;">
+    <p style="margin: 0 0 8px 0; padding: 10px; background-color: #fef3c7; border-radius: 6px; color: #92400e;">
+        📥 <strong>Didn't see this email in your inbox?</strong> Please check your spam or junk folder!
+    </p>
     <p style="margin: 0 0 8px 0;">This inbox isn't monitored. For help, contact <a href="mailto:{SUPPORT_EMAIL}" style="color: #6366f1;">{SUPPORT_EMAIL}</a></p>
     <p style="margin: 0;">© {datetime.now().year} Soul Food - Kingdom Living Project</p>
 </div>
