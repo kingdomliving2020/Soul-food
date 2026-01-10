@@ -4,14 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
+import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const GiftCertificate = () => {
   const [selectedType, setSelectedType] = useState('book');
   const [recipientName, setRecipientName] = useState('');
   const [recipientEmail, setRecipientEmail] = useState('');
   const [senderName, setSenderName] = useState('');
+  const [senderEmail, setSenderEmail] = useState('');
   const [message, setMessage] = useState('');
   const [amount, setAmount] = useState(50);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const certificateTypes = {
     book: {
@@ -44,14 +50,71 @@ const GiftCertificate = () => {
     }
   };
 
-  const handleGenerateCertificate = () => {
-    if (!recipientName || !recipientEmail || !senderName) {
-      toast.error('Please fill in all required fields');
+  const handlePurchaseCertificate = async () => {
+    // Validate required fields
+    if (!recipientName.trim()) {
+      setError('Please enter the recipient\'s name');
+      return;
+    }
+    if (!recipientEmail.trim()) {
+      setError('Please enter the recipient\'s email');
+      return;
+    }
+    if (!senderName.trim()) {
+      setError('Please enter your name');
+      return;
+    }
+    if (!senderEmail.trim()) {
+      setError('Please enter your email address for order confirmation');
+      return;
+    }
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(recipientEmail)) {
+      setError('Please enter a valid recipient email address');
+      return;
+    }
+    if (!emailRegex.test(senderEmail)) {
+      setError('Please enter a valid email address for yourself');
       return;
     }
 
-    // Generate certificate (this would connect to backend)
-    toast.success('Gift certificate generated! Check your email.');
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/gift-certificates/create-checkout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          certificate_type: selectedType,
+          amount: amount,
+          recipient_name: recipientName,
+          recipient_email: recipientEmail,
+          sender_name: senderName,
+          sender_email: senderEmail,
+          message: message || null
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.checkout_url) {
+        // Redirect to Stripe checkout
+        window.location.href = data.checkout_url;
+      } else {
+        throw new Error(data.detail || 'Failed to create checkout session');
+      }
+    } catch (err) {
+      console.error('Gift certificate error:', err);
+      setError(err.message || 'Something went wrong. Please try again.');
+      toast.error(err.message || 'Failed to process gift certificate');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -102,7 +165,10 @@ const GiftCertificate = () => {
                       ? 'border-2 border-orange-500 shadow-lg' 
                       : 'border border-slate-200 hover:border-orange-300'
                   }`}
-                  onClick={() => setSelectedType(key)}
+                  onClick={() => {
+                    setSelectedType(key);
+                    setAmount(type.amounts[0]);
+                  }}
                 >
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
@@ -112,9 +178,7 @@ const GiftCertificate = () => {
                         <p className="text-sm text-slate-600">{type.description}</p>
                       </div>
                       {selectedType === key && (
-                        <svg className="w-6 h-6 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
+                        <CheckCircle className="w-6 h-6 text-orange-500" />
                       )}
                     </div>
                   </CardContent>
@@ -205,6 +269,11 @@ const GiftCertificate = () => {
                     value={recipientEmail}
                     onChange={(e) => setRecipientEmail(e.target.value)}
                   />
+                  <p className="text-xs text-slate-500 mt-1">The gift certificate will be sent to this email after payment</p>
+                </div>
+                
+                <div className="border-t pt-4 mt-4">
+                  <p className="text-sm font-semibold text-slate-700 mb-3">Your Information (Purchaser)</p>
                 </div>
                 
                 <div>
@@ -214,6 +283,17 @@ const GiftCertificate = () => {
                     value={senderName}
                     onChange={(e) => setSenderName(e.target.value)}
                   />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium mb-1">Your Email *</label>
+                  <Input
+                    type="email"
+                    placeholder="john@example.com"
+                    value={senderEmail}
+                    onChange={(e) => setSenderEmail(e.target.value)}
+                  />
+                  <p className="text-xs text-slate-500 mt-1">You'll receive a confirmation when the gift is delivered</p>
                 </div>
                 
                 <div>
@@ -227,12 +307,31 @@ const GiftCertificate = () => {
                   />
                 </div>
 
+                {error && (
+                  <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                    <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
                 <Button
-                  onClick={handleGenerateCertificate}
+                  onClick={handlePurchaseCertificate}
+                  disabled={loading}
                   className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white py-3 text-lg font-semibold"
                 >
-                  Generate & Purchase - ${amount.toFixed(2)}
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>Purchase & Send - ${amount.toFixed(2)}</>
+                  )}
                 </Button>
+                
+                <p className="text-xs text-center text-slate-500">
+                  🔒 Secure payment powered by Stripe. Certificate sent only after payment succeeds.
+                </p>
               </CardContent>
             </Card>
 
