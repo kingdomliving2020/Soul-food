@@ -917,6 +917,13 @@ async def get_checkout_status(session_id: str):
         
         # Update transaction status if payment is complete and not already processed
         if checkout_status.payment_status == "paid" and transaction["payment_status"] != "paid":
+            from download_protection import create_download_link
+            
+            # Get customer email and order info
+            customer_email = transaction.get("customer_email", "")
+            user_id = transaction.get("user_id", session_id)
+            order_number = transaction.get("order_number", session_id)
+            
             await db.payment_transactions.update_one(
                 {"session_id": session_id, "payment_status": {"$ne": "paid"}},  # Only update if not already paid
                 {
@@ -925,13 +932,72 @@ async def get_checkout_status(session_id: str):
                         "status": "completed",
                         "stripe_status": checkout_status.status,
                         "stripe_amount_total": checkout_status.amount_total,
+                        "customer_email": customer_email or checkout_status.metadata.get("customer_email", ""),
                         "updated_at": datetime.utcnow()
                     }
                 }
             )
             
-            # TODO: Grant access to purchased content here
-            # For example: update user's purchased_products, extend gaming_access, etc.
+            # Create download links for ALL items in the cart
+            items = transaction.get("items", [])
+            
+            # If single product (old format), convert to items list  
+            product_id = transaction.get("product_id")
+            if product_id and not items:
+                items = [{"product_id": product_id, "name": PRODUCTS.get(product_id, {}).get("name", product_id)}]
+            
+            download_links_created = []
+            for item in items:
+                item_product_id = item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
+                item_name = item.get("name", item_product_id)
+                
+                # Normalize product ID
+                normalized_id = normalize_product_id(item_product_id)
+                pdf_path = get_pdf_path(normalized_id)
+                
+                if pdf_path:
+                    try:
+                        token, expires_at = await create_download_link(
+                            order_id=order_number,
+                            user_id=user_id,
+                            user_email=customer_email or "no-email@placeholder.com",
+                            product_id=normalized_id,
+                            product_name=item_name,
+                            file_path=pdf_path,
+                            payment_verified=True
+                        )
+                        download_links_created.append({
+                            "product_id": normalized_id,
+                            "name": item_name,
+                            "token": token
+                        })
+                        print(f"[Status Check] Download link created for {item_name} ({normalized_id})")
+                    except Exception as dl_error:
+                        print(f"[Status Check] Error creating download link for {item_name}: {dl_error}")
+                else:
+                    print(f"[Status Check] No PDF found for {item_name} ({normalized_id})")
+            
+            # Store download links info
+            if download_links_created:
+                await db.payment_transactions.update_one(
+                    {"session_id": session_id},
+                    {"$set": {"download_links_generated": True, "downloads_count": len(download_links_created)}}
+                )
+            
+            # Send order confirmation email  
+            if customer_email:
+                try:
+                    from email_service import send_order_confirmation
+                    await send_order_confirmation(
+                        to_email=customer_email,
+                        order_id=order_number,
+                        items=items,
+                        total=transaction.get("total_amount", 0),
+                        customer_name=transaction.get("customer_name")
+                    )
+                    print(f"[Status Check] Order confirmation email sent to {customer_email}")
+                except Exception as email_error:
+                    print(f"[Status Check] Error sending email: {email_error}")
         
         elif checkout_status.status == "expired" and transaction["status"] != "expired":
             await db.payment_transactions.update_one(
