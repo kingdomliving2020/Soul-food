@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useCart, PRODUCTS } from './CartContext';
 import { useNavigate } from 'react-router-dom';
-import { CreditCard, ShoppingBag, Trash2 } from 'lucide-react';
+import { CreditCard, ShoppingBag, Trash2, Mail } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -18,6 +18,10 @@ const CheckoutPage = () => {
   // Gift & Order Notes
   const [isGift, setIsGift] = useState(false);
   const [orderNotes, setOrderNotes] = useState('');
+  
+  // Customer info for email delivery
+  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerName, setCustomerName] = useState('');
   
   const subtotal = getCartTotal();
   const discount = couponApplied ? (subtotal * couponApplied.discount_percent / 100) : 0;
