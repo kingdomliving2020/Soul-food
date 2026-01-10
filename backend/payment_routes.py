@@ -512,6 +512,8 @@ async def process_free_order(request: FreeOrderRequest):
         "total_amount": 0.00,
         "payment_status": "completed",
         "order_type": "free_beta",
+        "customer_email": request.customer_email,
+        "customer_name": request.customer_name,
         "created_at": datetime.utcnow(),
         "updated_at": datetime.utcnow()
     }
@@ -520,6 +522,7 @@ async def process_free_order(request: FreeOrderRequest):
     
     # Create download links for digital products in the free order
     download_links = []
+    user_email = request.customer_email or "guest@soulfood.com"
     for item in request.items:
         product_id = item.product_id
         # Try to get PDF path for this product
@@ -530,7 +533,7 @@ async def process_free_order(request: FreeOrderRequest):
                 token, expires_at = await create_download_link(
                     order_id=order_id,
                     user_id=order_id,  # Use order_id as user_id for guests
-                    user_email="guest@soulfood.com",  # Placeholder for guest
+                    user_email=user_email,
                     product_id=product_id,
                     product_name=item.name,
                     file_path=pdf_path,
@@ -545,6 +548,23 @@ async def process_free_order(request: FreeOrderRequest):
                 print(f"[Free Order] Download link created for {product_id}")
             except Exception as dl_error:
                 print(f"[Free Order] Error creating download link for {product_id}: {dl_error}")
+    
+    # Send order confirmation email if customer email provided
+    if request.customer_email:
+        try:
+            await send_order_confirmation(
+                to_email=request.customer_email,
+                order_id=order_id,
+                items=[item.dict() for item in request.items],
+                total=0.00,
+                is_free_order=True,
+                coupon_code=request.coupon_code,
+                download_links=download_links,
+                customer_name=request.customer_name or "Valued Customer"
+            )
+            print(f"[Free Order] Confirmation email sent to {request.customer_email}")
+        except Exception as email_error:
+            print(f"[Free Order] Email send failed: {email_error}")
     
     return {
         "success": True,
