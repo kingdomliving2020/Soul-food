@@ -47,21 +47,36 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setLoading(true);
     setError('');
 
+    // Generate username from email (part before @)
+    const username = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
+
     try {
       const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, full_name: name }),
+        body: JSON.stringify({ 
+          email, 
+          username,
+          password, 
+          name: name || email.split('@')[0]  // Use name or derive from email
+        }),
       });
 
       const data = await response.json();
 
-      if (response.ok && data.token) {
-        localStorage.setItem('token', data.token);
+      if (response.ok && data.access_token) {
+        localStorage.setItem('token', data.access_token);
         localStorage.setItem('user', JSON.stringify(data.user));
         onLoginSuccess(data.user);
       } else {
-        setError(data.detail || 'Registration failed');
+        // Parse validation errors from backend
+        if (data.detail && typeof data.detail === 'string') {
+          setError(data.detail);
+        } else if (data.detail && Array.isArray(data.detail)) {
+          setError(data.detail.map(d => d.msg).join('. '));
+        } else {
+          setError('Registration failed. Please try again.');
+        }
       }
     } catch (err) {
       setError('Connection error. Please try again.');
