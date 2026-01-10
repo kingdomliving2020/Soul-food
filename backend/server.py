@@ -111,6 +111,14 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load email routes: {e}")
 
+# Import gift certificate routes
+try:
+    from routes.gift_certificate_routes import router as gift_cert_router
+    app.include_router(gift_cert_router)
+    print("✅ Gift certificate routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load gift certificate routes: {e}")
+
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
