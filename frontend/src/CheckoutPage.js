@@ -293,6 +293,8 @@ const CheckoutPage = () => {
         setCouponApplied({
           code: couponCode.toUpperCase(),
           discount_percent: data.discount_percent,
+          discount_dollars: data.discount_dollars || 0,
+          is_gift_certificate: data.is_gift_certificate || false,
           message: data.message
         });
         setCouponError('');
