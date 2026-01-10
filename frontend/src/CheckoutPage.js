@@ -429,9 +429,17 @@ const CheckoutPage = () => {
   };
 
   const handleSignIn = () => {
-    // Store return URL and navigate to login
-    sessionStorage.setItem('checkoutReturn', 'true');
-    navigate('/login?redirect=/checkout?returning=true');
+    // Show login modal instead of navigating away (Amazon/Walmart style)
+    setShowLoginModal(true);
+  };
+  
+  const handleLoginSuccess = (userData) => {
+    setUser(userData);
+    setIsLoggedIn(true);
+    setCustomerEmail(userData.email || '');
+    setCustomerName(userData.name || userData.full_name || '');
+    setShowLoginModal(false);
+    setCheckoutStep('checkout');
   };
 
   const handleContinueAsGuest = () => {
