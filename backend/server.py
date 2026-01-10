@@ -119,6 +119,14 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load gift certificate routes: {e}")
 
+# Import order management routes
+try:
+    from routes.order_routes import router as order_router
+    app.include_router(order_router)
+    print("✅ Order management routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load order routes: {e}")
+
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
