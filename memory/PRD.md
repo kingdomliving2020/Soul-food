@@ -30,8 +30,36 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ## What's Been Implemented
 
-### January 10, 2026 - Email Service Integration
-**Status: COMPLETED (Pending Domain Verification)**
+### January 10, 2026 - Amazon-like Checkout Flow
+**Status: COMPLETED & TESTED**
+
+**Feature**: Sign In / Continue as Guest prompt before payment (like Amazon)
+
+**Implementation**:
+- New checkout step: `guest-prompt` shows before the main checkout form
+- **Sign In** option: Lists benefits (track orders, download history, faster checkout next time)
+- **Continue as Guest** option: Proceeds directly to checkout with email collection
+- Auto-skips prompt if user is already logged in
+- Proper redirect handling: `/login?redirect=/checkout?returning=true`
+
+**Files Modified**:
+- `/app/frontend/src/CheckoutPage.js` - Complete rewrite with guest prompt flow
+
+**Test Results**: 100% pass rate (26 backend tests, all frontend UI tests)
+
+### January 10, 2026 - PDF Table of Contents Improvement
+**Status: COMPLETED**
+
+**Feature**: Professional TOC with dotted leader lines connecting titles to page numbers
+
+**Implementation**:
+- Created custom `TOCEntryWithLeader` Flowable class using reportlab
+- Draws dotted leader lines between entry title and page number
+- Supports chapter headers (bold, colored) and sub-entries (indented)
+- Clean, professional appearance similar to published books
+
+**Files Modified**:
+- `/app/backend/utils/pdf_generator.py` - Custom TOC flowable implementation
 
 **Features Implemented**:
 1. Resend email service integration with kingdom-soul.com
