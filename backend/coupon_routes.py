@@ -148,22 +148,77 @@ COUPONS = {
 class CouponValidateRequest(BaseModel):
     code: str
     product_ids: list[str]
+    cart_total: float = 0  # For gift certificate dollar-off calculation
 
 
 class CouponValidateResponse(BaseModel):
     valid: bool
     discount_percent: int
+    discount_dollars: float = 0  # For fixed dollar discounts
     message: str
     code: str
 
 
-@router.post("/validate", response_model=CouponValidateResponse)
+@router.post("/validate")
 async def validate_coupon(request: CouponValidateRequest):
     """Validate a coupon code and return discount information"""
     
-    input_code = request.code.strip()
+    input_code = request.code.strip().upper()
     
-    # Find coupon (case-insensitive lookup)
+    # FIRST: Check if this is a gift certificate discount code (SFGIFT-XXXXXXXX)
+    if input_code.startswith("SFGIFT-"):
+        discount_record = await db.discount_codes.find_one({
+            "code": input_code,
+            "status": "active"
+        })
+        
+        if discount_record:
+            # Check if already used
+            if discount_record.get("times_used", 0) >= discount_record.get("max_uses", 1):
+                return {
+                    "valid": False,
+                    "discount_percent": 0,
+                    "discount_dollars": 0,
+                    "message": "This discount code has already been used",
+                    "code": input_code
+                }
+            
+            # Check expiration
+            if discount_record.get("valid_until") and datetime.utcnow() > discount_record["valid_until"]:
+                return {
+                    "valid": False,
+                    "discount_percent": 0,
+                    "discount_dollars": 0,
+                    "message": "This discount code has expired",
+                    "code": input_code
+                }
+            
+            # Valid gift certificate discount!
+            amount = discount_record.get("amount_dollars", 0)
+            
+            # Calculate effective discount percentage for the cart
+            effective_percent = 0
+            if request.cart_total > 0:
+                effective_percent = min(100, int((amount / request.cart_total) * 100))
+            
+            return {
+                "valid": True,
+                "discount_percent": effective_percent,
+                "discount_dollars": amount,
+                "message": f"Gift certificate discount: ${amount:.2f} off!",
+                "code": input_code,
+                "is_gift_certificate": True
+            }
+        else:
+            return {
+                "valid": False,
+                "discount_percent": 0,
+                "discount_dollars": 0,
+                "message": "Invalid or expired discount code",
+                "code": input_code
+            }
+    
+    # SECOND: Check hardcoded coupons (case-insensitive lookup)
     code = None
     for coupon_code in COUPONS.keys():
         if coupon_code.lower() == input_code.lower():
@@ -172,12 +227,13 @@ async def validate_coupon(request: CouponValidateRequest):
     
     # Check if coupon exists
     if code is None:
-        return CouponValidateResponse(
-            valid=False,
-            discount_percent=0,
-            message="Invalid coupon code",
-            code=input_code
-        )
+        return {
+            "valid": False,
+            "discount_percent": 0,
+            "discount_dollars": 0,
+            "message": "Invalid coupon code",
+            "code": input_code
+        }
     
     coupon = COUPONS[code]
     
