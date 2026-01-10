@@ -11,7 +11,9 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 - Gaming center with session management
 - Referral system for user growth
 - **Email notifications for orders and contact forms**
-- **Order lookup and refund system (NEW)**
+- **Order lookup and refund system**
+- **Gift certificates with professional PDF generation**
+- **Shipping address collection for physical items**
 
 ## Tech Stack
 - **Frontend**: React with Tailwind CSS, Shadcn UI components
@@ -30,6 +32,52 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 ---
 
 ## What's Been Implemented
+
+### January 10, 2026 - Session 2 Updates
+**Status: COMPLETED**
+
+**1. Coupon Discount Bug Fix**
+- Fixed: Discounts now correctly transfer to Stripe checkout
+- Line items show "(X% off)" label when discount applied
+- Verified: $10 item with 50% coupon shows $5.00 in Stripe
+
+**2. Amazon-Style Popup Login**
+- Modal login/register form appears on checkout page
+- No more redirect to broken `/login` page
+- Includes email/password fields, "Create Account" option
+- User stays on checkout page throughout flow
+
+**3. Cart Persistence Fix**
+- Fixed recurring bug where cart was lost on navigation
+- Changed from async localStorage load to synchronous initialization
+- Cart now persists across page reloads and navigation
+
+**4. Shipping Address for Physical Items**
+- New form section appears when cart contains physical items
+- Fields: Street, City, State, ZIP, Country
+- Validation prevents checkout without complete address
+- Stored with order for fulfillment
+
+**5. Professional Gift Certificate PDF**
+- Check-style design matching user's mockup
+- Includes: recipient name, amount, voucher #, date, sender
+- Green/gold color scheme with decorative borders
+- Download link in email + direct endpoint
+
+**6. Spam Folder Note**
+- All emails now include yellow banner: "Didn't see this in inbox? Check spam folder!"
+
+**7. Duplicate Email Prevention**
+- Atomic database update prevents race condition double-activation
+
+**Files Modified/Created:**
+- `payment_routes.py` - Coupon discount to Stripe, shipping address
+- `CheckoutPage.js` - Login modal, shipping form, validation
+- `CartContext.js` - Synchronous localStorage initialization
+- `gift_certificate_routes.py` - PDF download endpoint
+- `utils/gift_certificate_pdf.py` - NEW: PDF generator
+
+---
 
 ### January 10, 2026 - Order Lookup & Refund System
 **Status: COMPLETED**
