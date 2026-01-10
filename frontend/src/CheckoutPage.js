@@ -221,10 +221,10 @@ const CheckoutPage = () => {
         throw new Error('Unexpected error during checkout. Please try again.');
       }
 
-      if (data.checkout_url) {
+      if (data.checkout_url || data.url) {
         // Clear cart before redirect
         clearCart();
-        window.location.href = data.checkout_url;
+        window.location.href = data.checkout_url || data.url;
       } else {
         throw new Error(data.detail || 'Failed to create checkout session');
       }
