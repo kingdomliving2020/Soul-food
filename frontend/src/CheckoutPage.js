@@ -579,6 +579,13 @@ const CheckoutPage = () => {
   // === MAIN CHECKOUT FORM ===
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-orange-50 py-12 px-4">
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        onLoginSuccess={handleLoginSuccess}
+      />
+      
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Checkout</h1>
         
