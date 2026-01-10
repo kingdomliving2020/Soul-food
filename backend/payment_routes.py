@@ -789,24 +789,39 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         
         total_amount += item_price * item_qty
         item_names.append(f"{item_name} x{item_qty}")
+    
+    # Apply discount if coupon provided
+    discount_multiplier = 1.0
+    if request.discount_percent > 0:
+        discount_multiplier = (100 - request.discount_percent) / 100
+        total_amount = total_amount * discount_multiplier
+    
+    # Build line items with discount applied to each item
+    for item in request.items:
+        item_price = item.get('salePrice', item.get('price', 0))
+        item_qty = item.get('quantity', 1)
+        item_name = item.get('name', 'Soul Food Product')
         
-        # Create line item for Stripe
+        # Apply discount to item price
+        discounted_price = item_price * discount_multiplier
+        
+        # Add discount indicator to name if coupon applied
+        display_name = item_name
+        if request.discount_percent > 0:
+            display_name = f"{item_name} ({request.discount_percent}% off)"
+        
+        # Create line item for Stripe with discounted price
         line_items.append({
             'price_data': {
                 'currency': 'usd',
                 'product_data': {
-                    'name': item_name,
+                    'name': display_name,
                     'description': item.get('description', 'Soul Food Digital Content'),
                 },
-                'unit_amount': int(item_price * 100),  # Stripe uses cents
+                'unit_amount': max(1, int(discounted_price * 100)),  # Stripe uses cents, min 1 cent
             },
             'quantity': item_qty,
         })
-    
-    # Apply discount if coupon provided
-    if request.discount_percent > 0:
-        discount_amount = total_amount * (request.discount_percent / 100)
-        total_amount -= discount_amount
     
     # Build URLs
     origin_url = request.origin_url.rstrip('/')
