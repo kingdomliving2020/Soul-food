@@ -729,6 +729,67 @@ const CheckoutPage = () => {
               </p>
             </div>
             
+            {/* Shipping Address for Physical Items */}
+            {hasPhysicalItems && (
+              <div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <MapPin className="w-4 h-4 text-amber-600" />
+                  <span className="text-sm font-semibold text-amber-800">Shipping Address</span>
+                  <span className="text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded">Required for physical items</span>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <input
+                      type="text"
+                      value={shippingAddress.street}
+                      onChange={(e) => setShippingAddress({...shippingAddress, street: e.target.value})}
+                      placeholder="Street address"
+                      required
+                      className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      value={shippingAddress.city}
+                      onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
+                      placeholder="City"
+                      required
+                      className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                    <input
+                      type="text"
+                      value={shippingAddress.state}
+                      onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})}
+                      placeholder="State"
+                      required
+                      className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      value={shippingAddress.zipCode}
+                      onChange={(e) => setShippingAddress({...shippingAddress, zipCode: e.target.value})}
+                      placeholder="ZIP Code"
+                      required
+                      className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                    <input
+                      type="text"
+                      value={shippingAddress.country}
+                      onChange={(e) => setShippingAddress({...shippingAddress, country: e.target.value})}
+                      placeholder="Country"
+                      className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-amber-600 mt-2">
+                  📦 Your physical items will be shipped to this address.
+                </p>
+              </div>
+            )}
+            
             {/* Gift & Order Notes Section */}
             <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
               <div className="flex items-start gap-3 mb-3">
