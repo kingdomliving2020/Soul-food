@@ -1,9 +1,185 @@
 import React, { useState, useEffect } from 'react';
 import { useCart, PRODUCTS } from './CartContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CreditCard, ShoppingBag, Trash2, Mail, User, LogIn, UserPlus, ArrowRight, ShieldCheck } from 'lucide-react';
+import { CreditCard, ShoppingBag, Trash2, Mail, User, LogIn, UserPlus, ArrowRight, ShieldCheck, X, MapPin, Loader2 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Login Modal Component (Amazon/Walmart style)
+const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
+  const [mode, setMode] = useState('login'); // 'login' or 'register'
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        onLoginSuccess(data.user);
+      } else {
+        setError(data.detail || 'Invalid email or password');
+      }
+    } catch (err) {
+      setError('Connection error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, full_name: name }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        onLoginSuccess(data.user);
+      } else {
+        setError(data.detail || 'Registration failed');
+      }
+    } catch (err) {
+      setError('Connection error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-xl font-bold text-gray-900">
+            {mode === 'login' ? 'Sign In' : 'Create Account'}
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <X className="w-5 h-5 text-gray-500" />
+          </button>
+        </div>
+
+        {/* Form */}
+        <div className="p-6">
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={mode === 'login' ? handleLogin : handleRegister} className="space-y-4">
+            {mode === 'register' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="John Doe"
+                />
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="••••••••"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {loading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : mode === 'login' ? (
+                <>Sign In <ArrowRight className="w-4 h-4" /></>
+              ) : (
+                <>Create Account <ArrowRight className="w-4 h-4" /></>
+              )}
+            </button>
+          </form>
+
+          {/* Toggle Login/Register */}
+          <div className="mt-6 pt-6 border-t text-center">
+            {mode === 'login' ? (
+              <p className="text-gray-600">
+                New customer?{' '}
+                <button
+                  onClick={() => { setMode('register'); setError(''); }}
+                  className="text-indigo-600 hover:text-indigo-700 font-medium"
+                >
+                  Create an account
+                </button>
+              </p>
+            ) : (
+              <p className="text-gray-600">
+                Already have an account?{' '}
+                <button
+                  onClick={() => { setMode('login'); setError(''); }}
+                  className="text-indigo-600 hover:text-indigo-700 font-medium"
+                >
+                  Sign in
+                </button>
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const CheckoutPage = () => {
   const { cartItems, getCartTotal, clearCart, removeFromCart } = useCart();
@@ -28,11 +204,28 @@ const CheckoutPage = () => {
   const [checkoutStep, setCheckoutStep] = useState('guest-prompt'); // 'guest-prompt', 'checkout'
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  
+  // Shipping address for physical items
+  const [shippingAddress, setShippingAddress] = useState({
+    street: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'USA'
+  });
   
   const subtotal = getCartTotal();
   const discount = couponApplied ? (subtotal * couponApplied.discount_percent / 100) : 0;
   const total = subtotal - discount;
   
+  // Check if cart has physical items that need shipping
+  const hasPhysicalItems = cartItems.some(item => {
+    const medium = item.metadata?.medium || '';
+    return medium === 'paperback' || medium === 'physical' || 
+           item.name?.toLowerCase().includes('print') ||
+           item.name?.toLowerCase().includes('paperback');
+  });
   // Minimum order for coupon discount
   const COUPON_MINIMUM = 7.00;
 
