@@ -567,11 +567,19 @@ const CheckoutPage = () => {
               </div>
             )}
 
+            {/* Email Required Warning */}
+            {!customerEmail && !isLoggedIn && (
+              <div className="mb-4 p-3 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg text-sm flex items-center gap-2">
+                <Mail className="w-4 h-4" />
+                <span>Please enter your email to receive order confirmation and download links.</span>
+              </div>
+            )}
+
             <button
               onClick={handleCheckout}
-              disabled={loading}
+              disabled={loading || (!customerEmail && !isLoggedIn)}
               data-testid="checkout-submit-btn"
-              className="w-full bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
             >
               {loading ? (
                 'Processing...'
