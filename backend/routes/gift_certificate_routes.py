@@ -2,6 +2,7 @@
 Soul Food Gift Certificate Routes
 =================================
 Handles gift certificate purchases with Stripe payment.
+Redemption creates a one-time discount code for checkout.
 """
 
 from fastapi import APIRouter, HTTPException, Request
@@ -11,6 +12,8 @@ from datetime import datetime, timedelta
 import os
 import stripe
 import uuid
+import secrets
+import string
 
 # Database
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -41,6 +44,11 @@ class GiftCertificateRedeemRequest(BaseModel):
     user_email: EmailStr
 
 
+class GiftCertificateLookupRequest(BaseModel):
+    """Request model for looking up a gift certificate"""
+    code: str
+
+
 # Certificate type configurations
 CERTIFICATE_TYPES = {
     "book": {
@@ -67,8 +75,34 @@ CERTIFICATE_TYPES = {
 
 
 def generate_certificate_code() -> str:
-    """Generate a unique gift certificate code"""
-    return f"SF-{uuid.uuid4().hex[:8].upper()}"
+    """
+    Generate a unique, trackable gift certificate code.
+    Format: SF-GC-XXXXX-XXXX (e.g., SF-GC-K7M9P-2B4N)
+    - SF = Soul Food
+    - GC = Gift Certificate
+    - 5 alphanumeric chars
+    - 4 alphanumeric chars
+    """
+    chars = string.ascii_uppercase + string.digits
+    # Remove confusing characters (0, O, I, L, 1)
+    chars = chars.replace('0', '').replace('O', '').replace('I', '').replace('L', '').replace('1', '')
+    
+    part1 = ''.join(secrets.choice(chars) for _ in range(5))
+    part2 = ''.join(secrets.choice(chars) for _ in range(4))
+    
+    return f"SF-GC-{part1}-{part2}"
+
+
+def generate_discount_code() -> str:
+    """
+    Generate a one-time discount code for redemption.
+    Format: SFGIFT-XXXXXXXX (e.g., SFGIFT-K7M9P2B4)
+    """
+    chars = string.ascii_uppercase + string.digits
+    chars = chars.replace('0', '').replace('O', '').replace('I', '').replace('L', '').replace('1', '')
+    
+    random_part = ''.join(secrets.choice(chars) for _ in range(8))
+    return f"SFGIFT-{random_part}"
 
 
 @router.post("/create-checkout")
@@ -190,8 +224,13 @@ async def activate_gift_certificate(pending_id: str, session_id: str = None):
         except stripe.error.StripeError:
             raise HTTPException(status_code=400, detail="Could not verify payment")
     
-    # Generate the actual certificate
+    # Generate the actual certificate code
     certificate_code = generate_certificate_code()
+    
+    # Ensure code is unique
+    while await db.gift_certificates.find_one({"code": certificate_code}):
+        certificate_code = generate_certificate_code()
+    
     cert_config = CERTIFICATE_TYPES.get(pending["certificate_type"], {})
     
     certificate = {
@@ -210,6 +249,7 @@ async def activate_gift_certificate(pending_id: str, session_id: str = None):
         "expires_at": datetime.utcnow() + timedelta(days=365),  # 1 year validity
         "created_at": datetime.utcnow(),
         "redeemed_at": None,
+        "discount_code": None,  # Will be set when redeemed
         "redemptions": []
     }
     
@@ -240,13 +280,23 @@ async def activate_gift_certificate(pending_id: str, session_id: str = None):
         </div>
         
         <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p style="color: #64748b; margin-bottom: 10px;">Your Gift Code:</p>
-            <p style="font-size: 28px; font-weight: bold; color: #0f172a; letter-spacing: 2px; font-family: monospace;">{certificate_code}</p>
+            <p style="color: #64748b; margin-bottom: 10px;">Your Gift Certificate Code:</p>
+            <p style="font-size: 24px; font-weight: bold; color: #0f172a; letter-spacing: 2px; font-family: monospace;">{certificate_code}</p>
+        </div>
+        
+        <div style="background: #ecfdf5; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #a7f3d0;">
+            <h4 style="color: #065f46; margin: 0 0 10px 0;">How to Redeem:</h4>
+            <ol style="color: #047857; text-align: left; margin: 0; padding-left: 20px; font-size: 14px;">
+                <li>Visit <a href="{FRONTEND_URL}/redeem-gift" style="color: #059669;">kingdom-soul.com/redeem-gift</a></li>
+                <li>Enter your certificate code: <strong>{certificate_code}</strong></li>
+                <li>Receive your one-time discount code within 1 business day</li>
+                <li>Apply the discount code at checkout!</li>
+            </ol>
         </div>
         
         <p style="color: #64748b; font-size: 14px;">
             Valid until {certificate['expires_at'].strftime('%B %d, %Y')}<br/>
-            Use at checkout or visit <a href="{FRONTEND_URL}" style="color: #ea580c;">kingdom-soul.com</a>
+            Questions? Contact <a href="mailto:{SUPPORT_EMAIL}" style="color: #ea580c;">{SUPPORT_EMAIL}</a>
         </p>
     </div>
     """
@@ -255,7 +305,7 @@ async def activate_gift_certificate(pending_id: str, session_id: str = None):
     
     await send_email(
         to=pending["recipient_email"],
-        subject=f"🎁 {pending['sender_name']} sent you a Soul Food Gift Certificate!",
+        subject=f"🎁 {pending['sender_name']} sent you a ${pending['amount']:.2f} Soul Food Gift Certificate!",
         html=recipient_email_html
     )
     
@@ -272,7 +322,7 @@ async def activate_gift_certificate(pending_id: str, session_id: str = None):
                 <ul style="color: #1f2937; margin-top: 10px;">
                     <li>Type: {cert_config.get('name', 'Gift Certificate')}</li>
                     <li>Amount: ${pending['amount']:.2f}</li>
-                    <li>Code: {certificate_code}</li>
+                    <li>Code: <strong>{certificate_code}</strong></li>
                     <li>Valid until: {certificate['expires_at'].strftime('%B %d, %Y')}</li>
                 </ul>
             </div>
@@ -302,22 +352,32 @@ async def activate_gift_certificate(pending_id: str, session_id: str = None):
 async def verify_gift_certificate(code: str):
     """Verify a gift certificate is valid and check its balance"""
     certificate = await db.gift_certificates.find_one(
-        {"code": code.upper()},
+        {"code": code.upper().strip()},
         {"_id": 0}
     )
     
     if not certificate:
-        raise HTTPException(status_code=404, detail="Gift certificate not found")
+        raise HTTPException(status_code=404, detail="Gift certificate not found. Please check the code and try again.")
     
     # Check expiration
     if certificate.get("expires_at") and datetime.utcnow() > certificate["expires_at"]:
         return {
             "valid": False,
             "reason": "expired",
-            "message": "This gift certificate has expired"
+            "message": "This gift certificate has expired",
+            "expired_at": certificate["expires_at"].isoformat()
         }
     
     # Check status
+    if certificate.get("status") == "redeemed":
+        return {
+            "valid": False,
+            "reason": "already_redeemed",
+            "message": "This gift certificate has already been redeemed",
+            "redeemed_at": certificate.get("redeemed_at").isoformat() if certificate.get("redeemed_at") else None,
+            "discount_code": certificate.get("discount_code")  # Show them their discount code
+        }
+    
     if certificate.get("status") != "active":
         return {
             "valid": False,
@@ -327,47 +387,90 @@ async def verify_gift_certificate(code: str):
     
     return {
         "valid": True,
+        "code": certificate.get("code"),
         "certificate_type": certificate.get("certificate_type"),
         "certificate_name": certificate.get("certificate_name"),
-        "original_amount": certificate.get("amount"),
+        "amount": certificate.get("amount"),
         "balance": certificate.get("balance"),
+        "recipient_name": certificate.get("recipient_name"),
+        "sender_name": certificate.get("sender_name"),
+        "message": certificate.get("message"),
         "expires_at": certificate.get("expires_at").isoformat() if certificate.get("expires_at") else None,
-        "recipient_name": certificate.get("recipient_name")
+        "created_at": certificate.get("created_at").isoformat() if certificate.get("created_at") else None
     }
 
 
 @router.post("/redeem")
 async def redeem_gift_certificate(request: GiftCertificateRedeemRequest):
-    """Redeem a gift certificate (partial or full)"""
-    certificate = await db.gift_certificates.find_one({"code": request.code.upper()})
+    """
+    Redeem a gift certificate.
+    Creates a one-time discount code that can be used at checkout.
+    Processing time: Within 1 business day (but usually instant).
+    """
+    from email_service import send_email, get_base_template, SUPPORT_EMAIL
+    
+    code = request.code.upper().strip()
+    certificate = await db.gift_certificates.find_one({"code": code})
     
     if not certificate:
-        raise HTTPException(status_code=404, detail="Gift certificate not found")
+        raise HTTPException(status_code=404, detail="Gift certificate not found. Please check the code and try again.")
     
     # Check validity
+    if certificate.get("status") == "redeemed":
+        # Already redeemed - return the existing discount code
+        return {
+            "success": True,
+            "already_redeemed": True,
+            "message": "This gift certificate was already redeemed.",
+            "discount_code": certificate.get("discount_code"),
+            "amount": certificate.get("amount"),
+            "redeemed_at": certificate.get("redeemed_at").isoformat() if certificate.get("redeemed_at") else None
+        }
+    
     if certificate.get("status") != "active":
         raise HTTPException(status_code=400, detail="This gift certificate is not active")
     
     if certificate.get("expires_at") and datetime.utcnow() > certificate["expires_at"]:
         raise HTTPException(status_code=400, detail="This gift certificate has expired")
     
-    if certificate.get("balance", 0) <= 0:
-        raise HTTPException(status_code=400, detail="This gift certificate has no remaining balance")
+    # Generate a unique one-time discount code
+    discount_code = generate_discount_code()
     
-    # For now, mark as redeemed (full redemption)
-    # TODO: Integrate with checkout to apply partial balance
+    # Ensure discount code is unique
+    while await db.discount_codes.find_one({"code": discount_code}):
+        discount_code = generate_discount_code()
+    
+    # Create the discount code in the database
+    discount_record = {
+        "code": discount_code,
+        "type": "gift_certificate_redemption",
+        "source_certificate": code,
+        "amount_dollars": certificate["amount"],  # Fixed dollar amount, not percentage
+        "max_uses": 1,
+        "times_used": 0,
+        "created_by_email": request.user_email,
+        "valid_until": datetime.utcnow() + timedelta(days=90),  # 90 days to use the discount
+        "created_at": datetime.utcnow(),
+        "status": "active"
+    }
+    
+    await db.discount_codes.insert_one(discount_record)
+    
+    # Update the gift certificate as redeemed
     await db.gift_certificates.update_one(
-        {"code": request.code.upper()},
+        {"code": code},
         {
             "$set": {
                 "status": "redeemed",
                 "balance": 0,
                 "redeemed_at": datetime.utcnow(),
-                "redeemed_by": request.user_email
+                "redeemed_by": request.user_email,
+                "discount_code": discount_code
             },
             "$push": {
                 "redemptions": {
-                    "amount": certificate["balance"],
+                    "discount_code": discount_code,
+                    "amount": certificate["amount"],
                     "user_email": request.user_email,
                     "redeemed_at": datetime.utcnow()
                 }
@@ -375,8 +478,124 @@ async def redeem_gift_certificate(request: GiftCertificateRedeemRequest):
         }
     )
     
+    # Send confirmation email with the discount code
+    redemption_html = f"""
+    <div style="text-align: center; padding: 20px;">
+        <h2 style="color: #1f2937; margin-bottom: 20px;">🎉 Gift Certificate Redeemed!</h2>
+        
+        <p style="color: #4b5563; margin-bottom: 20px;">
+            Your gift certificate has been successfully redeemed. Use the discount code below at checkout.
+        </p>
+        
+        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; border-radius: 12px; margin: 20px 0;">
+            <p style="color: #d1fae5; margin-bottom: 10px; font-size: 14px;">Your One-Time Discount Code:</p>
+            <p style="font-size: 32px; font-weight: bold; color: white; letter-spacing: 3px; font-family: monospace; margin: 0;">
+                {discount_code}
+            </p>
+            <p style="color: #a7f3d0; margin-top: 15px; font-size: 18px;">
+                Value: <strong>${certificate['amount']:.2f} OFF</strong>
+            </p>
+        </div>
+        
+        <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #fcd34d;">
+            <p style="color: #92400e; margin: 0; font-size: 14px;">
+                <strong>⚠️ Important:</strong> This code can only be used <strong>once</strong> and expires in 90 days.
+            </p>
+        </div>
+        
+        <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h4 style="color: #334155; margin: 0 0 10px 0;">How to Use:</h4>
+            <ol style="color: #64748b; text-align: left; margin: 0; padding-left: 20px; font-size: 14px;">
+                <li>Add items to your cart at <a href="{FRONTEND_URL}/quick-order" style="color: #6366f1;">kingdom-soul.com</a></li>
+                <li>Go to checkout</li>
+                <li>Enter discount code: <strong>{discount_code}</strong></li>
+                <li>Your ${certificate['amount']:.2f} discount will be applied!</li>
+            </ol>
+        </div>
+        
+        <a href="{FRONTEND_URL}/quick-order" 
+           style="display: inline-block; padding: 14px 30px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px; margin-top: 10px;">
+            Start Shopping →
+        </a>
+        
+        <p style="color: #9ca3af; font-size: 12px; margin-top: 20px;">
+            Original Gift Certificate: {code}<br/>
+            Questions? Contact <a href="mailto:{SUPPORT_EMAIL}" style="color: #6366f1;">{SUPPORT_EMAIL}</a>
+        </p>
+    </div>
+    """
+    
+    redemption_email_html = get_base_template(redemption_html, f"Your ${certificate['amount']:.2f} discount code is ready!")
+    
+    await send_email(
+        to=request.user_email,
+        subject=f"🎉 Your ${certificate['amount']:.2f} Soul Food Discount Code is Ready!",
+        html=redemption_email_html
+    )
+    
     return {
         "success": True,
-        "redeemed_amount": certificate["balance"],
-        "message": f"Gift certificate redeemed for ${certificate['balance']:.2f}"
+        "message": f"Gift certificate redeemed! Your discount code has been sent to {request.user_email}",
+        "discount_code": discount_code,
+        "amount": certificate["amount"],
+        "valid_until": discount_record["valid_until"].isoformat(),
+        "instructions": f"Enter code {discount_code} at checkout to receive ${certificate['amount']:.2f} off your order."
+    }
+
+
+@router.get("/lookup/{code}")
+async def lookup_gift_certificate(code: str):
+    """
+    Public lookup for gift certificate status.
+    Used by the redemption page to show certificate details before redeeming.
+    """
+    return await verify_gift_certificate(code)
+
+
+@router.get("/admin/list")
+async def list_all_certificates(status: str = None, limit: int = 50):
+    """Admin endpoint to list all gift certificates"""
+    query = {}
+    if status:
+        query["status"] = status
+    
+    certificates = await db.gift_certificates.find(
+        query,
+        {"_id": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    return {
+        "count": len(certificates),
+        "certificates": certificates
+    }
+
+
+@router.get("/admin/stats")
+async def get_certificate_stats():
+    """Admin endpoint for gift certificate statistics"""
+    total = await db.gift_certificates.count_documents({})
+    active = await db.gift_certificates.count_documents({"status": "active"})
+    redeemed = await db.gift_certificates.count_documents({"status": "redeemed"})
+    expired = await db.gift_certificates.count_documents({
+        "status": "active",
+        "expires_at": {"$lt": datetime.utcnow()}
+    })
+    
+    # Calculate total value
+    pipeline = [
+        {"$group": {
+            "_id": "$status",
+            "total_amount": {"$sum": "$amount"},
+            "count": {"$sum": 1}
+        }}
+    ]
+    
+    by_status = await db.gift_certificates.aggregate(pipeline).to_list(10)
+    
+    return {
+        "total_certificates": total,
+        "active": active,
+        "redeemed": redeemed,
+        "expired": expired,
+        "by_status": by_status
     }
