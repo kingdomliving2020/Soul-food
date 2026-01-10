@@ -195,6 +195,7 @@ async def activate_gift_certificate(pending_id: str, session_id: str = None):
     """
     Activate a gift certificate after successful payment.
     Called by webhook or success page verification.
+    Uses atomic update to prevent duplicate activations.
     """
     from email_service import send_email, get_base_template, SUPPORT_EMAIL
     
@@ -204,6 +205,7 @@ async def activate_gift_certificate(pending_id: str, session_id: str = None):
     if not pending:
         raise HTTPException(status_code=404, detail="Pending certificate not found")
     
+    # Check if already activated
     if pending.get("status") == "activated":
         # Already activated, return existing certificate
         existing = await db.gift_certificates.find_one({"pending_id": pending_id})
@@ -212,8 +214,34 @@ async def activate_gift_certificate(pending_id: str, session_id: str = None):
                 "success": True,
                 "already_activated": True,
                 "code": existing.get("code"),
-                "recipient_email": existing.get("recipient_email")
+                "recipient_email": existing.get("recipient_email"),
+                "amount": existing.get("amount"),
+                "expires_at": existing.get("expires_at").isoformat() if existing.get("expires_at") else None
             }
+    
+    # Use atomic update to prevent race condition (double activation)
+    # Only update if status is still "pending_payment"
+    update_result = await db.gift_certificates_pending.update_one(
+        {"pending_id": pending_id, "status": "pending_payment"},
+        {"$set": {"status": "activating"}}
+    )
+    
+    # If no documents matched, someone else already started activation
+    if update_result.modified_count == 0:
+        # Wait a moment and check for existing certificate
+        import asyncio
+        await asyncio.sleep(0.5)
+        existing = await db.gift_certificates.find_one({"pending_id": pending_id})
+        if existing:
+            return {
+                "success": True,
+                "already_activated": True,
+                "code": existing.get("code"),
+                "recipient_email": existing.get("recipient_email"),
+                "amount": existing.get("amount"),
+                "expires_at": existing.get("expires_at").isoformat() if existing.get("expires_at") else None
+            }
+        raise HTTPException(status_code=409, detail="Certificate activation already in progress")
     
     # Verify payment with Stripe if session_id provided
     if session_id:
