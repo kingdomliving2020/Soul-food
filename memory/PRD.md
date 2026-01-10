@@ -10,6 +10,7 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 - 100% discount coupon support for promotional access
 - Gaming center with session management
 - Referral system for user growth
+- **Email notifications for orders and contact forms (NEW)**
 
 ## Tech Stack
 - **Frontend**: React with Tailwind CSS, Shadcn UI components
@@ -17,6 +18,7 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 - **Database**: MongoDB
 - **Payments**: Stripe integration
 - **PDF Generation**: reportlab library
+- **Email Service**: Resend (kingdom-soul.com)
 
 ## User Personas
 1. **Individual Learners** - Purchase digital or print workbooks for personal study
@@ -27,6 +29,33 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 ---
 
 ## What's Been Implemented
+
+### January 10, 2026 - Email Service Integration
+**Status: COMPLETED (Pending Domain Verification)**
+
+**Features Implemented**:
+1. Resend email service integration with kingdom-soul.com
+2. Order confirmation emails (with download links for digital products)
+3. Contact form → support@kingdom-soul.com
+4. Bulk order notifications → support@kingdom-soul.com (replaced kingdomlivingproject@gmail.com)
+5. Customer email collection on checkout page
+
+**Email Configuration**:
+- From: noreply@kingdom-soul.com
+- Reply-To: support@kingdom-soul.com
+- Footer: "This inbox isn't monitored. For help, contact support@kingdom-soul.com"
+
+**Files Created**:
+- `/app/backend/email_service.py` - Email templates and sending functions
+- `/app/backend/routes/email_routes.py` - Contact form API endpoint
+- `/app/frontend/src/ContactForm.js` - Contact form component
+
+**Files Modified**:
+- `/app/backend/.env` - Added Resend API key and email config
+- `/app/backend/payment_routes.py` - Added email sending to free orders and bulk notifications
+- `/app/frontend/src/CheckoutPage.js` - Added email/name inputs for order confirmations
+
+**ACTION REQUIRED**: Verify domain in Resend dashboard to enable email sending
 
 ### January 10, 2026 - P0 Bug Fix: 100% Discount Free Order Flow
 **Status: COMPLETED & TESTED**
@@ -39,22 +68,7 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 3. Updated `OrderSuccess.js` to display download links with working download buttons
 4. Fixed datetime timezone comparison bug in `download_protection.py`
 
-**Files Modified**:
-- `/app/backend/payment_routes.py` - Added download link generation to free-order endpoint
-- `/app/backend/download_protection.py` - Fixed timezone comparison bug
-- `/app/frontend/src/OrderSuccess.js` - Complete rewrite for proper download display
-- `/app/frontend/src/CheckoutPage.js` - Store download links in sessionStorage
-
 **Test Results**: 100% pass rate (13 backend tests, 11 frontend tests)
-
-### Previous Session Work (Already Complete)
-- Product Catalog & UI Sync
-- Download Protection Implementation
-- Gaming Session Management Backend
-- Checkout Enhancements (coupon minimum, gift options, order notes)
-- Referral System API
-- Book Club Bulk Ordering
-- Major UI/UX Overhaul
 
 ---
 
@@ -62,6 +76,7 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ### P0 - Critical (Blocking Users)
 - ~~100% discount checkout bug~~ ✅ FIXED
+- ~~Email notifications for orders~~ ✅ IMPLEMENTED (pending domain verification)
 
 ### P1 - High Priority
 - [ ] Amazon-like checkout flow (login/guest prompt before payment)
@@ -77,68 +92,60 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ### P3 - Low Priority / Future
 - [ ] Migrate hardcoded product catalog to MongoDB
-- [ ] Email notifications for orders
 - [ ] User dashboard with purchase history
 - [ ] Mobile app strategy (PWA)
 
 ---
 
-## Known Issues
+## Email System Configuration
 
-### Cart Persistence
-- **Status**: Recurring
-- **Impact**: Medium - users lose cart items on refresh
-- **Root Cause**: Cart stored in React state only, not persisted
+### Email Addresses (kingdom-soul.com)
+| Address | Purpose |
+|---------|---------|
+| noreply@kingdom-soul.com | FROM address for transactional emails |
+| support@kingdom-soul.com | Customer support (Reply-To) |
+| billing@kingdom-soul.com | Billing inquiries (forwards to Gmail) |
+| admin@kingdom-soul.com | Admin/security notices (forwards to Gmail) |
 
-### PDF TOC Quality
-- **Status**: Not Started
-- **Impact**: Medium - auto-generated PDFs have poor formatting
-- **Root Cause**: Basic reportlab TOC implementation
+### Email Types Implemented
+1. **Order Confirmation** - Sent to customer after successful order
+2. **Download Delivery** - Contains download links for digital products
+3. **Contact Form** - Notifications to support@kingdom-soul.com
+4. **Bulk Order Alert** - Notifications for orders >25 items
 
----
-
-## Architecture Notes
-
-### Product Catalog
-Products are currently hardcoded in two places:
-- `/app/frontend/src/QuickOrder.js` - Frontend product display
-- `/app/backend/payment_routes.py` - Backend pricing (PRODUCTS dict)
-
-**Technical Debt**: Should migrate to MongoDB `products` collection
-
-### Download Protection
-- Tokens expire after 72 hours
-- Max 3 downloads per file per order
-- Tokens are hashed before storage (SHA256)
-- Files stored in `/app/backend/lesson_pdfs/`
-
-### Gaming Session Management
-- Backend complete in `/app/backend/gaming_session_manager.py`
-- Tiers: basic (4hr/day), premium (8hr/day), unlimited
-- Idle timeout: 10 minutes
-- Frontend UI not yet connected
+### DNS Requirements (Add to kingdom-soul.com)
+- SPF record
+- DKIM record (from Resend dashboard)
+- DMARC record (start with p=none)
 
 ---
 
 ## API Endpoints Reference
 
+### Email
+- `POST /api/email/contact` - Submit contact form
+- `GET /api/email/config` - Get email configuration (topics list)
+
 ### Payments
-- `POST /api/payments/free-order` - Process 100% discount orders with download links
+- `POST /api/payments/free-order` - Process 100% discount orders (now sends email)
 - `POST /api/payments/checkout/cart` - Create Stripe checkout session
 - `GET /api/payments/order/{order_id}` - Get order details with downloads
-- `GET /api/payments/products` - Get product catalog
+- `POST /api/payments/notify-large-order` - Send bulk order notification (now emails support@)
 
 ### Downloads
 - `GET /api/downloads/file/{token}` - Download file with token verification
 - `GET /api/downloads/remaining/{token}` - Check download token status
-- `POST /api/downloads/resend-links` - Regenerate expired download links
 
-### Gaming
-- `POST /api/gaming/start` - Start gaming session
-- `POST /api/gaming/heartbeat` - Keep session alive
-- `POST /api/gaming/end` - End gaming session
-- `GET /api/gaming/status` - Get current session status
+---
 
-### Referrals
-- `POST /api/referrals/create` - Create referral code
-- `GET /api/referrals/validate/{code}` - Validate referral code
+## Known Issues
+
+### Domain Not Verified in Resend
+- **Status**: Pending user action
+- **Impact**: Emails will not be sent until domain is verified
+- **Solution**: User must verify kingdom-soul.com in Resend dashboard and add DNS records
+
+### Cart Persistence
+- **Status**: Not started
+- **Impact**: Medium - users lose cart items on refresh
+
