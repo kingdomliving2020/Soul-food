@@ -216,7 +216,12 @@ const CheckoutPage = () => {
   });
   
   const subtotal = getCartTotal();
-  const discount = couponApplied ? (subtotal * couponApplied.discount_percent / 100) : 0;
+  // Handle both percentage and fixed dollar discounts (gift certificates)
+  const discount = couponApplied 
+    ? (couponApplied.is_gift_certificate && couponApplied.discount_dollars > 0
+        ? Math.min(subtotal, couponApplied.discount_dollars)  // Gift cert: use dollar amount, cap at subtotal
+        : (subtotal * couponApplied.discount_percent / 100))  // Regular coupon: use percentage
+    : 0;
   const total = subtotal - discount;
   
   // Check if cart has physical items that need shipping
