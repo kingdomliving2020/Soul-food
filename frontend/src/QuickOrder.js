@@ -694,15 +694,23 @@ const QuickOrder = () => {
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                   <button
-                                    onClick={() => updateQuantity(item.uniqueKey || item.id, item.quantity - 1)}
-                                    className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center"
+                                    onClick={() => {
+                                      const key = item.uniqueKey || item.productId || item.id;
+                                      console.log('[Cart] Decreasing quantity for:', key);
+                                      updateQuantity(key, item.quantity - 1);
+                                    }}
+                                    className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center text-gray-700 font-bold"
                                   >
                                     -
                                   </button>
-                                  <span className="font-bold text-sm">{item.quantity}</span>
+                                  <span className="font-bold text-sm min-w-[24px] text-center">{item.quantity}</span>
                                   <button
-                                    onClick={() => updateQuantity(item.uniqueKey || item.id, item.quantity + 1)}
-                                    className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center"
+                                    onClick={() => {
+                                      const key = item.uniqueKey || item.productId || item.id;
+                                      console.log('[Cart] Increasing quantity for:', key);
+                                      updateQuantity(key, item.quantity + 1);
+                                    }}
+                                    className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center text-gray-700 font-bold"
                                   >
                                     +
                                   </button>
