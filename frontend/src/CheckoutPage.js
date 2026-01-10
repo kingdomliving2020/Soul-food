@@ -137,16 +137,17 @@ const CheckoutPage = () => {
           let orderData;
           if (orderResponse.bodyUsed) {
             // Generate order ID locally if response was consumed
-            orderData = { order_id: `FREE-${Date.now().toString(36).toUpperCase()}` };
+            orderData = { order_id: `FREE-${Date.now().toString(36).toUpperCase()}`, download_links: [] };
           } else {
             orderData = await orderResponse.json();
           }
           
-          // Store order info and redirect to success/download page
+          // Store order info including download links and redirect to success/download page
           sessionStorage.setItem('orderComplete', JSON.stringify({
             orderId: orderData.order_id,
             items: cartItems,
-            coupon: couponApplied
+            coupon: couponApplied,
+            downloadLinks: orderData.download_links || []
           }));
           clearCart();
           navigate('/order-success?free=true&order=' + orderData.order_id);
