@@ -71,7 +71,7 @@ async def create_download_link(
     
     expires_at = datetime.now(timezone.utc) + timedelta(hours=DOWNLOAD_LINK_EXPIRY_HOURS)
     
-    # Store download record
+    # Store download record - include token for API retrieval
     download_record = {
         "id": secrets.token_hex(16),
         "order_id": order_id,
@@ -80,7 +80,8 @@ async def create_download_link(
         "product_id": product_id,
         "product_name": product_name,
         "file_path": file_path,
-        "token_hash": token_hash,
+        "token": raw_token,  # Store raw token for API retrieval
+        "token_hash": token_hash,  # Also store hash for security verification
         "expires_at": expires_at,
         "download_count": 0,
         "max_downloads": MAX_DOWNLOADS_PER_ORDER,
