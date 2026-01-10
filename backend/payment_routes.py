@@ -1004,28 +1004,71 @@ async def stripe_webhook(request: Request):
                     }
                 )
                 
-                # Create download links for digital products
+                # Get customer email from transaction
+                customer_email = transaction.get("customer_email") or webhook_response.metadata.get("customer_email", "")
+                user_id = webhook_response.metadata.get("user_id", "") or session_id
+                order_number = transaction.get("order_number", session_id)
+                
+                # Create download links for ALL items in the cart
+                items = transaction.get("items", [])
+                
+                # If single product (old format), convert to items list
                 product_id = transaction.get("product_id")
-                if product_id:
-                    pdf_path = get_pdf_path(product_id)
+                if product_id and not items:
+                    items = [{"product_id": product_id, "name": PRODUCTS.get(product_id, {}).get("name", product_id)}]
+                
+                download_links_created = []
+                for item in items:
+                    item_product_id = item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
+                    item_name = item.get("name", item_product_id)
+                    
+                    # Normalize product ID
+                    normalized_id = normalize_product_id(item_product_id)
+                    pdf_path = get_pdf_path(normalized_id)
+                    
                     if pdf_path:
-                        # Get customer info from metadata
-                        customer_email = webhook_response.metadata.get("customer_email", "")
-                        user_id = webhook_response.metadata.get("user_id", "")
-                        
                         try:
                             token, expires_at = await create_download_link(
-                                order_id=session_id,
-                                user_id=user_id or session_id,
+                                order_id=order_number,
+                                user_id=user_id,
                                 user_email=customer_email or "no-email@placeholder.com",
-                                product_id=product_id,
-                                product_name=PRODUCTS.get(product_id, {}).get("name", product_id),
+                                product_id=normalized_id,
+                                product_name=item_name,
                                 file_path=pdf_path,
                                 payment_verified=True
                             )
-                            print(f"[Webhook] Download link created for {product_id}, expires: {expires_at}")
+                            download_links_created.append({
+                                "product_id": normalized_id,
+                                "name": item_name,
+                                "token": token
+                            })
+                            print(f"[Webhook] Download link created for {item_name} ({normalized_id})")
                         except Exception as dl_error:
-                            print(f"[Webhook] Error creating download link: {dl_error}")
+                            print(f"[Webhook] Error creating download link for {item_name}: {dl_error}")
+                    else:
+                        print(f"[Webhook] No PDF found for {item_name} ({normalized_id})")
+                
+                # Store download links with the order
+                if download_links_created:
+                    await db.payment_transactions.update_one(
+                        {"session_id": session_id},
+                        {"$set": {"download_links_generated": True, "downloads_count": len(download_links_created)}}
+                    )
+                
+                # Send order confirmation email
+                if customer_email:
+                    try:
+                        from email_service import send_order_confirmation
+                        await send_order_confirmation(
+                            to_email=customer_email,
+                            order_id=order_number,
+                            items=items,
+                            total=transaction.get("total_amount", 0),
+                            customer_name=transaction.get("customer_name")
+                        )
+                        print(f"[Webhook] Order confirmation email sent to {customer_email}")
+                    except Exception as email_error:
+                        print(f"[Webhook] Error sending email: {email_error}")
         
         return {"status": "success", "event_type": webhook_response.event_type}
         
