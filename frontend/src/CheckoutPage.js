@@ -83,39 +83,48 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     // Generate username from email (part before @)
     const username = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
 
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          email, 
-          username,
-          password, 
-          name: name || email.split('@')[0]  // Use name or derive from email
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.access_token) {
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        onLoginSuccess(data.user);
-      } else {
-        // Parse validation errors from backend
-        if (data.detail && typeof data.detail === 'string') {
-          setError(data.detail);
-        } else if (data.detail && Array.isArray(data.detail)) {
-          setError(data.detail.map(d => d.msg).join('. '));
-        } else {
-          setError('Registration failed. Please try again.');
+    // Use XMLHttpRequest to avoid Emergent script intercepting fetch
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${BACKEND_URL}/api/auth/register`, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        setLoading(false);
+        try {
+          const data = JSON.parse(xhr.responseText);
+          
+          if (xhr.status >= 200 && xhr.status < 300 && data.access_token) {
+            localStorage.setItem('token', data.access_token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            onLoginSuccess(data.user);
+          } else {
+            // Parse validation errors from backend
+            if (data.detail && typeof data.detail === 'string') {
+              setError(data.detail);
+            } else if (data.detail && Array.isArray(data.detail)) {
+              setError(data.detail.map(d => d.msg).join('. '));
+            } else {
+              setError('Registration failed. Please try again.');
+            }
+          }
+        } catch (e) {
+          setError('Invalid response from server');
         }
       }
-    } catch (err) {
-      setError('Connection error. Please try again.');
-    } finally {
+    };
+    
+    xhr.onerror = function() {
       setLoading(false);
-    }
+      setError('Connection error. Please try again.');
+    };
+    
+    xhr.send(JSON.stringify({ 
+      email, 
+      username,
+      password, 
+      name: name || email.split('@')[0]
+    }));
   };
 
   if (!isOpen) return null;
