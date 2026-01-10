@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart, PRODUCTS } from './CartContext';
-import { useNavigate } from 'react-router-dom';
-import { CreditCard, ShoppingBag, Trash2, Mail } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { CreditCard, ShoppingBag, Trash2, Mail, User, LogIn, UserPlus, ArrowRight, ShieldCheck } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const CheckoutPage = () => {
   const { cartItems, getCartTotal, clearCart, removeFromCart } = useCart();
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [couponCode, setCouponCode] = useState('');
@@ -23,12 +24,42 @@ const CheckoutPage = () => {
   const [customerEmail, setCustomerEmail] = useState('');
   const [customerName, setCustomerName] = useState('');
   
+  // Amazon-like checkout flow state
+  const [checkoutStep, setCheckoutStep] = useState('guest-prompt'); // 'guest-prompt', 'checkout'
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  
   const subtotal = getCartTotal();
   const discount = couponApplied ? (subtotal * couponApplied.discount_percent / 100) : 0;
   const total = subtotal - discount;
   
   // Minimum order for coupon discount
   const COUPON_MINIMUM = 7.00;
+
+  // Check if user is logged in on mount
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+    
+    if (token && savedUser) {
+      try {
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+        setIsLoggedIn(true);
+        setCustomerEmail(userData.email || '');
+        setCustomerName(userData.name || userData.full_name || '');
+        setCheckoutStep('checkout'); // Skip guest prompt if logged in
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+      }
+    }
+    
+    // Check if returning from login
+    const params = new URLSearchParams(location.search);
+    if (params.get('returning') === 'true') {
+      setCheckoutStep('checkout');
+    }
+  }, [location]);
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
@@ -48,10 +79,8 @@ const CheckoutPage = () => {
     try {
       // Get product IDs - use uniqueKey or productId, filter out any undefined
       const productIds = cartItems
-        .map(item => item.productId || item.uniqueKey || item.id)
-        .filter(id => id);
-      
-      console.log('Validating coupon with productIds:', productIds);
+        .map(item => item.uniqueKey || item.productId || item.id)
+        .filter(id => id !== undefined);
       
       const response = await fetch(`${BACKEND_URL}/api/coupons/validate`, {
         method: 'POST',
@@ -59,36 +88,27 @@ const CheckoutPage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          code: couponCode.trim(),
-          product_ids: productIds
+          code: couponCode.toUpperCase(),
+          product_ids: productIds,
+          cart_total: subtotal
         }),
       });
-
-      // Handle case where body may already be consumed by interceptor
-      if (response.bodyUsed) {
-        console.error('Response body already consumed');
-        setCouponError('Unable to validate coupon. Please refresh and try again.');
-        setCouponApplied(null);
-        return;
-      }
 
       const data = await response.json();
 
       if (data.valid) {
-        setCouponApplied(data);
+        setCouponApplied({
+          code: couponCode.toUpperCase(),
+          discount_percent: data.discount_percent,
+          message: data.message
+        });
         setCouponError('');
       } else {
         setCouponError(data.message || 'Invalid coupon code');
         setCouponApplied(null);
       }
-    } catch (err) {
-      console.error('Coupon validation error:', err);
-      // More specific error message
-      if (err.message && err.message.includes('body stream')) {
-        setCouponError('Unable to validate coupon. Please refresh the page and try again.');
-      } else {
-        setCouponError('Failed to validate coupon. Please try again.');
-      }
+    } catch (error) {
+      setCouponError('Error validating coupon. Please try again.');
     } finally {
       setCouponLoading(false);
     }
@@ -101,17 +121,12 @@ const CheckoutPage = () => {
   };
 
   const handleCheckout = async () => {
-    if (cartItems.length === 0) {
-      setError('Your cart is empty');
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
     try {
-      // Calculate total with coupon discount
-      let totalAmount = cartItems.reduce((sum, item) => sum + (item.salePrice * item.quantity), 0);
+      // Calculate total with discount
+      let totalAmount = subtotal;
       if (couponApplied) {
         totalAmount = totalAmount - (totalAmount * couponApplied.discount_percent / 100);
       }
@@ -169,8 +184,7 @@ const CheckoutPage = () => {
         }
         return;
       }
-      
-      // For paid orders, use Stripe with full cart
+
       const response = await fetch(`${BACKEND_URL}/api/payments/checkout/cart`, {
         method: 'POST',
         headers: {
@@ -178,62 +192,56 @@ const CheckoutPage = () => {
         },
         body: JSON.stringify({
           items: cartItems.map(item => ({
-            productId: item.productId || item.uniqueKey || item.id,
+            product_id: item.productId || item.uniqueKey || item.id,
             name: item.name,
             quantity: item.quantity,
-            salePrice: item.salePrice,
-            price: item.salePrice
+            salePrice: item.salePrice
           })),
-          origin_url: window.location.origin,
           coupon_code: couponApplied?.code || null,
           discount_percent: couponApplied?.discount_percent || 0,
           is_gift: isGift,
-          order_notes: orderNotes.trim() || null
+          order_notes: orderNotes,
+          customer_email: customerEmail || null,
+          customer_name: customerName || null
         }),
       });
 
-      // Handle bodyUsed check for interceptor
-      let data;
-      if (response.bodyUsed) {
-        throw new Error('Unable to process checkout. Please refresh and try again.');
-      } else {
-        data = await response.json();
-      }
+      const data = await response.json();
 
-      if (!response.ok) {
+      if (data.checkout_url) {
+        // Clear cart before redirect
+        clearCart();
+        window.location.href = data.checkout_url;
+      } else {
         throw new Error(data.detail || 'Failed to create checkout session');
       }
-      
-      // Store coupon in session storage for later application
-      if (couponApplied) {
-        sessionStorage.setItem('appliedCoupon', JSON.stringify(couponApplied));
-      }
-      
-      // Redirect to Stripe Checkout
-      window.location.href = data.url;
-      
     } catch (err) {
-      console.error('Checkout error:', err);
-      // Handle the specific body stream error
-      if (err.message && err.message.includes('body stream')) {
-        setError('Unable to process checkout. Please refresh the page and try again.');
-      } else {
-        setError(err.message || 'Something went wrong. Please try again.');
-      }
+      setError(err.message);
+    } finally {
       setLoading(false);
     }
   };
 
+  const handleSignIn = () => {
+    // Store return URL and navigate to login
+    sessionStorage.setItem('checkoutReturn', 'true');
+    navigate('/login?redirect=/checkout?returning=true');
+  };
+
+  const handleContinueAsGuest = () => {
+    setCheckoutStep('checkout');
+  };
+
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
-        <div className="text-center">
-          <ShoppingBag className="w-20 h-20 mx-auto text-gray-300 mb-4" />
-          <h2 className="text-2xl font-bold text-gray-700 mb-2">Your cart is empty</h2>
-          <p className="text-gray-500 mb-6">Add some items to your cart to continue</p>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-orange-50 py-12 px-4">
+        <div className="max-w-md mx-auto text-center">
+          <ShoppingBag className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Your cart is empty</h1>
+          <p className="text-gray-600 mb-6">Add some items to get started!</p>
           <button
-            onClick={() => navigate('/')}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-3 px-8 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all"
+            onClick={() => navigate('/quick-order')}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
           >
             Browse Products
           </button>
@@ -242,57 +250,172 @@ const CheckoutPage = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <button
-            onClick={() => navigate('/')}
-            className="text-blue-600 hover:text-blue-800 font-semibold mb-4 inline-flex items-center"
-          >
-            ← Back to Home
-          </button>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">Checkout</h1>
-        </div>
+  // === AMAZON-LIKE GUEST/SIGN-IN PROMPT ===
+  if (checkoutStep === 'guest-prompt') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 py-12 px-4">
+        <div className="max-w-lg mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Checkout</h1>
+            <p className="text-gray-600">How would you like to continue?</p>
+          </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Order Summary */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-              
-              {cartItems.map((item) => (
-                <div key={item.uniqueKey || item.productId} className="flex justify-between items-center py-4 border-b last:border-b-0">
+          {/* Order Summary Mini */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">{cartItems.length} item{cartItems.length > 1 ? 's' : ''} in cart</span>
+              <span className="font-bold text-lg">${subtotal.toFixed(2)}</span>
+            </div>
+          </div>
+
+          {/* Sign In Option */}
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden mb-4">
+            <div className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <LogIn className="w-6 h-6 text-indigo-600" />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-lg font-bold text-gray-900 mb-1">Sign In</h2>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Access your order history, saved addresses, and get personalized recommendations.
+                  </p>
+                  <ul className="text-sm text-gray-500 space-y-1 mb-4">
+                    <li className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-green-500" />
+                      Track your orders
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-green-500" />
+                      Access download history
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <ShieldCheck className="w-4 h-4 text-green-500" />
+                      Faster checkout next time
+                    </li>
+                  </ul>
+                  <button
+                    onClick={handleSignIn}
+                    data-testid="checkout-sign-in-btn"
+                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    Sign In
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="flex items-center gap-4 my-6">
+            <div className="flex-1 h-px bg-gray-300"></div>
+            <span className="text-gray-500 text-sm font-medium">or</span>
+            <div className="flex-1 h-px bg-gray-300"></div>
+          </div>
+
+          {/* Guest Checkout Option */}
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <User className="w-6 h-6 text-gray-600" />
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-lg font-bold text-gray-900 mb-1">Continue as Guest</h2>
+                  <p className="text-sm text-gray-600 mb-4">
+                    No account needed. Just enter your email to receive order confirmation and download links.
+                  </p>
+                  <button
+                    onClick={handleContinueAsGuest}
+                    data-testid="checkout-guest-btn"
+                    className="w-full bg-gray-800 hover:bg-gray-900 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  >
+                    Continue as Guest
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Security Note */}
+          <div className="mt-6 text-center">
+            <p className="text-xs text-gray-500 flex items-center justify-center gap-1">
+              <ShieldCheck className="w-4 h-4" />
+              Secure checkout powered by Stripe
+            </p>
+          </div>
+
+          {/* Back to Cart Link */}
+          <div className="mt-6 text-center">
+            <button
+              onClick={() => navigate('/quick-order')}
+              className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+            >
+              ← Back to shopping
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // === MAIN CHECKOUT FORM ===
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-orange-50 py-12 px-4">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">Checkout</h1>
+        
+        {/* Logged in user badge */}
+        {isLoggedIn && user && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6 flex items-center gap-3">
+            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+              <User className="w-4 h-4 text-green-600" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm text-green-800">
+                Signed in as <strong>{user.email}</strong>
+              </p>
+            </div>
+            <button
+              onClick={() => setCheckoutStep('guest-prompt')}
+              className="text-xs text-green-600 hover:text-green-700"
+            >
+              Change
+            </button>
+          </div>
+        )}
+
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Cart Items */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <ShoppingBag className="w-5 h-5" />
+              Your Items
+            </h2>
+            
+            <div className="space-y-4">
+              {cartItems.map((item, index) => (
+                <div key={index} className="flex items-center justify-between border-b pb-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                      {(item.isPreOrder || item.name?.includes('[PRE-ORDER]')) && (
-                        <span className="bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded">
-                          PRE-ORDER
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-sm text-gray-500">{item.description}</p>
-                    <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
+                    <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                    <p className="text-sm text-gray-500">
+                      {item.seriesName && `${item.seriesName} • `}
+                      Qty: {item.quantity}
+                    </p>
                   </div>
-                  <div className="flex items-center gap-3 ml-4">
-                    <div className="text-right">
-                      {item.listPrice > item.salePrice && (
-                        <div className="text-sm text-gray-400 line-through">
-                          ${item.listPrice.toFixed(2)}
-                        </div>
-                      )}
-                      <div className="text-lg font-bold text-purple-600">
-                        ${(item.salePrice * item.quantity).toFixed(2)}
-                      </div>
-                    </div>
+                  <div className="flex items-center gap-3">
+                    <span className="font-bold text-purple-600">
+                      ${(item.salePrice * item.quantity).toFixed(2)}
+                    </span>
                     <button
                       onClick={() => removeFromCart(item.uniqueKey || item.productId)}
-                      className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 transition-colors"
+                      className="text-red-500 hover:text-red-700 p-1"
                       title="Remove item"
                     >
-                      <Trash2 className="w-5 h-5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -300,191 +423,175 @@ const CheckoutPage = () => {
             </div>
           </div>
 
-          {/* Payment Summary */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 sticky top-4">
-              <h2 className="text-xl font-bold mb-4">Payment Summary</h2>
-              
-              {/* Coupon Code Section */}
-              <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Have a coupon code?
-                </label>
-                {!couponApplied ? (
-                  <div className="flex gap-1.5 items-stretch">
-                    <input
-                      type="text"
-                      value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)}
-                      placeholder="Enter code"
-                      className="flex-1 min-w-0 px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
-                      disabled={couponLoading}
-                    />
-                    <button
-                      onClick={handleApplyCoupon}
-                      disabled={couponLoading}
-                      className="bg-gray-800 hover:bg-gray-900 text-white font-semibold px-4 py-2.5 rounded-lg text-sm transition-colors disabled:opacity-50 whitespace-nowrap flex-shrink-0"
-                    >
-                      {couponLoading ? 'Checking...' : 'Apply'}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-green-600 font-bold">✓</span>
-                      <div>
-                        <div className="font-semibold text-green-800 text-sm">{couponApplied.code}</div>
-                        <div className="text-xs text-green-600">{couponApplied.discount_percent}% discount applied</div>
-                      </div>
-                    </div>
-                    <button
-                      onClick={handleRemoveCoupon}
-                      className="text-red-500 hover:text-red-700 text-sm font-medium"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                )}
-                {couponError && (
-                  <p className="text-red-500 text-xs mt-2">{couponError}</p>
-                )}
-                {subtotal < COUPON_MINIMUM && !couponApplied && (
-                  <p className="text-amber-600 text-xs mt-2">💡 Coupons require minimum order of ${COUPON_MINIMUM.toFixed(2)}</p>
-                )}
-              </div>
-              
-              {/* Customer Email for Order Confirmation */}
-              <div className="mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
-                <div className="flex items-center gap-2 mb-3">
-                  <Mail className="w-4 h-4 text-indigo-600" />
-                  <span className="text-sm font-semibold text-indigo-800">Get Order Confirmation</span>
-                </div>
-                <div className="space-y-3">
+          {/* Order Summary & Checkout */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <CreditCard className="w-5 h-5" />
+              Order Summary
+            </h2>
+
+            {/* Coupon Code Section */}
+            <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-orange-50 rounded-lg border border-purple-100">
+              <label className="block text-sm font-semibold text-purple-700 mb-2">
+                Have a coupon?
+              </label>
+              {couponApplied ? (
+                <div className="flex items-center justify-between bg-green-100 p-3 rounded-lg">
                   <div>
-                    <input
-                      type="email"
-                      value={customerEmail}
-                      onChange={(e) => setCustomerEmail(e.target.value)}
-                      placeholder="your@email.com"
-                      className="w-full px-3 py-2.5 text-sm border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
+                    <span className="font-bold text-green-700">{couponApplied.code}</span>
+                    <span className="text-green-600 ml-2">({couponApplied.discount_percent}% off)</span>
                   </div>
-                  <div>
-                    <input
-                      type="text"
-                      value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
-                      placeholder="Your name (optional)"
-                      className="w-full px-3 py-2.5 text-sm border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    />
-                  </div>
+                  <button
+                    onClick={handleRemoveCoupon}
+                    className="text-red-500 hover:text-red-700 text-sm font-medium"
+                  >
+                    Remove
+                  </button>
                 </div>
-                <p className="text-xs text-indigo-600 mt-2">
-                  📧 We'll send your order confirmation and download links to this email.
-                </p>
-              </div>
-              
-              {/* Gift & Order Notes Section */}
-              <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-                <div className="flex items-start gap-3 mb-3">
+              ) : (
+                <div className="flex gap-2">
                   <input
-                    type="checkbox"
-                    id="isGift"
-                    checked={isGift}
-                    onChange={(e) => setIsGift(e.target.checked)}
-                    className="mt-1 w-4 h-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Enter code"
+                    className="flex-1 px-3 py-2 border border-purple-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 uppercase"
+                    disabled={subtotal < COUPON_MINIMUM}
                   />
-                  <label htmlFor="isGift" className="flex-1">
-                    <span className="text-sm font-semibold text-slate-700">🎁 This is a gift</span>
-                    <p className="text-xs text-slate-500 mt-0.5">We'll include a gift message and remove pricing</p>
-                  </label>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-                    Order Notes <span className="text-slate-400 font-normal">(optional)</span>
-                  </label>
-                  <textarea
-                    value={orderNotes}
-                    onChange={(e) => setOrderNotes(e.target.value)}
-                    placeholder="Color preferences, gift message, special instructions..."
-                    rows={3}
-                    maxLength={500}
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-                  />
-                  <p className="text-xs text-slate-400 mt-1 text-right">{orderNotes.length}/500</p>
-                </div>
-              </div>
-
-              <div className="space-y-2 mb-4">
-                <div className="flex justify-between text-gray-600">
-                  <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
-                </div>
-                {couponApplied && (
-                  <div className="flex justify-between text-green-600 font-semibold">
-                    <span>Discount ({couponApplied.discount_percent}%)</span>
-                    <span>-${discount.toFixed(2)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between text-gray-600">
-                  <span>Tax</span>
-                  <span>$0.00</span>
-                </div>
-                <div className="border-t pt-2 mt-2">
-                  <div className="flex justify-between text-xl font-bold">
-                    <span>Total</span>
-                    <span className="text-purple-600">${total.toFixed(2)}</span>
-                  </div>
-                  {couponApplied && (
-                    <div className="text-xs text-green-600 text-right mt-1">
-                      You save ${discount.toFixed(2)}!
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {error && (
-                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                  {error}
+                  <button
+                    onClick={handleApplyCoupon}
+                    disabled={couponLoading || subtotal < COUPON_MINIMUM}
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {couponLoading ? '...' : 'Apply'}
+                  </button>
                 </div>
               )}
-
-              <button
-                onClick={handleCheckout}
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="w-5 h-5" />
-                    Continue to Payment
-                  </>
-                )}
-              </button>
-
-              <p className="text-xs text-gray-500 text-center mt-4">
-                Secure payment powered by Stripe
+              {couponError && (
+                <p className="text-red-500 text-xs mt-2">{couponError}</p>
+              )}
+              {subtotal < COUPON_MINIMUM && !couponApplied && (
+                <p className="text-amber-600 text-xs mt-2">💡 Coupons require minimum order of ${COUPON_MINIMUM.toFixed(2)}</p>
+              )}
+            </div>
+            
+            {/* Customer Email for Order Confirmation */}
+            <div className="mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+              <div className="flex items-center gap-2 mb-3">
+                <Mail className="w-4 h-4 text-indigo-600" />
+                <span className="text-sm font-semibold text-indigo-800">Order Confirmation</span>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <input
+                    type="email"
+                    value={customerEmail}
+                    onChange={(e) => setCustomerEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    className="w-full px-3 py-2.5 text-sm border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={isLoggedIn}
+                  />
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    value={customerName}
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    placeholder="Your name (optional)"
+                    className="w-full px-3 py-2.5 text-sm border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    disabled={isLoggedIn}
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-indigo-600 mt-2">
+                📧 We'll send your order confirmation and download links to this email.
               </p>
-
-              {/* Return Policy Notice - Paperback books only */}
-              <div className="mt-6 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <h4 className="text-xs font-semibold text-slate-700 mb-1">📚 Return Policy (Paperback Books)</h4>
-                <ul className="text-xs text-slate-600 space-y-1">
-                  <li>• Returns accepted if workbook is unmarked</li>
-                  <li>• 15% restocking fee applies</li>
-                  <li>• Damaged in shipping? Contact us for exchange</li>
-                </ul>
-                <p className="text-xs text-slate-500 mt-2 italic">
-                  Digital products (PDF, ePub, Interactive) are non-refundable.
-                </p>
+            </div>
+            
+            {/* Gift & Order Notes Section */}
+            <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex items-start gap-3 mb-3">
+                <input
+                  type="checkbox"
+                  id="isGift"
+                  checked={isGift}
+                  onChange={(e) => setIsGift(e.target.checked)}
+                  className="mt-1 w-4 h-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
+                />
+                <label htmlFor="isGift" className="flex-1">
+                  <span className="text-sm font-semibold text-slate-700">🎁 This is a gift</span>
+                  <p className="text-xs text-slate-500 mt-0.5">We'll include a gift message and remove pricing</p>
+                </label>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                  Order Notes <span className="text-slate-400 font-normal">(optional)</span>
+                </label>
+                <textarea
+                  value={orderNotes}
+                  onChange={(e) => setOrderNotes(e.target.value)}
+                  placeholder="Color preferences, gift message, special instructions..."
+                  rows={3}
+                  maxLength={500}
+                  className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+                />
+                <p className="text-xs text-slate-400 mt-1 text-right">{orderNotes.length}/500</p>
               </div>
             </div>
+
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between text-gray-600">
+                <span>Subtotal</span>
+                <span>${subtotal.toFixed(2)}</span>
+              </div>
+              {couponApplied && (
+                <div className="flex justify-between text-green-600 font-semibold">
+                  <span>Discount ({couponApplied.discount_percent}%)</span>
+                  <span>-${discount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-gray-600">
+                <span>Tax</span>
+                <span>Calculated at checkout</span>
+              </div>
+              <div className="border-t pt-2 flex justify-between text-xl font-bold text-gray-900">
+                <span>Total</span>
+                <span className="text-purple-600">${total.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+                {error}
+              </div>
+            )}
+
+            <button
+              onClick={handleCheckout}
+              disabled={loading}
+              data-testid="checkout-submit-btn"
+              className="w-full bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:transform-none flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                'Processing...'
+              ) : total <= 0 ? (
+                <>
+                  Complete Free Order
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              ) : (
+                <>
+                  Proceed to Payment - ${total.toFixed(2)}
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
+            </button>
+
+            <p className="text-center text-xs text-gray-500 mt-3 flex items-center justify-center gap-1">
+              <ShieldCheck className="w-4 h-4" />
+              Secure payment powered by Stripe
+            </p>
           </div>
         </div>
       </div>
