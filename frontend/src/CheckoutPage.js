@@ -118,7 +118,7 @@ const CheckoutPage = () => {
       
       // If total is $0 (100% discount), bypass Stripe and go directly to success
       if (totalAmount <= 0 && couponApplied) {
-        // Record the free order
+        // Record the free order with customer email for confirmation
         const orderResponse = await fetch(`${BACKEND_URL}/api/payments/free-order`, {
           method: 'POST',
           headers: {
@@ -132,7 +132,9 @@ const CheckoutPage = () => {
               price: item.salePrice
             })),
             coupon_code: couponApplied.code,
-            discount_percent: couponApplied.discount_percent
+            discount_percent: couponApplied.discount_percent,
+            customer_email: customerEmail || null,
+            customer_name: customerName || null
           }),
         });
 
@@ -151,7 +153,8 @@ const CheckoutPage = () => {
             orderId: orderData.order_id,
             items: cartItems,
             coupon: couponApplied,
-            downloadLinks: orderData.download_links || []
+            downloadLinks: orderData.download_links || [],
+            customerEmail: customerEmail
           }));
           clearCart();
           navigate('/order-success?free=true&order=' + orderData.order_id);
