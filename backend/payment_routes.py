@@ -485,6 +485,8 @@ class FreeOrderRequest(BaseModel):
     items: list[FreeOrderItem]
     coupon_code: str
     discount_percent: int
+    customer_email: Optional[str] = None  # Optional email for order confirmation
+    customer_name: Optional[str] = None
 
 
 @router.post("/free-order")
@@ -492,6 +494,7 @@ async def process_free_order(request: FreeOrderRequest):
     """Process a free order (100% discount coupon)"""
     import uuid
     from download_protection import create_download_link
+    from email_service import send_order_confirmation
     
     # Validate coupon
     if request.discount_percent != 100:
