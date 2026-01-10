@@ -628,3 +628,71 @@ async def get_certificate_stats():
         "expired": expired,
         "by_status": by_status
     }
+
+
+@router.get("/download/{code}")
+async def download_gift_certificate_pdf(code: str):
+    """
+    Download a gift certificate as a beautiful PDF.
+    """
+    from utils.gift_certificate_pdf import generate_gift_certificate_pdf
+    
+    # Find the certificate
+    certificate = await db.gift_certificates.find_one({"code": code.upper()})
+    
+    if not certificate:
+        raise HTTPException(status_code=404, detail="Gift certificate not found")
+    
+    # Generate PDF
+    pdf_buffer = generate_gift_certificate_pdf(
+        recipient_name=certificate.get("recipient_name", ""),
+        amount=certificate.get("amount", 0),
+        certificate_code=certificate.get("code", ""),
+        sender_name=certificate.get("sender_name", ""),
+        issue_date=certificate.get("created_at"),
+        expires_at=certificate.get("expires_at"),
+        message=certificate.get("message")
+    )
+    
+    # Return as downloadable PDF
+    filename = f"SoulFood_GiftCertificate_{code}.pdf"
+    
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}"
+        }
+    )
+
+
+@router.get("/preview-pdf")
+async def preview_gift_certificate_pdf(
+    recipient: str = "John Doe",
+    amount: float = 50.00,
+    sender: str = "Jane Smith",
+    message: str = "Enjoy your Soul Food journey!"
+):
+    """
+    Preview/test endpoint to generate a sample gift certificate PDF.
+    """
+    from utils.gift_certificate_pdf import generate_gift_certificate_pdf
+    
+    # Generate sample PDF
+    pdf_buffer = generate_gift_certificate_pdf(
+        recipient_name=recipient,
+        amount=amount,
+        certificate_code="SF-GC-SAMPLE-TEST",
+        sender_name=sender,
+        issue_date=datetime.utcnow(),
+        expires_at=datetime.utcnow() + timedelta(days=365),
+        message=message
+    )
+    
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": "inline; filename=sample_gift_certificate.pdf"
+        }
+    )
