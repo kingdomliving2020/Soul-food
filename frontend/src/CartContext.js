@@ -63,41 +63,37 @@ export const PRODUCTS = {
 };
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
-
-  // Load cart from localStorage on mount - with robust error handling
-  useEffect(() => {
+  // Initialize cart directly from localStorage to prevent race condition
+  const [cartItems, setCartItems] = useState(() => {
     try {
       const savedCart = localStorage.getItem('soulFoodCart');
-      console.log('[Cart] Loading from localStorage:', savedCart ? 'found' : 'empty');
+      console.log('[Cart] Initial load from localStorage:', savedCart ? 'found' : 'empty');
       
       if (savedCart) {
         const parsed = JSON.parse(savedCart);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Validate each item has required fields
           const validItems = parsed.filter(item => 
             item && (item.productId || item.id) && (item.salePrice !== undefined || item.price !== undefined)
           );
-          console.log('[Cart] Loaded', validItems.length, 'valid items');
-          setCartItems(validItems);
+          console.log('[Cart] Initialized with', validItems.length, 'items');
+          return validItems;
         }
       }
     } catch (e) {
-      console.error('[Cart] Error loading cart:', e);
-      localStorage.removeItem('soulFoodCart'); // Clear corrupted data
+      console.error('[Cart] Error loading cart on init:', e);
+      localStorage.removeItem('soulFoodCart');
     }
-    setIsInitialized(true);
-  }, []);
+    return [];
+  });
+  
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(true); // Already initialized in useState
 
-  // Save cart to localStorage whenever it changes (but only after initial load)
+  // Save cart to localStorage whenever it changes
   useEffect(() => {
-    if (isInitialized) {
-      console.log('[Cart] Saving to localStorage:', cartItems.length, 'items');
-      localStorage.setItem('soulFoodCart', JSON.stringify(cartItems));
-    }
-  }, [cartItems, isInitialized]);
+    console.log('[Cart] Saving to localStorage:', cartItems.length, 'items');
+    localStorage.setItem('soulFoodCart', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   // Flexible addToCart - handles both PRODUCTS lookup and custom items
   const addToCart = (itemOrProductId, quantity = 1, metadata = {}) => {
