@@ -141,7 +141,7 @@ const PaymentSuccess = () => {
                   {downloadLinks.map((link, index) => (
                     <a
                       key={index}
-                      href={`${BACKEND_URL}/api/download/${link.token}`}
+                      href={`${BACKEND_URL}/api/downloads/file/${link.token}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center justify-between p-3 bg-white rounded-lg border border-blue-100 hover:border-blue-300 hover:shadow-md transition-all"
