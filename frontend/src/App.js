@@ -1900,6 +1900,7 @@ import TrickyTestamentGame from './TrickyTestamentGame';
 import QuickOrder from './QuickOrder';
 import GiftCertificate from './GiftCertificate';
 import GiftCertificateSuccess from './GiftCertificateSuccess';
+import RedeemGift from './RedeemGift';
 import OrderSuccess from './OrderSuccess';
 import GamingCentral from './GamingCentral';
 
@@ -1914,6 +1915,7 @@ function App() {
             <Route path="/quick-order" element={<QuickOrder />} />
             <Route path="/gift-certificates" element={<GiftCertificate />} />
             <Route path="/gift-certificate-success" element={<GiftCertificateSuccess />} />
+            <Route path="/redeem-gift" element={<RedeemGift />} />
             <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />
             <Route path="/lesson/:id" element={<LessonViewer />} />
             <Route path="/lessons" element={<LessonsListPage />} />
