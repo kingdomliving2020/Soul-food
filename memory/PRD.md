@@ -30,6 +30,23 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ## What's Been Implemented
 
+### January 10, 2026 - Critical Bug Fix: Product ID Mismatch & Email Required
+**Status: COMPLETED**
+
+**Problem**: Users reported only receiving 1 download (Covenant) instead of all items they ordered ($100+ worth). Email wasn't collected before checkout.
+
+**Root Cause**: Frontend product IDs like `breakfast-full-ae-digital` didn't match backend's `PRODUCT_FILES` mapping which expected `breakfast_ae_digital`.
+
+**Fixes Implemented**:
+1. **Expanded PRODUCT_FILES mapping** - Added all frontend-style product IDs with dashes
+2. **Created `normalize_product_id()` function** - Attempts multiple transformations to find matching file
+3. **Made email required** - Checkout button disabled until email is entered
+4. **Added email warning** - Clear message telling users to enter email for download links
+
+**Files Modified**:
+- `/app/backend/payment_routes.py` - Expanded PRODUCT_FILES, added normalize_product_id()
+- `/app/frontend/src/CheckoutPage.js` - Email required validation, warning message
+
 ### January 10, 2026 - Amazon-like Checkout Flow
 **Status: COMPLETED & TESTED**
 
