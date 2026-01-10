@@ -197,6 +197,7 @@ const CheckoutPage = () => {
             quantity: item.quantity,
             salePrice: item.salePrice
           })),
+          origin_url: window.location.origin,
           coupon_code: couponApplied?.code || null,
           discount_percent: couponApplied?.discount_percent || 0,
           is_gift: isGift,
