@@ -15,6 +15,8 @@ const GiftCertificateSuccess = () => {
   const pendingId = searchParams.get('pending_id');
 
   useEffect(() => {
+    let isCancelled = false;
+    
     const activateCertificate = async () => {
       if (!pendingId) {
         setError('Missing certificate information');
@@ -28,7 +30,17 @@ const GiftCertificateSuccess = () => {
           { method: 'POST' }
         );
 
-        const data = await response.json();
+        // Parse response text first to avoid "body stream already read" error
+        const responseText = await response.text();
+        
+        if (isCancelled) return;
+        
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch (parseError) {
+          throw new Error('Invalid response from server');
+        }
 
         if (response.ok && data.success) {
           setCertificateData(data);
@@ -36,14 +48,22 @@ const GiftCertificateSuccess = () => {
           throw new Error(data.detail || 'Failed to activate gift certificate');
         }
       } catch (err) {
-        console.error('Activation error:', err);
-        setError(err.message);
+        if (!isCancelled) {
+          console.error('Activation error:', err);
+          setError(err.message || 'Failed to activate gift certificate');
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     };
 
     activateCertificate();
+    
+    return () => {
+      isCancelled = true;
+    };
   }, [pendingId, sessionId]);
 
   if (loading) {
