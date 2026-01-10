@@ -925,3 +925,97 @@ async def notify_large_order(request: Request):
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+
+@router.get("/order/{order_id}")
+async def get_order_details(order_id: str):
+    """Get order details including download links for the confirmation page"""
+    
+    # First check orders collection
+    order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
+    
+    if not order:
+        # Also check payment_transactions for paid orders
+        transaction = await db.payment_transactions.find_one(
+            {"session_id": order_id},
+            {"_id": 0}
+        )
+        if transaction:
+            order = {
+                "order_id": order_id,
+                "items": transaction.get("items", []),
+                "payment_status": transaction.get("payment_status", "unknown"),
+                "order_type": "paid",
+                "created_at": transaction.get("created_at")
+            }
+        else:
+            raise HTTPException(status_code=404, detail="Order not found")
+    
+    # Get download links for this order
+    download_links = await db.download_links.find(
+        {"order_id": order_id, "revoked": False},
+        {"_id": 0, "token_hash": 0}
+    ).to_list(100)
+    
+    # Format download links for frontend
+    formatted_links = []
+    for link in download_links:
+        formatted_links.append({
+            "product_id": link.get("product_id"),
+            "product_name": link.get("product_name"),
+            "download_count": link.get("download_count", 0),
+            "max_downloads": link.get("max_downloads", 3),
+            "expires_at": link.get("expires_at").isoformat() if hasattr(link.get("expires_at"), 'isoformat') else str(link.get("expires_at", "")),
+        })
+    
+    return {
+        "order_id": order.get("order_id", order_id),
+        "items": order.get("items", []),
+        "payment_status": order.get("payment_status", "unknown"),
+        "order_type": order.get("order_type", "unknown"),
+        "coupon_code": order.get("coupon_code"),
+        "discount_percent": order.get("discount_percent", 0),
+        "download_links": formatted_links,
+        "created_at": order.get("created_at").isoformat() if hasattr(order.get("created_at"), 'isoformat') else str(order.get("created_at", ""))
+    }
+
+
+@router.get("/order/{order_id}/downloads")
+async def get_order_downloads(order_id: str):
+    """Get download links for an order - returns tokens for actual file downloads"""
+    
+    # Verify order exists
+    order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
+    if not order:
+        transaction = await db.payment_transactions.find_one(
+            {"session_id": order_id, "payment_status": "paid"},
+            {"_id": 0}
+        )
+        if not transaction:
+            raise HTTPException(status_code=404, detail="Order not found or not paid")
+    
+    # Get download links with tokens
+    download_links = await db.download_links.find(
+        {"order_id": order_id, "revoked": False},
+        {"_id": 0}
+    ).to_list(100)
+    
+    # Return links with tokens for downloading
+    result = []
+    for link in download_links:
+        # We need to return the actual token for downloads
+        # Note: For security, we generate new tokens or use the stored raw token
+        result.append({
+            "product_id": link.get("product_id"),
+            "product_name": link.get("product_name"),
+            "download_count": link.get("download_count", 0),
+            "max_downloads": link.get("max_downloads", 3),
+            "remaining": link.get("max_downloads", 3) - link.get("download_count", 0),
+            "expires_at": link.get("expires_at").isoformat() if hasattr(link.get("expires_at"), 'isoformat') else str(link.get("expires_at", ""))
+        })
+    
+    return {
+        "order_id": order_id,
+        "downloads": result
+    }
