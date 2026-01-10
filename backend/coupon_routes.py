@@ -241,32 +241,35 @@ async def validate_coupon(request: CouponValidateRequest):
     usage_count = await db.coupon_usage.count_documents({"code": code})
     
     if usage_count >= coupon["max_uses"]:
-        return CouponValidateResponse(
-            valid=False,
-            discount_percent=0,
-            message=f"This coupon has reached its maximum usage limit ({coupon['max_uses']} uses)",
-            code=code
-        )
+        return {
+            "valid": False,
+            "discount_percent": 0,
+            "discount_dollars": 0,
+            "message": f"This coupon has reached its maximum usage limit ({coupon['max_uses']} uses)",
+            "code": code
+        }
     
     # Check if coupon applies to the products
     if "applies_to" in coupon:
         # Beta coupon - only applies to specific products
         applicable = any(pid in coupon["applies_to"] for pid in request.product_ids)
         if not applicable:
-            return CouponValidateResponse(
-                valid=False,
-                discount_percent=0,
-                message="This coupon does not apply to the items in your cart",
-                code=code
-            )
+            return {
+                "valid": False,
+                "discount_percent": 0,
+                "discount_dollars": 0,
+                "message": "This coupon does not apply to the items in your cart",
+                "code": code
+            }
     
     # Coupon is valid
-    return CouponValidateResponse(
-        valid=True,
-        discount_percent=coupon["discount_percent"],
-        message=f"Coupon applied! You get {coupon['discount_percent']}% off",
-        code=code
-    )
+    return {
+        "valid": True,
+        "discount_percent": coupon["discount_percent"],
+        "discount_dollars": 0,
+        "message": f"Coupon applied! You get {coupon['discount_percent']}% off",
+        "code": code
+    }
 
 
 @router.post("/apply")
