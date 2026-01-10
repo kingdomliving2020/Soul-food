@@ -174,19 +174,26 @@ export const CartProvider = ({ children }) => {
     setCartItems(prevItems => prevItems.filter(item => item.uniqueKey !== uniqueKey));
   };
 
-  const updateQuantity = (uniqueKey, quantity) => {
-    if (quantity <= 0) {
-      removeFromCart(uniqueKey);
+  const updateQuantity = (keyToMatch, newQuantity) => {
+    console.log('[Cart] updateQuantity called:', { keyToMatch, newQuantity });
+    
+    if (newQuantity <= 0) {
+      removeFromCart(keyToMatch);
       return;
     }
     
-    setCartItems(prevItems =>
-      prevItems.map(item =>
-        item.uniqueKey === uniqueKey
-          ? { ...item, quantity }
-          : item
-      )
-    );
+    setCartItems(prevItems => {
+      const updated = prevItems.map(item => {
+        // Match by uniqueKey, productId, or id
+        const itemKey = item.uniqueKey || item.productId || item.id;
+        if (itemKey === keyToMatch) {
+          console.log('[Cart] Found item to update:', item.name, 'new qty:', newQuantity);
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      });
+      return updated;
+    });
   };
 
   const clearCart = () => {
