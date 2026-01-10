@@ -103,6 +103,14 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load referral routes: {e}")
 
+# Import email routes
+try:
+    from routes.email_routes import router as email_router
+    app.include_router(email_router)
+    print("✅ Email routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load email routes: {e}")
+
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
