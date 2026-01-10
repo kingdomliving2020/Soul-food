@@ -831,9 +831,19 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
             }
         )
         
-        # Store pending transaction
+        # Generate friendly order number: SF-2026-XXXXX
+        import secrets
+        import string
+        year = datetime.utcnow().year
+        chars = string.ascii_uppercase + string.digits
+        chars = chars.replace('0', '').replace('O', '').replace('I', '').replace('L', '').replace('1', '')
+        random_part = ''.join(secrets.choice(chars) for _ in range(5))
+        order_number = f"SF-{year}-{random_part}"
+        
+        # Store pending transaction with order number
         transaction = {
             "session_id": session.id,
+            "order_number": order_number,
             "items": request.items,
             "total_amount": total_amount,
             "currency": "usd",
@@ -852,6 +862,7 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         return {
             "url": session.url,
             "session_id": session.id,
+            "order_number": order_number,
             "amount": total_amount
         }
         
