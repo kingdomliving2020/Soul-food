@@ -1,14 +1,278 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Clock, Play, Pause, AlertTriangle, Zap, Timer, TrendingUp, Shield } from 'lucide-react';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Format minutes to hours:minutes display
+const formatTime = (minutes) => {
+  if (minutes === null || minutes === undefined) return '∞';
+  const hrs = Math.floor(minutes / 60);
+  const mins = Math.round(minutes % 60);
+  if (hrs > 0) {
+    return `${hrs}h ${mins}m`;
+  }
+  return `${mins}m`;
+};
+
+// Progress bar component
+const TimeProgressBar = ({ used, total, label }) => {
+  const percentage = total ? Math.min((used / total) * 100, 100) : 0;
+  const isWarning = percentage > 75;
+  const isCritical = percentage > 90;
+  
+  return (
+    <div className="w-full">
+      <div className="flex justify-between text-sm mb-1">
+        <span className="text-purple-300">{label}</span>
+        <span className={`font-medium ${isCritical ? 'text-red-400' : isWarning ? 'text-amber-400' : 'text-green-400'}`}>
+          {formatTime(used)} / {formatTime(total)}
+        </span>
+      </div>
+      <div className="h-3 bg-black/30 rounded-full overflow-hidden">
+        <div 
+          className={`h-full transition-all duration-500 ${
+            isCritical ? 'bg-gradient-to-r from-red-500 to-red-600' :
+            isWarning ? 'bg-gradient-to-r from-amber-500 to-orange-500' :
+            'bg-gradient-to-r from-green-500 to-emerald-500'
+          }`}
+          style={{ width: `${percentage}%` }}
+        />
+      </div>
+    </div>
+  );
+};
 
 const GamingCentral = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [edition, setEdition] = useState(searchParams.get('edition') || 'youth');
   
+  // Session management state
+  const [sessionStatus, setSessionStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [startingSession, setStartingSession] = useState(false);
+  const [error, setError] = useState(null);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  
+  // Get user ID (from localStorage or generate guest ID)
+  const getUserId = () => {
+    let userId = localStorage.getItem('userId');
+    if (!userId) {
+      // Check if logged in
+      const user = localStorage.getItem('user');
+      if (user) {
+        try {
+          const userData = JSON.parse(user);
+          userId = userData.id || userData._id || userData.email;
+        } catch (e) {}
+      }
+      if (!userId) {
+        // Generate guest ID
+        userId = `guest_${Date.now().toString(36)}`;
+        localStorage.setItem('userId', userId);
+      }
+    }
+    return userId;
+  };
+
+  // Heartbeat interval ref
+  const heartbeatInterval = useRef(null);
+
+  // Fetch session status
+  const fetchSessionStatus = useCallback(async () => {
+    try {
+      const userId = getUserId();
+      const token = localStorage.getItem('token');
+      
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch(
+        `${BACKEND_URL}/api/gaming/status?user_id=${userId}`,
+        { headers }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setSessionStatus(data);
+        
+        // Show upgrade prompt if near limit
+        if (data.remaining_minutes !== null && data.remaining_minutes < 30) {
+          setShowUpgradePrompt(true);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch session status:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Start gaming session
+  const startSession = async (gameType = 'jeopardy') => {
+    setStartingSession(true);
+    setError(null);
+    
+    try {
+      const userId = getUserId();
+      const token = localStorage.getItem('token');
+      
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch(
+        `${BACKEND_URL}/api/gaming/start?user_id=${userId}`,
+        {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ game_type: gameType })
+        }
+      );
+      
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        // Store session ID
+        localStorage.setItem('gamingSessionId', data.session_id);
+        
+        // Start heartbeat
+        startHeartbeat(data.session_id);
+        
+        // Refresh status
+        await fetchSessionStatus();
+        
+        return true;
+      } else {
+        setError(data.detail || 'Could not start session');
+        return false;
+      }
+    } catch (err) {
+      setError('Failed to start gaming session');
+      return false;
+    } finally {
+      setStartingSession(false);
+    }
+  };
+
+  // Send heartbeat
+  const sendHeartbeat = async (sessionId) => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/gaming/heartbeat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId })
+      });
+      
+      const data = await response.json();
+      
+      if (!data.active) {
+        // Session ended (timeout or limit reached)
+        stopHeartbeat();
+        localStorage.removeItem('gamingSessionId');
+        await fetchSessionStatus();
+        
+        if (data.message?.includes('limit')) {
+          setError('Daily time limit reached. Come back tomorrow!');
+        } else if (data.message?.includes('idle')) {
+          setError('Session ended due to inactivity');
+        }
+      } else {
+        // Update remaining time
+        setSessionStatus(prev => ({
+          ...prev,
+          remaining_minutes: data.remaining_minutes,
+          session_remaining_minutes: data.session_remaining_minutes
+        }));
+      }
+    } catch (err) {
+      console.error('Heartbeat failed:', err);
+    }
+  };
+
+  // Start heartbeat interval
+  const startHeartbeat = (sessionId) => {
+    if (heartbeatInterval.current) {
+      clearInterval(heartbeatInterval.current);
+    }
+    
+    // Send heartbeat every 60 seconds
+    heartbeatInterval.current = setInterval(() => {
+      sendHeartbeat(sessionId);
+    }, 60000);
+    
+    // Send first heartbeat immediately
+    sendHeartbeat(sessionId);
+  };
+
+  // Stop heartbeat
+  const stopHeartbeat = () => {
+    if (heartbeatInterval.current) {
+      clearInterval(heartbeatInterval.current);
+      heartbeatInterval.current = null;
+    }
+  };
+
+  // End session
+  const endSession = async () => {
+    const sessionId = localStorage.getItem('gamingSessionId');
+    if (!sessionId) return;
+    
+    try {
+      await fetch(`${BACKEND_URL}/api/gaming/end`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_id: sessionId, reason: 'user_ended' })
+      });
+    } catch (err) {
+      console.error('Failed to end session:', err);
+    } finally {
+      stopHeartbeat();
+      localStorage.removeItem('gamingSessionId');
+      await fetchSessionStatus();
+    }
+  };
+
+  // Handle game launch
+  const handlePlayGame = async (game) => {
+    if (!game.available) return;
+    
+    // Check if we have an active session or need to start one
+    const existingSessionId = localStorage.getItem('gamingSessionId');
+    
+    if (!existingSessionId && sessionStatus?.active_session === null) {
+      // Need to start a session first
+      const started = await startSession(game.id);
+      if (!started) return;
+    }
+    
+    // Navigate to game
+    navigate(game.route);
+  };
+
+  // Initialize
+  useEffect(() => {
+    fetchSessionStatus();
+    
+    // Check for existing session
+    const existingSessionId = localStorage.getItem('gamingSessionId');
+    if (existingSessionId) {
+      startHeartbeat(existingSessionId);
+    }
+    
+    // Cleanup on unmount
+    return () => {
+      stopHeartbeat();
+    };
+  }, [fetchSessionStatus]);
+
   // Game data for each edition
   const games = {
     youth: [
@@ -94,6 +358,8 @@ const GamingCentral = () => {
   };
 
   const currentGames = games[edition] || games.youth;
+  const hasActiveSession = sessionStatus?.active_session !== null;
+  const tierInfo = sessionStatus?.tier || {};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-purple-800">
@@ -120,7 +386,7 @@ const GamingCentral = () => {
 
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Title Section */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-6">
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">
             🎮 Gaming Central
           </h1>
@@ -129,6 +395,128 @@ const GamingCentral = () => {
             Learn scripture while having a blast!
           </p>
         </div>
+
+        {/* Session Status Panel */}
+        <Card className="bg-black/40 backdrop-blur-md border-purple-500/30 mb-8">
+          <CardContent className="p-6">
+            {loading ? (
+              <div className="flex items-center justify-center py-4">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400"></div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Tier & Status Row */}
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-lg ${hasActiveSession ? 'bg-green-500/20' : 'bg-gray-500/20'}`}>
+                      {hasActiveSession ? (
+                        <Play className="w-5 h-5 text-green-400" />
+                      ) : (
+                        <Pause className="w-5 h-5 text-gray-400" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-white font-semibold">{tierInfo.name || 'Free/Beta Access'}</p>
+                      <p className="text-purple-300 text-sm">
+                        {hasActiveSession ? 'Session Active' : 'No Active Session'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    {hasActiveSession ? (
+                      <Button
+                        onClick={endSession}
+                        variant="outline"
+                        className="border-red-500/50 text-red-400 hover:bg-red-500/20"
+                      >
+                        <Pause className="w-4 h-4 mr-2" />
+                        End Session
+                      </Button>
+                    ) : (
+                      <Badge className="bg-purple-500/30 text-purple-300 px-3 py-1">
+                        <Timer className="w-4 h-4 mr-1 inline" />
+                        {tierInfo.daily_limit_hours ? `${tierInfo.daily_limit_hours}hr daily limit` : 'Unlimited'}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                {/* Time Progress */}
+                {sessionStatus?.daily_limit_minutes && (
+                  <TimeProgressBar
+                    used={sessionStatus.used_today_minutes || 0}
+                    total={sessionStatus.daily_limit_minutes}
+                    label="Today's Usage"
+                  />
+                )}
+
+                {/* Remaining Time Display */}
+                {sessionStatus?.remaining_minutes !== null && sessionStatus?.remaining_minutes !== undefined && (
+                  <div className={`flex items-center gap-2 p-3 rounded-lg ${
+                    sessionStatus.remaining_minutes < 15 
+                      ? 'bg-red-500/20 border border-red-500/30' 
+                      : sessionStatus.remaining_minutes < 30 
+                        ? 'bg-amber-500/20 border border-amber-500/30'
+                        : 'bg-green-500/20 border border-green-500/30'
+                  }`}>
+                    <Clock className={`w-5 h-5 ${
+                      sessionStatus.remaining_minutes < 15 ? 'text-red-400' :
+                      sessionStatus.remaining_minutes < 30 ? 'text-amber-400' : 'text-green-400'
+                    }`} />
+                    <span className="text-white font-medium">
+                      {formatTime(sessionStatus.remaining_minutes)} remaining today
+                    </span>
+                    {sessionStatus.remaining_minutes < 30 && (
+                      <span className="text-amber-300 text-sm ml-auto">
+                        Time running low!
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Error Message */}
+                {error && (
+                  <div className="flex items-center gap-2 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+                    <AlertTriangle className="w-5 h-5 text-red-400" />
+                    <span className="text-red-300">{error}</span>
+                  </div>
+                )}
+
+                {/* Idle Timeout Warning */}
+                {tierInfo.idle_timeout_minutes && hasActiveSession && (
+                  <p className="text-purple-400 text-sm text-center">
+                    ⏱️ Sessions auto-end after {tierInfo.idle_timeout_minutes} minutes of inactivity
+                  </p>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Upgrade Prompt */}
+        {showUpgradePrompt && (
+          <Card className="bg-gradient-to-r from-amber-500/20 to-orange-500/20 border-amber-500/50 mb-8">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between gap-4 flex-wrap">
+                <div className="flex items-center gap-3">
+                  <TrendingUp className="w-6 h-6 text-amber-400" />
+                  <div>
+                    <p className="text-white font-semibold">Running low on time?</p>
+                    <p className="text-amber-200 text-sm">Upgrade your pass for more daily playtime!</p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() => navigate('/quick-order')}
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Upgrade Pass
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Edition Toggle */}
         <div className="flex justify-center mb-10">
@@ -175,7 +563,7 @@ const GamingCentral = () => {
               className={`bg-white/10 backdrop-blur-md border-purple-400/30 hover:bg-white/15 transition-all ${
                 game.available ? 'cursor-pointer' : 'opacity-70'
               }`}
-              onClick={() => game.available && navigate(game.route)}
+              onClick={() => handlePlayGame(game)}
             >
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
@@ -199,9 +587,10 @@ const GamingCentral = () => {
                       {game.available ? (
                         <Button
                           size="sm"
+                          disabled={startingSession}
                           className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
                         >
-                          Play Now →
+                          {startingSession ? 'Loading...' : 'Play Now →'}
                         </Button>
                       ) : (
                         <span className="text-purple-400 text-sm">🔒 Locked</span>
@@ -214,28 +603,29 @@ const GamingCentral = () => {
           ))}
         </div>
 
-        {/* Stats Section */}
-        <div className="mt-12 text-center">
-          <Card className="bg-white/10 backdrop-blur-md border-purple-400/30 inline-block">
-            <CardContent className="p-6">
-              <div className="flex gap-8">
-                <div>
-                  <div className="text-3xl font-bold text-white">2</div>
-                  <div className="text-purple-300 text-sm">Games Available</div>
-                </div>
-                <div className="border-l border-purple-500/30"></div>
-                <div>
-                  <div className="text-3xl font-bold text-white">2</div>
-                  <div className="text-purple-300 text-sm">Coming Soon</div>
-                </div>
-                <div className="border-l border-purple-500/30"></div>
-                <div>
-                  <div className="text-3xl font-bold text-white">∞</div>
-                  <div className="text-purple-300 text-sm">Fun to Have!</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Tier Info Cards */}
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold text-white text-center mb-6">Gaming Pass Tiers</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { name: 'Free/Beta', time: '30 min/day', idle: '10 min', color: 'gray' },
+              { name: '30-Day Pass', time: '4 hrs/day', idle: '20 min', color: 'blue', price: '$7.99' },
+              { name: '90-Day Pass', time: '5 hrs/day', idle: '30 min', color: 'purple', price: '$24.99' },
+              { name: 'Ministry', time: '6 hrs/day', idle: '40 min', color: 'amber', price: '$24.99/mo' },
+            ].map((tier) => (
+              <Card key={tier.name} className={`bg-${tier.color}-500/10 border-${tier.color}-500/30`}>
+                <CardContent className="p-4 text-center">
+                  <Shield className={`w-8 h-8 mx-auto mb-2 text-${tier.color}-400`} />
+                  <h3 className="text-white font-bold">{tier.name}</h3>
+                  <p className="text-purple-300 text-sm">{tier.time}</p>
+                  <p className="text-purple-400 text-xs">Idle: {tier.idle}</p>
+                  {tier.price && (
+                    <Badge className="mt-2 bg-green-500/20 text-green-300">{tier.price}</Badge>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
 
         {/* CTA Section */}
