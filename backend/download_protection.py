@@ -122,8 +122,13 @@ async def verify_download_token(token: str) -> Tuple[bool, Optional[Dict], str]:
     if record.get("revoked"):
         return False, None, "This download link has been revoked"
     
-    # Check expiry
-    if datetime.now(timezone.utc) > record["expires_at"]:
+    # Check expiry - handle both timezone-aware and naive datetimes
+    expires_at = record["expires_at"]
+    now = datetime.now(timezone.utc)
+    if hasattr(expires_at, 'tzinfo') and expires_at.tzinfo is None:
+        # Expires_at is naive, assume it's UTC
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if now > expires_at:
         return False, None, "This download link has expired. Please request a new one."
     
     # Check download count
