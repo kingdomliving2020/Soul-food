@@ -104,11 +104,11 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ### P0 - Critical (Blocking Users)
 - ~~100% discount checkout bug~~ ✅ FIXED
-- ~~Email notifications for orders~~ ✅ IMPLEMENTED (pending domain verification)
+- ~~Email notifications for orders~~ ✅ IMPLEMENTED
+- ~~Amazon-like checkout flow~~ ✅ IMPLEMENTED
+- ~~PDF Table of Contents quality~~ ✅ IMPROVED
 
 ### P1 - High Priority
-- [ ] Amazon-like checkout flow (login/guest prompt before payment)
-- [ ] PDF Table of Contents quality improvement
 - [ ] Frontend for Gaming Session Management
 - [ ] Frontend for Referral System
 
