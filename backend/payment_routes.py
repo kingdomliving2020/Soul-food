@@ -868,6 +868,9 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
             "discount_percent": request.discount_percent,
             "is_gift": request.is_gift,
             "order_notes": request.order_notes,
+            "customer_email": request.customer_email,
+            "customer_name": request.customer_name,
+            "shipping_address": request.shipping_address,
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
         }
