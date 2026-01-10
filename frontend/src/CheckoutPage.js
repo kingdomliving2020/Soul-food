@@ -20,22 +20,34 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setError('');
 
     try {
-      const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+      // Try regular login first
+      let response = await fetch(`${BACKEND_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier: email, password }),  // Backend expects 'identifier' not 'email'
+        body: JSON.stringify({ identifier: email, password }),
       });
 
-      const data = await response.json();
+      let data = await response.json();
+
+      // If regular login fails, try beta login (for test accounts)
+      if (!response.ok || !data.access_token) {
+        response = await fetch(`${BACKEND_URL}/api/auth/beta-login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: email, password }),
+        });
+        data = await response.json();
+      }
 
       if (response.ok && data.access_token) {
         localStorage.setItem('token', data.access_token);
         localStorage.setItem('user', JSON.stringify(data.user));
         onLoginSuccess(data.user);
       } else {
-        setError(data.detail || 'Invalid email or password');
+        setError(data.detail || 'Invalid email/username or password');
       }
     } catch (err) {
+      console.error('Login error:', err);
       setError('Connection error. Please try again.');
     } finally {
       setLoading(false);
