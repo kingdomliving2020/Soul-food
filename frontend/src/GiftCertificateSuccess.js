@@ -16,7 +16,6 @@ const GiftCertificateSuccess = () => {
 
   useEffect(() => {
     let isCancelled = false;
-    const abortController = new AbortController();
     
     const activateCertificate = async () => {
       if (!pendingId) {
@@ -25,52 +24,47 @@ const GiftCertificateSuccess = () => {
         return;
       }
 
-      try {
-        const response = await fetch(
-          `${BACKEND_URL}/api/gift-certificates/activate/${pendingId}?session_id=${sessionId || ''}`,
-          { 
-            method: 'POST',
-            signal: abortController.signal
+      // Use XMLHttpRequest to avoid fetch interception issues
+      const xhr = new XMLHttpRequest();
+      const url = `${BACKEND_URL}/api/gift-certificates/activate/${pendingId}?session_id=${sessionId || ''}`;
+      
+      xhr.open('POST', url, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          if (isCancelled) return;
+          
+          try {
+            const data = JSON.parse(xhr.responseText);
+            
+            if (xhr.status >= 200 && xhr.status < 300 && data.success) {
+              setCertificateData(data);
+            } else {
+              setError(data.detail || 'Failed to activate gift certificate');
+            }
+          } catch (parseError) {
+            setError('Invalid response from server');
           }
-        );
-
-        if (isCancelled) return;
-        
-        // Clone the response to safely read the body
-        const clonedResponse = response.clone();
-        let data;
-        
-        try {
-          data = await clonedResponse.json();
-        } catch (parseError) {
-          // If JSON parse fails, try to read as text for error details
-          const errorText = await response.text().catch(() => 'Unknown error');
-          throw new Error(errorText || 'Invalid response from server');
-        }
-
-        if (isCancelled) return;
-
-        if (response.ok && data.success) {
-          setCertificateData(data);
-        } else {
-          throw new Error(data.detail || 'Failed to activate gift certificate');
-        }
-      } catch (err) {
-        if (isCancelled || err.name === 'AbortError') return;
-        console.error('Activation error:', err);
-        setError(err.message || 'Failed to activate gift certificate');
-      } finally {
-        if (!isCancelled) {
+          
           setLoading(false);
         }
-      }
+      };
+      
+      xhr.onerror = function() {
+        if (!isCancelled) {
+          setError('Network error - please try again');
+          setLoading(false);
+        }
+      };
+      
+      xhr.send();
     };
 
     activateCertificate();
     
     return () => {
       isCancelled = true;
-      abortController.abort();
     };
   }, [pendingId, sessionId]);
 
