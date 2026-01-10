@@ -19,32 +19,53 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setLoading(true);
     setError('');
 
+    // Use XMLHttpRequest to avoid Emergent script intercepting fetch
+    const tryLogin = (url, body) => {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              resolve({ ok: xhr.status >= 200 && xhr.status < 300, data });
+            } catch (e) {
+              reject(new Error('Invalid response'));
+            }
+          }
+        };
+        
+        xhr.onerror = function() {
+          reject(new Error('Network error'));
+        };
+        
+        xhr.send(JSON.stringify(body));
+      });
+    };
+
     try {
       // Try regular login first
-      let response = await fetch(`${BACKEND_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier: email, password }),
-      });
-
-      let data = await response.json();
+      let result = await tryLogin(
+        `${BACKEND_URL}/api/auth/login`,
+        { identifier: email, password }
+      );
 
       // If regular login fails, try beta login (for test accounts)
-      if (!response.ok || !data.access_token) {
-        response = await fetch(`${BACKEND_URL}/api/auth/beta-login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: email, password }),
-        });
-        data = await response.json();
+      if (!result.ok || !result.data.access_token) {
+        result = await tryLogin(
+          `${BACKEND_URL}/api/auth/beta-login`,
+          { username: email, password }
+        );
       }
 
-      if (response.ok && data.access_token) {
-        localStorage.setItem('token', data.access_token);
-        localStorage.setItem('user', JSON.stringify(data.user));
-        onLoginSuccess(data.user);
+      if (result.ok && result.data.access_token) {
+        localStorage.setItem('token', result.data.access_token);
+        localStorage.setItem('user', JSON.stringify(result.data.user));
+        onLoginSuccess(result.data.user);
       } else {
-        setError(data.detail || 'Invalid email/username or password');
+        setError(result.data.detail || 'Invalid email/username or password');
       }
     } catch (err) {
       console.error('Login error:', err);
