@@ -50,6 +50,18 @@ const PaymentSuccess = () => {
         setStatus('success');
         // Clear the cart after successful payment
         clearCart();
+        
+        // Fetch download links
+        const orderId = data.transaction?.order_number || sessionId;
+        try {
+          const dlResponse = await fetch(`${BACKEND_URL}/api/payments/download-links/${orderId}`);
+          if (dlResponse.ok) {
+            const dlData = await dlResponse.json();
+            setDownloadLinks(dlData.links || []);
+          }
+        } catch (dlErr) {
+          console.error('Error fetching download links:', dlErr);
+        }
       } else if (data.status === 'expired') {
         setStatus('failed');
         setError('Payment session expired');
