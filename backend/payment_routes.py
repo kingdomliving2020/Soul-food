@@ -33,31 +33,125 @@ PRODUCT_FILES = {
     "snack_pack_ye_m1": "breakfast-ye-month1-snackpack.pdf",
     "snack_pack_ye_m2": "breakfast-ye-month2-snackpack.pdf",
     "snack_pack_ye_m3": "breakfast-ye-month3-snackpack.pdf",
-    # Full Workbooks
+    # Full Workbooks - with underscore format
     "breakfast_ae_digital": "breakfast-ae-full.pdf",
     "breakfast_ye_digital": "breakfast-ye-full.pdf",
     "breakfast_ie_digital": "breakfast-ie-full.pdf",
-    # Holiday
+    # Full Workbooks - with dash format (frontend sends these)
+    "breakfast-full-ae-digital": "breakfast-ae-full.pdf",
+    "breakfast-full-ye-digital": "breakfast-ye-full.pdf",
+    "breakfast-full-ie-digital": "breakfast-ie-full.pdf",
+    "breakfast-ae-full-digital": "breakfast-ae-full.pdf",
+    "breakfast-ye-full-digital": "breakfast-ye-full.pdf",
+    "breakfast-ie-full-digital": "breakfast-ie-full.pdf",
+    # Holiday - with underscore format
     "holiday_ae": "holiday-ae-full.pdf",
     "holiday_ye": "holiday-ye-full.pdf",
     "holiday_ie": "holiday-ie-full.pdf",
+    # Holiday - with dash format (frontend sends these)
+    "holiday-full-ae-digital": "holiday-ae-full.pdf",
+    "holiday-full-ye-digital": "holiday-ye-full.pdf",
+    "holiday-full-ie-digital": "holiday-ie-full.pdf",
+    "holiday-ae-full-digital": "holiday-ae-full.pdf",
+    "holiday-ye-full-digital": "holiday-ye-full.pdf",
+    "holiday-ie-full-digital": "holiday-ie-full.pdf",
+    # Holiday print versions (map to same PDF for download)
+    "holiday-full-ae-print": "holiday-ae-full.pdf",
+    "holiday-full-ye-print": "holiday-ye-full.pdf",
+    "holiday-full-ie-print": "holiday-ie-full.pdf",
+    # Breakfast print versions
+    "breakfast-full-ae-print": "breakfast-ae-full.pdf",
+    "breakfast-full-ye-print": "breakfast-ye-full.pdf",
+    "breakfast-full-ie-print": "breakfast-ie-full.pdf",
+    # Snack Packs - with dash format
+    "breakfast-snack-ae-m1-digital": "breakfast-ae-month1-snackpack.pdf",
+    "breakfast-snack-ae-m2-digital": "breakfast-ae-month2-snackpack.pdf",
+    "breakfast-snack-ae-m3-digital": "breakfast-ae-month3-snackpack.pdf",
+    "breakfast-snack-ye-m1-digital": "breakfast-ye-month1-snackpack.pdf",
+    "breakfast-snack-ye-m2-digital": "breakfast-ye-month2-snackpack.pdf",
+    "breakfast-snack-ye-m3-digital": "breakfast-ye-month3-snackpack.pdf",
     # Nibbles (single lessons)
-    "nibble_ae": "breakfast-ae-esther.pdf",  # Sample nibble
-    "nibble_ye": "breakfast-ye-esther.pdf",  # Sample nibble
+    "nibble_ae": "breakfast-ae-esther.pdf",
+    "nibble_ye": "breakfast-ye-esther.pdf",
+    "holiday-nibble-ae-covenant-digital": "holiday-ae-full.pdf",  # Use full workbook for now
+    "holiday-nibble-ae-cradle-digital": "holiday-ae-full.pdf",
+    "holiday-nibble-ae-cross-digital": "holiday-ae-full.pdf",
+    "holiday-nibble-ae-comforter-digital": "holiday-ae-full.pdf",
     # Free bonus lessons
     "bonus_names_of_god": "holiday-bonus-names-seasons.pdf",
     "bonus_times_seasons": "holiday-bonus-names-seasons.pdf",
     "bonus_in_his_image": "in-his-image-adult-full.pdf",
+    # In His Image series
+    "in-his-image-full-ae-digital": "in-his-image-adult-full.pdf",
+    "in-his-image-full-ye-digital": "in-his-image-youth-full.pdf",
+    "in-his-image-ae-digital": "in-his-image-adult-full.pdf",
+    "in-his-image-ye-digital": "in-his-image-youth-full.pdf",
 }
+
+def normalize_product_id(product_id: str) -> str:
+    """Normalize product ID to match PRODUCT_FILES keys"""
+    if not product_id:
+        return product_id
+    
+    # Already in PRODUCT_FILES, return as-is
+    if product_id in PRODUCT_FILES:
+        return product_id
+    
+    # Try common transformations
+    normalized = product_id.lower().strip()
+    
+    # Check if normalized version exists
+    if normalized in PRODUCT_FILES:
+        return normalized
+    
+    # Try replacing dashes with underscores
+    underscore_version = normalized.replace('-', '_')
+    if underscore_version in PRODUCT_FILES:
+        return underscore_version
+    
+    # Try extracting components: series-package-edition-format
+    parts = normalized.split('-')
+    if len(parts) >= 3:
+        series = parts[0]  # e.g., "breakfast", "holiday"
+        edition = None
+        format_type = None
+        
+        for part in parts:
+            if part in ['ae', 'ye', 'ie']:
+                edition = part
+            if part in ['digital', 'print']:
+                format_type = part
+        
+        if edition:
+            # Try series_edition_digital format
+            key = f"{series}_{edition}_digital"
+            if key in PRODUCT_FILES:
+                return key
+            
+            # Try series_edition format
+            key = f"{series}_{edition}"
+            if key in PRODUCT_FILES:
+                return key
+    
+    return product_id  # Return original if no match found
 
 def get_pdf_path(product_id: str) -> Optional[str]:
     """Get the full path to a product's PDF file"""
-    filename = PRODUCT_FILES.get(product_id)
+    # Normalize the product ID first
+    normalized_id = normalize_product_id(product_id)
+    
+    filename = PRODUCT_FILES.get(normalized_id)
     if not filename:
+        # Log for debugging
+        print(f"[PDF Path] No mapping found for product_id: {product_id} (normalized: {normalized_id})")
         return None
+    
     full_path = os.path.join(PDF_DIR, filename)
     if os.path.exists(full_path):
+        print(f"[PDF Path] Found file for {product_id}: {full_path}")
         return full_path
+    
+    print(f"[PDF Path] File not found: {full_path}")
     return None
 
 # Product catalog with list and sale prices
