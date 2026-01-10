@@ -170,8 +170,12 @@ export const CartProvider = ({ children }) => {
     setIsCartOpen(true);
   };
 
-  const removeFromCart = (uniqueKey) => {
-    setCartItems(prevItems => prevItems.filter(item => item.uniqueKey !== uniqueKey));
+  const removeFromCart = (keyToMatch) => {
+    console.log('[Cart] removeFromCart called:', keyToMatch);
+    setCartItems(prevItems => prevItems.filter(item => {
+      const itemKey = item.uniqueKey || item.productId || item.id;
+      return itemKey !== keyToMatch;
+    }));
   };
 
   const updateQuantity = (keyToMatch, newQuantity) => {
