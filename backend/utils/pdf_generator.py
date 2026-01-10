@@ -686,34 +686,90 @@ class LessonPDFGenerator:
         story.append(PageBreak())
         
         # === TABLE OF CONTENTS ===
-        story.append(Paragraph("Table of Contents", self.styles['SectionHeader']))
-        story.append(Spacer(1, 0.3*inch))
+        story.append(Paragraph("Contents", self.styles['TOCTitle']))
+        story.append(HRFlowable(width="50%", thickness=1, color=colors.HexColor('#E5E7EB'), spaceBefore=0, spaceAfter=20))
+        
+        # Import the custom TOC flowable
+        from reportlab.platypus import Flowable
+        from reportlab.lib.colors import HexColor
+        
+        class TOCEntryWithLeader(Flowable):
+            """Custom flowable for TOC entry with dotted leader line"""
+            def __init__(self, title, page_num, width=6*inch, is_chapter=False, indent=0):
+                Flowable.__init__(self)
+                self.title = title
+                self.page_num = str(page_num) if page_num else ""
+                self.width = width
+                self.is_chapter = is_chapter
+                self.indent = indent
+                self.height = 20 if is_chapter else 16
+                
+            def draw(self):
+                canvas = self.canv
+                
+                # Font settings
+                if self.is_chapter:
+                    canvas.setFont('Helvetica-Bold', 13)
+                    canvas.setFillColor(HexColor('#4F46E5'))
+                else:
+                    canvas.setFont('Helvetica', 11)
+                    canvas.setFillColor(HexColor('#374151'))
+                
+                # Draw title
+                x_start = self.indent
+                canvas.drawString(x_start, 4, self.title)
+                
+                # Get title width
+                title_width = canvas.stringWidth(self.title, canvas._fontname, canvas._fontsize)
+                
+                # Draw page number (right-aligned)
+                if self.page_num:
+                    canvas.setFont('Helvetica', 11)
+                    canvas.setFillColor(HexColor('#6B7280'))
+                    page_width = canvas.stringWidth(self.page_num, 'Helvetica', 11)
+                    x_page = self.width - page_width - 10
+                    canvas.drawString(x_page, 4, self.page_num)
+                    
+                    # Draw dotted leader between title and page number
+                    if not self.is_chapter:
+                        x_leader_start = x_start + title_width + 10
+                        x_leader_end = x_page - 10
+                        
+                        if x_leader_end > x_leader_start:
+                            dot_spacing = 6
+                            y_dots = 5
+                            x = x_leader_start
+                            canvas.setFillColor(HexColor('#9CA3AF'))
+                            while x < x_leader_end:
+                                canvas.circle(x, y_dots, 0.5, fill=1)
+                                x += dot_spacing
         
         # Front matter
-        story.append(Paragraph("Title Page .......................... 1", self.styles['TOCEntry']))
-        story.append(Paragraph("Copyright ........................... 2", self.styles['TOCEntry']))
-        story.append(Paragraph("Dedication .......................... 3", self.styles['TOCEntry']))
-        story.append(Paragraph("Quick Start Guide ................... 4", self.styles['TOCEntry']))
-        story.append(Spacer(1, 0.2*inch))
+        story.append(TOCEntryWithLeader("FRONT MATTER", "", is_chapter=True))
+        story.append(TOCEntryWithLeader("Title Page", "i", indent=24))
+        story.append(TOCEntryWithLeader("Copyright", "ii", indent=24))
+        story.append(TOCEntryWithLeader("Dedication", "iii", indent=24))
+        story.append(TOCEntryWithLeader("Quick Start Guide", "iv", indent=24))
+        story.append(Spacer(1, 0.15*inch))
         
         # Lessons
+        story.append(TOCEntryWithLeader("LESSONS", "", is_chapter=True))
         current_page = 6
         for nibble in nibbles:
-            story.append(Paragraph(
-                f"Lesson {nibble.get('lesson_number', '')}: {nibble['title']}",
-                self.styles['TOCEntry']
-            ))
+            # Lesson title
+            lesson_title = f"Lesson {nibble.get('lesson_number', '')}: {nibble['title']}"
+            if len(lesson_title) > 45:
+                lesson_title = lesson_title[:42] + "..."
+            story.append(TOCEntryWithLeader(lesson_title, current_page, indent=24))
             
-            # Sub-entries
-            sub_entries = ["Opening Prayer", "Appetizer", "Key Verse"]
+            # Sub-entries for each bite
             for i, bite in enumerate(nibble.get('bites', []), 1):
-                sub_entries.append(f"Bite {i}: {bite.get('title', '')}")
-            sub_entries.extend(["To-Go Box", "Activity", "Closing Prayer"])
+                bite_title = bite.get('title', '')[:25]
+                if len(bite.get('title', '')) > 25:
+                    bite_title += "..."
+                story.append(TOCEntryWithLeader(f"    Bite {i}: {bite_title}", "", indent=48))
             
-            for sub in sub_entries:
-                story.append(Paragraph(f"    • {sub}", self.styles['TOCSubEntry']))
-            
-            story.append(Spacer(1, 0.1*inch))
+            current_page += 4  # Estimate 4 pages per lesson
         
         story.append(PageBreak())
         
