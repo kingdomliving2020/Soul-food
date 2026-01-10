@@ -344,87 +344,113 @@ class LessonPDFGenerator:
         # Decorative line under title
         story.append(HRFlowable(width="50%", thickness=1, color=colors.HexColor('#E5E7EB'), spaceBefore=0, spaceAfter=20))
         
-        # Build TOC entries with professional dotted leaders
-        toc_data = [
-            ("Title Page", "i"),
-            ("Copyright & Dedication", "ii"),
-            ("How to Use This Study", "iii"),
-        ]
+        # Professional TOC with dotted leaders using a custom approach
+        from reportlab.platypus import Table, TableStyle, Flowable
+        from reportlab.lib.colors import HexColor
         
-        # Calculate page numbers for lesson content
-        current_page = 1
+        class TOCEntryWithLeader(Flowable):
+            """Custom flowable for TOC entry with dotted leader line"""
+            def __init__(self, title, page_num, width=6*inch, is_chapter=False, indent=0):
+                Flowable.__init__(self)
+                self.title = title
+                self.page_num = page_num
+                self.width = width
+                self.is_chapter = is_chapter
+                self.indent = indent
+                self.height = 20 if is_chapter else 16
+                
+            def draw(self):
+                canvas = self.canv
+                
+                # Font settings
+                if self.is_chapter:
+                    canvas.setFont('Helvetica-Bold', 13)
+                    canvas.setFillColor(HexColor('#4F46E5'))
+                else:
+                    canvas.setFont('Helvetica', 11)
+                    canvas.setFillColor(HexColor('#374151'))
+                
+                # Draw title
+                x_start = self.indent
+                canvas.drawString(x_start, 4, self.title)
+                
+                # Get title width
+                title_width = canvas.stringWidth(self.title, canvas._fontname, canvas._fontsize)
+                
+                # Draw page number (right-aligned)
+                canvas.setFont('Helvetica', 11)
+                canvas.setFillColor(HexColor('#6B7280'))
+                page_width = canvas.stringWidth(str(self.page_num), 'Helvetica', 11)
+                x_page = self.width - page_width - 10
+                canvas.drawString(x_page, 4, str(self.page_num))
+                
+                # Draw dotted leader between title and page number
+                if not self.is_chapter:
+                    canvas.setStrokeColor(HexColor('#D1D5DB'))
+                    canvas.setLineCap(0)
+                    x_leader_start = x_start + title_width + 10
+                    x_leader_end = x_page - 10
+                    
+                    if x_leader_end > x_leader_start:
+                        # Draw dots
+                        dot_spacing = 6
+                        y_dots = 5
+                        x = x_leader_start
+                        canvas.setFillColor(HexColor('#9CA3AF'))
+                        while x < x_leader_end:
+                            canvas.circle(x, y_dots, 0.5, fill=1)
+                            x += dot_spacing
         
-        # Main lesson entry
-        lesson_title = f"{nibble['title']}"
-        toc_data.append((lesson_title, str(current_page)))
+        # Add TOC entries
+        story.append(Spacer(1, 0.1*inch))
         
-        # Create professional TOC with dotted leaders
-        from reportlab.platypus import Table, TableStyle
+        # Front matter section header
+        story.append(TOCEntryWithLeader("FRONT MATTER", "", is_chapter=True))
+        story.append(TOCEntryWithLeader("Title Page", "i", indent=24))
+        story.append(TOCEntryWithLeader("Copyright & Dedication", "ii", indent=24))
+        story.append(TOCEntryWithLeader("How to Use This Study", "iii", indent=24))
         
-        toc_table_data = []
+        story.append(Spacer(1, 0.15*inch))
         
-        # Front matter section
-        toc_table_data.append([Paragraph("<b>FRONT MATTER</b>", self.styles['TOCChapter']), ""])
-        for entry, page in toc_data[:3]:
-            # Create dotted leader effect
-            entry_text = f"<font color='#374151'>{entry}</font>"
-            toc_table_data.append([
-                Paragraph(entry_text, self.styles['TOCSubEntry']),
-                Paragraph(f"<font color='#6B7280'>{page}</font>", self.styles['TOCPageNum'])
-            ])
+        # Lesson section header
+        story.append(TOCEntryWithLeader("THE LESSON", "", is_chapter=True))
         
-        # Lesson section
-        toc_table_data.append([Paragraph("", self.styles['TOCEntry']), ""])  # Spacer row
-        toc_table_data.append([Paragraph("<b>THE LESSON</b>", self.styles['TOCChapter']), ""])
+        # Main lesson title (bold)
+        lesson_title = nibble['title']
+        story.append(TOCEntryWithLeader(lesson_title, "1", indent=24))
         
-        # Lesson title
-        toc_table_data.append([
-            Paragraph(f"<b>{nibble['title']}</b>", self.styles['TOCEntry']),
-            Paragraph("<font color='#4F46E5'><b>1</b></font>", self.styles['TOCPageNum'])
-        ])
-        
-        # Sub-entries for the lesson
+        # Calculate page numbers for sub-sections
+        page_num = 1
         sub_entries = [
-            ("🙏 Opening Prayer", "1"),
-            ("🍽️ Appetizer (Background)", "1"),
-            ("📖 Key Verse", "2"),
+            ("Opening Prayer", page_num),
+            ("Appetizer (Background)", page_num),
+            ("Key Verse", page_num + 1),
         ]
         
-        # Add bites with page estimates
+        # Add bites
         page_num = 2
         for i, bite in enumerate(nibble.get('bites', []), 1):
-            sub_entries.append((f"📚 Bite {i}: {bite.get('title', '')}", str(page_num)))
+            bite_title = f"Bite {i}: {bite.get('title', '')[:30]}"
+            if len(bite.get('title', '')) > 30:
+                bite_title += "..."
+            sub_entries.append((bite_title, page_num))
             page_num += 1
         
         # Add remaining sections
         sub_entries.extend([
-            ("🥡 To-Go Box (Key Takeaways)", str(page_num)),
-            ("✏️ Activity", str(page_num)),
-            ("🙏 Your Personal Prayer", str(page_num + 1)),
-            ("🙏 Closing Prayer", str(page_num + 1))
+            ("To-Go Box (Key Takeaways)", page_num),
+            ("Activity", page_num),
+            ("Your Personal Prayer", page_num + 1),
+            ("Closing Prayer", page_num + 1)
         ])
         
-        # Add word study if present
+        # Word study if present
         if nibble.get('word_study'):
-            sub_entries.append(("📝 Word Study", str(page_num + 2)))
+            sub_entries.append(("Word Study", page_num + 2))
         
-        for entry, page in sub_entries:
-            toc_table_data.append([
-                Paragraph(entry, self.styles['TOCSubEntry']),
-                Paragraph(f"<font color='#6B7280'>{page}</font>", self.styles['TOCPageNum'])
-            ])
-        
-        # Create the TOC table with proper column widths
-        toc_table = Table(toc_table_data, colWidths=[5.5*inch, 0.75*inch])
-        toc_table.setStyle(TableStyle([
-            ('ALIGN', (0, 0), (0, -1), 'LEFT'),
-            ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-            ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
-            ('TOPPADDING', (0, 0), (-1, -1), 4),
-        ]))
-        
-        story.append(toc_table)
+        # Add sub-entries with dotted leaders
+        for entry_title, entry_page in sub_entries:
+            story.append(TOCEntryWithLeader(f"    {entry_title}", str(entry_page), indent=40))
         
         story.append(PageBreak())
         
