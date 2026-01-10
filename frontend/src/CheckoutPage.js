@@ -353,6 +353,37 @@ const CheckoutPage = () => {
                 )}
               </div>
               
+              {/* Customer Email for Order Confirmation */}
+              <div className="mb-6 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <Mail className="w-4 h-4 text-indigo-600" />
+                  <span className="text-sm font-semibold text-indigo-800">Get Order Confirmation</span>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <input
+                      type="email"
+                      value={customerEmail}
+                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      className="w-full px-3 py-2.5 text-sm border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="Your name (optional)"
+                      className="w-full px-3 py-2.5 text-sm border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                </div>
+                <p className="text-xs text-indigo-600 mt-2">
+                  📧 We'll send your order confirmation and download links to this email.
+                </p>
+              </div>
+              
               {/* Gift & Order Notes Section */}
               <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
                 <div className="flex items-start gap-3 mb-3">
