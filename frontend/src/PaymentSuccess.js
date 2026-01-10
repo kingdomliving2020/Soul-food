@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { CheckCircle, Loader, XCircle } from 'lucide-react';
+import { CheckCircle, Loader, XCircle, Download, ExternalLink, Package } from 'lucide-react';
 import { useCart } from './CartContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -12,11 +12,12 @@ const PaymentSuccess = () => {
   
   const [status, setStatus] = useState('checking'); // checking, success, failed
   const [paymentData, setPaymentData] = useState(null);
+  const [downloadLinks, setDownloadLinks] = useState([]);
   const [error, setError] = useState(null);
   const [attempts, setAttempts] = useState(0);
   
   const sessionId = searchParams.get('session_id');
-  const maxAttempts = 5;
+  const maxAttempts = 10; // Increased to allow more time for download link generation
 
   useEffect(() => {
     if (!sessionId) {
