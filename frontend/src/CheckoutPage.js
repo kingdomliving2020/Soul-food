@@ -317,6 +317,23 @@ const CheckoutPage = () => {
     setLoading(true);
     setError(null);
 
+    // Validate email is provided
+    if (!customerEmail.trim()) {
+      setError('Please enter your email address to receive order confirmation.');
+      setLoading(false);
+      return;
+    }
+    
+    // Validate shipping address for physical items
+    if (hasPhysicalItems) {
+      if (!shippingAddress.street.trim() || !shippingAddress.city.trim() || 
+          !shippingAddress.state.trim() || !shippingAddress.zipCode.trim()) {
+        setError('Please enter your complete shipping address for physical items.');
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
       // Calculate total with discount
       let totalAmount = subtotal;
@@ -342,7 +359,8 @@ const CheckoutPage = () => {
             coupon_code: couponApplied.code,
             discount_percent: couponApplied.discount_percent,
             customer_email: customerEmail || null,
-            customer_name: customerName || null
+            customer_name: customerName || null,
+            shipping_address: hasPhysicalItems ? shippingAddress : null
           }),
         });
 
