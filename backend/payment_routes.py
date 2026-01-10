@@ -1148,6 +1148,46 @@ async def get_products():
     return {"products": PRODUCTS}
 
 
+@router.get("/download-links/{order_id}")
+async def get_download_links(order_id: str):
+    """Get download links for an order - returns tokens for actual file downloads"""
+    
+    # Find download links for this order
+    links = await db.download_links.find(
+        {"order_id": order_id, "revoked": False},
+        {"_id": 0, "token_hash": 0, "file_path": 0}  # Don't expose sensitive data
+    ).to_list(100)
+    
+    if not links:
+        # Try to find by session_id as well
+        transaction = await db.payment_transactions.find_one({
+            "$or": [
+                {"order_number": order_id},
+                {"session_id": order_id}
+            ]
+        })
+        
+        if transaction:
+            order_number = transaction.get("order_number", order_id)
+            links = await db.download_links.find(
+                {"order_id": order_number, "revoked": False},
+                {"_id": 0, "token_hash": 0, "file_path": 0}
+            ).to_list(100)
+    
+    return {
+        "order_id": order_id,
+        "links": [{
+            "product_id": link.get("product_id"),
+            "product_name": link.get("product_name"),
+            "token": link.get("token"),
+            "download_count": link.get("download_count", 0),
+            "max_downloads": link.get("max_downloads", 3),
+            "expires_at": link.get("expires_at").isoformat() if link.get("expires_at") else None
+        } for link in links],
+        "count": len(links)
+    }
+
+
 @router.post("/notify-large-order")
 async def notify_large_order(request: Request):
     """Send email notification for large print orders (>25 items)"""
