@@ -16,6 +16,7 @@ const GiftCertificateSuccess = () => {
 
   useEffect(() => {
     let isCancelled = false;
+    const abortController = new AbortController();
     
     const activateCertificate = async () => {
       if (!pendingId) {
@@ -27,20 +28,27 @@ const GiftCertificateSuccess = () => {
       try {
         const response = await fetch(
           `${BACKEND_URL}/api/gift-certificates/activate/${pendingId}?session_id=${sessionId || ''}`,
-          { method: 'POST' }
+          { 
+            method: 'POST',
+            signal: abortController.signal
+          }
         );
 
-        // Parse response text first to avoid "body stream already read" error
-        const responseText = await response.text();
-        
         if (isCancelled) return;
         
+        // Clone the response to safely read the body
+        const clonedResponse = response.clone();
         let data;
+        
         try {
-          data = JSON.parse(responseText);
+          data = await clonedResponse.json();
         } catch (parseError) {
-          throw new Error('Invalid response from server');
+          // If JSON parse fails, try to read as text for error details
+          const errorText = await response.text().catch(() => 'Unknown error');
+          throw new Error(errorText || 'Invalid response from server');
         }
+
+        if (isCancelled) return;
 
         if (response.ok && data.success) {
           setCertificateData(data);
@@ -48,10 +56,9 @@ const GiftCertificateSuccess = () => {
           throw new Error(data.detail || 'Failed to activate gift certificate');
         }
       } catch (err) {
-        if (!isCancelled) {
-          console.error('Activation error:', err);
-          setError(err.message || 'Failed to activate gift certificate');
-        }
+        if (isCancelled || err.name === 'AbortError') return;
+        console.error('Activation error:', err);
+        setError(err.message || 'Failed to activate gift certificate');
       } finally {
         if (!isCancelled) {
           setLoading(false);
@@ -63,6 +70,7 @@ const GiftCertificateSuccess = () => {
     
     return () => {
       isCancelled = true;
+      abortController.abort();
     };
   }, [pendingId, sessionId]);
 
