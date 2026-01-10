@@ -684,6 +684,9 @@ class CartCheckoutRequest(BaseModel):
     discount_percent: int = 0
     is_gift: bool = False
     order_notes: Optional[str] = None
+    customer_email: Optional[str] = None
+    customer_name: Optional[str] = None
+    shipping_address: Optional[dict] = None
 
 
 @router.post("/checkout/session")
