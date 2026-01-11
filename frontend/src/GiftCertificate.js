@@ -408,7 +408,7 @@ const GiftCertificate = () => {
                     value={senderEmail}
                     onChange={(e) => setSenderEmail(e.target.value)}
                   />
-                  <p className="text-xs text-slate-500 mt-1">You'll receive a confirmation when the gift is delivered</p>
+                  <p className="text-xs text-slate-500 mt-1">You&apos;ll receive a confirmation when the gift is delivered</p>
                 </div>
                 
                 <div>
