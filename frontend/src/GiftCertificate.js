@@ -70,6 +70,74 @@ const GiftCertificate = () => {
     return amount - (amount * couponApplied.discount_percent / 100);
   };
 
+  // Validate form fields
+  const validateForm = () => {
+    if (!recipientName.trim()) {
+      setError('Please enter the recipient\'s name');
+      return false;
+    }
+    if (!recipientEmail.trim()) {
+      setError('Please enter the recipient\'s email');
+      return false;
+    }
+    if (!senderName.trim()) {
+      setError('Please enter your name');
+      return false;
+    }
+    if (!senderEmail.trim()) {
+      setError('Please enter your email address');
+      return false;
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(recipientEmail)) {
+      setError('Please enter a valid recipient email address');
+      return false;
+    }
+    if (!emailRegex.test(senderEmail)) {
+      setError('Please enter a valid email address for yourself');
+      return false;
+    }
+    
+    return true;
+  };
+
+  // Add gift certificate to cart instead of direct checkout
+  const handleAddToCart = () => {
+    if (!validateForm()) return;
+    
+    setAddingToCart(true);
+    setError(null);
+    
+    try {
+      const certConfig = certificateTypes[selectedType];
+      
+      addGiftCertificateToCart({
+        certificateType: selectedType,
+        certificateTypeName: certConfig.name,
+        amount: amount,
+        recipientName: recipientName,
+        recipientEmail: recipientEmail,
+        senderName: senderName,
+        senderEmail: senderEmail,
+        message: message
+      });
+      
+      toast.success('Gift certificate added to cart!');
+      
+      // Clear form after adding to cart
+      setRecipientName('');
+      setRecipientEmail('');
+      setMessage('');
+      
+    } catch (err) {
+      console.error('Add to cart error:', err);
+      setError('Failed to add gift certificate to cart. Please try again.');
+    } finally {
+      setAddingToCart(false);
+    }
+  };
+
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
       setCouponError('Please enter a coupon code');
