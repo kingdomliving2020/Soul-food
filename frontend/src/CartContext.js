@@ -220,14 +220,51 @@ export const CartProvider = ({ children }) => {
     return cartItems.reduce((count, item) => count + item.quantity, 0);
   };
 
+  // Special function to add gift certificates to cart
+  const addGiftCertificateToCart = (giftCertData) => {
+    const uniqueKey = `gift_certificate_${giftCertData.certificateType}_${Date.now()}`;
+    
+    const giftCertItem = {
+      productId: `gift_certificate_${giftCertData.certificateType}`,
+      uniqueKey: uniqueKey,
+      name: `Gift Certificate - ${giftCertData.certificateTypeName}`,
+      salePrice: giftCertData.amount,
+      listPrice: giftCertData.amount,
+      quantity: 1,
+      isGiftCertificate: true,
+      metadata: {
+        certificateType: giftCertData.certificateType,
+        certificateTypeName: giftCertData.certificateTypeName,
+        recipientName: giftCertData.recipientName,
+        recipientEmail: giftCertData.recipientEmail,
+        senderName: giftCertData.senderName,
+        senderEmail: giftCertData.senderEmail,
+        message: giftCertData.message || '',
+        amount: giftCertData.amount
+      }
+    };
+
+    setCartItems(prevItems => [...prevItems, giftCertItem]);
+    setIsCartOpen(true);
+    
+    return uniqueKey;
+  };
+
+  // Check if cart has gift certificates
+  const hasGiftCertificates = () => {
+    return cartItems.some(item => item.isGiftCertificate);
+  };
+
   const value = {
     cartItems,
     addToCart,
+    addGiftCertificateToCart,
     removeFromCart,
     updateQuantity,
     clearCart,
     getCartTotal,
     getCartCount,
+    hasGiftCertificates,
     isCartOpen,
     setIsCartOpen
   };
