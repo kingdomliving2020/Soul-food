@@ -162,7 +162,9 @@ const GiftCertificate = () => {
           recipient_email: recipientEmail,
           sender_name: senderName,
           sender_email: senderEmail,
-          message: message || null
+          message: message || null,
+          coupon_code: couponApplied?.code || null,
+          discount_percent: couponApplied?.discount_percent || 0
         }),
       });
 
