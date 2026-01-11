@@ -10,7 +10,7 @@ from playwright.async_api import async_playwright
 import time
 
 # Frontend URL from frontend/.env
-FRONTEND_URL = "https://sf-store-platform.preview.emergentagent.com"
+FRONTEND_URL = "https://learn-shop-soul.preview.emergentagent.com"
 
 class SoulFoodCartTester:
     def __init__(self):

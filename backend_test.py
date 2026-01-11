@@ -11,7 +11,7 @@ import time
 from typing import Dict, Any
 
 # Backend URL from frontend/.env
-BASE_URL = "https://sf-store-platform.preview.emergentagent.com/api"
+BASE_URL = "https://learn-shop-soul.preview.emergentagent.com/api"
 
 class SoulFoodQuickOrderTester:
     def __init__(self):

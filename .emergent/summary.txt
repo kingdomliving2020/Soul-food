@@ -1,142 +1,135 @@
 <analysis>**original_problem_statement:**
 The user's primary goal is to build and refine a full-stack e-commerce and learning platform, Soul Food.
 
-During this session, the user's requests included:
-1.  **Critical Bug Fix (100% Discount)**: Fix the checkout flow where using a 100% discount coupon completes the order but prevents the user from accessing their downloads.
-2.  **Product ID Mismatch**: Fix a bug where the cart contained different items than what the user ordered, resulting in incorrect downloads.
-3.  **Email System Integration**: Implement a full transactional email system using Resend for order confirmations, contact form submissions, and gift certificate delivery.
-4.  **Checkout Flow Overhaul**:
-    *   Implement an Amazon-like checkout flow with a Sign In vs. Continue as Guest prompt.
-    *   Make the email field mandatory for guest checkout to ensure delivery of download links.
-    *   Fix a body stream already read error that blocked payments.
-5.  **PDF Quality Improvement**: Fix a long-standing issue with the poor formatting of the Table of Contents in auto-generated PDFs.
-6.  **Cart Functionality**: Fix a bug where the quantity of items in the cart could not be adjusted.
-7.  **Gift Certificate System**:
-    *   Fix a mocked implementation where gift certificates were generated without payment.
-    *   Implement a full purchase and redemption flow where a purchased certificate code can be redeemed for a one-time use discount code.
-8.  **Stripe Live Mode**: Switch the application from Stripe test keys to live keys to process real payments.
-9.  **Gaming Frontend**: Build the UI for the gaming session management system, allowing users to see their time limits, usage, and available tiers.
+Key objectives in this session were:
+1.  **Critical Checkout & Download Fixes**: Resolve multiple revenue-blocking bugs, including coupons not applying to Stripe, non-delivery of purchased digital items, and a broken login/registration flow.
+2.  **Refund System**: Implement a full refund system, allowing customers to look up orders and request refunds, and an admin interface to process them.
+3.  **UI/UX Enhancements**:
+    *   Implement an Amazon-style modal pop-up for login at checkout.
+    *   Fix a long-standing cart persistence bug where items were lost on navigation.
+    *   Collect shipping addresses for physical goods.
+    *   Improve the design of the gift certificate to a professional PDF.
+4.  **New Feature Request**: Add a coupon code field to the gift certificate purchase page.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack project (React, FastAPI, MongoDB) with several major features completed and bugs fixed in this session.
--   **Critical Bug Fixes**: The 100% discount checkout flow is now fixed and verified. The product ID mismatch between the frontend and backend has been resolved, ensuring correct items are processed. The cart quantity adjustment bug is fixed. The checkout payment error (body stream already read) is resolved.
--   **Email System**: A complete email system using the user's Resend API key is integrated. It handles order confirmations, contact form submissions, and gift certificate delivery. It uses  as the sender and  as the reply-to address.
--   **Checkout Flow**: The checkout page now features an Amazon-like prompt to either Sign In or Continue as Guest. The email field is mandatory for guest checkout to proceed to payment.
--   **Gift Certificate System**: A full flow for gift certificates is implemented. Users can purchase a certificate via a dedicated Stripe checkout. The backend generates a unique certificate code () and emails it to the recipient. A new page () allows the recipient to redeem this code, which then generates a one-time use, fixed-amount discount code () that can be used at the main checkout.
--   **Gaming Frontend**: A functional frontend for the gaming session management system is live at . It displays the user's current tier, daily time usage via a progress bar, remaining time, and allows starting/ending sessions. It also lists the available gaming pass tiers for upgrades.
--   **PDF Generation**: The Table of Contents in generated PDFs has been improved with professional dotted leader lines.
--   **Stripe Integration**: The application is now configured with the user's **LIVE** Stripe keys.
+The application is a full-stack project (React, FastAPI, MongoDB) with Stripe LIVE payments enabled. All major systems are functional, with several critical bugs and new features completed in this session.
+
+-   **Checkout & Payment**: The checkout flow is stable. Coupons (including fixed-amount gift certificate codes) are now correctly applied to the final Stripe charge. The login/registration process is handled via a working Amazon-style modal. Shipping addresses are collected for physical products.
+-   **Order Fulfillment**: **This is now fixed.** Purchased digital items are delivered immediately after successful payment via download links on the success page and in the user's order history. A bug preventing download token generation has been resolved.
+-   **Refund System**: A complete refund system is in place. Customers can look up their orders via an email/order number form on . This page displays order details, download links, and an option to request a refund. An admin page at  lists all transactions and allows an admin to process refunds. A dedicated  page has also been created.
+-   **Gift Certificates**: The purchase and redemption flow is functional. The blank success page bug has been fixed. A professionally designed PDF of the gift certificate is now generated and attached to the recipient's email. A race condition causing duplicate email sends has been fixed.
+-   **Cart Persistence**: **This is now fixed.** The long-standing bug where the cart would lose its contents upon page navigation or reload has been resolved by initializing the cart state directly from .
+-   **Known Workaround**: Critical frontend API calls (login, gift certificate activation) use  instead of  to bypass a platform script that was causing body stream already read errors.
 
 **Last working item**:
--   **Last item agent was working**: The user reported two issues with the gift certificate purchase flow:
-    1.  After a successful Stripe payment for a gift certificate, the user is redirected to a blank success page.
-    2.  The gift certificate purchase is a separate, immediate transaction, rather than being added to the main shopping cart. The user seems to prefer it being part of the main cart.
-    The agent had just analyzed the user's screenshot showing the blank page and was about to begin fixing it.
--   **Status**: IN PROGRESS
+-   **Last item agent was working**: The user requested the ability for customers to apply a discount coupon when *purchasing* a gift certificate. The current gift certificate purchase page does not have a coupon input field.
+-   **Status**: NOT STARTED
 -   **Agent Testing Done**: N
--   **Which testing method agent to use?**: both. The backend agent needs to verify the Stripe success/cancel URLs are correct. The frontend agent needs to test the full purchase flow, ensuring redirection from Stripe to a non-blank  page that displays the correct information.
--   **User Testing Done**: Y (User reported the bug)
+-   **Which testing method agent to use?**: both. The frontend () needs a UI for coupon input. The backend () needs to be updated to apply the discount to the Stripe checkout session.
+-   **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
--   **Issue 1**: Blank success page after gift certificate purchase (P0)
--   **Issue 2**: Gift certificates are a separate transaction, not part of the main cart (P1)
--   **Issue 3**: Cart state is sometimes lost on refresh/navigation (P2)
+-   **Issue 1**: Add coupon code field to the Gift Certificate purchase page (P0)
+-   **Issue 2**: Interactive lessons link to the wrong content (P1)
+-   **Issue 3**: Gift certificates are a separate transaction, not part of the main cart (P1)
 -   **Issue 4**: User is Blocked from Linking Custom Domain (P2)
 
 **Issues Detail**:
--   **Issue 1**: Blank success page after gift certificate purchase
-    -   **Description**: After completing a Stripe payment for a gift certificate, the user is redirected to a blank page. The payment is processed correctly, but there is no confirmation UI.
+-   **Issue 1**: Add coupon code field to the Gift Certificate purchase page
+    -   **Description**: The user wants to allow customers to use a coupon when buying a gift certificate. The current purchase page at  lacks a coupon input field.
     -   **Next debug checklist**:
-        1.  Examine  and check the  being passed when creating the Stripe Checkout session. It should point to .
-        2.  Review . Ensure its  hook correctly parses the  from the URL, fetches the certificate details from the backend, and displays them. The blank page suggests this logic is failing.
-    -   **Why fix this issue and what will be achieved with the fix?**: This is a critical break in the purchase flow. Fixing it will provide users with immediate confirmation that their purchase was successful and their gift certificate was sent.
-    -   **Status**: IN PROGRESS
+        1.  Edit  to add a coupon input field and an Apply button, similar to the main .
+        2.  Update the  function in that file to pass the  to the backend.
+        3.  Modify the  endpoint in  to accept a .
+        4.  In the backend endpoint, validate the coupon and apply the discount to the Stripe  before creating the session.
+    -   **Why fix this issue and what will be achieved with the fix?**: This will increase sales flexibility and allow for promotions on gift certificates.
+    -   **Status**: NOT STARTED
     -   **Is recurring issue?**: N
     -   **Should Test frontend/backend/both after fix?**: both
 
--   **Issue 2**: Gift certificates are a separate transaction, not part of the main cart
-    -   **Description**: The user noted that purchasing a gift certificate is a separate payment flow, unlike other products. They would prefer to add it to their main shopping cart and pay for everything at once.
+-   **Issue 2**: Interactive lessons link to the wrong content
+    -   **Description**: The user reported that clicking on links for interactive lessons incorrectly redirects them to the covenant lesson.
+    -   **Attempted fixes**: None. The agent acknowledged the issue but did not have a chance to investigate.
     -   **Next debug checklist**:
-        1.  Refactor . Instead of creating a separate Stripe session, the Purchase button should add a special item to the cart using the  function from .
+        1.  Examine  to check the logic that serves lesson content.
+        2.  Review the frontend components that contain the links to the interactive lessons (likely in  or a dedicated lessons page) to ensure the correct lesson IDs or slugs are being passed in the URL.
+        3.  Trace the API call from the frontend to see what request is being made when a lesson link is clicked.
+    -   **Why fix this issue and what will be achieved with the fix?**: This is a core functionality bug preventing users from accessing purchased content.
+    -   **Status**: NOT STARTED
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: both
+
+-   **Issue 3**: Gift certificates are a separate transaction, not part of the main cart
+    -   **Description**: The user noted that purchasing a gift certificate is a separate payment flow. They would prefer to add it to their main shopping cart and pay for everything at once.
+    -   **Next debug checklist**:
+        1.  Refactor . The Purchase button should add a special item to the cart using the  function from , instead of creating a separate Stripe session.
         2.  Update the main checkout logic in . The  endpoint must be able to identify the gift certificate item in the cart.
-        3.  Modify the Stripe webhook handler () or the success logic. When a payment that includes a gift certificate is completed, it must trigger the gift certificate creation and email sending logic from .
-    -   **Why fix this issue and what will be achieved with the fix?**: This will create a more unified and seamless shopping experience, allowing users to purchase products and gift certificates in a single transaction.
+        3.  Modify the Stripe webhook handler () or the success logic. When a payment that includes a gift certificate is completed, it must trigger the gift certificate creation and email sending logic.
+    -   **Why fix this issue and what will be achieved with the fix?**: This will create a more unified and seamless shopping experience.
     -   **Status**: NOT STARTED
     -   **Is recurring issue?**: N
     -   **Should Test frontend/backend/both after fix?**: both
-
--   **Issue 3**: Cart state is sometimes lost on refresh/navigation
-    -   **Description**: A long-standing issue where cart items disappear on page reload or navigation, despite the use of .
-    -   **Next debug checklist**:
-        1.  Perform a deep-dive analysis of .
-        2.  Trace the  hooks that read from and write to .
-        3.  Investigate potential race conditions where the cart state is initialized as empty before  is read, overwriting the saved data.
-    -   **Why fix this issue and what will be achieved with the fix?**: This will improve user experience by preventing frustrating data loss and making the shopping cart reliable.
-    -   **Status**: NOT STARTED
-    -   **Is recurring issue?**: Y
-    -   **Should Test frontend/backend/both after fix?**: Frontend
 
 -   **Issue 4**: User is Blocked from Linking Custom Domain
     -   **Description**: An external issue where the user cannot find the Link domain button in the Emergent dashboard.
     -   **Status**: BLOCKED
-    -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: N/A
     -   **Blocked on other issue**: Emergent Support
-
-**In progress Task List**:
-None. The agent was focused on bug fixing and implementing user requests.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks**:
-    -   **P1: Frontend for Referral System**: Create a UI for users to generate referral codes and for new users to apply them.
-    -   **P1: Implement Full Instructor Role Functionality**: Begin work on the features defined in .
-    -   **P1: Implement RBAC Rules for Test Users**: Enforce the specific access controls for , ,  roles.
-    -   **P2: Implement Word Search Game**: Build the actual game to replace the placeholder in .
+    -   P1: Frontend for Referral System.
+    -   P1: Implement Full Instructor Role Functionality (as per ).
+    -   P1: Implement RBAC Rules for Test Users (, , ).
+    -   P2: Implement Word Search Game to replace the placeholder.
 -   **Future Tasks**:
-    -   **Migrate Hardcoded Product Catalog to DB**: This is a critical refactoring task to improve maintainability. The entire product, pricing, and bundle catalog should be moved from JS/Python files to MongoDB.
-    -   Develop a mobile app strategy (PWA is the recommended first step).
+    -   **Critical Tech Debt**: Migrate the hardcoded product catalog from JS/Python files to a  collection in MongoDB.
+    -   Develop a mobile app strategy (PWA).
 
 **Completed work in this session**
--   **Critical Checkout Bug Fixes**: Fixed the 100% discount flow, resolved product ID mismatches, made email mandatory for guest checkout, and fixed the cart quantity adjustment bug.
--   **Email System Integration**: Successfully integrated Resend for all transactional emails.
--   **Checkout Flow Overhaul**: Implemented an Amazon-like guest/login prompt.
--   **Gift Certificate System**: Built a complete system for purchasing certificates and redeeming them for one-time use discount codes.
--   **Gaming Session Frontend**: Developed a UI for users to track their gaming time and view available tiers.
--   **PDF TOC Improvement**: Enhanced the formatting of the Table of Contents in generated PDFs.
--   **Stripe Live Mode**: Configured the application to use the user's live Stripe keys for real payments.
+-   **Fixed Critical Download Bug**: Resolved the issue where paid digital items were not delivered after purchase.
+-   **Fixed Critical Checkout Bugs**: Fixed coupons not applying to Stripe and a broken login/registration flow.
+-   **Implemented Refund System**: Created frontend pages for order lookup (), admin order management (), a policy page (), and the corresponding backend API ().
+-   **Fixed Recurring Cart Bug**: Finally resolved the cart persistence issue where items were lost on navigation.
+-   **Implemented Amazon-Style Login**: The checkout page now features a working modal pop-up for login/registration.
+-   **Implemented Shipping Address Collection**: The checkout page now conditionally shows and requires a shipping address for physical items.
+-   **Improved Gift Certificate Flow**: Fixed the blank success page, added navigation buttons, and implemented a professionally styled PDF voucher attached to the recipient email.
+-   **Fixed API Call Failures**: Identified and worked around a platform-level issue by replacing  with  for critical API calls.
 
 **Earlier issues found/mentioned but not fixed**
--   **Issue 1**: Game Pass Restriction Disclosures
-    -   **Description**: The user's request to add restriction disclosures (e.g., 4 hrs/day limit) to the Game Pass items on the  page was noted in the previous handoff but not implemented.
-    -   **Debug checklist**:
-        1.  Locate the rendering logic for Game Pass items within .
-        2.  Add a text description below the item name or price, pulling the limit data from the product definition.
-    -   **Why to solve this issue and what will be achieved with this?**: Provides clarity to customers about what they are purchasing.
-    -   **Should Test frontend/backend/both after fix?**: Frontend
-    -   **Is recurring issue?**: N
+-   **Game Pass Restriction Disclosures**: The user's request to add restriction disclosures (e.g., 4 hrs/day limit) to the Game Pass items on the  page was noted in the previous handoff but not implemented.
 
 **Known issue recurrence from previous fork**
--   **Cart Persistence**: This was a known issue, and despite attempts to fix it with , it remains unresolved and reported by users.
+-   **Cart Persistence**: This was a recurring issue from the previous fork.
 -   **Recurrence count**: 2+
--   **Status**: NOT STARTED
+-   **Status**: RESOLVED. The agent fixed this by ensuring the cart state was initialized directly from  synchronously.
 
 **Code Architecture**
 
 
+**Key Technical Concepts**
+-   **Frontend**: React, React Router, , , .
+-   **Backend**: FastAPI, Pydantic, MongoDB ().
+-   **Integrations**: Stripe (Live Keys), Resend (Emails), ReportLab (PDF Generation).
+-   **Key Workaround**: Using  in the frontend to bypass interference from a platform script () that was consuming  response bodies and causing errors.
+
+**key DB schema**
+-   **orders**: Added  (e.g., SF-2026-XXXXX),  (object),  (e.g., completed, refunded).
+-   **download_links**: Added a  field to store the raw, un-hashed download token required for file access.
+-   **pending_gift_certificates**: Added a  field (pending, activating, activated) to serve as a lock, preventing race conditions during activation.
+
 **All files of reference**
--    (Current implementation of gift certificate purchase)
--    (Backend logic for creating certificates and redemption codes)
--    (Site of many recent bug fixes and UI changes)
--    (Core backend payment logic)
--    (Core logic for cart state management)
--    (Newly implemented gaming session UI)
--    (New Resend email integration)
--    (Project requirements and completed tasks)
+-    (Center of most recent critical fixes)
+-    (Core payment and order fulfillment logic)
+-    (Location of the cart persistence fix)
+-    (New refund and order management system)
+-    (Current gift certificate logic)
+-    (Target for the next feature request)
+-   
 
 **Areas that need refactoring**:
--   **Hardcoded Product Catalog**: The entire product catalog in  () and  is extremely fragile. Migrating this to a  collection in MongoDB is the highest priority technical debt.
+-   **Hardcoded Product Catalog**: This remains the highest priority technical debt. The product list, pricing, and file mappings are duplicated and hardcoded in  and various frontend components. Migrating this to a  collection in MongoDB is critical for stability and maintainability.
 
 **key api endpoints**
 -   
@@ -147,41 +140,38 @@ None. The agent was focused on bug fixing and implementing user requests.
 -   
 -   
 -   
--   
 
 **Critical Info for New Agent**
--   **LIVE MODE IS ACTIVE**: The application is using live Stripe keys. All payment-related tests will result in real transactions. Be cautious.
--   **Immediate Priorities**: The user is blocked by two gift certificate issues. First, fix the **blank success page** (P0). Second, plan and implement the **integration of gift certificates into the main shopping cart** (P1 feature request).
--   **User Feedback Loop**: The user is actively testing and providing high-quality feedback with screenshots. Pay close attention to their reports as they uncover critical bugs.
--   **Technical Debt**: The hardcoded product catalog is a major liability. After addressing the user's immediate blockers, propose migrating this data to MongoDB as a crucial step for stability.
+-   **Stripe is in LIVE mode.** All payment tests will result in real transactions.
+-   **Top Priority is User Request**: The highest priority task is to add a coupon input field to the gift certificate purchase page, as this was the user's last direct request.
+-   **Second Priority is Bug Fix**: Immediately after, address the bug where interactive lessons link to the wrong content.
+-   ** is CRUCIAL**: A platform script interferes with the standard  API, causing body stream already read errors. For critical frontend API calls (especially login, registration, and post-payment activation), you **must** use  to ensure stability. This workaround is already implemented in  (Login Modal) and .
+-   **Cart Persistence**: This recurring bug is now considered fixed. The solution was to initialize the cart state with a function that synchronously reads from . Be cautious of any changes that might re-introduce this race condition.
 
 **documents and test reports created in this job**
--   
--   
--   
+-    (Updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-10. **(LATEST)** Reported two issues with gift certificates: the success page after payment is blank, and the purchase is a separate transaction instead of being added to the cart. **Status: IN PROGRESS.**
-9.  Confirmed they have live Stripe keys and asked the agent to configure them. **Status: Completed.**
-8.  Reported a bug where the cart quantity could not be adjusted. **Status: Completed.**
-7.  Reported a body stream already read error when trying to pay at checkout. **Status: Completed.**
-6.  Asked the agent to start work on the Gaming Session Frontend. **Status: Completed.**
-5.  Reported a serious bug where a purchased gift certificate was a mock and didn't process payment. **Status: Completed.**
-4.  Reported a critical bug where the items received after a 100% discount order did not match the items in the cart, and the email was not requested for a guest checkout. **Status: Completed.**
-3.  Confirmed DNS is verified and instructed the agent to implement the Amazon-like checkout flow and fix the PDF TOC. **Status: Completed.**
-2.  Confirmed they have a Resend account and provided the API key. **Status: Completed.**
-1.  Provided detailed requirements for a full email integration (roles, sending rules, form submissions). **Status: Completed.**
+10. **(LATEST)** Requested a coupon field on the gift certificate purchase page. **Status: NOT STARTED.**
+9.  Reported that user registration/login was failing. **Status: Completed.**
+8.  Reported a critical bug where coupons were not being applied to the final Stripe price. Also requested an Amazon-style login popup and shipping address collection. **Status: Completed.**
+7.  Reported that the cart checkout button was unresponsive. This was diagnosed as the recurring cart persistence bug. **Status: Completed.**
+6.  Reported that gift certificate emails were being sent twice and asked for a spam folder note. **Status: Completed.**
+5.  Expressed dissatisfaction with the initial gift certificate design and provided a professional mockup. **Status: Completed.**
+4.  Asked for a refund system and provided a detailed refund policy. **Status: Completed.**
+3.  Requested clarification on the plan to build the refund system. **Status: Completed.**
+2.  Confirmed the plan for the refund system. **Status: Completed.**
+1.  Fixed the blank gift certificate success page and added Continue Shopping/Proceed to Checkout buttons. **Status: Completed.**
 
 **Project Health Check:**
 -   **Broken**:
-    -   The post-payment success page for gift certificate purchases is blank.
+    -   Navigation for interactive lessons is broken, leading to the wrong content.
 -   **Mocked**:
     -   Frontend UI for the referral system.
     -   The Word Search game itself.
     -   Full RBAC rules for different test user tiers.
 -   **Fragile**:
-    -   The entire product catalog is hardcoded in frontend and backend files, making it brittle and difficult to update.
-    -   The cart's state persistence across sessions remains an unaddressed, recurring issue.
+    -   The entire product catalog is hardcoded, making it extremely brittle and difficult to update. This is a high-priority technical debt.
 
 **3rd Party Integrations**
 -   **Stripe**: For payment processing. **Configured with LIVE keys.**
@@ -192,14 +182,16 @@ None. The agent was focused on bug fixing and implementing user requests.
 -   **libreoffice**: Used via shell command for DOCX-to-PDF conversion.
 
 **Testing status**
--   **Testing agent used after significant changes**: YES. Used twice to verify the 100% discount fix and the checkout/PDF TOC changes.
+-   **Testing agent used after significant changes**: NO. Agent performed all testing manually via , Python scripts, and extensive use of the  with Playwright for UI interaction.
 -   **Troubleshoot agent used after agent stuck in loop**: NO
--   **Test files created**: , 
--   **Known regressions**: Cart persistence.
+-   **Test files created**: None.
+-   **Known regressions**: None in this session. The cart persistence regression was fixed.
 
 **Credentials to test flow:**
 -   Resend API Key:  (stored in )
 -   Stripe LIVE Keys:  and  (stored in )
+-   Test User (Instructor):  / 
 
 **What agent forgot to execute**
--   The user's request from the previous session to add restriction disclosures (e.g., 4 hrs/day limit) to the Game Pass items on the  page was not implemented. This task remains outstanding.</analysis>
+-   The user's request from a previous session to add restriction disclosures (e.g., 4 hrs/day limit) to the Game Pass items on the  page remains unimplemented.
+-   The user reported that interactive lessons keept taking me to covenant. The agent acknowledged this but was immediately tasked with a higher-priority bug and did not address it. This is now a P1 pending issue.</analysis>
