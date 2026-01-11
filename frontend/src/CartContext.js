@@ -59,6 +59,16 @@ export const PRODUCTS = {
     listPrice: 40.00,
     salePrice: 29.99,
     currency: 'USD'
+  },
+  // Gift Certificate Products
+  gift_certificate_book: {
+    id: 'gift_certificate_book',
+    name: 'Book Selection Gift Certificate',
+    description: 'Redeemable for any Soul Food series book',
+    listPrice: 0, // Dynamic pricing
+    salePrice: 0, // Set by amount selection
+    currency: 'USD',
+    isGiftCertificate: true
   }
 };
 
