@@ -375,6 +375,50 @@ const GiftCertificate = () => {
                   />
                 </div>
 
+                {/* Coupon Code Section */}
+                <div className="p-4 bg-gradient-to-r from-purple-50 to-orange-50 rounded-lg border border-purple-100">
+                  <label className="block text-sm font-semibold text-purple-700 mb-2">
+                    Have a coupon code?
+                  </label>
+                  {couponApplied ? (
+                    <div className="flex items-center justify-between bg-green-100 p-3 rounded-lg">
+                      <div>
+                        <span className="font-bold text-green-700">{couponApplied.code}</span>
+                        <span className="text-green-600 ml-2">
+                          ({couponApplied.discount_percent}% off)
+                        </span>
+                      </div>
+                      <button
+                        onClick={handleRemoveCoupon}
+                        className="text-red-500 hover:text-red-700 text-sm font-medium"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Input
+                        type="text"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                        placeholder="Enter coupon code"
+                        className="flex-1 uppercase"
+                      />
+                      <Button
+                        onClick={handleApplyCoupon}
+                        disabled={couponLoading}
+                        variant="outline"
+                        className="border-purple-300 text-purple-700 hover:bg-purple-50"
+                      >
+                        {couponLoading ? '...' : 'Apply'}
+                      </Button>
+                    </div>
+                  )}
+                  {couponError && (
+                    <p className="text-red-500 text-xs mt-2">{couponError}</p>
+                  )}
+                </div>
+
                 {error && (
                   <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
                     <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
@@ -382,9 +426,28 @@ const GiftCertificate = () => {
                   </div>
                 )}
 
+                {/* Price Summary */}
+                <div className="bg-slate-50 rounded-lg p-4 space-y-2">
+                  <div className="flex justify-between text-slate-600">
+                    <span>Certificate Value</span>
+                    <span>${amount.toFixed(2)}</span>
+                  </div>
+                  {couponApplied && (
+                    <div className="flex justify-between text-green-600 font-semibold">
+                      <span>Discount ({couponApplied.discount_percent}%)</span>
+                      <span>-${(amount - getDiscountedAmount()).toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-lg font-bold text-slate-800 border-t pt-2">
+                    <span>Total to Pay</span>
+                    <span className="text-orange-600">${getDiscountedAmount().toFixed(2)}</span>
+                  </div>
+                </div>
+
                 <Button
                   onClick={handlePurchaseCertificate}
                   disabled={loading}
+                  data-testid="gift-certificate-purchase-btn"
                   className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white py-3 text-lg font-semibold"
                 >
                   {loading ? (
@@ -393,7 +456,7 @@ const GiftCertificate = () => {
                       Processing...
                     </>
                   ) : (
-                    <>Purchase & Send - ${amount.toFixed(2)}</>
+                    <>Purchase & Send - ${getDiscountedAmount().toFixed(2)}</>
                   )}
                 </Button>
                 
