@@ -18,6 +18,12 @@ const GiftCertificate = () => {
   const [amount, setAmount] = useState(50);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  
+  // Coupon state
+  const [couponCode, setCouponCode] = useState('');
+  const [couponApplied, setCouponApplied] = useState(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState('');
 
   const certificateTypes = {
     book: {
