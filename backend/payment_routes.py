@@ -10,7 +10,7 @@ from emergentintegrations.payments.stripe.checkout import (
     CheckoutStatusResponse,
     CheckoutSessionRequest
 )
-from datetime import datetime
+from datetime import datetime, timedelta
 
 load_dotenv()
 
