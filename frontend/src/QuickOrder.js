@@ -168,12 +168,12 @@ const QuickOrder = () => {
     { id: 'faith-4', name: 'Faith & Foresight - Lesson 4', available: true, month: 3 }
   ];
 
-  // Holiday lessons for Nibble selection
+  // Holiday lessons for Nibble selection - IDs must match backend ALL_NIBBLES
   const holidayLessons = [
-    { id: 'covenant', name: 'The Covenant', available: true },
-    { id: 'cradle', name: 'The Cradle', available: true },
-    { id: 'cross', name: 'The Cross', available: true },
-    { id: 'comforter', name: 'The Comforter', available: true }
+    { id: 'holiday-ae-covenant', name: 'The Covenant', available: true },
+    { id: 'holiday-ae-cradle', name: 'The Cradle', available: true },
+    { id: 'holiday-ae-cross', name: 'The Cross', available: true },
+    { id: 'holiday-ae-comforter', name: 'The Comforter', available: true }
   ];
 
   // FREE LESSONS - Self-Worth series and Bonus lessons
@@ -866,7 +866,7 @@ const QuickOrder = () => {
                 : (meal.formats?.[0] || 'interactive');
               const selectedFormat = sel.format || defaultFormat;
               const selectedMonth = sel.month || (meal.monthOptions?.[0]?.id || 'month-1');
-              const selectedLesson = sel.lesson || (meal.lessonOptions?.[0]?.id || 'covenant');
+              const selectedLesson = sel.lesson || (meal.lessonOptions?.[0]?.id || 'holiday-ae-covenant');
               
               const pkgData = meal.packages?.find(p => p.id === selectedPkg) || meal.packages?.[0];
               const pricingData = meal.pricing?.[selectedPkg] || {};
