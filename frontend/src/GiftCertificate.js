@@ -190,34 +190,8 @@ const GiftCertificate = () => {
   };
 
   const handlePurchaseCertificate = async () => {
-    // Validate required fields
-    if (!recipientName.trim()) {
-      setError('Please enter the recipient\'s name');
-      return;
-    }
-    if (!recipientEmail.trim()) {
-      setError('Please enter the recipient\'s email');
-      return;
-    }
-    if (!senderName.trim()) {
-      setError('Please enter your name');
-      return;
-    }
-    if (!senderEmail.trim()) {
-      setError('Please enter your email address for order confirmation');
-      return;
-    }
-    
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(recipientEmail)) {
-      setError('Please enter a valid recipient email address');
-      return;
-    }
-    if (!emailRegex.test(senderEmail)) {
-      setError('Please enter a valid email address for yourself');
-      return;
-    }
+    // Use shared validation
+    if (!validateForm()) return;
 
     setLoading(true);
     setError(null);
