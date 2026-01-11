@@ -491,23 +491,56 @@ const GiftCertificate = () => {
                   </div>
                 </div>
 
-                <Button
-                  onClick={handlePurchaseCertificate}
-                  disabled={loading}
-                  data-testid="gift-certificate-purchase-btn"
-                  className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white py-3 text-lg font-semibold"
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    <>Purchase & Send - ${getDiscountedAmount().toFixed(2)}</>
-                  )}
-                </Button>
+                {/* Purchase Buttons */}
+                <div className="space-y-3">
+                  <Button
+                    onClick={handlePurchaseCertificate}
+                    disabled={loading || addingToCart}
+                    data-testid="gift-certificate-purchase-btn"
+                    className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-700 hover:to-amber-700 text-white py-3 text-lg font-semibold"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>Purchase & Send Now - ${getDiscountedAmount().toFixed(2)}</>
+                    )}
+                  </Button>
+                  
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1 h-px bg-slate-200"></div>
+                    <span className="text-xs text-slate-400">or</span>
+                    <div className="flex-1 h-px bg-slate-200"></div>
+                  </div>
+                  
+                  <Button
+                    onClick={handleAddToCart}
+                    disabled={loading || addingToCart}
+                    data-testid="gift-certificate-add-to-cart-btn"
+                    variant="outline"
+                    className="w-full border-2 border-purple-300 text-purple-700 hover:bg-purple-50 py-3 text-lg font-semibold"
+                  >
+                    {addingToCart ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Adding...
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingCart className="w-5 h-5 mr-2" />
+                        Add to Cart
+                      </>
+                    )}
+                  </Button>
+                  
+                  <p className="text-xs text-center text-slate-500">
+                    💡 Add to cart to combine with other items and pay once
+                  </p>
+                </div>
                 
-                <p className="text-xs text-center text-slate-500">
+                <p className="text-xs text-center text-slate-500 mt-2">
                   🔒 Secure payment powered by Stripe. Certificate sent only after payment succeeds.
                 </p>
               </CardContent>
