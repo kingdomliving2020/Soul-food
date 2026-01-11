@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import { Loader2, CheckCircle, AlertCircle, ShoppingCart } from "lucide-react";
+import { useCart } from "./CartContext";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
