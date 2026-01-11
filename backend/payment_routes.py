@@ -951,6 +951,71 @@ async def get_checkout_status(session_id: str):
                 item_product_id = item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
                 item_name = item.get("name", item_product_id)
                 
+                # Check if this is a gift certificate item
+                if item_product_id.startswith('gift_certificate_') or item.get("isGiftCertificate"):
+                    # Process gift certificate
+                    try:
+                        metadata = item.get("metadata", {})
+                        from routes.gift_certificate_routes import generate_certificate_code, CERTIFICATE_TYPES
+                        from email_service import send_email, get_base_template, SUPPORT_EMAIL
+                        
+                        cert_type = metadata.get("certificateType", "book")
+                        cert_config = CERTIFICATE_TYPES.get(cert_type, {"name": "Gift Certificate"})
+                        cert_code = generate_certificate_code()
+                        
+                        # Ensure code is unique
+                        while await db.gift_certificates.find_one({"code": cert_code}):
+                            cert_code = generate_certificate_code()
+                        
+                        # Create the gift certificate
+                        gift_cert = {
+                            "code": cert_code,
+                            "order_id": order_number,
+                            "certificate_type": cert_type,
+                            "certificate_name": cert_config.get("name", "Gift Certificate"),
+                            "amount": metadata.get("amount", item.get("salePrice", 0)),
+                            "balance": metadata.get("amount", item.get("salePrice", 0)),
+                            "recipient_name": metadata.get("recipientName", ""),
+                            "recipient_email": metadata.get("recipientEmail", ""),
+                            "sender_name": metadata.get("senderName", ""),
+                            "sender_email": metadata.get("senderEmail", ""),
+                            "message": metadata.get("message", ""),
+                            "status": "active",
+                            "expires_at": datetime.utcnow() + timedelta(days=365),
+                            "created_at": datetime.utcnow()
+                        }
+                        
+                        await db.gift_certificates.insert_one(gift_cert)
+                        
+                        # Send email to recipient
+                        FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://kingdom-soul.com')
+                        recipient_html = f"""
+                        <div style="text-align: center; padding: 20px;">
+                            <h2 style="color: #1f2937;">🎁 You've Received a Gift!</h2>
+                            <p>From: <strong>{gift_cert['sender_name']}</strong></p>
+                            <div style="background: linear-gradient(135deg, #fed7aa 0%, #fef3c7 100%); padding: 30px; border-radius: 12px; margin: 20px 0;">
+                                <h3 style="color: #ea580c;">{cert_config.get('name', 'Gift Certificate')}</h3>
+                                <p style="font-size: 36px; font-weight: bold; color: #c2410c;">${gift_cert['amount']:.2f}</p>
+                            </div>
+                            {f'<p style="font-style: italic;">"{gift_cert["message"]}"</p>' if gift_cert.get('message') else ''}
+                            <p style="font-size: 24px; font-weight: bold; letter-spacing: 2px;">{cert_code}</p>
+                            <p>Redeem at <a href="{FRONTEND_URL}/redeem-gift">{FRONTEND_URL}/redeem-gift</a></p>
+                        </div>
+                        """
+                        
+                        email_html = get_base_template(recipient_html, f"🎁 {gift_cert['sender_name']} sent you a Soul Food gift!")
+                        
+                        await send_email(
+                            to=gift_cert["recipient_email"],
+                            subject=f"🎁 {gift_cert['sender_name']} sent you a ${gift_cert['amount']:.2f} Soul Food Gift Certificate!",
+                            html=email_html
+                        )
+                        
+                        print(f"[Status Check] Gift certificate created and sent: {cert_code}")
+                    except Exception as gc_error:
+                        print(f"[Status Check] Error creating gift certificate: {gc_error}")
+                    continue
+                
                 # Normalize product ID
                 normalized_id = normalize_product_id(item_product_id)
                 pdf_path = get_pdf_path(normalized_id)
