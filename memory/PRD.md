@@ -327,6 +327,90 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 - **Solution**: User must verify kingdom-soul.com in Resend dashboard and add DNS records
 
 ### Cart Persistence
-- **Status**: Not started
-- **Impact**: Medium - users lose cart items on refresh
+- **Status**: FIXED (January 10, 2026)
+- **Impact**: None - issue resolved
+- **Solution**: Changed to synchronous localStorage initialization
 
+---
+
+## January 11, 2026 - Session 3 Updates
+
+### 1. Gift Certificate Coupon Code Field
+**Status: COMPLETED**
+
+**Feature**: Added coupon code input field to the Gift Certificate purchase page.
+
+**Implementation**:
+- New "Have a coupon code?" section with input field and Apply button
+- Validates coupons via `/api/coupons/validate` endpoint
+- Shows discount percentage and updated price summary
+- Price breakdown: Certificate Value, Discount, Total to Pay
+- Backend modified to apply discount to Stripe checkout amount
+- Supports 100% discount (free gift certificate checkout flow)
+
+**Files Modified**:
+- `/app/frontend/src/GiftCertificate.js` - Coupon state, validation, UI
+- `/app/backend/routes/gift_certificate_routes.py` - Accept coupon_code, apply discount
+
+---
+
+### 2. Interactive Lessons Navigation Bug Fix
+**Status: COMPLETED**
+
+**Problem**: Users reported that clicking on interactive lessons always redirected to the "covenant" lesson regardless of which lesson was selected.
+
+**Root Cause**: The `holidayLessons` array in QuickOrder.js used short IDs (`covenant`, `cradle`, `cross`, `comforter`) that didn't match the backend's expected full IDs (`holiday-ae-covenant`, etc.).
+
+**Fix Implemented**:
+- Changed holiday lesson IDs from short names to full IDs:
+  - `covenant` → `holiday-ae-covenant`
+  - `cradle` → `holiday-ae-cradle`
+  - `cross` → `holiday-ae-cross`
+  - `comforter` → `holiday-ae-comforter`
+- Updated default fallback lesson ID
+
+**Files Modified**:
+- `/app/frontend/src/QuickOrder.js` - Lines 172-177 (holidayLessons array)
+
+---
+
+### 3. Gift Certificate Cart Integration
+**Status: COMPLETED**
+
+**Feature**: Allow customers to add gift certificates to their main cart and pay for everything at once.
+
+**Implementation**:
+- New `addGiftCertificateToCart()` function in CartContext
+- "Add to Cart" button on Gift Certificate page alongside "Purchase Now"
+- Gift certificate items stored with full metadata (recipient, sender, amount, message)
+- Backend payment_routes.py processes gift certificates in cart checkout
+- Gift certificate automatically created and emailed to recipient after successful payment
+- Unique key per gift certificate to allow multiple in cart
+
+**Files Modified**:
+- `/app/frontend/src/GiftCertificate.js` - Add to Cart button, form validation
+- `/app/frontend/src/CartContext.js` - addGiftCertificateToCart, hasGiftCertificates functions
+- `/app/backend/payment_routes.py` - Gift certificate processing in checkout status handler
+
+---
+
+## Prioritized Backlog
+
+### P0 - Critical
+- ~~Gift Certificate Coupon Field~~ **DONE**
+- ~~Interactive Lessons Navigation Bug~~ **DONE**
+- ~~Gift Certificate Cart Integration~~ **DONE**
+
+### P1 - High Priority
+- Game Pass Restriction Disclosures (add "4 hrs/day" to QuickOrder game passes)
+- Frontend for Referral System
+- Full Instructor Role Functionality (per INSTRUCTOR_BUILD_SPEC.md)
+- RBAC Rules for Test Users (test_ie, test_ye, test_ae)
+
+### P2 - Medium Priority
+- Word Search Game (replace placeholder)
+- Custom Domain Linking (blocked on Emergent Support)
+
+### P3 - Tech Debt
+- Migrate hardcoded product catalog to MongoDB `products` collection
+- Mobile app strategy (PWA)
