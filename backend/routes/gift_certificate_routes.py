@@ -113,6 +113,7 @@ async def create_gift_certificate_checkout(request: GiftCertificateRequest):
     """
     Create a Stripe checkout session for purchasing a gift certificate.
     The certificate is NOT sent until payment succeeds (handled by webhook).
+    Supports coupon codes for discounts on the purchase price.
     """
     # Validate certificate type
     if request.certificate_type not in CERTIFICATE_TYPES:
@@ -133,6 +134,19 @@ async def create_gift_certificate_checkout(request: GiftCertificateRequest):
             detail=f"Invalid amount. Valid amounts are: {cert_config['valid_amounts']}"
         )
     
+    # Calculate discounted price if coupon is applied
+    original_amount = request.amount
+    discount_percent = request.discount_percent or 0
+    discounted_amount = original_amount
+    
+    if request.coupon_code and discount_percent > 0:
+        # Validate coupon from database
+        coupon = await db.coupons.find_one({"code": request.coupon_code.upper()})
+        if coupon and coupon.get("active", True):
+            # Apply discount
+            discounted_amount = original_amount * (1 - discount_percent / 100)
+            discounted_amount = max(0, discounted_amount)  # Ensure non-negative
+    
     # Generate a pending certificate ID
     pending_cert_id = f"PENDING-{uuid.uuid4().hex[:12].upper()}"
     
@@ -140,7 +154,10 @@ async def create_gift_certificate_checkout(request: GiftCertificateRequest):
     pending_certificate = {
         "pending_id": pending_cert_id,
         "certificate_type": request.certificate_type,
-        "amount": request.amount,
+        "amount": original_amount,  # Certificate value (what recipient gets)
+        "paid_amount": discounted_amount,  # What purchaser pays
+        "coupon_code": request.coupon_code,
+        "discount_percent": discount_percent,
         "recipient_name": request.recipient_name,
         "recipient_email": request.recipient_email,
         "sender_name": request.sender_name,
@@ -153,6 +170,28 @@ async def create_gift_certificate_checkout(request: GiftCertificateRequest):
     await db.gift_certificates_pending.insert_one(pending_certificate)
     
     try:
+        # Build line item description
+        description = f"Gift for {request.recipient_name} - {cert_config['description']}"
+        if discount_percent > 0:
+            description += f" ({discount_percent}% off)"
+        
+        # Stripe amount in cents
+        stripe_amount = int(discounted_amount * 100)
+        
+        # If fully discounted, handle free order
+        if stripe_amount <= 0:
+            # Auto-activate the certificate for free orders
+            await db.gift_certificates_pending.update_one(
+                {"pending_id": pending_cert_id},
+                {"$set": {"status": "ready_to_activate"}}
+            )
+            return {
+                "checkout_url": f"{FRONTEND_URL}/gift-certificate-success?session_id=FREE&pending_id={pending_cert_id}",
+                "session_id": "FREE",
+                "pending_cert_id": pending_cert_id,
+                "free_order": True
+            }
+        
         # Create Stripe checkout session
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
@@ -161,9 +200,9 @@ async def create_gift_certificate_checkout(request: GiftCertificateRequest):
                     'currency': 'usd',
                     'product_data': {
                         'name': f"Soul Food {cert_config['name']}",
-                        'description': f"Gift for {request.recipient_name} - {cert_config['description']}",
+                        'description': description,
                     },
-                    'unit_amount': int(request.amount * 100),  # Stripe uses cents
+                    'unit_amount': stripe_amount,
                 },
                 'quantity': 1,
             }],
@@ -176,7 +215,9 @@ async def create_gift_certificate_checkout(request: GiftCertificateRequest):
                 'certificate_type': request.certificate_type,
                 'recipient_email': request.recipient_email,
                 'recipient_name': request.recipient_name,
-                'sender_name': request.sender_name
+                'sender_name': request.sender_name,
+                'coupon_code': request.coupon_code or '',
+                'discount_percent': str(discount_percent)
             },
             customer_email=request.sender_email  # Pre-fill purchaser's email in Stripe
         )
