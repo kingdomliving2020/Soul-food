@@ -10,6 +10,7 @@ import { useCart } from "./CartContext";
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const GiftCertificate = () => {
+  const { addGiftCertificateToCart } = useCart();
   const [selectedType, setSelectedType] = useState('book');
   const [recipientName, setRecipientName] = useState('');
   const [recipientEmail, setRecipientEmail] = useState('');
@@ -25,6 +26,9 @@ const GiftCertificate = () => {
   const [couponApplied, setCouponApplied] = useState(null);
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponError, setCouponError] = useState('');
+  
+  // Track if adding to cart
+  const [addingToCart, setAddingToCart] = useState(false);
 
   const certificateTypes = {
     book: {
