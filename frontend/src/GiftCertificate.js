@@ -56,6 +56,66 @@ const GiftCertificate = () => {
     }
   };
 
+  // Calculate discounted amount
+  const getDiscountedAmount = () => {
+    if (!couponApplied) return amount;
+    if (couponApplied.is_gift_certificate && couponApplied.discount_dollars > 0) {
+      return Math.max(0, amount - couponApplied.discount_dollars);
+    }
+    return amount - (amount * couponApplied.discount_percent / 100);
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setCouponError('Please enter a coupon code');
+      return;
+    }
+
+    setCouponLoading(true);
+    setCouponError('');
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/coupons/validate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          code: couponCode.toUpperCase(),
+          product_ids: [`gift_certificate_${selectedType}`],
+          cart_total: amount
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.valid) {
+        setCouponApplied({
+          code: couponCode.toUpperCase(),
+          discount_percent: data.discount_percent,
+          discount_dollars: data.discount_dollars || 0,
+          is_gift_certificate: data.is_gift_certificate || false,
+          message: data.message
+        });
+        setCouponError('');
+        toast.success(`Coupon applied! ${data.discount_percent}% off`);
+      } else {
+        setCouponError(data.message || 'Invalid coupon code');
+        setCouponApplied(null);
+      }
+    } catch (error) {
+      setCouponError('Error validating coupon. Please try again.');
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponApplied(null);
+    setCouponCode('');
+    setCouponError('');
+  };
+
   const handlePurchaseCertificate = async () => {
     // Validate required fields
     if (!recipientName.trim()) {
