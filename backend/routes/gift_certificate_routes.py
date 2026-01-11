@@ -37,6 +37,8 @@ class GiftCertificateRequest(BaseModel):
     sender_name: str
     sender_email: Optional[EmailStr] = None
     message: Optional[str] = None
+    coupon_code: Optional[str] = None
+    discount_percent: Optional[float] = 0
 
 
 class GiftCertificateRedeemRequest(BaseModel):
