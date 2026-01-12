@@ -1302,30 +1302,31 @@ BREAKFAST_AE_NIBBLES = [
     }
 ]
 
-# BREAKFAST SERIES - Youth Edition (Preview lessons)
+# BREAKFAST SERIES - Youth Edition (All 12 Lessons)
 BREAKFAST_YE_NIBBLES = [
-    # Month 1: Prayer - Esther (Youth)
+    # ========== MONTH 1: PRAYER, THE FIRST RESORT ==========
+    # Lesson 1: Esther
     {
-        "id": "breakfast-ye-esther",
+        "id": "breakfast-ye-prayer-1",
         "lesson_number": 1,
-        "title": "Esther: Second is Best",
+        "title": "Esther: Second Is the Best",
         "series_name": "Breakfast Series (Youth)",
         "edition": "Youth",
         "month": 1,
         "theme": "Prayer, the First Resort",
-        "background_text": "Esther 4:1-17",
+        "background_text": "Esther 1-4",
         "appetizer": "Queen Esther was young, beautiful, and living in a palace—but she had a big secret and an even bigger choice to make. Would she stay quiet and safe, or speak up and risk everything? Her story shows us that God puts us in the right place at the right time for a reason!",
         "opening_prayer": "God, help us be brave like Esther. When we feel scared to speak up or stand out, remind us that You're with us. In Jesus' name, amen.",
         "key_verse_ref": "Esther 4:14 (WEB)",
         "key_verse_text": "Who knows if you haven't come to the kingdom for such a time as this?",
         "bites": [
             {
-                "id": "bkft-ye-esther-1",
+                "id": "bkft-ye-prayer-1-1",
                 "title": "Right Place, Right Time",
                 "scripture_ref": "Esther 4:14 (WEB)",
                 "scripture_text": "Who knows if you haven't come to the kingdom for such a time as this?",
                 "teaching": "Esther didn't become queen by accident. God had a plan! And guess what? God has a plan for you too. The school you're at, the family you're in, the friends you have—God is using all of it to prepare you for something amazing.",
-                "question": {"id": "q-bkft-ye-esther-1", "type": "reflection", "prompt": "Where has God placed you? How might He want to use you there?"}
+                "question": {"id": "q-bkft-ye-prayer-1-1", "type": "reflection", "prompt": "Where has God placed you? How might He want to use you there?"}
             }
         ],
         "to_go_box": ["God has a plan for you", "Being brave means trusting God", "You're where you are for a reason"],
@@ -1333,9 +1334,98 @@ BREAKFAST_YE_NIBBLES = [
         "price_interactive": 4.59,
         "is_free": False
     },
-    # Month 2: Art of Through - Joseph (Youth)
+    # Lesson 2: Solomon
     {
-        "id": "breakfast-ye-joseph",
+        "id": "breakfast-ye-prayer-2",
+        "lesson_number": 2,
+        "title": "Solomon: Wisdom in Response",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 1,
+        "theme": "Prayer, the First Resort",
+        "background_text": "1 Kings 3:5-14; 2 Chronicles 1:7-12",
+        "appetizer": "Imagine God showing up and saying, 'Ask for anything you want.' That's what happened to Solomon! He could have asked for a million dollars, superpowers, or to be the most popular kid ever. But Solomon asked for wisdom. And God was so happy with that answer, He gave Solomon bonus gifts too!",
+        "opening_prayer": "God, give us wisdom like Solomon. Help us make good choices and know what's right. In Jesus' name, amen.",
+        "key_verse_ref": "1 Kings 3:9 (WEB)",
+        "key_verse_text": "Give your servant therefore an understanding heart to judge your people, that I may discern between good and evil.",
+        "bites": [
+            {
+                "id": "bkft-ye-prayer-2-1",
+                "title": "The Best Request",
+                "scripture_ref": "1 Kings 3:9 (WEB)",
+                "scripture_text": "Give your servant therefore an understanding heart.",
+                "teaching": "Solomon didn't ask for stuff—he asked for wisdom. Wisdom is knowing the right thing to do and doing it. When you ask God for wisdom, He's always happy to give it. It's like having a superpower for making good decisions!",
+                "question": {"id": "q-bkft-ye-prayer-2-1", "type": "reflection", "prompt": "If God said you could have anything, what would you ask for?"}
+            }
+        ],
+        "to_go_box": ["Wisdom is better than stuff", "God loves when we ask for wisdom", "Smart choices = blessed life"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 3: Jesus
+    {
+        "id": "breakfast-ye-prayer-3",
+        "lesson_number": 3,
+        "title": "Jesus",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 1,
+        "theme": "Prayer, the First Resort",
+        "background_text": "Luke 5:15-16; Luke 11:1-4; Luke 18:1-8",
+        "appetizer": "Jesus was God's Son—He could do anything! But here's the cool part: He still made time to pray. A lot. If Jesus needed to pray, we definitely do! Jesus shows us that talking to God isn't just for emergencies—it's for every day.",
+        "opening_prayer": "Jesus, teach us to pray like You did. Help us want to talk to God every day, not just when things go wrong. In Your name, amen.",
+        "key_verse_ref": "Luke 18:1 (WEB)",
+        "key_verse_text": "He also spoke a parable to them that they must always pray and not give up.",
+        "bites": [
+            {
+                "id": "bkft-ye-prayer-3-1",
+                "title": "Never Give Up Praying",
+                "scripture_ref": "Luke 18:1 (WEB)",
+                "scripture_text": "They must always pray and not give up.",
+                "teaching": "Jesus told His followers to keep praying and never quit. Sometimes it feels like God isn't listening, but He always is. Keep talking to Him—about everything! The big stuff, the small stuff, the happy stuff, the hard stuff.",
+                "question": {"id": "q-bkft-ye-prayer-3-1", "type": "reflection", "prompt": "What's something you've stopped praying about that you should start again?"}
+            }
+        ],
+        "to_go_box": ["Prayer is for every day", "Don't give up praying", "Jesus prayed—so should we"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 4: Paul & Silas
+    {
+        "id": "breakfast-ye-prayer-4",
+        "lesson_number": 4,
+        "title": "Paul & Silas",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 1,
+        "theme": "Prayer, the First Resort",
+        "background_text": "Acts 16:16-34",
+        "appetizer": "Paul and Silas were thrown in jail for doing the right thing. Beaten up. Locked in chains. Stuck in the darkest part of the prison. So what did they do? They started singing worship songs! At midnight! And God showed up in a major way.",
+        "opening_prayer": "Lord, give us faith like Paul and Silas. Help us praise You even when things are hard. In Jesus' name, amen.",
+        "key_verse_ref": "Acts 16:25 (WEB)",
+        "key_verse_text": "But about midnight Paul and Silas were praying and singing hymns to God, and the prisoners were listening to them.",
+        "bites": [
+            {
+                "id": "bkft-ye-prayer-4-1",
+                "title": "Praise in the Prison",
+                "scripture_ref": "Acts 16:25 (WEB)",
+                "scripture_text": "About midnight Paul and Silas were praying and singing hymns to God.",
+                "teaching": "Paul and Silas didn't wait until they felt happy to worship. They praised God in the middle of their worst moment. And guess what? An earthquake shook the prison and set them free! Sometimes worship is the key that unlocks our chains.",
+                "question": {"id": "q-bkft-ye-prayer-4-1", "type": "reflection", "prompt": "What's something hard you're going through that you could praise God in?"}
+            }
+        ],
+        "to_go_box": ["Praise even when it's hard", "Worship unlocks chains", "God hears midnight prayers"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    
+    # ========== MONTH 2: THE ART OF THROUGH ==========
+    # Lesson 5: Joseph
+    {
+        "id": "breakfast-ye-through-1",
         "lesson_number": 5,
         "title": "Joseph: The Young Dreamer",
         "series_name": "Breakfast Series (Youth)",
@@ -1349,12 +1439,12 @@ BREAKFAST_YE_NIBBLES = [
         "key_verse_text": "You meant evil against me, but God meant it for good.",
         "bites": [
             {
-                "id": "bkft-ye-joseph-1",
+                "id": "bkft-ye-through-1-1",
                 "title": "From Pit to Palace",
                 "scripture_ref": "Genesis 50:20 (WEB)",
                 "scripture_text": "You meant evil against me, but God meant it for good.",
                 "teaching": "Joseph's brothers did something terrible. But years later, Joseph was in charge of all of Egypt and saved his whole family from starving! God didn't waste Joseph's pain—He used it. God can do the same with the hard things you go through.",
-                "question": {"id": "q-bkft-ye-joseph-1", "type": "reflection", "prompt": "Have you ever seen something bad turn into something good?"}
+                "question": {"id": "q-bkft-ye-through-1-1", "type": "reflection", "prompt": "Have you ever seen something bad turn into something good?"}
             }
         ],
         "to_go_box": ["God doesn't waste your pain", "Keep dreaming even when it's hard", "What others mean for bad, God can use for good"],
@@ -1362,31 +1452,207 @@ BREAKFAST_YE_NIBBLES = [
         "price_interactive": 4.59,
         "is_free": False
     },
-    # Month 3: Faith & Foresight - Rahab (Youth)
+    # Lesson 6: Hannah
     {
-        "id": "breakfast-ye-rahab",
+        "id": "breakfast-ye-through-2",
+        "lesson_number": 6,
+        "title": "Hannah: Barren but Not Lifeless",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 2,
+        "theme": "The Art of Through",
+        "background_text": "1 Samuel 1:1-28",
+        "appetizer": "Hannah wanted a baby more than anything, but year after year, nothing happened. People made fun of her. She cried a lot. But instead of giving up on God, she kept praying. And when God finally answered, she gave her son back to God to serve Him forever.",
+        "opening_prayer": "God, when we're waiting for something and it feels like forever, help us keep trusting You like Hannah did. In Jesus' name, amen.",
+        "key_verse_ref": "1 Samuel 1:27 (WEB)",
+        "key_verse_text": "For this child I prayed. Yahweh has given me my petition which I asked of him.",
+        "bites": [
+            {
+                "id": "bkft-ye-through-2-1",
+                "title": "Pray Through the Pain",
+                "scripture_ref": "1 Samuel 1:10 (WEB)",
+                "scripture_text": "She was in bitterness of soul, and prayed to Yahweh, and wept bitterly.",
+                "teaching": "Hannah didn't pretend everything was fine. She told God exactly how she felt—even when she was crying her eyes out. God can handle your real emotions. Don't hide your feelings from Him. Pray through the pain!",
+                "question": {"id": "q-bkft-ye-through-2-1", "type": "reflection", "prompt": "What's something you've been feeling that you need to be honest with God about?"}
+            }
+        ],
+        "to_go_box": ["It's okay to cry to God", "Keep praying even when waiting", "God hears honest prayers"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 7: Abram
+    {
+        "id": "breakfast-ye-through-3",
+        "lesson_number": 7,
+        "title": "Abram: No Heir, Wait Here",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 2,
+        "theme": "The Art of Through",
+        "background_text": "Genesis 15:1-6; Genesis 17:1-8",
+        "appetizer": "God promised Abram he'd have more grandkids than he could count. Just one problem: Abram didn't even have ONE kid yet. And he was really, really old. But Abram believed God anyway, and that faith made him one of the greatest heroes in the Bible.",
+        "opening_prayer": "Father, help us trust Your promises even when they seem impossible. Give us faith like Abram. In Jesus' name, amen.",
+        "key_verse_ref": "Genesis 15:6 (WEB)",
+        "key_verse_text": "He believed in Yahweh, and he credited it to him for righteousness.",
+        "bites": [
+            {
+                "id": "bkft-ye-through-3-1",
+                "title": "Believe the Impossible",
+                "scripture_ref": "Genesis 15:5 (WEB)",
+                "scripture_text": "Look now toward the sky, and count the stars... So will your offspring be.",
+                "teaching": "God told old Abram to count the stars—that's how many grandkids he'd have. Impossible? Yep! But Abram believed anyway. Faith isn't about understanding everything. It's about trusting that God can do what He says, even when it makes zero sense.",
+                "question": {"id": "q-bkft-ye-through-3-1", "type": "reflection", "prompt": "What 'impossible' thing do you need to trust God for?"}
+            }
+        ],
+        "to_go_box": ["Faith believes the impossible", "God keeps His promises", "Waiting is part of the journey"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 8: Chronic Conditions (Woman with issue of blood)
+    {
+        "id": "breakfast-ye-through-4",
+        "lesson_number": 8,
+        "title": "Chronic Conditions",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 2,
+        "theme": "The Art of Through",
+        "background_text": "Luke 8:43-48",
+        "appetizer": "She'd been sick for 12 years. Spent all her money on doctors. Nothing worked. Everyone called her 'unclean' and wouldn't come near her. But one day, she heard Jesus was passing by. She thought, 'If I can just touch His clothes...' And that one touch changed everything.",
+        "opening_prayer": "Jesus, give us faith to reach for You no matter what. Even when we feel broken or forgotten, You can make us whole. In Your name, amen.",
+        "key_verse_ref": "Luke 8:48 (WEB)",
+        "key_verse_text": "He said to her, 'Daughter, cheer up. Your faith has made you well. Go in peace.'",
+        "bites": [
+            {
+                "id": "bkft-ye-through-4-1",
+                "title": "The Touch That Changed Everything",
+                "scripture_ref": "Luke 8:44 (WEB)",
+                "scripture_text": "She came behind him and touched the fringe of his cloak, and immediately her bleeding stopped.",
+                "teaching": "This woman didn't let 12 years of disappointment stop her. She pushed through the crowd, reached out in faith, and touched Jesus. That one moment of brave faith ended 12 years of suffering. Jesus can do the same for you.",
+                "question": {"id": "q-bkft-ye-through-4-1", "type": "reflection", "prompt": "What do you need to 'push through' to get closer to Jesus?"}
+            }
+        ],
+        "to_go_box": ["One touch can change everything", "Don't let your past stop you", "Jesus makes you whole"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    
+    # ========== MONTH 3: FAITH & FORESIGHT ==========
+    # Lesson 9: Rahab
+    {
+        "id": "breakfast-ye-faith-1",
         "lesson_number": 9,
         "title": "Rahab: Faith That Took Action",
         "series_name": "Breakfast Series (Youth)",
         "edition": "Youth",
         "month": 3,
         "theme": "Faith & Foresight",
-        "background_text": "Joshua 2:1-24",
+        "background_text": "Joshua 2:1-21; 6:22-25",
         "appetizer": "Rahab wasn't one of 'God's people'—but she believed in God anyway! When Israelite spies came to her city, she made a brave choice. She hid them and asked them to save her family. That one brave decision changed everything for Rahab and her family forever.",
         "opening_prayer": "God, help us be brave like Rahab. Even when we feel like we don't fit in or belong, remind us that You see us and have a plan for us. In Jesus' name, amen.",
         "key_verse_ref": "Joshua 2:11 (WEB)",
         "key_verse_text": "For Yahweh your God, he is God in heaven above, and on earth beneath.",
         "bites": [
             {
-                "id": "bkft-ye-rahab-1",
+                "id": "bkft-ye-faith-1-1",
                 "title": "Brave Belief",
                 "scripture_ref": "Joshua 2:11 (WEB)",
                 "scripture_text": "For Yahweh your God, he is God in heaven above, and on earth beneath.",
                 "teaching": "Rahab had heard stories about God. She chose to believe those stories were true—even though everyone around her worshipped fake gods. Her belief led her to action, and that action saved her whole family!",
-                "question": {"id": "q-bkft-ye-rahab-1", "type": "reflection", "prompt": "What's one brave thing you can do this week to show your faith?"}
+                "question": {"id": "q-bkft-ye-faith-1-1", "type": "reflection", "prompt": "What's one brave thing you can do this week to show your faith?"}
             }
         ],
         "to_go_box": ["It's never too late to believe", "Faith leads to action", "God can use anyone—including you!"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 10: Abigail
+    {
+        "id": "breakfast-ye-faith-2",
+        "lesson_number": 10,
+        "title": "Abigail: Wisdom on the Move",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 3,
+        "theme": "Faith & Foresight",
+        "background_text": "1 Samuel 25:2-35",
+        "appetizer": "Abigail's husband was a fool (seriously, that's what his name means!). He made a powerful guy named David really angry. Abigail knew disaster was coming, so she moved fast with wisdom and stopped a battle before it started. Smart move, Abigail!",
+        "opening_prayer": "Lord, give us wisdom like Abigail. Help us see problems coming and do something smart about it. In Jesus' name, amen.",
+        "key_verse_ref": "1 Samuel 25:33 (WEB)",
+        "key_verse_text": "Blessed is your discretion, and blessed are you, who have kept me today from blood guiltiness.",
+        "bites": [
+            {
+                "id": "bkft-ye-faith-2-1",
+                "title": "Smart and Quick",
+                "scripture_ref": "1 Samuel 25:18 (WEB)",
+                "scripture_text": "Then Abigail hurried...",
+                "teaching": "Abigail didn't sit around worrying. She saw the problem, made a plan, and moved fast. Wisdom isn't just knowing stuff—it's doing the right thing at the right time. Sometimes you've got to move quick!",
+                "question": {"id": "q-bkft-ye-faith-2-1", "type": "reflection", "prompt": "Is there a problem you need to deal with before it gets worse?"}
+            }
+        ],
+        "to_go_box": ["Wisdom takes action", "Don't wait for disaster", "Quick thinking saves the day"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 11: The Centurion
+    {
+        "id": "breakfast-ye-faith-3",
+        "lesson_number": 11,
+        "title": "The Centurion: Faith That Commands Results",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 3,
+        "theme": "Faith & Foresight",
+        "background_text": "Matthew 8:5-13; Luke 7:1-10",
+        "appetizer": "A Roman soldier came to Jesus asking for help. His servant was sick. But here's the wild part—he told Jesus He didn't even need to come over. Just say the word and it's done! Jesus was amazed by this guy's faith. Even Jesus can be impressed!",
+        "opening_prayer": "Lord, grow our faith to trust Your word completely. Help us believe that when You speak, things happen! In Jesus' name, amen.",
+        "key_verse_ref": "Matthew 8:10 (WEB)",
+        "key_verse_text": "When Jesus heard it, he marveled... 'I haven't found so great a faith, not even in Israel.'",
+        "bites": [
+            {
+                "id": "bkft-ye-faith-3-1",
+                "title": "Just Say the Word",
+                "scripture_ref": "Matthew 8:8 (WEB)",
+                "scripture_text": "Just say the word, and my servant will be healed.",
+                "teaching": "The centurion understood authority. When he gave orders, soldiers obeyed. He knew Jesus had that same authority over sickness. He didn't need Jesus to show up physically—he just needed Jesus to speak. That's next-level faith!",
+                "question": {"id": "q-bkft-ye-faith-3-1", "type": "reflection", "prompt": "Do you trust that Jesus' word is enough?"}
+            }
+        ],
+        "to_go_box": ["Jesus' word is powerful", "Faith trusts without seeing", "You can amaze Jesus with your faith"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 12: Joseph of Arimathea
+    {
+        "id": "breakfast-ye-faith-4",
+        "lesson_number": 12,
+        "title": "Joseph of Arimathea: Trust the Process",
+        "series_name": "Breakfast Series (Youth)",
+        "edition": "Youth",
+        "month": 3,
+        "theme": "Faith & Foresight",
+        "background_text": "Matthew 27:57-61; John 19:38-42",
+        "appetizer": "Joseph of Arimathea was a secret follower of Jesus. He was rich and important, but he kept his faith quiet. Then Jesus died, and Joseph did something bold—he asked for Jesus' body and buried Him in his own tomb. Sometimes quiet faith becomes loud action at just the right moment.",
+        "opening_prayer": "Lord, prepare us for our moment. Even if our faith has been quiet, make us bold when it matters. In Jesus' name, amen.",
+        "key_verse_ref": "Matthew 27:58 (WEB)",
+        "key_verse_text": "He went to Pilate and asked for Jesus' body.",
+        "bites": [
+            {
+                "id": "bkft-ye-faith-4-1",
+                "title": "The Right Moment",
+                "scripture_ref": "John 19:38 (WEB)",
+                "scripture_text": "Joseph of Arimathea, being a disciple of Jesus, but secretly for fear of the Jews, asked...",
+                "teaching": "Joseph's tomb wasn't random—God had it ready. Joseph's wealth and position weren't accidents either. God was preparing him for a moment no one expected. God might be preparing you for something right now that you don't even know about yet!",
+                "question": {"id": "q-bkft-ye-faith-4-1", "type": "reflection", "prompt": "What might God be preparing you for that you can't see yet?"}
+            }
+        ],
+        "to_go_box": ["God prepares you for your moment", "Quiet faith can become bold action", "Trust the process"],
         "price_download": 3.59,
         "price_interactive": 4.59,
         "is_free": False
