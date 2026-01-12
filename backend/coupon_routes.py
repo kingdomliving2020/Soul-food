@@ -92,6 +92,12 @@ COUPONS = {
         "discount_percent": 100,
         "conditions": "Beta tester full access - all items"
     },
+    "TESTII": {
+        "code": "TESTII",
+        "max_uses": 100,
+        "discount_percent": 99,
+        "conditions": "Live testing - 99% off all items"
+    },
     
     # ==================== RBAC TEST ACCOUNTS ====================
     # test_ie (Instructor): 2wk access, can select game categories, users, lessons
