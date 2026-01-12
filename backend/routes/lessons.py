@@ -1662,8 +1662,93 @@ BREAKFAST_YE_NIBBLES = [
 # Combine all nibbles for lookup
 ALL_NIBBLES = IN_HIS_IMAGE_NIBBLES + HOLIDAY_AE_NIBBLES + BREAKFAST_AE_NIBBLES + BREAKFAST_YE_NIBBLES
 
-# Only In His Image has a snack pack - Holiday is individual lessons
-ALL_SNACK_PACKS = [IN_HIS_IMAGE_SNACK_PACK]
+# Snack Pack definitions - 4 lessons per pack
+IN_HIS_IMAGE_SNACK_PACK_DEF = IN_HIS_IMAGE_SNACK_PACK  # Already defined above
+
+# Breakfast AE Snack Packs
+BREAKFAST_AE_PRAYER_SNACK_PACK = {
+    "id": "breakfast-ae-prayer-snack-pack",
+    "name": "Prayer, the First Resort (Adult)",
+    "series": "Breakfast",
+    "edition": "Adult",
+    "month": 1,
+    "description": "4-lesson snack pack exploring prayer through the stories of Esther, Solomon, Jesus, and Paul & Silas.",
+    "nibbles": ["breakfast-ae-prayer-1", "breakfast-ae-prayer-2", "breakfast-ae-prayer-3", "breakfast-ae-prayer-4"],
+    "price": 12.99,
+    "lesson_count": 4
+}
+
+BREAKFAST_AE_THROUGH_SNACK_PACK = {
+    "id": "breakfast-ae-through-snack-pack",
+    "name": "The Art of Through (Adult)",
+    "series": "Breakfast",
+    "edition": "Adult",
+    "month": 2,
+    "description": "4-lesson snack pack on perseverance through the stories of Joseph, Hannah, Abram, and Victory Through the Blood.",
+    "nibbles": ["breakfast-ae-through-1", "breakfast-ae-through-2", "breakfast-ae-through-3", "breakfast-ae-through-4"],
+    "price": 12.99,
+    "lesson_count": 4
+}
+
+BREAKFAST_AE_FAITH_SNACK_PACK = {
+    "id": "breakfast-ae-faith-snack-pack",
+    "name": "Faith & Foresight (Adult)",
+    "series": "Breakfast",
+    "edition": "Adult",
+    "month": 3,
+    "description": "4-lesson snack pack on faith in action through the stories of Rahab, Abigail, the Centurion, and Joseph of Arimathea.",
+    "nibbles": ["breakfast-ae-faith-1", "breakfast-ae-faith-2", "breakfast-ae-faith-3", "breakfast-ae-faith-4"],
+    "price": 12.99,
+    "lesson_count": 4
+}
+
+# Breakfast YE Snack Packs
+BREAKFAST_YE_PRAYER_SNACK_PACK = {
+    "id": "breakfast-ye-prayer-snack-pack",
+    "name": "Prayer, the First Resort (Youth)",
+    "series": "Breakfast",
+    "edition": "Youth",
+    "month": 1,
+    "description": "4-lesson snack pack exploring prayer through the stories of Esther, Solomon, Jesus, and Paul & Silas.",
+    "nibbles": ["breakfast-ye-prayer-1", "breakfast-ye-prayer-2", "breakfast-ye-prayer-3", "breakfast-ye-prayer-4"],
+    "price": 10.99,
+    "lesson_count": 4
+}
+
+BREAKFAST_YE_THROUGH_SNACK_PACK = {
+    "id": "breakfast-ye-through-snack-pack",
+    "name": "The Art of Through (Youth)",
+    "series": "Breakfast",
+    "edition": "Youth",
+    "month": 2,
+    "description": "4-lesson snack pack on perseverance through the stories of Joseph, Hannah, Abram, and the woman with the issue of blood.",
+    "nibbles": ["breakfast-ye-through-1", "breakfast-ye-through-2", "breakfast-ye-through-3", "breakfast-ye-through-4"],
+    "price": 10.99,
+    "lesson_count": 4
+}
+
+BREAKFAST_YE_FAITH_SNACK_PACK = {
+    "id": "breakfast-ye-faith-snack-pack",
+    "name": "Faith & Foresight (Youth)",
+    "series": "Breakfast",
+    "edition": "Youth",
+    "month": 3,
+    "description": "4-lesson snack pack on faith in action through the stories of Rahab, Abigail, the Centurion, and Joseph of Arimathea.",
+    "nibbles": ["breakfast-ye-faith-1", "breakfast-ye-faith-2", "breakfast-ye-faith-3", "breakfast-ye-faith-4"],
+    "price": 10.99,
+    "lesson_count": 4
+}
+
+# All Snack Packs
+ALL_SNACK_PACKS = [
+    IN_HIS_IMAGE_SNACK_PACK,
+    BREAKFAST_AE_PRAYER_SNACK_PACK,
+    BREAKFAST_AE_THROUGH_SNACK_PACK,
+    BREAKFAST_AE_FAITH_SNACK_PACK,
+    BREAKFAST_YE_PRAYER_SNACK_PACK,
+    BREAKFAST_YE_THROUGH_SNACK_PACK,
+    BREAKFAST_YE_FAITH_SNACK_PACK
+]
 
 @router.get("/snack-packs")
 async def get_snack_packs():
