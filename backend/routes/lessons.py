@@ -939,30 +939,36 @@ for nibble in HOLIDAY_AE_NIBBLES[:4]:
         nibble["price_interactive"] = 9.99
         nibble["is_free"] = False
 
-# BREAKFAST SERIES - Adult Edition (Preview lessons)
+# BREAKFAST SERIES - Adult Edition (All 12 Lessons)
+# Structure: 3 Months x 4 Lessons = 12 Lessons Total
+# Month 1: Prayer, the First Resort (Esther, Solomon, Jesus, Paul & Silas)
+# Month 2: The Art of Through (Joseph - all 4 lessons)
+# Month 3: Faith & Foresight (Rahab, Abigail, Centurion, Joseph of Arimathea)
+
 BREAKFAST_AE_NIBBLES = [
-    # Month 1: Prayer, the First Resort - Esther (Preview)
+    # ========== MONTH 1: PRAYER, THE FIRST RESORT ==========
+    # Lesson 1: Esther
     {
-        "id": "breakfast-ae-esther",
+        "id": "breakfast-ae-prayer-1",
         "lesson_number": 1,
-        "title": "Esther: Second is Best",
+        "title": "Esther: Second Is the Best",
         "series_name": "Breakfast Series (Adult)",
         "edition": "Adult",
         "month": 1,
         "theme": "Prayer, the First Resort",
-        "background_text": "Esther 4:1-17; Esther 5:1-8",
+        "background_text": "Esther 1-4 (focus on chapters 2-4)",
         "appetizer": "In the Persian Empire, Queen Esther faced an impossible choice: remain silent and survive, or speak up and risk death. Her people's fate hung in the balance. Through fasting, prayer, and courage, Esther discovered that sometimes being second in position means being first in purpose. God had placed her 'for such a time as this.'",
         "opening_prayer": "Lord, give us the courage of Esther to stand for what is right even when the cost is high. Help us see that Your timing is perfect and Your positioning is purposeful. In Jesus' name, amen.",
         "key_verse_ref": "Esther 4:14 (WEB)",
         "key_verse_text": "For if you remain silent now, relief and deliverance will come to the Jews from another place, but you and your father's house will perish. Who knows if you haven't come to the kingdom for such a time as this?",
         "bites": [
             {
-                "id": "bkft-ae-esther-1",
+                "id": "bkft-ae-prayer-1-1",
                 "title": "For Such a Time",
                 "scripture_ref": "Esther 4:14 (WEB)",
                 "scripture_text": "Who knows if you haven't come to the kingdom for such a time as this?",
                 "teaching": "Mordecai's question to Esther wasn't just about her moment—it's about all of us. Every position we hold, every relationship we have, every skill we've developed may be preparation for a divine appointment we haven't yet recognized.",
-                "question": {"id": "q-bkft-esther-1", "type": "reflection", "prompt": "What 'position' has God placed you in that might be 'for such a time as this'?"}
+                "question": {"id": "q-bkft-ae-prayer-1-1", "type": "reflection", "prompt": "What 'position' has God placed you in that might be 'for such a time as this'?"}
             }
         ],
         "to_go_box": ["God's timing is purposeful", "Position comes with responsibility", "Prayer precedes breakthrough"],
@@ -970,60 +976,326 @@ BREAKFAST_AE_NIBBLES = [
         "price_interactive": 4.59,
         "is_free": False
     },
-    # Month 2: The Art of Through - Joseph (Preview)
+    # Lesson 2: Solomon
     {
-        "id": "breakfast-ae-joseph",
-        "lesson_number": 5,
-        "title": "Joseph: The Young Dreamer",
+        "id": "breakfast-ae-prayer-2",
+        "lesson_number": 2,
+        "title": "Solomon: The Question That Unlocked a Legacy",
         "series_name": "Breakfast Series (Adult)",
         "edition": "Adult",
-        "month": 2,
-        "theme": "The Art of Through",
-        "background_text": "Genesis 37:1-36; Genesis 39-41",
-        "appetizer": "Joseph's journey from favored son to slave, from prisoner to prime minister, teaches us that God's dreams don't have expiration dates. The pit, the prison, and the palace were all part of God's process. Sometimes we have to go through to get to where God is taking us.",
-        "opening_prayer": "Father, when the path seems long and the wait feels endless, remind us of Joseph. Help us trust that You are working even in the waiting. In Jesus' name, amen.",
-        "key_verse_ref": "Genesis 50:20 (WEB)",
-        "key_verse_text": "As for you, you meant evil against me, but God meant it for good, to bring to pass, as it is today, to save many people alive.",
+        "month": 1,
+        "theme": "Prayer, the First Resort",
+        "background_text": "1 Kings 3:5-14; 2 Chronicles 1:7-12",
+        "appetizer": "When God offered Solomon anything he wanted, Solomon didn't ask for wealth, fame, or long life. He asked for wisdom—an understanding heart to discern between good and evil. That single prayer unlocked a legacy that still speaks today. What we ask for reveals what we value most.",
+        "opening_prayer": "Father, like Solomon, we come asking for wisdom. Give us understanding hearts to lead well, discern clearly, and honor You in our decisions. In Jesus' name, amen.",
+        "key_verse_ref": "1 Kings 3:9 (WEB)",
+        "key_verse_text": "Give your servant therefore an understanding heart to judge your people, that I may discern between good and evil; for who is able to judge this great people of yours?",
         "bites": [
             {
-                "id": "bkft-ae-joseph-1",
-                "title": "The Dreamer's Journey",
-                "scripture_ref": "Genesis 37:19-20 (WEB)",
-                "scripture_text": "They said to one another, 'Behold, this dreamer comes. Come now therefore, and let's kill him.'",
-                "teaching": "Joseph's brothers saw his dreams as arrogance, but God saw them as prophecy. The very thing that made Joseph a target was the same thing that would eventually save his family. Your God-given vision may be misunderstood by others, but it's still valid.",
-                "question": {"id": "q-bkft-joseph-1", "type": "reflection", "prompt": "What dream has God given you that others may not understand?"}
+                "id": "bkft-ae-prayer-2-1",
+                "title": "The Wisdom Request",
+                "scripture_ref": "1 Kings 3:9 (WEB)",
+                "scripture_text": "Give your servant therefore an understanding heart to judge your people.",
+                "teaching": "Solomon could have asked for anything—riches, revenge on enemies, endless life. Instead, he recognized his inadequacy and asked for what he truly needed. Wisdom isn't just knowledge; it's the ability to apply knowledge rightly. It starts with acknowledging we need God's help.",
+                "question": {"id": "q-bkft-ae-prayer-2-1", "type": "reflection", "prompt": "If God offered you one thing today, what would you ask for and why?"}
             }
         ],
-        "to_go_box": ["Dreams survive detours", "Betrayal can become blessing", "God's process has purpose"],
+        "to_go_box": ["What you ask for reveals what you value", "Wisdom begins with humility", "God honors hearts that seek Him"],
         "price_download": 3.59,
         "price_interactive": 4.59,
         "is_free": False
     },
-    # Month 3: Faith & Foresight - Rahab (Preview)
+    # Lesson 3: Jesus
     {
-        "id": "breakfast-ae-rahab",
+        "id": "breakfast-ae-prayer-3",
+        "lesson_number": 3,
+        "title": "Jesus: Prayer the First Resort",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 1,
+        "theme": "Prayer, the First Resort",
+        "background_text": "Luke 5:15-16; Luke 11:1-4; Luke 22:39-46",
+        "appetizer": "If anyone could have skipped prayer, it was Jesus. He was God in flesh. Yet He consistently withdrew to pray. Before major decisions, after great victories, in moments of crisis—prayer was His first resort, not His last. If Jesus needed to pray, how much more do we?",
+        "opening_prayer": "Jesus, teach us to pray as You prayed—not out of obligation but out of intimacy. Help us make prayer our first response, not our last resort. In Your name, amen.",
+        "key_verse_ref": "Luke 5:16 (WEB)",
+        "key_verse_text": "But he withdrew himself into the desert, and prayed.",
+        "bites": [
+            {
+                "id": "bkft-ae-prayer-3-1",
+                "title": "The Practice of Withdrawal",
+                "scripture_ref": "Luke 5:16 (WEB)",
+                "scripture_text": "But he withdrew himself into the desert, and prayed.",
+                "teaching": "Notice the pattern: Jesus withdrew AND prayed. Sometimes we try to pray while staying connected to everything demanding our attention. Jesus physically separated Himself. The withdrawal wasn't weakness—it was wisdom. Disconnecting from distractions deepens our connection to God.",
+                "question": {"id": "q-bkft-ae-prayer-3-1", "type": "reflection", "prompt": "What do you need to withdraw from to deepen your prayer life?"}
+            }
+        ],
+        "to_go_box": ["Withdrawal is not weakness", "Even Jesus prioritized prayer", "Intimacy requires intentionality"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 4: Paul & Silas
+    {
+        "id": "breakfast-ae-prayer-4",
+        "lesson_number": 4,
+        "title": "Paul & Silas: Faith in the Dark",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 1,
+        "theme": "Prayer, the First Resort",
+        "background_text": "Acts 16:16-34",
+        "appetizer": "Beaten, bleeding, and locked in the innermost cell with their feet in stocks—Paul and Silas did the unthinkable. At midnight, they prayed and sang hymns. Their praise in the prison became the key that unlocked not just their chains, but an entire household's salvation.",
+        "opening_prayer": "Lord, give us midnight faith—the kind that praises before the breakthrough, that worships in the waiting, that trusts when circumstances say otherwise. In Jesus' name, amen.",
+        "key_verse_ref": "Acts 16:25 (WEB)",
+        "key_verse_text": "But about midnight Paul and Silas were praying and singing hymns to God, and the prisoners were listening to them.",
+        "bites": [
+            {
+                "id": "bkft-ae-prayer-4-1",
+                "title": "Midnight Praise",
+                "scripture_ref": "Acts 16:25 (WEB)",
+                "scripture_text": "But about midnight Paul and Silas were praying and singing hymns to God.",
+                "teaching": "Midnight represents our darkest moments—when hope seems gone and circumstances feel hopeless. Yet Paul and Silas chose worship over worry. Their praise wasn't denial of their pain; it was declaration of God's power. Sometimes the breakthrough comes not when circumstances change, but when our response does.",
+                "question": {"id": "q-bkft-ae-prayer-4-1", "type": "reflection", "prompt": "What 'midnight moment' are you facing that needs a praise response?"}
+            }
+        ],
+        "to_go_box": ["Praise is a weapon", "Your worship affects others watching", "God moves at midnight"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    
+    # ========== MONTH 2: THE ART OF THROUGH ==========
+    # All 4 lessons focus on Joseph's journey
+    # Lesson 5: Joseph - The Young Dreamer
+    {
+        "id": "breakfast-ae-through-1",
+        "lesson_number": 5,
+        "title": "Joseph – The Young Dreamer",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 2,
+        "theme": "The Art of Through",
+        "background_text": "Genesis 37:1-36",
+        "appetizer": "Joseph was seventeen when God gave him dreams of greatness. His father's favorite, he wore a coat that set him apart. But favor often attracts friction. His brothers' jealousy would throw him into a pit, but even pits can't bury God's purpose. The dreamer's journey had just begun.",
+        "opening_prayer": "Father, when the path seems long and the wait feels endless, remind us of Joseph. Help us trust that You are working even in the waiting. In Jesus' name, amen.",
+        "key_verse_ref": "Genesis 37:19-20 (WEB)",
+        "key_verse_text": "They said to one another, 'Behold, this dreamer comes. Come now therefore, and let's kill him.'",
+        "bites": [
+            {
+                "id": "bkft-ae-through-1-1",
+                "title": "The Dreamer's Target",
+                "scripture_ref": "Genesis 37:19-20 (WEB)",
+                "scripture_text": "They said to one another, 'Behold, this dreamer comes.'",
+                "teaching": "Joseph's brothers saw his dreams as arrogance, but God saw them as prophecy. The very thing that made Joseph a target was the same thing that would eventually save his family. Your God-given vision may be misunderstood by others, but it's still valid. Don't let others' rejection make you abandon God's revelation.",
+                "question": {"id": "q-bkft-ae-through-1-1", "type": "reflection", "prompt": "What dream has God given you that others may not understand?"}
+            }
+        ],
+        "to_go_box": ["Dreams attract opposition", "Favor can create friction", "God's purpose survives pits"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 6: Hannah
+    {
+        "id": "breakfast-ae-through-2",
+        "lesson_number": 6,
+        "title": "Hannah – Barren but Not Lifeless",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 2,
+        "theme": "The Art of Through",
+        "background_text": "1 Samuel 1:1-28",
+        "appetizer": "Hannah's womb was closed, but her heart was open. Year after year, she endured the mockery of Peninnah and the silence of heaven. But Hannah didn't let barrenness make her bitter—she let it make her bold. Her tears became her prayer, and her prayer became a prophet.",
+        "opening_prayer": "Lord, in our seasons of waiting and wanting, keep our hearts soft toward You. Like Hannah, let our pain push us into Your presence, not away from it. In Jesus' name, amen.",
+        "key_verse_ref": "1 Samuel 1:27 (WEB)",
+        "key_verse_text": "For this child I prayed. Yahweh has given me my petition which I asked of him.",
+        "bites": [
+            {
+                "id": "bkft-ae-through-2-1",
+                "title": "Prayer in the Pain",
+                "scripture_ref": "1 Samuel 1:10 (WEB)",
+                "scripture_text": "She was in bitterness of soul, and prayed to Yahweh, and wept bitterly.",
+                "teaching": "Hannah didn't hide her pain from God—she poured it out before Him. Her prayer wasn't polished or pretty; it was raw and real. God isn't intimidated by our honest emotions. Sometimes the most powerful prayers come from the most broken places.",
+                "question": {"id": "q-bkft-ae-through-2-1", "type": "reflection", "prompt": "What pain have you been hiding from God that needs to become a prayer?"}
+            }
+        ],
+        "to_go_box": ["Barrenness isn't the end", "Pain can fuel prayer", "God hears desperate cries"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 7: Abram
+    {
+        "id": "breakfast-ae-through-3",
+        "lesson_number": 7,
+        "title": "Abram – No Heir, Wait Here",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 2,
+        "theme": "The Art of Through",
+        "background_text": "Genesis 15:1-6; Genesis 17:1-8",
+        "appetizer": "God promised Abram descendants as numerous as the stars, but years passed with no child. The promise seemed impossible—Sarah was barren, and time was running out. Yet Abram believed God, and it was credited to him as righteousness. Sometimes the wait IS the work.",
+        "opening_prayer": "Father, strengthen our faith in the waiting seasons. When Your promises seem delayed, help us remember that Your timing is always perfect. In Jesus' name, amen.",
+        "key_verse_ref": "Genesis 15:6 (WEB)",
+        "key_verse_text": "He believed in Yahweh, and he credited it to him for righteousness.",
+        "bites": [
+            {
+                "id": "bkft-ae-through-3-1",
+                "title": "Faith in the Wait",
+                "scripture_ref": "Genesis 15:5-6 (WEB)",
+                "scripture_text": "Look now toward the sky, and count the stars... He believed in Yahweh.",
+                "teaching": "God showed Abram the stars—a visual promise of what seemed impossible. Abram's faith wasn't blind; it was built on what God showed him. When we can't see the promise fulfilled, we can still see the Promise-Keeper. Faith doesn't deny reality; it trusts a greater reality.",
+                "question": {"id": "q-bkft-ae-through-3-1", "type": "reflection", "prompt": "What promise from God are you waiting on, and how can you 'look at the stars' today?"}
+            }
+        ],
+        "to_go_box": ["The wait is part of the work", "Belief is credited as righteousness", "God's delays aren't denials"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 8: Victory Through the Blood
+    {
+        "id": "breakfast-ae-through-4",
+        "lesson_number": 8,
+        "title": "Victory Through the Blood",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 2,
+        "theme": "The Art of Through",
+        "background_text": "Exodus 12:1-13; Revelation 12:11",
+        "appetizer": "The Israelites were trapped—slaves in Egypt with Pharaoh's heart hardened against them. But God made a way through the blood of a lamb. The same blood that marked their doors marked their deliverance. Centuries later, another Lamb's blood would mark our eternal freedom.",
+        "opening_prayer": "Thank You, Lord, for the blood that covers, protects, and delivers us. Help us never forget the price of our freedom and the power of the cross. In Jesus' name, amen.",
+        "key_verse_ref": "Revelation 12:11 (WEB)",
+        "key_verse_text": "They overcame him because of the Lamb's blood, and because of the word of their testimony.",
+        "bites": [
+            {
+                "id": "bkft-ae-through-4-1",
+                "title": "The Power of the Blood",
+                "scripture_ref": "Exodus 12:13 (WEB)",
+                "scripture_text": "The blood shall be to you for a token... when I see the blood, I will pass over you.",
+                "teaching": "The blood wasn't just a sign to the Israelites—it was a signal to the destroyer. When death saw the blood, it had to pass over. The blood of Jesus works the same way. It's not just a symbol; it's our protection, our victory, our way through.",
+                "question": {"id": "q-bkft-ae-through-4-1", "type": "reflection", "prompt": "How has the blood of Jesus been your 'way through' a difficult situation?"}
+            }
+        ],
+        "to_go_box": ["The blood is our covering", "Victory comes through surrender", "What's marked is protected"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    
+    # ========== MONTH 3: FAITH & FORESIGHT ==========
+    # Lesson 9: Rahab
+    {
+        "id": "breakfast-ae-faith-1",
         "lesson_number": 9,
         "title": "Rahab: Faith That Took Action",
         "series_name": "Breakfast Series (Adult)",
         "edition": "Adult",
         "month": 3,
         "theme": "Faith & Foresight",
-        "background_text": "Joshua 2:1-24; Hebrews 11:31; James 2:25",
+        "background_text": "Joshua 2:1-21; 6:22-25; Hebrews 11:31",
         "appetizer": "Rahab was a Canaanite woman with a questionable past, yet she appears in the lineage of Jesus. Her story proves that faith isn't about where you've been—it's about who you're reaching for. When she hid the Israelite spies, she wasn't just saving them; she was stepping into her destiny.",
         "opening_prayer": "God of second chances, thank You for Rahab's story. Remind us that our past doesn't disqualify us from Your purpose. Give us faith that takes action. In Jesus' name, amen.",
         "key_verse_ref": "Hebrews 11:31 (WEB)",
         "key_verse_text": "By faith, Rahab the prostitute didn't perish with those who were disobedient, having received the spies in peace.",
         "bites": [
             {
-                "id": "bkft-ae-rahab-1",
+                "id": "bkft-ae-faith-1-1",
                 "title": "Faith in Action",
                 "scripture_ref": "James 2:25 (WEB)",
-                "scripture_text": "In the same way, wasn't Rahab the prostitute also justified by works, in that she received the messengers and sent them out another way?",
+                "scripture_text": "In the same way, wasn't Rahab the prostitute also justified by works, in that she received the messengers?",
                 "teaching": "Rahab's faith wasn't passive. She heard about God's power, believed in His sovereignty, and then acted. True faith always produces movement. She risked everything—her safety, her reputation, her life—because she believed God was who He said He was.",
-                "question": {"id": "q-bkft-rahab-1", "type": "reflection", "prompt": "What action is your faith calling you to take right now?"}
+                "question": {"id": "q-bkft-ae-faith-1-1", "type": "reflection", "prompt": "What action is your faith calling you to take right now?"}
             }
         ],
         "to_go_box": ["Faith requires action", "Your past doesn't define your future", "God uses the unlikely"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 10: Abigail
+    {
+        "id": "breakfast-ae-faith-2",
+        "lesson_number": 10,
+        "title": "Abigail: Wisdom on the Move",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 3,
+        "theme": "Faith & Foresight",
+        "background_text": "1 Samuel 25:2-35",
+        "appetizer": "Abigail was married to a fool named Nabal. When his arrogance nearly got their entire household killed, Abigail moved with wisdom, speed, and grace. She intercepted David's wrath with humility and provision. Her foresight saved lives and changed her future.",
+        "opening_prayer": "Lord, give us the wisdom of Abigail—to see trouble coming and move with grace and speed. Help us be peacemakers who intercept disaster with discernment. In Jesus' name, amen.",
+        "key_verse_ref": "1 Samuel 25:32-33 (WEB)",
+        "key_verse_text": "Blessed is your discretion, and blessed are you, who have kept me today from blood guiltiness.",
+        "bites": [
+            {
+                "id": "bkft-ae-faith-2-1",
+                "title": "Wisdom That Protects",
+                "scripture_ref": "1 Samuel 25:18 (WEB)",
+                "scripture_text": "Then Abigail hurried and took two hundred loaves of bread...",
+                "teaching": "Abigail didn't wait for permission or waste time in panic. She assessed the situation, gathered resources, and moved. Wisdom isn't just knowing what's right—it's doing what's right at the right time. Her quick action protected her household from destruction.",
+                "question": {"id": "q-bkft-ae-faith-2-1", "type": "reflection", "prompt": "Is there a situation where you need to move with wisdom before it escalates?"}
+            }
+        ],
+        "to_go_box": ["Wisdom moves quickly", "Humility disarms anger", "Foresight prevents disaster"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 11: The Centurion
+    {
+        "id": "breakfast-ae-faith-3",
+        "lesson_number": 11,
+        "title": "The Centurion: Faith That Commands Results",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 3,
+        "theme": "Faith & Foresight",
+        "background_text": "Matthew 8:5-13; Luke 7:1-10",
+        "appetizer": "A Roman centurion—a man of military authority—came to Jesus not with demands but with desperate faith. He understood authority: if Jesus spoke a word, disease had to obey. His faith amazed even Jesus. Sometimes the greatest faith comes from unexpected places.",
+        "opening_prayer": "Lord, increase our faith to trust Your word alone. Help us understand that when You speak, circumstances must obey. We don't need to see to believe. In Jesus' name, amen.",
+        "key_verse_ref": "Matthew 8:10 (WEB)",
+        "key_verse_text": "When Jesus heard it, he marveled, and said to those who followed, 'Most certainly I tell you, I haven't found so great a faith, not even in Israel.'",
+        "bites": [
+            {
+                "id": "bkft-ae-faith-3-1",
+                "title": "Faith That Understands Authority",
+                "scripture_ref": "Matthew 8:8-9 (WEB)",
+                "scripture_text": "Just say the word, and my servant will be healed. For I am also a man under authority...",
+                "teaching": "The centurion understood chain of command. He knew that Jesus' word carried divine authority—sickness had to respond to His command just as soldiers responded to the centurion's. Faith is trusting that Jesus' word is enough, even without physical evidence.",
+                "question": {"id": "q-bkft-ae-faith-3-1", "type": "reflection", "prompt": "What situation in your life needs you to simply trust Jesus' word?"}
+            }
+        ],
+        "to_go_box": ["Faith trusts the Word", "Authority flows through submission", "Great faith amazes Jesus"],
+        "price_download": 3.59,
+        "price_interactive": 4.59,
+        "is_free": False
+    },
+    # Lesson 12: Joseph of Arimathea
+    {
+        "id": "breakfast-ae-faith-4",
+        "lesson_number": 12,
+        "title": "Joseph of Arimathea: Trust the Process",
+        "series_name": "Breakfast Series (Adult)",
+        "edition": "Adult",
+        "month": 3,
+        "theme": "Faith & Foresight",
+        "background_text": "Matthew 27:57-61; John 19:38-42",
+        "appetizer": "Joseph of Arimathea was a secret disciple—wealthy, influential, but quiet about his faith. When Jesus died, something shifted. Joseph boldly asked Pilate for the body and placed Jesus in his own new tomb. His moment came not in Jesus' ministry, but in Jesus' burial.",
+        "opening_prayer": "Lord, prepare us for our moment. Even when our faith has been quiet, give us boldness when it counts. Help us trust Your process and timing. In Jesus' name, amen.",
+        "key_verse_ref": "Matthew 27:57-58 (WEB)",
+        "key_verse_text": "He went to Pilate and asked for Jesus' body. Then Pilate commanded it to be given up.",
+        "bites": [
+            {
+                "id": "bkft-ae-faith-4-1",
+                "title": "Prepared for the Moment",
+                "scripture_ref": "John 19:38 (WEB)",
+                "scripture_text": "Joseph of Arimathea, being a disciple of Jesus, but secretly for fear of the Jews, asked...",
+                "teaching": "Joseph's tomb wasn't an accident—it was preparation. His wealth, his position, even his secrecy positioned him for a moment no one expected. God uses our preparation, even when we don't understand the purpose. Trust the process; your moment is coming.",
+                "question": {"id": "q-bkft-ae-faith-4-1", "type": "reflection", "prompt": "What has God been preparing in your life that might be for an unexpected purpose?"}
+            }
+        ],
+        "to_go_box": ["Quiet faith can become bold action", "God prepares us for moments we don't expect", "Trust the process"],
         "price_download": 3.59,
         "price_interactive": 4.59,
         "is_free": False
