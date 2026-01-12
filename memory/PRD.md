@@ -394,12 +394,52 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ---
 
+## January 11, 2026 - Breakfast Series Full Lesson Structure
+**Status: COMPLETED**
+
+**Feature**: Added all 24 Breakfast lessons (12 AE + 12 YE) with correct IDs and exact titles from curriculum.
+
+**Lesson ID Format**: `breakfast-{ae|ye}-{theme}-{lesson#}`
+- Month 1 (Prayer): `breakfast-ae-prayer-1` through `breakfast-ae-prayer-4`
+- Month 2 (Through): `breakfast-ae-through-1` through `breakfast-ae-through-4`
+- Month 3 (Faith): `breakfast-ae-faith-1` through `breakfast-ae-faith-4`
+
+**All 12 Lessons per Edition**:
+
+| # | Theme | AE Title | YE Title (where different) |
+|---|-------|----------|---------------------------|
+| 1 | Prayer | Esther: Second Is the Best | Same |
+| 2 | Prayer | Solomon: The Question That Unlocked a Legacy | Solomon: Wisdom in Response |
+| 3 | Prayer | Jesus: Prayer the First Resort | Jesus |
+| 4 | Prayer | Paul & Silas: Faith in the Dark | Paul & Silas |
+| 5 | Through | Joseph – The Young Dreamer | Same |
+| 6 | Through | Hannah – Barren but Not Lifeless | Same |
+| 7 | Through | Abram – No Heir, Wait Here | Same |
+| 8 | Through | Victory Through the Blood | Chronic Conditions |
+| 9 | Faith | Rahab: Faith That Took Action | Same |
+| 10 | Faith | Abigail: Wisdom on the Move | Same |
+| 11 | Faith | The Centurion: Faith That Commands Results | Same |
+| 12 | Faith | Joseph of Arimathea: Trust the Process | Same |
+
+**Snack Packs Created** (7 total):
+- In His Image (FREE)
+- Breakfast AE: Prayer, Through, Faith ($12.99 each)
+- Breakfast YE: Prayer, Through, Faith ($10.99 each)
+
+**Files Modified**:
+- `/app/backend/routes/lessons.py` - Full BREAKFAST_AE_NIBBLES and BREAKFAST_YE_NIBBLES arrays
+- `/app/backend/payment_routes.py` - Product file mappings for all 24 nibbles
+- `/app/frontend/src/QuickOrder.js` - Updated breakfastLessons with correct IDs and titles
+
+---
+
 ## Prioritized Backlog
 
 ### P0 - Critical
 - ~~Gift Certificate Coupon Field~~ **DONE**
 - ~~Interactive Lessons Navigation Bug~~ **DONE**
 - ~~Gift Certificate Cart Integration~~ **DONE**
+- ~~Breakfast Series Full Lesson Structure~~ **DONE**
 
 ### P1 - High Priority
 - Game Pass Restriction Disclosures (add "4 hrs/day" to QuickOrder game passes)
@@ -414,3 +454,4 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 ### P3 - Tech Debt
 - Migrate hardcoded product catalog to MongoDB `products` collection
 - Mobile app strategy (PWA)
+
