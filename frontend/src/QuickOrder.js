@@ -149,23 +149,24 @@ const QuickOrder = () => {
   ];
 
   // Breakfast individual lessons for Nibble selection (organized by month)
-  // NOTE: "In His Image" series is FREE - available in Free Lessons section above
+  // IDs must match backend BREAKFAST_AE_NIBBLES / BREAKFAST_YE_NIBBLES
+  // Format: breakfast-{ae|ye}-{theme}-{lesson#}
   const breakfastLessons = [
-    // Month 1 - Prayer
-    { id: 'prayer-esther', name: 'Esther - Second is Best', available: true, month: 1 },
-    { id: 'prayer-solomon', name: 'Solomon - Wisdom in Response', available: true, month: 1 },
-    { id: 'prayer-jesus', name: 'Jesus - Prayer as First Resort', available: true, month: 1 },
-    { id: 'prayer-paul', name: 'Paul & Silas - Faith in the Dark', available: true, month: 1 },
-    // Month 2 - Through
-    { id: 'through-1', name: 'The Art of Through - Lesson 1', available: true, month: 2 },
-    { id: 'through-2', name: 'The Art of Through - Lesson 2', available: true, month: 2 },
-    { id: 'through-3', name: 'The Art of Through - Lesson 3', available: true, month: 2 },
-    { id: 'through-4', name: 'The Art of Through - Lesson 4', available: true, month: 2 },
+    // Month 1 - Prayer, the First Resort
+    { id: 'prayer-1', name: 'Esther: Second Is the Best', available: true, month: 1 },
+    { id: 'prayer-2', name: 'Solomon: The Question That Unlocked a Legacy', available: true, month: 1 },
+    { id: 'prayer-3', name: 'Jesus: Prayer the First Resort', available: true, month: 1 },
+    { id: 'prayer-4', name: 'Paul & Silas: Faith in the Dark', available: true, month: 1 },
+    // Month 2 - The Art of Through
+    { id: 'through-1', name: 'Joseph – The Young Dreamer', available: true, month: 2 },
+    { id: 'through-2', name: 'Hannah – Barren but Not Lifeless', available: true, month: 2 },
+    { id: 'through-3', name: 'Abram – No Heir, Wait Here', available: true, month: 2 },
+    { id: 'through-4', name: 'Victory Through the Blood', available: true, month: 2 },
     // Month 3 - Faith & Foresight
-    { id: 'faith-1', name: 'Faith & Foresight - Lesson 1', available: true, month: 3 },
-    { id: 'faith-2', name: 'Faith & Foresight - Lesson 2', available: true, month: 3 },
-    { id: 'faith-3', name: 'Faith & Foresight - Lesson 3', available: true, month: 3 },
-    { id: 'faith-4', name: 'Faith & Foresight - Lesson 4', available: true, month: 3 }
+    { id: 'faith-1', name: 'Rahab: Faith That Took Action', available: true, month: 3 },
+    { id: 'faith-2', name: 'Abigail: Wisdom on the Move', available: true, month: 3 },
+    { id: 'faith-3', name: 'The Centurion: Faith That Commands Results', available: true, month: 3 },
+    { id: 'faith-4', name: 'Joseph of Arimathea: Trust the Process', available: true, month: 3 }
   ];
 
   // Holiday lessons for Nibble selection - IDs must match backend ALL_NIBBLES
