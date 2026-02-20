@@ -360,6 +360,29 @@ const QuickOrder = () => {
       ],
       contactEmail: 'kingdomlivingproject2020@gmail.com',
       salePercent: 0
+    },
+    {
+      id: 'medallions',
+      name: '🏅 Achievement Medallions',
+      tagline: 'Excellence Recognition Awards',
+      description: 'Metal medallions for game champions and outstanding teachers. Iron sharpens iron.',
+      available: true,
+      editions: ['adult', 'youth', 'instructor'],
+      formats: ['physical'],
+      packages: [
+        // Individual Medallions - $9.99 each
+        { id: 'medallion-grinch-ae', name: 'GRinCH Champion (Adult)', price: 9.99, edition: 'adult', game: 'grinch', image: '/medallions/grinch-ae.png', available: true, note: 'Ships 2-3 wks' },
+        { id: 'medallion-grinch-ye', name: 'GRinCH Champion (Youth)', price: 9.99, edition: 'youth', game: 'grinch', image: '/medallions/grinch-ye.png', available: true, note: 'Ships 2-3 wks' },
+        { id: 'medallion-grinch-ie', name: 'GRinCH Iron vs Iron (Instructor)', price: 9.99, edition: 'instructor', game: 'grinch', image: '/medallions/grinch-ie.png', available: true, note: 'Ships 2-3 wks' },
+        { id: 'medallion-passport-ae', name: 'Passport Trek (Adult)', price: 9.99, edition: 'adult', game: 'passport', image: '/medallions/passport-ae.png', available: true, note: 'Ships 2-3 wks' },
+        { id: 'medallion-passport-ye', name: 'Passport Trek (Youth)', price: 9.99, edition: 'youth', game: 'passport', image: '/medallions/passport-ye.png', available: true, note: 'Ships 2-3 wks' },
+        { id: 'medallion-passport-ie', name: 'Passport Trek (Instructor)', price: 9.99, edition: 'instructor', game: 'passport', image: '/medallions/passport-ie.png', available: true, note: 'Ships 2-3 wks' },
+        // Bulk Packs
+        { id: 'medallion-teacher-pack', name: 'Teacher Pack (3 Medallions)', price: 24.99, note: 'Any 3 - Save $5', available: true, bulk: 3 },
+        { id: 'medallion-ministry-pack', name: 'Ministry Pack (10 Medallions)', price: 69.99, note: 'Any 10 - Save $30', available: true, bulk: 10 },
+        { id: 'medallion-church-bundle', name: 'Church Bundle (25 Medallions)', price: 149.99, note: 'Any 25 - Save $100', available: true, bulk: 25 }
+      ],
+      salePercent: 0
     }
   ];
 
