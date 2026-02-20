@@ -22,10 +22,33 @@ client = AsyncIOMotorClient(MONGO_URL)
 db = client[os.environ.get('DB_NAME', 'soul_food_db')]
 
 # PDF files directory
-PDF_DIR = os.path.join(os.path.dirname(__file__), "lesson_pdfs")
+PDF_DIR = "/app/content/downloads"
 
 # Product ID to PDF file mapping
 PRODUCT_FILES = {
+    # =============== HOLIDAY SERIES ===============
+    # Full Workbooks - Holiday
+    "holiday_ae": "holiday-ae-full.pdf",
+    "holiday_ye": "holiday-ye-full.pdf",
+    "holiday_ie": "holiday-ie-full.pdf",
+    # Holiday - with dash format (frontend sends these)
+    "holiday-full-ae-digital": "holiday-ae-full.pdf",
+    "holiday-full-ye-digital": "holiday-ye-full.pdf",
+    "holiday-full-ie-digital": "holiday-ie-full.pdf",
+    "holiday-ae-full-digital": "holiday-ae-full.pdf",
+    "holiday-ye-full-digital": "holiday-ye-full.pdf",
+    "holiday-ie-full-digital": "holiday-ie-full.pdf",
+    "holiday-full-adult-digital": "holiday-ae-full.pdf",
+    "holiday-full-youth-digital": "holiday-ye-full.pdf",
+    "holiday-full-instructor-digital": "holiday-ie-full.pdf",
+    # Holiday print versions (map to same PDF for download)
+    "holiday-full-ae-print": "holiday-ae-full.pdf",
+    "holiday-full-ye-print": "holiday-ye-full.pdf",
+    "holiday-full-ie-print": "holiday-ie-full.pdf",
+    "holiday-full-adult-print": "holiday-ae-full.pdf",
+    "holiday-full-youth-print": "holiday-ye-full.pdf",
+    "holiday-full-instructor-print": "holiday-ie-full.pdf",
+    # =============== BREAKFAST SERIES ===============
     # Snack Packs
     "snack_pack_ae_m1": "breakfast-ae-month1-snackpack.pdf",
     "snack_pack_ae_m2": "breakfast-ae-month2-snackpack.pdf",
@@ -44,25 +67,16 @@ PRODUCT_FILES = {
     "breakfast-ae-full-digital": "breakfast-ae-full.pdf",
     "breakfast-ye-full-digital": "breakfast-ye-full.pdf",
     "breakfast-ie-full-digital": "breakfast-ie-full.pdf",
-    # Holiday - with underscore format
-    "holiday_ae": "holiday-ae-full.pdf",
-    "holiday_ye": "holiday-ye-full.pdf",
-    "holiday_ie": "holiday-ie-full.pdf",
-    # Holiday - with dash format (frontend sends these)
-    "holiday-full-ae-digital": "holiday-ae-full.pdf",
-    "holiday-full-ye-digital": "holiday-ye-full.pdf",
-    "holiday-full-ie-digital": "holiday-ie-full.pdf",
-    "holiday-ae-full-digital": "holiday-ae-full.pdf",
-    "holiday-ye-full-digital": "holiday-ye-full.pdf",
-    "holiday-ie-full-digital": "holiday-ie-full.pdf",
-    # Holiday print versions (map to same PDF for download)
-    "holiday-full-ae-print": "holiday-ae-full.pdf",
-    "holiday-full-ye-print": "holiday-ye-full.pdf",
-    "holiday-full-ie-print": "holiday-ie-full.pdf",
+    "breakfast-full-adult-digital": "breakfast-ae-full.pdf",
+    "breakfast-full-youth-digital": "breakfast-ye-full.pdf",
+    "breakfast-full-instructor-digital": "breakfast-ie-full.pdf",
     # Breakfast print versions
     "breakfast-full-ae-print": "breakfast-ae-full.pdf",
     "breakfast-full-ye-print": "breakfast-ye-full.pdf",
     "breakfast-full-ie-print": "breakfast-ie-full.pdf",
+    "breakfast-full-adult-print": "breakfast-ae-full.pdf",
+    "breakfast-full-youth-print": "breakfast-ye-full.pdf",
+    "breakfast-full-instructor-print": "breakfast-ie-full.pdf",
     # Snack Packs - with dash format
     "breakfast-snack-ae-m1-digital": "breakfast-ae-month1-snackpack.pdf",
     "breakfast-snack-ae-m2-digital": "breakfast-ae-month2-snackpack.pdf",
