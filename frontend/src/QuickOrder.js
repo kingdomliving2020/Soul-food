@@ -137,7 +137,7 @@ const QuickOrder = () => {
   };
 
   // Product catalog - Holiday first, then Breakfast, then Nibbles/Snack Packs, then Box Set, then Coming Soon
-  // Sale ends January 15, 2026 - show list price crossed out with sale price
+  // Products now available - show sale prices where applicable
   const SALE_END_DATE = new Date('2026-01-15');
   const isSaleActive = new Date() < SALE_END_DATE;
   
