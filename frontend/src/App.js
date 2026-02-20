@@ -760,11 +760,11 @@ const LandingPage = () => {
                   </li>
                 </ul>
                 <Button
-                  onClick={() => toast.info('Subscriptions launching soon! Sign up to be first in line.')}
+                  onClick={() => window.location.href = '/quick-order'}
                   data-testid="subscription-plan-btn"
                   className="w-full bg-gradient-to-r from-purple-600 to-indigo-700 hover:from-purple-700 hover:to-indigo-800 py-3 rounded-xl font-semibold"
                 >
-                  Join Waitlist
+                  Subscribe Now
                 </Button>
               </CardContent>
             </Card>
