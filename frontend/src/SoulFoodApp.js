@@ -1253,16 +1253,16 @@ const SoulFoodLanding = () => {
                       <div className="text-2xl font-bold text-indigo-600">$24.99</div>
                     </div>
                   </div>
-                  <Badge className="bg-amber-500 text-white text-xs px-3 py-1 mt-2">
-                    Early Access Waitlist Open!
+                  <Badge className="bg-emerald-500 text-white text-xs px-3 py-1 mt-2">
+                    Instant Download Available
                   </Badge>
                 </div>
 
                 <Button 
-                  onClick={() => window.location.href = '/auth'}
-                  className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold py-4 rounded-xl text-lg shadow-2xl transform hover:scale-105 transition-all"
+                  onClick={() => window.location.href = '/quick-order'}
+                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold py-4 rounded-xl text-lg shadow-2xl transform hover:scale-105 transition-all"
                 >
-                  Join Waitlist for Digital Access →
+                  Get Digital Access Now →
                 </Button>
               </CardContent>
             </Card>
