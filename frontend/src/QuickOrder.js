@@ -318,7 +318,10 @@ const QuickOrder = () => {
         { id: 'breakfast-ye-paperback', name: 'Break*fast YE Paperback', price: 24.99, edition: 'youth', format: 'physical', available: true, note: '2-3 wk ship' },
         { id: 'holiday-ae-digital', name: 'Holiday AE Digital', price: 14.99, edition: 'adult', format: 'digital', available: true },
         { id: 'holiday-ae-paperback', name: 'Holiday AE Paperback', price: 16.99, edition: 'adult', format: 'physical', available: true, note: '2-3 wk ship' },
-        { id: 'holiday-ye-paperback', name: 'Holiday YE Paperback', price: 16.99, edition: 'youth', format: 'physical', available: true, note: '2-3 wk ship' }
+        { id: 'holiday-ye-digital', name: 'Holiday YE Digital', price: 12.99, edition: 'youth', format: 'digital', available: true },
+        { id: 'holiday-ye-paperback', name: 'Holiday YE Paperback', price: 16.99, edition: 'youth', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'holiday-ie-digital', name: 'Holiday IE Digital', price: 19.99, edition: 'instructor', format: 'digital', available: true },
+        { id: 'holiday-ie-paperback', name: 'Holiday IE Paperback', price: 24.99, edition: 'instructor', format: 'physical', available: true, note: '2-3 wk ship' }
       ],
       salePercent: 0
     },
