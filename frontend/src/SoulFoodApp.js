@@ -700,7 +700,7 @@ const SoulFoodLanding = () => {
                         ? 'bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600' 
                         : 'bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600'} text-white font-semibold py-3 rounded-lg transition-all shadow-md`}
                     >
-                      🛒 {(s.id === 'breakfast' || s.id === 'holiday') ? 'Add to Cart' : 'Pre-Order Book'}
+                      🛒 {(s.id === 'breakfast' || s.id === 'holiday') ? 'Add to Cart' : 'Order Book'}
                     </Button>
                     
                     <Button
@@ -788,7 +788,7 @@ const SoulFoodLanding = () => {
                       onClick={() => openProductModal(s)}
                       className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-semibold py-3 rounded-lg transition-all shadow-md"
                     >
-                      🛒 Pre-Order Book
+                      🛒 Order Book
                     </Button>
                     
                     <Button
@@ -1190,7 +1190,7 @@ const SoulFoodLanding = () => {
         </div>
       )}
 
-      {/* Holiday Box Set Pre-Order Section */}
+      {/* Holiday Box Set Section */}
       {/* Holiday Box Set Section - Available Now */}
       <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
         <div className="container mx-auto max-w-6xl">
