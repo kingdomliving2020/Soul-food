@@ -1267,10 +1267,10 @@ const SoulFoodLanding = () => {
               </CardContent>
             </Card>
 
-            {/* Print Pre-Order - Ships January */}
+            {/* Print - Ships in 2-3 Weeks */}
             <Card className="border-4 border-amber-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
               <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 text-sm font-bold z-10 shadow-xl rotate-12">
-                Ships January!
+                Ships in 2-3 Weeks
               </Badge>
               <CardHeader className="bg-gradient-to-br from-amber-50 to-orange-100 p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -1279,11 +1279,11 @@ const SoulFoodLanding = () => {
                   </CardTitle>
                   <span className="text-4xl">📚</span>
                 </div>
-                <Badge className="bg-amber-500 text-white px-3 py-1 text-xs">Pre-Order Open</Badge>
+                <Badge className="bg-emerald-500 text-white px-3 py-1 text-xs">Order Now</Badge>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
                 <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4">
-                  <h5 className="font-bold text-amber-800 mb-2">📦 Pre-Order Includes:</h5>
+                  <h5 className="font-bold text-amber-800 mb-2">📦 Bundle Includes:</h5>
                   <ul className="text-sm text-slate-700 space-y-2">
                     <li className="flex items-start space-x-2">
                       <span className="text-amber-600 font-bold">✓</span>
@@ -1291,7 +1291,7 @@ const SoulFoodLanding = () => {
                     </li>
                     <li className="flex items-start space-x-2">
                       <span className="text-amber-600 font-bold">✓</span>
-                      <span><strong>FREE Instant eBook</strong> - Start reading while you wait!</span>
+                      <span><strong>FREE Instant eBook</strong> - Start reading immediately!</span>
                     </li>
                     <li className="flex items-start space-x-2">
                       <span className="text-amber-600 font-bold">✓</span>
@@ -1315,15 +1315,15 @@ const SoulFoodLanding = () => {
                 </div>
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-sm text-slate-700">
-                  <p className="font-semibold">📦 Ships: January 2025</p>
-                  <p className="text-xs mt-1">Perfect timing for New Year study groups!</p>
+                  <p className="font-semibold">📦 Ships in 2-3 Weeks</p>
+                  <p className="text-xs mt-1">Perfect for personal or group Bible study!</p>
                 </div>
 
                 <Button 
-                  onClick={() => toast.info('Print pre-orders opening soon! Join the waitlist to be notified.')}
+                  onClick={() => window.location.href = '/quick-order'}
                   className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-4 rounded-xl text-lg shadow-2xl transform hover:scale-105 transition-all"
                 >
-                  Join Print Waitlist →
+                  Order Print Workbook →
                 </Button>
               </CardContent>
             </Card>
