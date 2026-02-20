@@ -839,14 +839,14 @@ const SoulFoodLanding = () => {
                   </p>
                 </div>
                 
-                {/* Delivery Notice - Updated dates by 30 days */}
+                {/* Delivery Notice */}
                 <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4">
                   <p className="text-blue-900 font-semibold flex items-center">
                     <span className="text-xl mr-2">📦</span>
-                    <span>Paperback Delivery: Order by January 15th</span>
+                    <span>Paperback Delivery: Ships in 2-3 weeks</span>
                   </p>
                   <p className="text-sm text-blue-700 mt-1 ml-8">
-                    Delivery between January 23-30th for US locations (timing depends on shipping option selected)
+                    US delivery typically 2-3 weeks from order (timing depends on shipping option selected)
                   </p>
                 </div>
               </div>
