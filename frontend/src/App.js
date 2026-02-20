@@ -578,23 +578,23 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Updated Pricing Section - Digital Available Soon, Print Ships January */}
+      {/* Updated Pricing Section - Digital & Print Available Now */}
       <section className="py-12 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-indigo-50 to-purple-50">
         <div className="container mx-auto">
           <h3 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-slate-800">
             Choose Your Learning Path
           </h3>
           <p className="text-center text-slate-600 mb-12 sm:mb-16 max-w-2xl mx-auto">
-            Digital access launching soon! Get instant access to interactive lessons, eBooks, and community features. 
-            Physical workbooks shipping January 2025.
+            Get instant access to interactive lessons, eBooks, and community features. 
+            Physical workbooks available with 2-3 week shipping.
           </p>
           
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
-            {/* Print Version - Ships January */}
+            {/* Print Version - Available Now */}
             <Card className="shadow-2xl border border-slate-200 relative rounded-2xl overflow-hidden">
               <div className="absolute top-3 right-3">
-                <Badge className="bg-amber-500 text-white px-3 py-1 text-xs font-semibold">
-                  Ships January
+                <Badge className="bg-emerald-500 text-white px-3 py-1 text-xs font-semibold">
+                  Ships in 2-3 Weeks
                 </Badge>
               </div>
               <CardHeader className="text-center p-6 bg-gradient-to-r from-slate-50 to-gray-100">
@@ -605,7 +605,7 @@ const LandingPage = () => {
                 </div>
                 <CardTitle className="text-2xl text-slate-800">Print Workbook</CardTitle>
                 <div className="text-3xl sm:text-4xl font-bold mb-2 text-slate-700">$39.99</div>
-                <p className="text-sm text-amber-600 font-medium">Pre-order now • Ships January 2025</p>
+                <p className="text-sm text-emerald-600 font-medium">Order now • Ships in 2-3 weeks</p>
               </CardHeader>
               <CardContent className="p-6 sm:p-8 pt-0">
                 <ul className="space-y-3 mb-8">
