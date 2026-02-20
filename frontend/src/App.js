@@ -770,13 +770,13 @@ const LandingPage = () => {
             </Card>
           </div>
           
-          {/* Coming Soon Notice */}
+          {/* Available Now Notice */}
           <div className="mt-12 text-center">
-            <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg border border-purple-200">
-              <span className="text-2xl">🚀</span>
+            <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg border border-emerald-200">
+              <span className="text-2xl">✨</span>
               <div className="text-left">
-                <p className="font-bold text-slate-800">Digital Access Launching Soon!</p>
-                <p className="text-sm text-slate-600">Interactive lessons, eBooks & subscriptions available shortly. Print books ship January 2025.</p>
+                <p className="font-bold text-slate-800">Digital Downloads Available Now!</p>
+                <p className="text-sm text-slate-600">Interactive lessons, eBooks & subscriptions ready for instant access. Print books ship in 2-3 weeks.</p>
               </div>
             </div>
           </div>
