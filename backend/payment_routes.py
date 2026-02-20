@@ -585,6 +585,110 @@ PRODUCTS = {
         "sale_price": 0.00,
         "currency": "usd",
         "free": True
+    },
+    
+    # ==================== ACHIEVEMENT MEDALLIONS ====================
+    # GRinCH (Grid Iron Challenge) Medallions
+    "medallion-grinch-ae": {
+        "name": "GRinCH Champion Medallion (Adult)",
+        "sku": "MEDAL-GRINCH-AE",
+        "description": "Metal achievement medallion for GRinCH game champions. Adult Edition design.",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "unit": "medallion",
+        "edition": "AE",
+        "physical": True
+    },
+    "medallion-grinch-ye": {
+        "name": "GRinCH Champion Medallion (Youth)",
+        "sku": "MEDAL-GRINCH-YE",
+        "description": "Metal achievement medallion for GRinCH game champions. Youth Edition design.",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "unit": "medallion",
+        "edition": "YE",
+        "physical": True
+    },
+    "medallion-grinch-ie": {
+        "name": "GRinCH Iron vs Iron Medallion (Instructor)",
+        "sku": "MEDAL-GRINCH-IE",
+        "description": "Metal achievement medallion for outstanding instructors. Prov. 27:17 - Iron sharpens iron.",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "unit": "medallion",
+        "edition": "IE",
+        "physical": True
+    },
+    # Passport Trek Medallions
+    "medallion-passport-ae": {
+        "name": "Passport Trek Medallion (Adult)",
+        "sku": "MEDAL-PASSPORT-AE",
+        "description": "Metal achievement medallion for completing the Passport Trek journey. Adult Edition design.",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "unit": "medallion",
+        "edition": "AE",
+        "physical": True
+    },
+    "medallion-passport-ye": {
+        "name": "Passport Trek Medallion (Youth)",
+        "sku": "MEDAL-PASSPORT-YE",
+        "description": "Metal achievement medallion for completing the Passport Trek journey. Youth Edition design.",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "unit": "medallion",
+        "edition": "YE",
+        "physical": True
+    },
+    "medallion-passport-ie": {
+        "name": "Passport Trek Medallion (Instructor)",
+        "sku": "MEDAL-PASSPORT-IE",
+        "description": "Metal achievement medallion for instructors who led groups through the full Passport Trek journey.",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "unit": "medallion",
+        "edition": "IE",
+        "physical": True
+    },
+    # Bulk Medallion Packs
+    "medallion-teacher-pack": {
+        "name": "Teacher Pack (3 Medallions)",
+        "sku": "MEDAL-PACK-3",
+        "description": "Pack of 3 medallions for classroom recognition. Mix and match any editions/games.",
+        "list_price": 29.97,
+        "sale_price": 24.99,
+        "currency": "usd",
+        "unit": "pack",
+        "physical": True,
+        "quantity": 3
+    },
+    "medallion-ministry-pack": {
+        "name": "Ministry Pack (10 Medallions)",
+        "sku": "MEDAL-PACK-10",
+        "description": "Pack of 10 medallions for small group and ministry recognition. Mix and match any editions/games.",
+        "list_price": 99.90,
+        "sale_price": 69.99,
+        "currency": "usd",
+        "unit": "pack",
+        "physical": True,
+        "quantity": 10
+    },
+    "medallion-church-bundle": {
+        "name": "Church Bundle (25 Medallions)",
+        "sku": "MEDAL-PACK-25",
+        "description": "Bundle of 25 medallions for church-wide recognition programs. Mix and match any editions/games.",
+        "list_price": 249.75,
+        "sale_price": 149.99,
+        "currency": "usd",
+        "unit": "bundle",
+        "physical": True,
+        "quantity": 25
     }
 }
 
