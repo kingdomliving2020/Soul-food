@@ -410,9 +410,9 @@ const SoulFoodLanding = () => {
         </div>
         
         <div className="relative z-10 container mx-auto text-center max-w-5xl">
-          {/* Beta Badge */}
-          <Badge className="mb-6 bg-gradient-to-r from-purple-600 to-indigo-700 text-white px-6 py-2 text-sm font-bold animate-pulse shadow-xl">
-            🚀 BETA ACCESS - Launch Special
+          {/* Available Now Badge */}
+          <Badge className="mb-6 bg-gradient-to-r from-emerald-600 to-teal-700 text-white px-6 py-2 text-sm font-bold shadow-xl">
+            ✨ NOW AVAILABLE - Digital Downloads Ready
           </Badge>
           
           <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
