@@ -1989,12 +1989,12 @@ const SoulFoodLanding = () => {
                 >
                   {selectedSeries.available 
                     ? `Get Started with ${selectedSeries.name} 🚀` 
-                    : `Pre-Order ${selectedSeries.name} Now 🎯`}
+                    : `Order ${selectedSeries.name} Now 🎯`}
                 </Button>
                 <p className="text-center text-sm text-slate-500 mt-3">
                   {selectedSeries.available 
                     ? 'Choose your preferred access option below'
-                    : `Available ${selectedSeries.unlockDate} - Reserve your spot today!`}
+                    : `Available ${selectedSeries.unlockDate} - Order yours today!`}
                 </p>
               </div>
             </div>
