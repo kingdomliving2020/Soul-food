@@ -1784,7 +1784,7 @@ const SoulFoodLanding = () => {
           </div>
           <div className="mt-8 pt-8 border-t border-slate-700">
             <p className="text-slate-500 text-sm">
-              © 2025 Kingdom Living Project. All rights reserved. | New Year 2026 Launch
+              © 2025 Kingdom Living Project. All rights reserved.
             </p>
           </div>
           
