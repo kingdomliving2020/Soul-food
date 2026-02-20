@@ -1191,43 +1191,43 @@ const SoulFoodLanding = () => {
       )}
 
       {/* Holiday Box Set Pre-Order Section */}
-      {/* Holiday Box Set Pre-Order Section - Updated for January Shipping */}
+      {/* Holiday Box Set Section - Available Now */}
       <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-10">
-            <Badge className="mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-8 py-3 text-base font-bold shadow-2xl">
-              🚀 DIGITAL ACCESS LAUNCHING SOON
+            <Badge className="mb-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-8 py-3 text-base font-bold shadow-2xl">
+              ✨ NOW AVAILABLE
             </Badge>
             <h3 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
               Start Your Journey Today
             </h3>
             <p className="text-xl text-slate-700 max-w-2xl mx-auto">
-              Interactive lessons, eBooks & subscriptions available soon. Physical workbooks shipping January 2025!
+              Interactive lessons, eBooks & digital downloads available now. Physical workbooks ship in 2-3 weeks!
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 mb-12">
-            {/* Digital Access - Coming Soon */}
-            <Card className="border-4 border-purple-300 shadow-2xl overflow-hidden hover:scale-105 transition-all">
-              <CardHeader className="bg-gradient-to-br from-purple-100 to-indigo-100 p-6">
+            {/* Digital Access - Available Now */}
+            <Card className="border-4 border-emerald-300 shadow-2xl overflow-hidden hover:scale-105 transition-all">
+              <CardHeader className="bg-gradient-to-br from-emerald-100 to-teal-100 p-6">
                 <div className="flex items-center justify-between mb-4">
                   <CardTitle className="text-2xl font-bold text-slate-800">
                     Interactive Digital Bundle
                   </CardTitle>
                   <span className="text-4xl">✨</span>
                 </div>
-                <Badge className="bg-emerald-500 text-white px-3 py-1 text-xs">Coming Soon</Badge>
+                <Badge className="bg-emerald-500 text-white px-3 py-1 text-xs">Available Now</Badge>
               </CardHeader>
               <CardContent className="p-6 space-y-4">
-                <div className="bg-purple-50 border-2 border-purple-300 rounded-xl p-4">
-                  <h5 className="font-bold text-purple-800 mb-2">🎯 What's Included:</h5>
+                <div className="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-4">
+                  <h5 className="font-bold text-emerald-800 mb-2">🎯 What's Included:</h5>
                   <ul className="text-sm text-slate-700 space-y-2">
                     <li className="flex items-start space-x-2">
-                      <span className="text-purple-600 font-bold">✓</span>
+                      <span className="text-emerald-600 font-bold">✓</span>
                       <span><strong>Interactive Lessons</strong> - Engaging online experience</span>
                     </li>
                     <li className="flex items-start space-x-2">
-                      <span className="text-purple-600 font-bold">✓</span>
+                      <span className="text-emerald-600 font-bold">✓</span>
                       <span><strong>Progress Tracking</strong> - Games, quizzes & achievements</span>
                     </li>
                     <li className="flex items-start space-x-2">
