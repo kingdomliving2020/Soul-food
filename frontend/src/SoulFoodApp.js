@@ -1450,8 +1450,8 @@ const SoulFoodLanding = () => {
               helping you focus on core principles without navigating Old English.
             </p>
             
-            {/* Updated Pricing Clarity Notice - Digital Soon, Print January */}
-            <div className="max-w-4xl mx-auto bg-gradient-to-r from-purple-50 to-indigo-50 border-2 border-purple-200 rounded-xl p-6 shadow-lg">
+            {/* Pricing Clarity Notice - Available Now */}
+            <div className="max-w-4xl mx-auto bg-gradient-to-r from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-xl p-6 shadow-lg">
               <div className="flex items-start space-x-3">
                 <div className="flex-shrink-0 w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
                   <span className="text-white text-xl">✨</span>
