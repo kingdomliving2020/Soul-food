@@ -268,10 +268,10 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ### P2 - Medium Priority
 - [x] Add gaming pass restriction disclosures to QuickOrder page ✅ COMPLETED Feb 2026
+- [x] Coupon System Refactor - Migrate from hardcoded to MongoDB ✅ COMPLETED Feb 2026
 - [ ] Cart persistence across browser sessions (localStorage)
 - [ ] Implement Word Search Game
 - [ ] RBAC rules for test users
-- [ ] Coupon System Refactor - Migrate from hardcoded to MongoDB
 
 ### P3 - Low Priority / Future
 - [ ] Migrate hardcoded product catalog to MongoDB
