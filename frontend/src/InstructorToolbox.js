@@ -37,8 +37,8 @@ const InstructorToolbox = () => {
   // Check authentication on mount
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem('sf_token');
-      const userData = localStorage.getItem('sf_user');
+      const token = localStorage.getItem('soul_food_token');
+      const userData = localStorage.getItem('soul_food_user');
       
       if (!token || !userData) {
         navigate('/login', { state: { returnTo: '/instructor-toolbox', message: 'Please sign in with an Instructor account to access the Toolbox.' } });
