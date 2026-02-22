@@ -281,6 +281,31 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ---
 
+## February 22, 2026 - Holiday Bonus Lessons & Game Pass Disclosures
+
+### Status: COMPLETED
+
+**1. Holiday Bonus Lessons Implementation**
+- **AE (Adult Edition)**: FREE - Available in Free Lessons section with download button
+- **YE (Youth Edition)**: FREE - Available in Free Lessons section with download button  
+- **IE (Instructor Edition)**: $9.99 PAID - Available in Merchandise section
+- PDF files uploaded: `bonus-ae-holiday.pdf`, `bonus-ye-holiday.pdf`, `bonus-ie-holiday.pdf`
+- Downloads served from `/app/content/downloads/` via lesson download endpoint
+
+**2. Game Pass Restriction Disclosures**
+- New "Gaming Access" section added to QuickOrder page
+- 30-Day Game Pass: Shows "⚠️ 4 hrs/day limit • 20 min idle timeout"
+- 90-Day Game Pass: Shows "⚠️ 5 hrs/day limit • 30 min idle timeout"
+- Edition badges (Adult/Youth/Instructor) displayed for each pass
+- "Best Value" badge on 90-day pass
+
+**Files Modified**:
+- `/app/backend/payment_routes.py` - Added bonus lesson products and file mappings
+- `/app/frontend/src/QuickOrder.js` - Updated Free Lessons, added Gaming Access section
+- `/app/backend/lesson_pdfs/` - Symlinks to new bonus PDFs
+
+---
+
 ## Email System Configuration
 
 ### Email Addresses (kingdom-soul.com)
