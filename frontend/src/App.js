@@ -1906,6 +1906,7 @@ import GamingCentral from './GamingCentral';
 import OrderLookup from './OrderLookup';
 import RefundPolicy from './RefundPolicy';
 import AdminOrders from './AdminOrders';
+import InstructorToolbox from './InstructorToolbox';
 
 function App() {
   return (
@@ -1915,6 +1916,7 @@ function App() {
           <Routes>
             <Route path="/" element={<SoulFoodLanding />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/login" element={<AuthPage />} />
             <Route path="/quick-order" element={<QuickOrder />} />
             <Route path="/gift-certificates" element={<GiftCertificate />} />
             <Route path="/gift-certificate-success" element={<GiftCertificateSuccess />} />
@@ -1922,6 +1924,7 @@ function App() {
             <Route path="/orders/lookup" element={<OrderLookup />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
             <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/instructor-toolbox" element={<InstructorToolbox />} />
             <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />
             <Route path="/lesson/:id" element={<LessonViewer />} />
             <Route path="/lessons" element={<LessonsListPage />} />
