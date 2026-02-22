@@ -127,6 +127,14 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load order routes: {e}")
 
+# Instructor routes
+try:
+    from routes.instructor_routes import router as instructor_router
+    app.include_router(instructor_router)
+    print("✅ Instructor toolbox routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load instructor routes: {e}")
+
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
