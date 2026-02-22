@@ -262,19 +262,22 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 - ~~Order lookup and refund system~~ ✅ IMPLEMENTED
 
 ### P1 - High Priority
-- [ ] Gift certificates added to main cart (not separate transaction)
+- [x] Gift certificates added to main cart (completed in previous session)
 - [ ] Frontend for Referral System
+- [ ] Instructor Role Functionality - Create gated "Instructor Toolbox" area
 
 ### P2 - Medium Priority
+- [x] Add gaming pass restriction disclosures to QuickOrder page ✅ COMPLETED Feb 2026
 - [ ] Cart persistence across browser sessions (localStorage)
-- [ ] Add gaming pass restriction disclosures to QuickOrder page
 - [ ] Implement Word Search Game
 - [ ] RBAC rules for test users
+- [ ] Coupon System Refactor - Migrate from hardcoded to MongoDB
 
 ### P3 - Low Priority / Future
 - [ ] Migrate hardcoded product catalog to MongoDB
 - [ ] User dashboard with purchase history
 - [ ] Mobile app strategy (PWA)
+- [ ] Individual Breakfast lesson PDFs (need page ranges from user)
 
 ---
 
