@@ -299,10 +299,28 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 - Edition badges (Adult/Youth/Instructor) displayed for each pass
 - "Best Value" badge on 90-day pass
 
+**3. Instructor Toolbox (Gated Area)**
+- New `/instructor-toolbox` route - requires instructor role to access
+- **Answer Keys**: Browse and download lesson answer guides (8 Breakfast + 4 Holiday)
+- **Facilitation Notes**: Teaching tips and discussion guides
+- **Group Roster**: Manage study group members and track progress (CRUD API ready)
+- **Game Setup**: GRinCH and Passport Trek configuration guides
+- **Teaching Resources**: Printables, slides, attendance sheets
+- **Achievement Awards**: Certificate printing and medallion ordering links
+
+**Files Created**:
+- `/app/frontend/src/InstructorToolbox.js` - Instructor portal UI
+- `/app/backend/routes/instructor_routes.py` - API endpoints for instructor content
+
 **Files Modified**:
 - `/app/backend/payment_routes.py` - Added bonus lesson products and file mappings
 - `/app/frontend/src/QuickOrder.js` - Updated Free Lessons, added Gaming Access section
-- `/app/backend/lesson_pdfs/` - Symlinks to new bonus PDFs
+- `/app/frontend/src/App.js` - Added InstructorToolbox route
+- `/app/backend/server.py` - Registered instructor routes
+- `/app/backend/.env` - Added JWT_SECRET_KEY for consistent auth
+
+**Test Credentials**:
+- Username: `instructor` / Password: `test123` (Beta login tab)
 
 ---
 
