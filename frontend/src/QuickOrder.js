@@ -473,6 +473,15 @@ const QuickOrder = () => {
       link: '/gift-certificates'
     },
     {
+      id: 'bonus-ie-holiday',
+      name: 'Holiday Bonus Lessons (Instructor)',
+      subtitle: 'Names of God & Times and Seasons with Games',
+      image: '/covers/holiday-instructor-front.jpg',
+      price: 9.99,
+      isDigital: true,
+      description: 'Instructor edition with game content for group activities'
+    },
+    {
       id: 'study-kit',
       name: 'Study Kit Add-On',
       subtitle: 'Pen + Magnetic Bookmark Set',
