@@ -1355,9 +1355,81 @@ const QuickOrder = () => {
           </div>
         </section>
 
+        {/* Gaming Passes Section */}
+        <section className="mb-12">
+          <h3 className="text-2xl font-bold mb-6 text-slate-800">🎮 Gaming Access</h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            {gamingPasses.map(pass => (
+              <Card key={pass.id} className="shadow-lg hover:shadow-xl transition-shadow border-2 border-purple-200">
+                <CardContent className="p-5">
+                  <div className="flex gap-4">
+                    {/* Game Token Image */}
+                    <div className="flex-shrink-0 relative">
+                      <img 
+                        src={pass.image} 
+                        alt={pass.name}
+                        className="w-20 h-20 object-contain rounded-lg"
+                      />
+                      {pass.badge && (
+                        <Badge className="absolute -top-2 -right-2 bg-emerald-500 text-xs">
+                          {pass.badge}
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    {/* Details */}
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-lg text-slate-800">{pass.name}</h4>
+                      <p className="text-sm text-slate-600 mb-2">{pass.description}</p>
+                      
+                      {/* RESTRICTION DISCLOSURE - Required notice */}
+                      <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3">
+                        <p className="text-xs text-amber-700 font-medium flex items-center gap-1">
+                          <span>⚠️</span>
+                          <span>{pass.restrictions}</span>
+                        </p>
+                      </div>
+                      
+                      {/* Editions */}
+                      <div className="flex flex-wrap gap-1 mb-3">
+                        {pass.editions.map(ed => (
+                          <Badge key={ed} variant="outline" className="text-xs capitalize">
+                            {ed === 'adult' ? 'Adult' : ed === 'youth' ? 'Youth' : 'Instructor'}
+                          </Badge>
+                        ))}
+                      </div>
+                      
+                      {/* Price & Add to Cart */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-xl font-bold text-purple-600">${pass.price.toFixed(2)}</span>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            addToCart({
+                              id: pass.id,
+                              name: pass.name,
+                              price: pass.price,
+                              quantity: 1,
+                              image: pass.image
+                            });
+                            toast.success(`Added ${pass.name} to cart!`);
+                          }}
+                          className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                        >
+                          🛒 Add to Cart
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
         {/* Merchandise Section */}
         <section>
-          <h3 className="text-2xl font-bold mb-6 text-slate-800">🎁 Merchandise</h3>
+          <h3 className="text-2xl font-bold mb-6 text-slate-800">🎁 Extras & Merchandise</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {merchandise.map(item => (
               <Card key={item.id} className="shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full">
