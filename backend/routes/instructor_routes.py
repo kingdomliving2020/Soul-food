@@ -24,9 +24,8 @@ MONGO_URL = os.getenv('MONGO_URL')
 client = AsyncIOMotorClient(MONGO_URL)
 db = client[os.environ.get('DB_NAME', 'soul_food_db')]
 
-# JWT Settings - Must match auth_routes.py
-# Note: In production, JWT_SECRET_KEY should be set in .env
-SECRET_KEY = os.getenv("JWT_SECRET_KEY") or "soul-food-jwt-secret-" + "development-key-2024"
+# JWT Settings - Must match auth_routes.py and admin_routes.py
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
 ALGORITHM = "HS256"
 
 security = HTTPBearer(auto_error=False)
