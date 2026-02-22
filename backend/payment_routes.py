@@ -130,10 +130,17 @@ PRODUCT_FILES = {
     "holiday-nibble-holiday-ae-cradle-adult-interactive": "holiday-ae-full.pdf",
     "holiday-nibble-holiday-ae-cross-adult-interactive": "holiday-ae-full.pdf",
     "holiday-nibble-holiday-ae-comforter-adult-interactive": "holiday-ae-full.pdf",
-    # Free bonus lessons
+    # Free bonus lessons - Adult Edition (FREE)
     "bonus_names_of_god": "holiday-bonus-names-seasons.pdf",
     "bonus_times_seasons": "holiday-bonus-names-seasons.pdf",
     "bonus_in_his_image": "in-his-image-adult-full.pdf",
+    # Holiday Bonus Lessons - by edition
+    "bonus-ae-holiday": "bonus-ae-holiday.pdf",
+    "bonus-ye-holiday": "bonus-ye-holiday.pdf",
+    "bonus-ie-holiday": "bonus-ie-holiday.pdf",
+    "holiday-bonus-ae": "bonus-ae-holiday.pdf",
+    "holiday-bonus-ye": "bonus-ye-holiday.pdf",
+    "holiday-bonus-ie": "bonus-ie-holiday.pdf",
     # In His Image series
     "in-his-image-full-ae-digital": "in-his-image-adult-full.pdf",
     "in-his-image-full-ye-digital": "in-his-image-youth-full.pdf",
@@ -585,6 +592,37 @@ PRODUCTS = {
         "sale_price": 0.00,
         "currency": "usd",
         "free": True
+    },
+    # Holiday Bonus Lessons - AE and YE are FREE, IE is PAID
+    "bonus-ae-holiday": {
+        "name": "Holiday Bonus Lessons (Adult Edition)",
+        "sku": "BONUS-HOL-AE",
+        "description": "Names of God & Times and Seasons bonus lessons for adults. FREE download.",
+        "list_price": 0.00,
+        "sale_price": 0.00,
+        "currency": "usd",
+        "edition": "AE",
+        "free": True
+    },
+    "bonus-ye-holiday": {
+        "name": "Holiday Bonus Lessons (Youth Edition)",
+        "sku": "BONUS-HOL-YE",
+        "description": "Names of God & Times and Seasons bonus lessons for youth. FREE download.",
+        "list_price": 0.00,
+        "sale_price": 0.00,
+        "currency": "usd",
+        "edition": "YE",
+        "free": True
+    },
+    "bonus-ie-holiday": {
+        "name": "Holiday Bonus Lessons (Instructor Edition)",
+        "sku": "BONUS-HOL-IE",
+        "description": "Names of God & Times and Seasons bonus lessons with game content for instructors.",
+        "list_price": 9.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "edition": "IE",
+        "free": False
     },
     
     # ==================== ACHIEVEMENT MEDALLIONS ====================
