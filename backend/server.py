@@ -556,3 +556,10 @@ async def initialize_data():
         logger.info(f"Soul Food curriculum initialized: {len(soul_food_lessons)} lessons created")
         logger.info("Available at launch: Break*fast Series, Holiday Series (4 C's), Leap of Faith")
         logger.info("Coming Q1 2026: Lunch, Dinner, Supper series")
+    
+    # Initialize coupons in MongoDB
+    try:
+        from coupon_routes import initialize_coupons
+        await initialize_coupons()
+    except Exception as e:
+        logger.warning(f"Coupon initialization skipped: {e}")
