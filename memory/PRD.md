@@ -324,6 +324,32 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ---
 
+## Coupon System Refactor - Feb 2026
+
+### Status: COMPLETED
+
+**Changes Made**:
+- Migrated all 18 hardcoded coupons to MongoDB `coupons` collection
+- Coupons auto-seeded on server startup if collection is empty
+- Added admin CRUD endpoints for coupon management
+
+**Admin API Endpoints** (requires admin/instructor role):
+- `GET /api/coupons/admin/list` - List all coupons
+- `GET /api/coupons/admin/{code}` - Get coupon details + usage history
+- `POST /api/coupons/admin/create` - Create new coupon
+- `PUT /api/coupons/admin/{code}` - Update coupon
+- `DELETE /api/coupons/admin/{code}` - Deactivate coupon
+
+**Public Endpoints**:
+- `POST /api/coupons/validate` - Validate coupon (unchanged)
+- `POST /api/coupons/use/{code}` - Record coupon usage
+
+**Files Modified**:
+- `/app/backend/coupon_routes.py` - Complete rewrite for MongoDB
+- `/app/backend/server.py` - Added coupon initialization on startup
+
+---
+
 ## Email System Configuration
 
 ### Email Addresses (kingdom-soul.com)
