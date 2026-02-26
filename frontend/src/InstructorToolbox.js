@@ -701,17 +701,17 @@ const InstructorToolbox = () => {
                         </div>
                       </div>
 
-                      <div className="grid md:grid-cols-2 gap-4 mb-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Game Mode</label>
-                          <select className="w-full border rounded-lg p-2">
+                          <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Game Mode</label>
+                          <select className="w-full border rounded-lg p-2 text-sm sm:text-base">
                             <option>Individual (Each person)</option>
                             <option>Team Race (Groups compete)</option>
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Challenges per Stamp</label>
-                          <select className="w-full border rounded-lg p-2">
+                          <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Challenges per Stamp</label>
+                          <select className="w-full border rounded-lg p-2 text-sm sm:text-base">
                             <option>1 Challenge (Quick)</option>
                             <option>3 Challenges (Standard)</option>
                             <option>6 Challenges (Full)</option>
@@ -720,7 +720,7 @@ const InstructorToolbox = () => {
                       </div>
 
                       <Button 
-                        className="w-full bg-blue-600 hover:bg-blue-700 py-6 text-lg"
+                        className="w-full bg-blue-600 hover:bg-blue-700 py-4 sm:py-6 text-base sm:text-lg"
                         onClick={() => {
                           if ((coveredLessons[selectedSeries] || []).length === 0) {
                             toast.error('Please select at least one covered lesson first');
@@ -744,11 +744,11 @@ const InstructorToolbox = () => {
       case 'resources':
         return (
           <div className="space-y-4">
-            <p className="text-slate-600 mb-6">
+            <p className="text-slate-600 text-sm sm:text-base mb-4 sm:mb-6">
               Downloadable materials to enhance your teaching sessions.
             </p>
 
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
               {[
                 { title: 'Lesson Slides Template', type: 'PowerPoint', icon: FileText },
                 { title: 'Attendance Sheet', type: 'PDF', icon: ClipboardList },
