@@ -33,6 +33,79 @@ const InstructorToolbox = () => {
   const [answerKeys, setAnswerKeys] = useState([]);
   const [facilitationNotes, setFacilitationNotes] = useState([]);
   const [roster, setRoster] = useState([]);
+  
+  // Game filtering state - which lessons have been covered
+  const [coveredLessons, setCoveredLessons] = useState(() => {
+    const saved = localStorage.getItem('sf_covered_lessons');
+    return saved ? JSON.parse(saved) : {};
+  });
+  const [selectedSeries, setSelectedSeries] = useState('holiday');
+  const [gameMode, setGameMode] = useState(null); // 'grinch' | 'passport' | null
+
+  // Save covered lessons to localStorage
+  useEffect(() => {
+    localStorage.setItem('sf_covered_lessons', JSON.stringify(coveredLessons));
+  }, [coveredLessons]);
+
+  // Curriculum structure - all series and their lessons
+  const curriculumStructure = {
+    holiday: {
+      name: 'Holiday Series (4 Cs)',
+      lessons: [
+        { id: 'hol-covenant', title: 'The Covenant', subtitle: 'God Keeps His Promises', bites: ['Bite 1: Rainbow Promise', 'Bite 2: Abraham\'s Covenant', 'Bite 3: New Covenant in Christ'] },
+        { id: 'hol-cradle', title: 'The Cradle', subtitle: 'God Comes to Be with Us', bites: ['Bite 1: Prophecy Fulfilled', 'Bite 2: Immanuel', 'Bite 3: The Incarnation'] },
+        { id: 'hol-cross', title: 'The Cross', subtitle: 'God Provides Salvation', bites: ['Bite 1: The Sacrifice', 'Bite 2: Substitution', 'Bite 3: It Is Finished'] },
+        { id: 'hol-comforter', title: 'The Comforter', subtitle: 'God Remains with Us', bites: ['Bite 1: The Promise', 'Bite 2: Pentecost', 'Bite 3: Fruits of the Spirit'] }
+      ],
+      bonusLessons: [
+        { id: 'hol-names-of-god', title: 'Names of God', subtitle: 'Understanding the Sacred Language' },
+        { id: 'hol-times-seasons', title: 'Times and Seasons', subtitle: 'God\'s Order in Days and Numbers' }
+      ]
+    },
+    breakfast: {
+      name: 'Break*fast Series',
+      lessons: [
+        // Month 1 - Prayer
+        { id: 'bkft-m1-l1', title: 'Hannah', subtitle: 'Prayer', month: 1 },
+        { id: 'bkft-m1-l2', title: 'Solomon', subtitle: 'Wisdom', month: 1 },
+        { id: 'bkft-m1-l3', title: 'Centurion', subtitle: 'Authority', month: 1 },
+        { id: 'bkft-m1-l4', title: 'Chronic Woman', subtitle: 'Persistence', month: 1 },
+        // Month 2 - Through
+        { id: 'bkft-m2-l1', title: 'Joseph', subtitle: 'Forgiveness', month: 2 },
+        { id: 'bkft-m2-l2', title: 'Abram', subtitle: 'Trust', month: 2 },
+        { id: 'bkft-m2-l3', title: 'Rahab', subtitle: 'Courage', month: 2 },
+        { id: 'bkft-m2-l4', title: 'Esther', subtitle: 'Purpose', month: 2 },
+        // Month 3 - Worship
+        { id: 'bkft-m3-l1', title: 'David', subtitle: 'Worship', month: 3 },
+        { id: 'bkft-m3-l2', title: 'Mary', subtitle: 'Surrender', month: 3 },
+        { id: 'bkft-m3-l3', title: 'Paul & Silas', subtitle: 'Joy in Trials', month: 3 },
+        { id: 'bkft-m3-l4', title: 'The Leper', subtitle: 'Gratitude', month: 3 }
+      ]
+    }
+  };
+
+  // Toggle lesson coverage
+  const toggleLessonCovered = (seriesId, lessonId) => {
+    setCoveredLessons(prev => {
+      const seriesKey = `${seriesId}`;
+      const current = prev[seriesKey] || [];
+      if (current.includes(lessonId)) {
+        return { ...prev, [seriesKey]: current.filter(id => id !== lessonId) };
+      } else {
+        return { ...prev, [seriesKey]: [...current, lessonId] };
+      }
+    });
+  };
+
+  // Check if lesson is covered
+  const isLessonCovered = (seriesId, lessonId) => {
+    return (coveredLessons[seriesId] || []).includes(lessonId);
+  };
+
+  // Get count of covered lessons for a series
+  const getCoveredCount = (seriesId) => {
+    return (coveredLessons[seriesId] || []).length;
+  };
 
   // Check authentication on mount
   useEffect(() => {
