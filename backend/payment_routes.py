@@ -1655,3 +1655,87 @@ async def get_order_downloads(order_id: str):
         "order_id": order_id,
         "downloads": result
     }
+
+
+
+@router.get("/my-purchases")
+async def get_my_purchases(request: Request):
+    """Get all purchases for the logged-in user"""
+    from jose import jwt, JWTError
+    
+    # Get auth token
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    token = auth_header.split(" ")[1]
+    
+    try:
+        SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        user_id = payload.get("sub")
+        user_email = payload.get("email")
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid user")
+    
+    # Get user by ID to find their email
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "email": 1})
+    if user:
+        user_email = user.get("email")
+    
+    # Find orders for this user (by user_id or email)
+    query = {"payment_status": "paid"}
+    if user_email:
+        query["$or"] = [
+            {"user_id": user_id},
+            {"customer_email": user_email}
+        ]
+    else:
+        query["user_id"] = user_id
+    
+    orders = await db.orders.find(query, {"_id": 0}).sort("created_at", -1).limit(50).to_list(50)
+    
+    # Also check payment_transactions
+    transactions = await db.payment_transactions.find(
+        {"payment_status": "paid", "$or": [{"user_id": user_id}, {"customer_email": user_email}] if user_email else {"user_id": user_id}},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(50).to_list(50)
+    
+    # Combine and format purchases
+    purchases = []
+    seen_orders = set()
+    
+    for order in orders:
+        order_id = order.get("order_id")
+        if order_id in seen_orders:
+            continue
+        seen_orders.add(order_id)
+        
+        for item in order.get("items", []):
+            purchases.append({
+                "order_id": order_id,
+                "product_id": item.get("product_id") or item.get("id"),
+                "product_name": item.get("name", "Soul Food Product"),
+                "purchased_at": order.get("created_at"),
+                "download_url": f"{os.getenv('REACT_APP_BACKEND_URL', '')}/api/payments/order/{order_id}/downloads" if order.get("has_digital") else None
+            })
+    
+    for txn in transactions:
+        order_id = txn.get("order_id") or txn.get("session_id")
+        if order_id in seen_orders:
+            continue
+        seen_orders.add(order_id)
+        
+        for item in txn.get("items", []):
+            purchases.append({
+                "order_id": order_id,
+                "product_id": item.get("product_id") or item.get("id"),
+                "product_name": item.get("name", "Soul Food Product"),
+                "purchased_at": txn.get("created_at"),
+                "download_url": f"{os.getenv('REACT_APP_BACKEND_URL', '')}/api/payments/order/{order_id}/downloads" if txn.get("has_digital") else None
+            })
+    
+    return {"purchases": purchases}
