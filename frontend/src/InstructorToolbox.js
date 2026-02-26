@@ -574,8 +574,8 @@ const InstructorToolbox = () => {
                         <div className="pt-2 border-t">
                           <p className="text-xs text-blue-600">
                             {getCoveredCount(selectedSeries) > 0 
-                              ? `✅ ${getCoveredCount(selectedSeries)} lessons available for challenges`
-                              : '⚠️ Select covered lessons above first'}
+                              ? `✅ ${getCoveredCount(selectedSeries)} lessons available`
+                              : '⚠️ Select lessons above first'}
                           </p>
                         </div>
                       </CardContent>
@@ -585,12 +585,12 @@ const InstructorToolbox = () => {
 
                 {/* Pro Tip */}
                 <Card className="bg-amber-50 border-amber-200">
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <Lightbulb className="w-8 h-8 text-amber-600 flex-shrink-0" />
+                  <CardContent className="p-3 sm:p-4 flex items-start sm:items-center gap-3 sm:gap-4">
+                    <Lightbulb className="w-6 h-6 sm:w-8 sm:h-8 text-amber-600 flex-shrink-0 mt-0.5 sm:mt-0" />
                     <div>
-                      <p className="font-semibold text-amber-800">Pro Tip: Game Session Timing</p>
-                      <p className="text-sm text-amber-700">
-                        Schedule games for the last 15-20 minutes of your session as a reward for completing the lesson discussion.
+                      <p className="font-semibold text-amber-800 text-sm sm:text-base">Pro Tip: Game Session Timing</p>
+                      <p className="text-xs sm:text-sm text-amber-700">
+                        Schedule games for the last 15-20 minutes of your session as a reward for completing the lesson.
                       </p>
                     </div>
                   </CardContent>
@@ -598,26 +598,26 @@ const InstructorToolbox = () => {
               </>
             ) : (
               /* Game Configuration Screen */
-              <div className="space-y-6">
-                <Button variant="ghost" onClick={() => setGameMode(null)} className="mb-4">
+              <div className="space-y-4 sm:space-y-6">
+                <Button variant="ghost" onClick={() => setGameMode(null)} className="mb-2 sm:mb-4 text-sm">
                   <ArrowLeft className="w-4 h-4 mr-2" /> Back to Game Selection
                 </Button>
 
                 {gameMode === 'grinch' && (
-                  <div className="space-y-6">
-                    <div className="bg-purple-50 rounded-xl p-6 border border-purple-200">
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className="w-16 h-16 rounded-xl bg-purple-500 flex items-center justify-center">
-                          <Gamepad2 className="w-8 h-8 text-white" />
+                  <div className="space-y-4 sm:space-y-6">
+                    <div className="bg-purple-50 rounded-xl p-4 sm:p-6 border border-purple-200">
+                      <div className="flex items-center gap-3 sm:gap-4 mb-4">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-purple-500 flex items-center justify-center flex-shrink-0">
+                          <Gamepad2 className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-2xl font-bold text-purple-800">GRinCH Setup</h3>
-                          <p className="text-purple-600">Grid Iron Challenge - Team Trivia</p>
+                          <h3 className="text-xl sm:text-2xl font-bold text-purple-800">GRinCH Setup</h3>
+                          <p className="text-purple-600 text-sm sm:text-base">Grid Iron Challenge - Team Trivia</p>
                         </div>
                       </div>
 
-                      <div className="bg-white rounded-lg p-4 mb-4">
-                        <h4 className="font-semibold text-slate-800 mb-2">Questions will be drawn from:</h4>
+                      <div className="bg-white rounded-lg p-3 sm:p-4 mb-4">
+                        <h4 className="font-semibold text-slate-800 mb-2 text-sm sm:text-base">Questions will be drawn from:</h4>
                         <div className="flex flex-wrap gap-2">
                           {(coveredLessons[selectedSeries] || []).map(lessonId => {
                             const lesson = [...(curriculumStructure[selectedSeries]?.lessons || []), ...(curriculumStructure[selectedSeries]?.bonusLessons || [])].find(l => l.id === lessonId);
