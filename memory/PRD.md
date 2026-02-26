@@ -324,6 +324,34 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ---
 
+## Instructor Game Filtering - Feb 2026
+
+### Status: COMPLETED
+
+**Feature**: Instructors can now filter game content by lessons they've covered
+
+**How It Works**:
+1. **Step 1**: Select series (Holiday / Break*fast)
+2. **Step 2**: Check off lessons that have been covered in class
+3. **Step 3**: Choose game (GRinCH or Passport Trek)
+4. Games only pull questions from checked lessons
+
+**UI Components**:
+- Series toggle buttons with coverage counter (e.g., "2/4")
+- Lesson checklist with titles and subtitles
+- Bonus lessons section (collapsible)
+- "Mark All Covered" bulk action
+- Coverage persists in localStorage across sessions
+
+**Curriculum Structure Supported**:
+- **Holiday Series**: 4 lessons (Covenant, Cradle, Cross, Comforter) + 2 bonus
+- **Break*fast Series**: 12 lessons (Month 1-3, 4 lessons each)
+
+**Files Modified**:
+- `/app/frontend/src/InstructorToolbox.js` - Added game filtering UI and state management
+
+---
+
 ## Palm Sunday Marketing Update - Feb 2026
 
 ### Status: COMPLETED
