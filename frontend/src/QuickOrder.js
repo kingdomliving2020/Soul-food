@@ -38,6 +38,112 @@ const useCountdown = (targetDate) => {
   return timeLeft;
 };
 
+// Palm Sunday Promo Banner with Countdown
+const PalmSundayBanner = () => {
+  // March 15, 2026 at 11:59 PM (expedited shipping deadline)
+  const expeditedDeadline = useCountdown('2026-03-15T23:59:59');
+  // March 10, 2026 at 11:59 PM (standard shipping deadline)
+  const standardDeadline = useCountdown('2026-03-10T23:59:59');
+
+  // Don't show banner after both deadlines pass
+  if (expeditedDeadline.expired && standardDeadline.expired) {
+    return null;
+  }
+
+  return (
+    <div className="mb-8 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+      
+      <div className="relative z-10">
+        {/* Header */}
+        <div className="text-center mb-4">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <span className="text-3xl">✝️</span>
+            <h3 className="text-xl md:text-2xl font-bold">Get Ready for Resurrection Sunday!</h3>
+            <span className="text-3xl">🌿</span>
+          </div>
+          <p className="text-purple-100 text-sm md:text-base">
+            Order your <strong>Break*fast</strong> or <strong>Holiday Series</strong> workbooks in time for Palm Sunday studies!
+          </p>
+        </div>
+
+        {/* Countdown & Deadlines */}
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8">
+          
+          {/* Standard Shipping - Show if not expired */}
+          {!standardDeadline.expired ? (
+            <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4 text-center min-w-[200px]">
+              <p className="text-xs text-purple-200 uppercase tracking-wide mb-2">📦 Standard Shipping</p>
+              <p className="font-semibold text-sm mb-2">Order by March 10</p>
+              <div className="flex justify-center gap-2">
+                <div className="bg-white/30 rounded-lg px-3 py-2">
+                  <span className="text-2xl font-bold">{standardDeadline.days}</span>
+                  <p className="text-xs text-purple-200">days</p>
+                </div>
+                <div className="bg-white/30 rounded-lg px-3 py-2">
+                  <span className="text-2xl font-bold">{standardDeadline.hours}</span>
+                  <p className="text-xs text-purple-200">hrs</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-red-500/30 backdrop-blur-sm rounded-xl px-5 py-4 text-center">
+              <p className="text-xs uppercase tracking-wide mb-1">📦 Standard Shipping</p>
+              <p className="font-semibold">Deadline Passed</p>
+            </div>
+          )}
+
+          {/* Divider */}
+          <div className="hidden lg:block h-20 w-px bg-white/30"></div>
+          <div className="lg:hidden w-full h-px bg-white/30"></div>
+
+          {/* Expedited Shipping - Primary focus */}
+          {!expeditedDeadline.expired ? (
+            <div className="bg-amber-400 text-purple-900 rounded-xl px-5 py-4 text-center min-w-[220px] shadow-lg transform hover:scale-105 transition-transform">
+              <p className="text-xs uppercase tracking-wide font-medium mb-2">⚡ Expedited Shipping</p>
+              <p className="font-semibold text-sm mb-2">Order by March 15</p>
+              <div className="flex justify-center gap-2">
+                <div className="bg-amber-300 rounded-lg px-3 py-2">
+                  <span className="text-3xl font-bold">{expeditedDeadline.days}</span>
+                  <p className="text-xs text-purple-800">days</p>
+                </div>
+                <div className="bg-amber-300 rounded-lg px-3 py-2">
+                  <span className="text-3xl font-bold">{expeditedDeadline.hours}</span>
+                  <p className="text-xs text-purple-800">hrs</p>
+                </div>
+                <div className="bg-amber-300 rounded-lg px-3 py-2">
+                  <span className="text-3xl font-bold">{expeditedDeadline.minutes}</span>
+                  <p className="text-xs text-purple-800">min</p>
+                </div>
+              </div>
+              {expeditedDeadline.days <= 3 && (
+                <p className="mt-2 text-xs font-bold animate-pulse">🔥 Last chance for on-time delivery!</p>
+              )}
+            </div>
+          ) : (
+            <div className="bg-red-500 text-white rounded-xl px-5 py-4 text-center">
+              <p className="text-xs uppercase tracking-wide mb-1">⚡ Expedited Shipping</p>
+              <p className="font-semibold">Deadline Passed</p>
+              <p className="text-xs mt-1">Digital downloads still available!</p>
+            </div>
+          )}
+        </div>
+
+        {/* CTA */}
+        {!expeditedDeadline.expired && (
+          <div className="text-center mt-4">
+            <p className="text-purple-200 text-xs">
+              🎁 Physical workbooks ship from our fulfillment center • Digital downloads available instantly
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // Back Cover Preview Modal Component
 const BackCoverModal = ({ isOpen, onClose, frontCover, backCover, productName }) => {
   const [showBack, setShowBack] = useState(false);
