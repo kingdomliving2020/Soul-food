@@ -115,7 +115,8 @@ const AuthPage = () => {
       
       toast.success(data.session_config.message);
       
-      setTimeout(() => navigate(returnTo), 1000);
+      // Redirect beta users to my-library
+      setTimeout(() => navigate('/my-library'), 1000);
       
     } catch (err) {
       console.error('Beta login error:', err);
