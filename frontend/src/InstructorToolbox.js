@@ -633,18 +633,18 @@ const InstructorToolbox = () => {
                         </div>
                       </div>
 
-                      <div className="grid md:grid-cols-2 gap-4 mb-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Number of Teams</label>
-                          <select className="w-full border rounded-lg p-2">
+                          <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Number of Teams</label>
+                          <select className="w-full border rounded-lg p-2 text-sm sm:text-base">
                             <option>2 Teams</option>
                             <option>3 Teams</option>
                             <option>4 Teams</option>
                           </select>
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-slate-700 mb-1">Question Count</label>
-                          <select className="w-full border rounded-lg p-2">
+                          <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Question Count</label>
+                          <select className="w-full border rounded-lg p-2 text-sm sm:text-base">
                             <option>10 Questions (Quick)</option>
                             <option>20 Questions (Standard)</option>
                             <option>30 Questions (Extended)</option>
@@ -653,7 +653,7 @@ const InstructorToolbox = () => {
                       </div>
 
                       <Button 
-                        className="w-full bg-purple-600 hover:bg-purple-700 py-6 text-lg"
+                        className="w-full bg-purple-600 hover:bg-purple-700 py-4 sm:py-6 text-base sm:text-lg"
                         onClick={() => {
                           if ((coveredLessons[selectedSeries] || []).length === 0) {
                             toast.error('Please select at least one covered lesson first');
@@ -672,31 +672,31 @@ const InstructorToolbox = () => {
                 )}
 
                 {gameMode === 'passport' && (
-                  <div className="space-y-6">
-                    <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className="w-16 h-16 rounded-xl bg-blue-500 flex items-center justify-center">
-                          <GraduationCap className="w-8 h-8 text-white" />
+                  <div className="space-y-4 sm:space-y-6">
+                    <div className="bg-blue-50 rounded-xl p-4 sm:p-6 border border-blue-200">
+                      <div className="flex items-center gap-3 sm:gap-4 mb-4">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
+                          <GraduationCap className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-2xl font-bold text-blue-800">Passport Trek Setup</h3>
-                          <p className="text-blue-600">Stamp Collection Challenge</p>
+                          <h3 className="text-xl sm:text-2xl font-bold text-blue-800">Passport Trek Setup</h3>
+                          <p className="text-blue-600 text-sm sm:text-base">Stamp Collection Challenge</p>
                         </div>
                       </div>
 
-                      <div className="bg-white rounded-lg p-4 mb-4">
-                        <h4 className="font-semibold text-slate-800 mb-2">Available Stamps (Covered Lessons):</h4>
+                      <div className="bg-white rounded-lg p-3 sm:p-4 mb-4">
+                        <h4 className="font-semibold text-slate-800 mb-2 text-sm sm:text-base">Available Stamps (Covered Lessons):</h4>
                         <div className="flex flex-wrap gap-2">
                           {(coveredLessons[selectedSeries] || []).map(lessonId => {
                             const lesson = [...(curriculumStructure[selectedSeries]?.lessons || []), ...(curriculumStructure[selectedSeries]?.bonusLessons || [])].find(l => l.id === lessonId);
                             return lesson ? (
-                              <Badge key={lessonId} className="bg-blue-100 text-blue-700">
+                              <Badge key={lessonId} className="bg-blue-100 text-blue-700 text-xs sm:text-sm">
                                 🎫 {lesson.title}
                               </Badge>
                             ) : null;
                           })}
                           {(coveredLessons[selectedSeries] || []).length === 0 && (
-                            <p className="text-slate-500 text-sm">No lessons selected. Go back and mark covered lessons.</p>
+                            <p className="text-slate-500 text-xs sm:text-sm">No lessons selected. Go back and mark covered lessons.</p>
                           )}
                         </div>
                       </div>
