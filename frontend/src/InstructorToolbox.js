@@ -399,37 +399,37 @@ const InstructorToolbox = () => {
             {!gameMode ? (
               <>
                 {/* Step 1: Select Lessons Covered */}
-                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-5 border border-indigo-200">
-                  <h4 className="font-bold text-lg text-indigo-800 mb-2 flex items-center gap-2">
+                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 sm:p-5 border border-indigo-200">
+                  <h4 className="font-bold text-base sm:text-lg text-indigo-800 mb-2 flex items-center gap-2">
                     <span>📚</span> Step 1: Select Lessons You've Covered
                   </h4>
-                  <p className="text-sm text-indigo-600 mb-4">
-                    Games will only pull questions from lessons you've marked as covered. This ensures students aren't tested on material they haven't learned.
+                  <p className="text-xs sm:text-sm text-indigo-600 mb-4">
+                    Games will only pull questions from lessons you've marked as covered.
                   </p>
                   
-                  {/* Series Selector */}
-                  <div className="flex gap-2 mb-4">
+                  {/* Series Selector - Stack on mobile */}
+                  <div className="flex flex-col sm:flex-row gap-2 mb-4">
                     {Object.entries(curriculumStructure).map(([key, series]) => (
                       <Button
                         key={key}
                         variant={selectedSeries === key ? "default" : "outline"}
                         size="sm"
                         onClick={() => setSelectedSeries(key)}
-                        className={selectedSeries === key ? "bg-indigo-600" : ""}
+                        className={`justify-between sm:justify-center ${selectedSeries === key ? "bg-indigo-600" : ""}`}
                       >
-                        {series.name}
-                        <Badge className="ml-2 bg-white/20">{getCoveredCount(key)}/{series.lessons.length}</Badge>
+                        <span className="truncate">{series.name}</span>
+                        <Badge className="ml-2 bg-white/20 flex-shrink-0">{getCoveredCount(key)}/{series.lessons.length}</Badge>
                       </Button>
                     ))}
                   </div>
 
                   {/* Lessons Checklist */}
-                  <div className="bg-white rounded-lg p-4 max-h-64 overflow-y-auto">
+                  <div className="bg-white rounded-lg p-3 sm:p-4 max-h-64 overflow-y-auto">
                     <div className="space-y-2">
                       {curriculumStructure[selectedSeries]?.lessons.map(lesson => (
                         <label 
                           key={lesson.id}
-                          className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
+                          className={`flex items-start sm:items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
                             isLessonCovered(selectedSeries, lesson.id) 
                               ? 'bg-green-50 border border-green-200' 
                               : 'hover:bg-slate-50'
@@ -439,13 +439,13 @@ const InstructorToolbox = () => {
                             type="checkbox"
                             checked={isLessonCovered(selectedSeries, lesson.id)}
                             onChange={() => toggleLessonCovered(selectedSeries, lesson.id)}
-                            className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                            className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500 mt-0.5 sm:mt-0 flex-shrink-0"
                           />
-                          <div className="flex-1">
-                            <span className="font-medium text-slate-800">{lesson.title}</span>
-                            <span className="text-slate-500 text-sm ml-2">— {lesson.subtitle}</span>
+                          <div className="flex-1 min-w-0">
+                            <span className="font-medium text-slate-800 text-sm sm:text-base">{lesson.title}</span>
+                            <span className="text-slate-500 text-xs sm:text-sm block sm:inline sm:ml-2">— {lesson.subtitle}</span>
                             {lesson.month && (
-                              <Badge variant="outline" className="ml-2 text-xs">Month {lesson.month}</Badge>
+                              <Badge variant="outline" className="ml-0 sm:ml-2 mt-1 sm:mt-0 text-xs">Month {lesson.month}</Badge>
                             )}
                           </div>
                           {isLessonCovered(selectedSeries, lesson.id) && (
