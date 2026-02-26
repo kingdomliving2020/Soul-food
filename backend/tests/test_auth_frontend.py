@@ -186,10 +186,13 @@ class TestAuthMe:
     
     def test_get_current_user(self):
         """Test getting current user with valid token"""
-        # Login first
-        response = requests.post(f"{BASE_URL}/api/auth/beta-login", json={
-            "username": "instructor",
-            "password": "test123"
+        # Register a new user first (regular users work with /me endpoint)
+        timestamp = str(int(time.time() * 1000))
+        response = requests.post(f"{BASE_URL}/api/auth/register", json={
+            "email": f"test_me_{timestamp}@example.com",
+            "username": f"testme{timestamp[-8:]}",
+            "password": "TestPass123!",
+            "name": "Test Me User"
         })
         token = response.json().get("access_token")
         
