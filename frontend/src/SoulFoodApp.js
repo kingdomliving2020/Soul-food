@@ -469,25 +469,37 @@ const SoulFoodLanding = () => {
             
             {/* Why Soul Food - Audio Intro */}
             <div className="mt-6 flex justify-center" ref={youtubeRef}>
-              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl shadow-lg p-4 max-w-lg w-full border border-purple-200">
-                <div className="flex items-center gap-4">
-                  {/* Placeholder for founder image - replace src when ready */}
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center flex-shrink-0 shadow-md">
-                    <span className="text-3xl">🍽️</span>
+              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl shadow-lg p-6 max-w-lg w-full border border-purple-200">
+                {/* Founder Photo & Bio */}
+                <div className="text-center mb-4">
+                  {/* Photo - replace src with actual photo when uploaded */}
+                  <div className="w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-purple-300 shadow-lg mb-3">
+                    <img 
+                      src="/images/dr-shefa-brown.jpg" 
+                      alt="Dr. Shefa D. Brown"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center"><span class="text-4xl">🍽️</span></div>';
+                      }}
+                    />
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-bold text-slate-800 text-lg">Why Soul Food?</h4>
-                    <p className="text-sm text-slate-600 mb-2">Hear from the creator about the heart behind this ministry</p>
-                    <audio 
-                      controls 
-                      className="w-full h-10"
-                      style={{ filter: 'sepia(20%) saturate(70%) grayscale(0) brightness(100%) contrast(100%)' }}
-                    >
-                      <source src="/audio/why-soul-food.m4a" type="audio/mp4" />
-                      <source src="/audio/why-soul-food.m4a" type="audio/x-m4a" />
-                      Your browser does not support the audio element.
-                    </audio>
-                  </div>
+                  <h4 className="font-bold text-slate-800 text-lg">Dr. Shefa D. Brown</h4>
+                  <p className="text-sm text-purple-600 font-medium">Creator, Soul Food Series</p>
+                </div>
+                
+                {/* Why Soul Food Question & Audio */}
+                <div className="bg-white rounded-lg p-4 border border-purple-100">
+                  <h5 className="font-bold text-slate-800 text-center mb-3">Why Soul Food?</h5>
+                  <audio 
+                    controls 
+                    className="w-full"
+                    style={{ filter: 'sepia(20%) saturate(70%) grayscale(0) brightness(100%) contrast(100%)' }}
+                  >
+                    <source src="/audio/why-soul-food.m4a" type="audio/mp4" />
+                    <source src="/audio/why-soul-food.m4a" type="audio/x-m4a" />
+                    Your browser does not support the audio element.
+                  </audio>
                 </div>
               </div>
             </div>
