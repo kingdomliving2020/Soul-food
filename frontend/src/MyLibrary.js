@@ -29,7 +29,25 @@ const MyLibrary = () => {
       return;
     }
     
-    fetchUserData();
+    // Check if we have user data in localStorage (from login)
+    const storedUser = localStorage.getItem('soul_food_user');
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        setUser(userData);
+        setLoading(false);
+        
+        // Only fetch from API if not a beta user
+        if (!userData.is_beta) {
+          fetchUserData();
+        }
+      } catch (e) {
+        fetchUserData();
+      }
+    } else {
+      fetchUserData();
+    }
+    
     fetchPurchases();
     fetchRewards();
   }, [token, navigate]);
