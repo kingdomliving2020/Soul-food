@@ -1907,6 +1907,7 @@ import OrderLookup from './OrderLookup';
 import RefundPolicy from './RefundPolicy';
 import AdminOrders from './AdminOrders';
 import InstructorToolbox from './InstructorToolbox';
+import MultimediaPage from './MultimediaPage';
 
 function App() {
   return (
