@@ -324,6 +324,24 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ---
 
+## Palm Sunday Marketing Update - Feb 2026
+
+### Status: COMPLETED
+
+**Marketing Banner Added to QuickOrder Page**:
+- "Get Ready for Resurrection Sunday!" promo banner
+- Order deadlines prominently displayed:
+  - **Standard Shipping**: Order by March 10
+  - **Expedited Shipping**: Order by March 15 (highlighted)
+- Products promoted: Break*fast & Holiday Series workbooks
+
+**Holiday Series Status**: ✅ LIVE
+- All 3 editions (AE, YE, IE) available in Full Series and Nibble formats
+- Pricing verified: Nibble $3.99, Full Series $14.99-$19.99
+- PDFs in place for digital downloads
+
+---
+
 ## Coupon System Refactor - Feb 2026
 
 ### Status: COMPLETED
