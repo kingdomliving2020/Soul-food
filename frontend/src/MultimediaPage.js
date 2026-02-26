@@ -46,10 +46,38 @@ const MultimediaPage = () => {
     {
       id: 'why-soul-food',
       title: 'Why Soul Food?',
-      description: 'Hear from the creator about the heart behind this ministry',
+      description: 'Hear from Dr. Shefa D. Brown about the heart behind this ministry',
       src: '/audio/why-soul-food.m4a',
       duration: '2:30',
-      free: true
+      free: true,
+      category: 'introduction'
+    },
+    {
+      id: 'holiday-covenant',
+      title: 'The 4 C\'s: The Covenant',
+      description: 'Teaching by Pastor ME II - God\'s covenant promises',
+      src: '/audio/holiday-covenant.m4a',
+      duration: '8:45',
+      free: false,
+      category: 'holiday-series'
+    },
+    {
+      id: 'holiday-cradle',
+      title: 'The 4 C\'s: The Cradle',
+      description: 'Teaching by Pastor ME II - The birth of Christ',
+      src: '/audio/holiday-cradle.m4a',
+      duration: '11:30',
+      free: false,
+      category: 'holiday-series'
+    },
+    {
+      id: 'holiday-comforter',
+      title: 'The 4 C\'s: The Comforter',
+      description: 'Teaching by Pastor ME II - The Holy Spirit',
+      src: '/audio/holiday-comforter.m4a',
+      duration: '4:30',
+      free: false,
+      category: 'holiday-series'
     }
   ];
 
