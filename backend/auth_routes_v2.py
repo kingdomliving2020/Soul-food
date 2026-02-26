@@ -990,12 +990,25 @@ async def beta_login(credentials: BetaLogin):
 # =============================================================================
 
 async def award_rewards_points(user_id: str, amount_spent: float, order_id: str):
-    """Award rewards points for a purchase - 1 point per $10 spent"""
+    """Award rewards points for a purchase - 1 point per $10 spent + first purchase bonus"""
     
     if not user_id or user_id.startswith("guest"):
         return 0
     
     points_earned = int(amount_spent / 10)  # 1 point per $10
+    first_purchase_bonus = 0
+    
+    # Check if this is the user's first purchase
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "first_purchase_bonus_awarded": 1})
+    if user and not user.get("first_purchase_bonus_awarded"):
+        first_purchase_bonus = 10  # 10 bonus points for first purchase!
+        points_earned += first_purchase_bonus
+        
+        # Mark that bonus has been awarded
+        await db.users.update_one(
+            {"id": user_id},
+            {"$set": {"first_purchase_bonus_awarded": True}}
+        )
     
     if points_earned > 0:
         await db.users.update_one(
@@ -1003,13 +1016,27 @@ async def award_rewards_points(user_id: str, amount_spent: float, order_id: str)
             {"$inc": {"rewards_points": points_earned}}
         )
         
-        await db.rewards_history.insert_one({
-            "user_id": user_id,
-            "type": "earned",
-            "points": points_earned,
-            "order_id": order_id,
-            "amount_spent": amount_spent,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        })
+        # Record regular points earned
+        base_points = points_earned - first_purchase_bonus
+        if base_points > 0:
+            await db.rewards_history.insert_one({
+                "user_id": user_id,
+                "type": "earned",
+                "points": base_points,
+                "order_id": order_id,
+                "amount_spent": amount_spent,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
+        
+        # Record first purchase bonus separately
+        if first_purchase_bonus > 0:
+            await db.rewards_history.insert_one({
+                "user_id": user_id,
+                "type": "bonus",
+                "points": first_purchase_bonus,
+                "order_id": order_id,
+                "description": "🎉 First Purchase Bonus!",
+                "created_at": datetime.now(timezone.utc).isoformat()
+            })
     
     return points_earned
