@@ -335,7 +335,7 @@ const MultimediaPage = () => {
                             />
                           </div>
                           {/* Theme Icon Badge */}
-                          <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white border-2 border-purple-300 flex items-center justify-center text-sm shadow-md">
+                          <div className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-slate-800 border-3 border-slate-900 flex items-center justify-center text-base shadow-lg">
                             {audio.icon}
                           </div>
                         </div>
