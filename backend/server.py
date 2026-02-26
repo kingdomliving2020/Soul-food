@@ -65,9 +65,9 @@ except Exception as e:
 
 # Import authentication routes
 try:
-    from auth_routes import router as auth_router
+    from auth_routes_v2 import router as auth_router
     app.include_router(auth_router)
-    print("✅ Authentication routes loaded")
+    print("✅ Auth routes v2 loaded (Google OAuth, 2FA, Rewards)")
 except Exception as e:
     print(f"⚠️ Could not load authentication routes: {e}")
 
