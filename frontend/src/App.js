@@ -1926,6 +1926,7 @@ function App() {
             <Route path="/refund-policy" element={<RefundPolicy />} />
             <Route path="/admin/orders" element={<AdminOrders />} />
             <Route path="/instructor-toolbox" element={<InstructorToolbox />} />
+            <Route path="/multimedia" element={<MultimediaPage />} />
             <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />
             <Route path="/lesson/:id" element={<LessonViewer />} />
             <Route path="/lessons" element={<LessonsListPage />} />
