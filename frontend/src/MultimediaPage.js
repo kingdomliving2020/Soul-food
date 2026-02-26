@@ -11,7 +11,8 @@ import { ArrowLeft, Play, Music, Video, Lock } from 'lucide-react';
 
 const MultimediaPage = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('videos');
+  const [activeTab, setActiveTab] = useState('audio'); // Default to audio until videos are ready
+  const [playingPreview, setPlayingPreview] = useState(null);
 
   const videos = [
     {
@@ -50,36 +51,90 @@ const MultimediaPage = () => {
       src: '/audio/why-soul-food.m4a',
       duration: '2:30',
       free: true,
-      category: 'introduction'
+      category: 'introduction',
+      lessonLink: null
     },
     {
       id: 'holiday-covenant',
       title: 'The 4 C\'s: The Covenant',
-      description: 'Teaching by Pastor ME II - God\'s covenant promises',
+      description: 'Teaching by Pastor ME II - God\'s covenant promises through the ages',
       src: '/audio/holiday-covenant.m4a',
       duration: '8:45',
       free: false,
-      category: 'holiday-series'
+      category: 'holiday-series',
+      lessonLink: '/lesson/holiday-ae-covenant',
+      lessonTitle: 'Holiday Series - Lesson 1'
     },
     {
       id: 'holiday-cradle',
       title: 'The 4 C\'s: The Cradle',
-      description: 'Teaching by Pastor ME II - The birth of Christ',
+      description: 'Teaching by Pastor ME II - The birth of Christ and its significance',
       src: '/audio/holiday-cradle.m4a',
       duration: '11:30',
       free: false,
-      category: 'holiday-series'
+      category: 'holiday-series',
+      lessonLink: '/lesson/holiday-ae-cradle',
+      lessonTitle: 'Holiday Series - Lesson 2'
+    },
+    {
+      id: 'holiday-cross',
+      title: 'The 4 C\'s: The Cross',
+      description: 'Teaching by Pastor ME II - The sacrifice and redemption through Christ',
+      src: '/audio/holiday-cross.m4a',
+      duration: '4:30',
+      free: false,
+      category: 'holiday-series',
+      lessonLink: '/lesson/holiday-ae-cross',
+      lessonTitle: 'Holiday Series - Lesson 3'
     },
     {
       id: 'holiday-comforter',
       title: 'The 4 C\'s: The Comforter',
-      description: 'Teaching by Pastor ME II - The Holy Spirit',
+      description: 'Teaching by Pastor ME II - The Holy Spirit as our guide and helper',
       src: '/audio/holiday-comforter.m4a',
       duration: '4:30',
       free: false,
-      category: 'holiday-series'
+      category: 'holiday-series',
+      lessonLink: '/lesson/holiday-ae-comforter',
+      lessonTitle: 'Holiday Series - Lesson 4'
     }
   ];
+
+  // Handle 30-second preview playback (Amazon-style teaser)
+  const handlePreviewPlay = (audioId, audioSrc) => {
+    // Stop any currently playing preview
+    const allPreviews = document.querySelectorAll('.audio-preview');
+    allPreviews.forEach(audio => {
+      audio.pause();
+      audio.currentTime = 0;
+    });
+
+    if (playingPreview === audioId) {
+      setPlayingPreview(null);
+      return;
+    }
+
+    const previewAudio = document.getElementById(`preview-${audioId}`);
+    if (previewAudio) {
+      previewAudio.currentTime = 0;
+      previewAudio.play();
+      setPlayingPreview(audioId);
+
+      // Stop after 30 seconds
+      setTimeout(() => {
+        if (previewAudio && !previewAudio.paused) {
+          previewAudio.pause();
+          previewAudio.currentTime = 0;
+          setPlayingPreview(null);
+        }
+      }, 30000);
+
+      // Handle natural end
+      previewAudio.onended = () => {
+        setPlayingPreview(null);
+      };
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50">
