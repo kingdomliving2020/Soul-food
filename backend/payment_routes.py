@@ -1458,6 +1458,16 @@ async def stripe_webhook(request: Request):
                         print(f"[Webhook] Order confirmation email sent to {customer_email}")
                     except Exception as email_error:
                         print(f"[Webhook] Error sending email: {email_error}")
+                
+                # Award rewards points (1 point per $10 spent)
+                try:
+                    from auth_routes_v2 import award_rewards_points
+                    total_spent = transaction.get("total_amount", 0)
+                    points_awarded = await award_rewards_points(user_id, total_spent, order_number)
+                    if points_awarded > 0:
+                        print(f"[Webhook] Awarded {points_awarded} rewards points to {user_id}")
+                except Exception as points_error:
+                    print(f"[Webhook] Error awarding points: {points_error}")
         
         return {"status": "success", "event_type": webhook_response.event_type}
         
