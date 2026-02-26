@@ -831,35 +831,8 @@ const QuickOrder = () => {
           </p>
         </div>
 
-        {/* 🌿 PALM SUNDAY / RESURRECTION SUNDAY PROMO BANNER */}
-        <div className="mb-8 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
-          {/* Decorative elements */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-          
-          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-center md:text-left">
-              <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
-                <span className="text-3xl">✝️</span>
-                <h3 className="text-xl md:text-2xl font-bold">Get Ready for Resurrection Sunday!</h3>
-              </div>
-              <p className="text-purple-100 text-sm md:text-base max-w-xl">
-                Order your <strong>Break*fast</strong> or <strong>Holiday Series</strong> workbooks in time for Palm Sunday studies!
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3 text-center">
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-3">
-                <p className="text-xs text-purple-200 uppercase tracking-wide">Standard Shipping</p>
-                <p className="font-bold text-lg">Order by Mar 10</p>
-              </div>
-              <div className="bg-amber-400 text-purple-900 rounded-lg px-4 py-3">
-                <p className="text-xs uppercase tracking-wide font-medium">Expedited Shipping</p>
-                <p className="font-bold text-lg">Order by Mar 15</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* 🌿 PALM SUNDAY / RESURRECTION SUNDAY PROMO BANNER WITH COUNTDOWN */}
+        <PalmSundayBanner />
 
         {/* FREE LESSONS CARD - Same style as Holiday/Breakfast cards */}
         <section className="mb-12">
