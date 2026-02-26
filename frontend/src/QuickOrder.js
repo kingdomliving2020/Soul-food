@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,37 @@ import { useCart } from './CartContext';
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { ShoppingCart, X, Trash2 } from 'lucide-react';
+
+// Countdown Timer Hook for Palm Sunday deadline
+const useCountdown = (targetDate) => {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, expired: false });
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const target = new Date(targetDate);
+      const difference = target - now;
+
+      if (difference <= 0) {
+        return { days: 0, hours: 0, minutes: 0, expired: true };
+      }
+
+      return {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+        expired: false
+      };
+    };
+
+    setTimeLeft(calculateTimeLeft());
+    const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 60000); // Update every minute
+
+    return () => clearInterval(timer);
+  }, [targetDate]);
+
+  return timeLeft;
+};
 
 // Back Cover Preview Modal Component
 const BackCoverModal = ({ isOpen, onClose, frontCover, backCover, productName }) => {
