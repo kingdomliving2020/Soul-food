@@ -324,6 +324,59 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ---
 
+## Account & Security System - Feb 2026
+
+### Status: COMPLETED
+
+**1. Login Options Implemented**
+- ✅ Username + Email + Password (traditional)
+- ✅ Google OAuth via Emergent Auth (one-click signup/login)
+- ❌ Apple ID (removed - no platform bias)
+
+**2. Two-Factor Authentication (2FA)**
+- Mandatory for: `instructor`, `admin`, `owner` roles
+- Optional for: Regular members
+- Methods: Email code (6-digit), Authenticator app (TOTP with QR code)
+- Codes expire in 10 minutes
+
+**3. Checkout Gating Logic**
+| Cart Contains | Account Required? |
+|--------------|-------------------|
+| Monthly subscription | ✅ Yes |
+| Instructor Edition (IE) | ✅ Yes |
+| Bundle packages | ✅ Yes |
+| Game passes (30/90 day) | ✅ Yes |
+| Physical books/merch | ❌ Guest OK |
+| Gift certificates | ❌ Guest OK |
+| Single lessons (Nibble) | ❌ Guest OK |
+
+**4. Rewards Points Program**
+- Earn: 1 point per $10 spent
+- Redeem: 50 pts = $2.50, 100 pts = $5, 200 pts = $12 (best value)
+- Points auto-awarded via Stripe webhook after payment
+- Redemption generates unique discount code valid 30 days
+
+**Files Created/Modified**:
+- `/app/backend/auth_routes_v2.py` - New auth system with Google OAuth, 2FA, rewards
+- `/app/backend/payment_routes.py` - Added checkout gating logic, rewards awarding
+- `/app/backend/server.py` - Updated to use auth_routes_v2
+
+**API Endpoints Added**:
+- `POST /api/auth/google/callback` - Google OAuth callback
+- `GET /api/auth/me` - Get current user
+- `POST /api/auth/logout` - Logout
+- `POST /api/auth/2fa/setup` - Setup 2FA (email or TOTP)
+- `POST /api/auth/2fa/verify` - Verify 2FA code
+- `GET /api/auth/rewards/balance` - Get points balance
+- `POST /api/auth/rewards/redeem` - Redeem points for discount
+- `GET /api/auth/rewards/history` - Get points history
+
+**Test Credentials**:
+- Standard: Register via `/api/auth/register`
+- Beta: `instructor` / `test123`
+
+---
+
 ## Instructor Game Filtering - Feb 2026
 
 ### Status: COMPLETED
