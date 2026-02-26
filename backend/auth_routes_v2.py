@@ -863,7 +863,7 @@ async def login(credentials: UserLogin, request: Request):
     ip_address = request.client.host if request.client else "unknown"
     
     # Check lockout
-    is_locked, lockout_msg = await check_lockout_status(identifier)
+    is_locked, remaining_mins, lockout_msg = await check_lockout_status(identifier)
     if is_locked:
         raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=lockout_msg)
     
