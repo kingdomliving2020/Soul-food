@@ -467,28 +467,40 @@ const SoulFoodLanding = () => {
               Four transformative courses designed to nourish your spirit throughout the year
             </p>
             
-            {/* Music Player - A Friend by Kossi Bruno */}
+            {/* Why Soul Food - Audio Intro */}
             <div className="mt-6 flex justify-center" ref={youtubeRef}>
-              <div className="bg-white rounded-lg shadow-md p-3 max-w-md w-full">
-                <div className="flex items-center space-x-2 mb-2">
-                  <span className="text-lg">🎵</span>
-                  <div>
-                    <p className="text-xs font-semibold text-gray-800">"A Friend" by Kossi Bruno 🇨🇩</p>
-                    <p className="text-xs text-gray-500">2020 | Used with permission</p>
+              <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl shadow-lg p-4 max-w-lg w-full border border-purple-200">
+                <div className="flex items-center gap-4">
+                  {/* Placeholder for founder image - replace src when ready */}
+                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center flex-shrink-0 shadow-md">
+                    <span className="text-3xl">🍽️</span>
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-slate-800 text-lg">Why Soul Food?</h4>
+                    <p className="text-sm text-slate-600 mb-2">Hear from the creator about the heart behind this ministry</p>
+                    <audio 
+                      controls 
+                      className="w-full h-10"
+                      style={{ filter: 'sepia(20%) saturate(70%) grayscale(0) brightness(100%) contrast(100%)' }}
+                    >
+                      <source src="/audio/why-soul-food.m4a" type="audio/mp4" />
+                      <source src="/audio/why-soul-food.m4a" type="audio/x-m4a" />
+                      Your browser does not support the audio element.
+                    </audio>
                   </div>
                 </div>
-                <div className="relative" style={{paddingBottom: '56.25%', height: 0, overflow: 'hidden'}}>
-                  <iframe
-                    id="youtube-player"
-                    style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}
-                    src="https://www.youtube.com/embed/p2XDayIVugk?si=sXCK7vYsRs2g1NYp&enablejsapi=1&rel=0&modestbranding=1"
-                    title="A Friend by Kossi Bruno"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  ></iframe>
-                </div>
               </div>
+            </div>
+
+            {/* Multimedia Section Link */}
+            <div className="mt-4 text-center">
+              <a 
+                href="/multimedia" 
+                className="text-purple-600 hover:text-purple-800 text-sm font-medium inline-flex items-center gap-1"
+              >
+                <span>🎬</span> View more videos and audio content
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              </a>
             </div>
           </div>
 
