@@ -396,6 +396,9 @@ const MyLibrary = () => {
                   <p className="text-sm text-slate-500">
                     🎁 Earn 1 point for every $10 spent on Soul Food products!
                   </p>
+                  <p className="text-sm text-slate-500 mt-1">
+                    🎉 <span className="text-amber-600 font-medium">First Purchase Bonus:</span> Get 10 extra points on your first order!
+                  </p>
                 </div>
                 
                 {rewards.available_rewards?.length > 0 ? (
