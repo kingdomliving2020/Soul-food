@@ -285,8 +285,13 @@ const MultimediaPage = () => {
                 <Card key={audio.id} className="hover:shadow-lg transition-shadow border-green-200 bg-green-50/30">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-purple-400 to-indigo-500">
-                        <Music className="w-8 h-8 text-white" />
+                      {/* Speaker Thumbnail */}
+                      <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 border-2 border-purple-200 shadow-md">
+                        <img 
+                          src={audio.thumbnail} 
+                          alt="Speaker"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -312,7 +317,7 @@ const MultimediaPage = () => {
             {/* Holiday Series Section */}
             <div>
               <h3 className="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
-                <span className="w-8 h-8 rounded-full bg-gradient-to-br from-red-400 to-green-500 flex items-center justify-center text-white text-sm">🎄</span>
+                <span className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-lg">✝️</span>
                 Holiday Series - The 4 C's
               </h3>
               <div className="grid md:grid-cols-2 gap-6">
@@ -320,8 +325,19 @@ const MultimediaPage = () => {
                   <Card key={audio.id} className="hover:shadow-lg transition-shadow">
                     <CardContent className="p-6">
                       <div className="flex items-start gap-4">
-                        <div className="w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-red-400 to-green-500">
-                          <Music className="w-8 h-8 text-white" />
+                        {/* Speaker Photo with Theme Icon Overlay */}
+                        <div className="relative flex-shrink-0">
+                          <div className="w-20 h-20 rounded-xl overflow-hidden border-2 border-purple-200 shadow-md">
+                            <img 
+                              src={audio.thumbnail} 
+                              alt="Pastor Mike Edwards"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          {/* Theme Icon Badge */}
+                          <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-white border-2 border-purple-300 flex items-center justify-center text-sm shadow-md">
+                            {audio.icon}
+                          </div>
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
