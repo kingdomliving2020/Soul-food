@@ -648,6 +648,32 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ---
 
+## February 26, 2026 - First Purchase Bonus & Meet the Team
+
+### Status: COMPLETED
+
+**1. First Purchase Bonus**
+- New users get **10 bonus reward points** on their first order
+- Bonus tracked via `first_purchase_bonus_awarded` flag in user record
+- Separate rewards history entry with "🎉 First Purchase Bonus!" description
+- UI updated in My Library to show bonus info
+
+**2. Meet the Team Section**
+- New section added to homepage (before footer)
+- Features 3 team members with photos:
+  - **Dr. Temia Julius** - Curriculum Advisor
+  - **Evang. Rose Doctor** - Ministry Outreach
+  - **Pastor Mike Edwards** - Spiritual Guidance
+- Team mission quote: "Together, we're committed to nourishing souls..."
+- Responsive grid layout (3 columns on desktop, 2 on tablet, 1 on mobile)
+
+**Files Modified**:
+- `/app/backend/auth_routes_v2.py` - First purchase bonus logic
+- `/app/frontend/src/MyLibrary.js` - Bonus info display
+- `/app/frontend/src/SoulFoodApp.js` - Meet the Team section
+
+---
+
 ## Prioritized Backlog
 
 ### P0 - Critical
