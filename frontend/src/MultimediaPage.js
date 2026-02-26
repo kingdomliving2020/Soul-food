@@ -52,51 +52,61 @@ const MultimediaPage = () => {
       duration: '2:30',
       free: true,
       category: 'introduction',
-      lessonLink: null
+      lessonLink: null,
+      thumbnail: '/images/dr-shefa-brown.png',
+      icon: '🍽️'
     },
     {
       id: 'holiday-covenant',
       title: 'The 4 C\'s: The Covenant',
-      description: 'Teaching by Pastor ME II - God\'s covenant promises through the ages',
+      description: 'Teaching by Pastor Mike Edwards - God\'s covenant promises through the ages',
       src: '/audio/holiday-covenant.m4a',
       duration: '8:45',
       free: false,
       category: 'holiday-series',
       lessonLink: '/lesson/holiday-ae-covenant',
-      lessonTitle: 'Holiday Series - Lesson 1'
+      lessonTitle: 'Holiday Series - Lesson 1',
+      thumbnail: '/images/team/pastor-mike-edwards.jpg',
+      icon: '📜' // Scroll for covenant
     },
     {
       id: 'holiday-cradle',
       title: 'The 4 C\'s: The Cradle',
-      description: 'Teaching by Pastor ME II - The birth of Christ and its significance',
+      description: 'Teaching by Pastor Mike Edwards - The birth of Christ and its significance',
       src: '/audio/holiday-cradle.m4a',
       duration: '11:30',
       free: false,
       category: 'holiday-series',
       lessonLink: '/lesson/holiday-ae-cradle',
-      lessonTitle: 'Holiday Series - Lesson 2'
+      lessonTitle: 'Holiday Series - Lesson 2',
+      thumbnail: '/images/team/pastor-mike-edwards.jpg',
+      icon: '⭐' // Star for the nativity
     },
     {
       id: 'holiday-cross',
       title: 'The 4 C\'s: The Cross',
-      description: 'Teaching by Pastor ME II - The sacrifice and redemption through Christ',
+      description: 'Teaching by Pastor Mike Edwards - The sacrifice and redemption through Christ',
       src: '/audio/holiday-cross.m4a',
       duration: '4:30',
       free: false,
       category: 'holiday-series',
       lessonLink: '/lesson/holiday-ae-cross',
-      lessonTitle: 'Holiday Series - Lesson 3'
+      lessonTitle: 'Holiday Series - Lesson 3',
+      thumbnail: '/images/team/pastor-mike-edwards.jpg',
+      icon: '✝️' // Cross
     },
     {
       id: 'holiday-comforter',
       title: 'The 4 C\'s: The Comforter',
-      description: 'Teaching by Pastor ME II - The Holy Spirit as our guide and helper',
+      description: 'Teaching by Pastor Mike Edwards - The Holy Spirit as our guide and helper',
       src: '/audio/holiday-comforter.m4a',
       duration: '4:30',
       free: false,
       category: 'holiday-series',
       lessonLink: '/lesson/holiday-ae-comforter',
-      lessonTitle: 'Holiday Series - Lesson 4'
+      lessonTitle: 'Holiday Series - Lesson 4',
+      thumbnail: '/images/team/pastor-mike-edwards.jpg',
+      icon: '🕊️' // Dove for Holy Spirit
     }
   ];
 
