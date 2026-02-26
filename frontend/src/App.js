@@ -19,6 +19,9 @@ import PaymentCancel from './PaymentCancel';
 import InteractiveLesson from './InteractiveLesson';
 import SnackPacksPage from './SnackPacksPage';
 import AuthPage from './AuthPage';
+import AuthCallback from './AuthCallback';
+import TwoFactorSetup from './TwoFactorSetup';
+import MyLibrary from './MyLibrary';
 import AdminConsole from './AdminConsole';
 import { PrivacyPolicy, TermsOfService } from './LegalPages';
 
