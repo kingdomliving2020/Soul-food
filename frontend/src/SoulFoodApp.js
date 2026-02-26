@@ -472,15 +472,20 @@ const SoulFoodLanding = () => {
               <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl shadow-lg p-6 max-w-lg w-full border border-purple-200">
                 {/* Founder Photo & Bio */}
                 <div className="text-center mb-4">
-                  {/* Photo - replace src with actual photo when uploaded */}
+                  {/* Photo - checks for both jpg and png */}
                   <div className="w-28 h-28 mx-auto rounded-full overflow-hidden border-4 border-purple-300 shadow-lg mb-3">
                     <img 
-                      src="/images/dr-shefa-brown.jpg" 
+                      src="/images/dr-shefa-brown.png" 
                       alt="Dr. Shefa D. Brown"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center"><span class="text-4xl">🍽️</span></div>';
+                        // Try jpg if png fails
+                        if (e.target.src.endsWith('.png')) {
+                          e.target.src = '/images/dr-shefa-brown.jpg';
+                        } else {
+                          e.target.style.display = 'none';
+                          e.target.parentElement.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center"><span class="text-4xl">🍽️</span></div>';
+                        }
                       }}
                     />
                   </div>
