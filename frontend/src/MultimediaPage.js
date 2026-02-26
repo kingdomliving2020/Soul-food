@@ -209,20 +209,40 @@ const MultimediaPage = () => {
                 <Card key={audio.id} className="hover:shadow-lg transition-shadow">
                   <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center flex-shrink-0">
+                      <div className={`w-16 h-16 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                        audio.category === 'holiday-series' 
+                          ? 'bg-gradient-to-br from-red-400 to-green-500' 
+                          : 'bg-gradient-to-br from-purple-400 to-indigo-500'
+                      }`}>
                         <Music className="w-8 h-8 text-white" />
                       </div>
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
                           <h3 className="font-bold text-slate-800">{audio.title}</h3>
-                          {audio.free && <Badge className="bg-green-500 text-xs">FREE</Badge>}
+                          {audio.free ? (
+                            <Badge className="bg-green-500 text-xs">FREE</Badge>
+                          ) : (
+                            <Badge variant="secondary" className="text-xs">Premium</Badge>
+                          )}
                         </div>
                         <p className="text-sm text-slate-600 mb-3">{audio.description}</p>
-                        <audio controls className="w-full">
-                          <source src={audio.src} type="audio/mp4" />
-                          <source src={audio.src} type="audio/x-m4a" />
-                          Your browser does not support the audio element.
-                        </audio>
+                        {audio.free ? (
+                          <audio controls className="w-full">
+                            <source src={audio.src} type="audio/mp4" />
+                            <source src={audio.src} type="audio/x-m4a" />
+                            Your browser does not support the audio element.
+                          </audio>
+                        ) : (
+                          <div className="bg-slate-100 rounded-lg p-3 flex items-center justify-between">
+                            <div className="flex items-center gap-2 text-slate-500">
+                              <Lock className="w-4 h-4" />
+                              <span className="text-sm">Purchase Holiday Series to unlock</span>
+                            </div>
+                            <Button size="sm" onClick={() => navigate('/quick-order')} className="bg-purple-600 hover:bg-purple-700">
+                              Get Access
+                            </Button>
+                          </div>
+                        )}
                         {audio.duration && (
                           <p className="text-xs text-slate-500 mt-2">Duration: {audio.duration}</p>
                         )}
