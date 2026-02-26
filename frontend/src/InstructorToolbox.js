@@ -512,29 +512,29 @@ const InstructorToolbox = () => {
 
                 {/* Step 2: Choose Game */}
                 <div>
-                  <h4 className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
+                  <h4 className="font-bold text-base sm:text-lg text-slate-800 mb-4 flex items-center gap-2">
                     <span>🎮</span> Step 2: Choose Your Game
                   </h4>
                   
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     {/* GRinCH Card */}
-                    <Card className="border-2 border-purple-200 hover:border-purple-400 transition-colors cursor-pointer" onClick={() => setGameMode('grinch')}>
-                      <CardHeader className="bg-purple-50">
+                    <Card className="border-2 border-purple-200 hover:border-purple-400 transition-colors cursor-pointer active:scale-[0.98]" onClick={() => setGameMode('grinch')}>
+                      <CardHeader className="bg-purple-50 p-3 sm:p-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-purple-500 flex items-center justify-center">
-                            <Gamepad2 className="w-6 h-6 text-white" />
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-500 flex items-center justify-center flex-shrink-0">
+                            <Gamepad2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                           </div>
                           <div>
-                            <CardTitle className="text-purple-800">GRinCH</CardTitle>
-                            <CardDescription>Grid Iron Challenge</CardDescription>
+                            <CardTitle className="text-purple-800 text-base sm:text-lg">GRinCH</CardTitle>
+                            <CardDescription className="text-xs sm:text-sm">Grid Iron Challenge</CardDescription>
                           </div>
                         </div>
                       </CardHeader>
-                      <CardContent className="p-4 space-y-3">
-                        <p className="text-sm text-slate-600">
+                      <CardContent className="p-3 sm:p-4 space-y-2 sm:space-y-3">
+                        <p className="text-xs sm:text-sm text-slate-600">
                           Team-based trivia game. Perfect for competitive review sessions.
                         </p>
-                        <ul className="text-sm space-y-1">
+                        <ul className="text-xs sm:text-sm space-y-1">
                           <li className="flex items-center gap-2"><span className="text-green-500">✓</span> 2-4 teams</li>
                           <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Point multipliers</li>
                           <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Championship rounds</li>
@@ -542,31 +542,31 @@ const InstructorToolbox = () => {
                         <div className="pt-2 border-t">
                           <p className="text-xs text-purple-600">
                             {getCoveredCount(selectedSeries) > 0 
-                              ? `✅ ${getCoveredCount(selectedSeries)} lessons available for questions`
-                              : '⚠️ Select covered lessons above first'}
+                              ? `✅ ${getCoveredCount(selectedSeries)} lessons available`
+                              : '⚠️ Select lessons above first'}
                           </p>
                         </div>
                       </CardContent>
                     </Card>
 
                     {/* Passport Trek Card */}
-                    <Card className="border-2 border-blue-200 hover:border-blue-400 transition-colors cursor-pointer" onClick={() => setGameMode('passport')}>
-                      <CardHeader className="bg-blue-50">
+                    <Card className="border-2 border-blue-200 hover:border-blue-400 transition-colors cursor-pointer active:scale-[0.98]" onClick={() => setGameMode('passport')}>
+                      <CardHeader className="bg-blue-50 p-3 sm:p-6">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center">
-                            <GraduationCap className="w-6 h-6 text-white" />
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-500 flex items-center justify-center flex-shrink-0">
+                            <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                           </div>
                           <div>
-                            <CardTitle className="text-blue-800">Passport Trek</CardTitle>
-                            <CardDescription>Stamp Collection Journey</CardDescription>
+                            <CardTitle className="text-blue-800 text-base sm:text-lg">Passport Trek</CardTitle>
+                            <CardDescription className="text-xs sm:text-sm">Stamp Collection Journey</CardDescription>
                           </div>
                         </div>
                       </CardHeader>
-                      <CardContent className="p-4 space-y-3">
-                        <p className="text-sm text-slate-600">
+                      <CardContent className="p-3 sm:p-4 space-y-2 sm:space-y-3">
+                        <p className="text-xs sm:text-sm text-slate-600">
                           Individual progress tracking with stamp collection rewards.
                         </p>
-                        <ul className="text-sm space-y-1">
+                        <ul className="text-xs sm:text-sm space-y-1">
                           <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Individual or team mode</li>
                           <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Stamp collection</li>
                           <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Completion certificates</li>
