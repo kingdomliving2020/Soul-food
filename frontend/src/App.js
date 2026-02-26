@@ -1921,6 +1921,9 @@ function App() {
             <Route path="/" element={<SoulFoodLanding />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/login" element={<AuthPage />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/2fa-setup" element={<TwoFactorSetup />} />
+            <Route path="/my-library" element={<MyLibrary />} />
             <Route path="/quick-order" element={<QuickOrder />} />
             <Route path="/gift-certificates" element={<GiftCertificate />} />
             <Route path="/gift-certificate-success" element={<GiftCertificateSuccess />} />
