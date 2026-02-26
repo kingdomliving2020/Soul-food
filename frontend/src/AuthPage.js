@@ -259,11 +259,11 @@ const AuthPage = () => {
       
       localStorage.setItem('soul_food_token', data.access_token);
       localStorage.setItem('soul_food_user', JSON.stringify(data.user));
-      localStorage.setItem('soul_food_session', JSON.stringify(data.session_config));
       
-      toast.success(data.session_config.message);
+      toast.success(data.session_config?.message || `Welcome to Soul Food, ${data.user.name}!`);
       
-      setTimeout(() => navigate(returnTo), 1000);
+      // Redirect to My Library for new users
+      setTimeout(() => navigate('/my-library'), 1000);
       
     } catch (err) {
       console.error('Registration error:', err);
