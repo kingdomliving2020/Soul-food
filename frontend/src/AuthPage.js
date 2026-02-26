@@ -181,9 +181,24 @@ const AuthPage = () => {
         toast.info(`Your password expires in ${data.password_expires_in_days} days`);
       }
       
-      toast.success(data.session_config.message);
+      // Check if 2FA setup is required (for instructors/admins)
+      if (data.requires_2fa_setup) {
+        toast.info(data.message || 'Please set up 2-factor authentication');
+        setTimeout(() => navigate('/2fa-setup', { state: { returnTo } }), 1000);
+        return;
+      }
       
-      setTimeout(() => navigate(returnTo), 1000);
+      // Check if 2FA verification is needed
+      if (data.requires_2fa_verification) {
+        toast.info(data.message || 'Please verify with your 2FA code');
+        setTimeout(() => navigate('/2fa-verify', { state: { returnTo, userId: data.user.id } }), 1000);
+        return;
+      }
+      
+      toast.success(data.message || 'Welcome back!');
+      
+      // Redirect to My Library instead of home for logged in users
+      setTimeout(() => navigate(returnTo === '/' ? '/my-library' : returnTo), 1000);
       
     } catch (err) {
       console.error('Login error:', err);
