@@ -396,89 +396,348 @@ const InstructorToolbox = () => {
       case 'games':
         return (
           <div className="space-y-6">
-            <p className="text-slate-600">
-              Everything you need to run engaging game sessions with your study group.
-            </p>
+            {!gameMode ? (
+              <>
+                {/* Step 1: Select Lessons Covered */}
+                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-5 border border-indigo-200">
+                  <h4 className="font-bold text-lg text-indigo-800 mb-2 flex items-center gap-2">
+                    <span>📚</span> Step 1: Select Lessons You've Covered
+                  </h4>
+                  <p className="text-sm text-indigo-600 mb-4">
+                    Games will only pull questions from lessons you've marked as covered. This ensures students aren't tested on material they haven't learned.
+                  </p>
+                  
+                  {/* Series Selector */}
+                  <div className="flex gap-2 mb-4">
+                    {Object.entries(curriculumStructure).map(([key, series]) => (
+                      <Button
+                        key={key}
+                        variant={selectedSeries === key ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setSelectedSeries(key)}
+                        className={selectedSeries === key ? "bg-indigo-600" : ""}
+                      >
+                        {series.name}
+                        <Badge className="ml-2 bg-white/20">{getCoveredCount(key)}/{series.lessons.length}</Badge>
+                      </Button>
+                    ))}
+                  </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="border-2 border-purple-200">
-                <CardHeader className="bg-purple-50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-purple-500 flex items-center justify-center">
-                      <Gamepad2 className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-purple-800">GRinCH</CardTitle>
-                      <CardDescription>Grid Iron Challenge</CardDescription>
+                  {/* Lessons Checklist */}
+                  <div className="bg-white rounded-lg p-4 max-h-64 overflow-y-auto">
+                    <div className="space-y-2">
+                      {curriculumStructure[selectedSeries]?.lessons.map(lesson => (
+                        <label 
+                          key={lesson.id}
+                          className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
+                            isLessonCovered(selectedSeries, lesson.id) 
+                              ? 'bg-green-50 border border-green-200' 
+                              : 'hover:bg-slate-50'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isLessonCovered(selectedSeries, lesson.id)}
+                            onChange={() => toggleLessonCovered(selectedSeries, lesson.id)}
+                            className="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500"
+                          />
+                          <div className="flex-1">
+                            <span className="font-medium text-slate-800">{lesson.title}</span>
+                            <span className="text-slate-500 text-sm ml-2">— {lesson.subtitle}</span>
+                            {lesson.month && (
+                              <Badge variant="outline" className="ml-2 text-xs">Month {lesson.month}</Badge>
+                            )}
+                          </div>
+                          {isLessonCovered(selectedSeries, lesson.id) && (
+                            <span className="text-green-500 text-lg">✓</span>
+                          )}
+                        </label>
+                      ))}
+                      
+                      {/* Bonus Lessons */}
+                      {curriculumStructure[selectedSeries]?.bonusLessons && (
+                        <>
+                          <div className="border-t pt-2 mt-3">
+                            <p className="text-xs font-medium text-slate-500 uppercase mb-2">Bonus Lessons</p>
+                          </div>
+                          {curriculumStructure[selectedSeries].bonusLessons.map(lesson => (
+                            <label 
+                              key={lesson.id}
+                              className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
+                                isLessonCovered(selectedSeries, lesson.id) 
+                                  ? 'bg-amber-50 border border-amber-200' 
+                                  : 'hover:bg-slate-50'
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isLessonCovered(selectedSeries, lesson.id)}
+                                onChange={() => toggleLessonCovered(selectedSeries, lesson.id)}
+                                className="w-5 h-5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                              />
+                              <div className="flex-1">
+                                <span className="font-medium text-slate-800">{lesson.title}</span>
+                                <span className="text-slate-500 text-sm ml-2">— {lesson.subtitle}</span>
+                                <Badge className="ml-2 bg-amber-100 text-amber-700 text-xs">Bonus</Badge>
+                              </div>
+                              {isLessonCovered(selectedSeries, lesson.id) && (
+                                <span className="text-amber-500 text-lg">✓</span>
+                              )}
+                            </label>
+                          ))}
+                        </>
+                      )}
                     </div>
                   </div>
-                </CardHeader>
-                <CardContent className="p-4 space-y-3">
-                  <p className="text-sm text-slate-600">
-                    Team-based trivia game testing lesson knowledge. Perfect for review sessions.
-                  </p>
-                  <ul className="text-sm space-y-1">
-                    <li className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span> 2-4 teams
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span> Point multipliers for difficulty
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span> Championship rounds
-                    </li>
-                  </ul>
-                  <Button className="w-full mt-4 bg-purple-600 hover:bg-purple-700" onClick={() => navigate('/gaming')}>
-                    Launch GRinCH Setup
-                  </Button>
-                </CardContent>
-              </Card>
 
-              <Card className="border-2 border-blue-200">
-                <CardHeader className="bg-blue-50">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center">
-                      <GraduationCap className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-blue-800">Passport Trek</CardTitle>
-                      <CardDescription>Journey Through Scripture</CardDescription>
-                    </div>
+                  {/* Coverage Summary */}
+                  <div className="mt-3 flex items-center justify-between">
+                    <p className="text-sm text-indigo-700">
+                      <strong>{getCoveredCount(selectedSeries)}</strong> of {curriculumStructure[selectedSeries]?.lessons.length} lessons covered
+                    </p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        const series = curriculumStructure[selectedSeries];
+                        const allIds = [...series.lessons.map(l => l.id), ...(series.bonusLessons?.map(l => l.id) || [])];
+                        setCoveredLessons(prev => ({ ...prev, [selectedSeries]: allIds }));
+                        toast.success('All lessons marked as covered');
+                      }}
+                    >
+                      Mark All Covered
+                    </Button>
                   </div>
-                </CardHeader>
-                <CardContent className="p-4 space-y-3">
-                  <p className="text-sm text-slate-600">
-                    Individual progress tracking through biblical locations and themes.
-                  </p>
-                  <ul className="text-sm space-y-1">
-                    <li className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span> Individual or team mode
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span> Stamp collection rewards
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span> Completion certificates
-                    </li>
-                  </ul>
-                  <Button className="w-full mt-4 bg-blue-600 hover:bg-blue-700" onClick={() => navigate('/gaming')}>
-                    Launch Passport Trek
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card className="bg-amber-50 border-amber-200">
-              <CardContent className="p-4 flex items-center gap-4">
-                <Lightbulb className="w-8 h-8 text-amber-600 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold text-amber-800">Pro Tip: Game Session Timing</p>
-                  <p className="text-sm text-amber-700">
-                    Schedule games for the last 15-20 minutes of your session as a reward for completing the lesson discussion.
-                  </p>
                 </div>
-              </CardContent>
-            </Card>
+
+                {/* Step 2: Choose Game */}
+                <div>
+                  <h4 className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
+                    <span>🎮</span> Step 2: Choose Your Game
+                  </h4>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* GRinCH Card */}
+                    <Card className="border-2 border-purple-200 hover:border-purple-400 transition-colors cursor-pointer" onClick={() => setGameMode('grinch')}>
+                      <CardHeader className="bg-purple-50">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-lg bg-purple-500 flex items-center justify-center">
+                            <Gamepad2 className="w-6 h-6 text-white" />
+                          </div>
+                          <div>
+                            <CardTitle className="text-purple-800">GRinCH</CardTitle>
+                            <CardDescription>Grid Iron Challenge</CardDescription>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="p-4 space-y-3">
+                        <p className="text-sm text-slate-600">
+                          Team-based trivia game. Perfect for competitive review sessions.
+                        </p>
+                        <ul className="text-sm space-y-1">
+                          <li className="flex items-center gap-2"><span className="text-green-500">✓</span> 2-4 teams</li>
+                          <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Point multipliers</li>
+                          <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Championship rounds</li>
+                        </ul>
+                        <div className="pt-2 border-t">
+                          <p className="text-xs text-purple-600">
+                            {getCoveredCount(selectedSeries) > 0 
+                              ? `✅ ${getCoveredCount(selectedSeries)} lessons available for questions`
+                              : '⚠️ Select covered lessons above first'}
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Passport Trek Card */}
+                    <Card className="border-2 border-blue-200 hover:border-blue-400 transition-colors cursor-pointer" onClick={() => setGameMode('passport')}>
+                      <CardHeader className="bg-blue-50">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-lg bg-blue-500 flex items-center justify-center">
+                            <GraduationCap className="w-6 h-6 text-white" />
+                          </div>
+                          <div>
+                            <CardTitle className="text-blue-800">Passport Trek</CardTitle>
+                            <CardDescription>Stamp Collection Journey</CardDescription>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="p-4 space-y-3">
+                        <p className="text-sm text-slate-600">
+                          Individual progress tracking with stamp collection rewards.
+                        </p>
+                        <ul className="text-sm space-y-1">
+                          <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Individual or team mode</li>
+                          <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Stamp collection</li>
+                          <li className="flex items-center gap-2"><span className="text-green-500">✓</span> Completion certificates</li>
+                        </ul>
+                        <div className="pt-2 border-t">
+                          <p className="text-xs text-blue-600">
+                            {getCoveredCount(selectedSeries) > 0 
+                              ? `✅ ${getCoveredCount(selectedSeries)} lessons available for challenges`
+                              : '⚠️ Select covered lessons above first'}
+                          </p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+
+                {/* Pro Tip */}
+                <Card className="bg-amber-50 border-amber-200">
+                  <CardContent className="p-4 flex items-center gap-4">
+                    <Lightbulb className="w-8 h-8 text-amber-600 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-amber-800">Pro Tip: Game Session Timing</p>
+                      <p className="text-sm text-amber-700">
+                        Schedule games for the last 15-20 minutes of your session as a reward for completing the lesson discussion.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              /* Game Configuration Screen */
+              <div className="space-y-6">
+                <Button variant="ghost" onClick={() => setGameMode(null)} className="mb-4">
+                  <ArrowLeft className="w-4 h-4 mr-2" /> Back to Game Selection
+                </Button>
+
+                {gameMode === 'grinch' && (
+                  <div className="space-y-6">
+                    <div className="bg-purple-50 rounded-xl p-6 border border-purple-200">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-16 h-16 rounded-xl bg-purple-500 flex items-center justify-center">
+                          <Gamepad2 className="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-2xl font-bold text-purple-800">GRinCH Setup</h3>
+                          <p className="text-purple-600">Grid Iron Challenge - Team Trivia</p>
+                        </div>
+                      </div>
+
+                      <div className="bg-white rounded-lg p-4 mb-4">
+                        <h4 className="font-semibold text-slate-800 mb-2">Questions will be drawn from:</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {(coveredLessons[selectedSeries] || []).map(lessonId => {
+                            const lesson = [...(curriculumStructure[selectedSeries]?.lessons || []), ...(curriculumStructure[selectedSeries]?.bonusLessons || [])].find(l => l.id === lessonId);
+                            return lesson ? (
+                              <Badge key={lessonId} className="bg-purple-100 text-purple-700">
+                                {lesson.title}
+                              </Badge>
+                            ) : null;
+                          })}
+                          {(coveredLessons[selectedSeries] || []).length === 0 && (
+                            <p className="text-slate-500 text-sm">No lessons selected. Go back and mark covered lessons.</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">Number of Teams</label>
+                          <select className="w-full border rounded-lg p-2">
+                            <option>2 Teams</option>
+                            <option>3 Teams</option>
+                            <option>4 Teams</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">Question Count</label>
+                          <select className="w-full border rounded-lg p-2">
+                            <option>10 Questions (Quick)</option>
+                            <option>20 Questions (Standard)</option>
+                            <option>30 Questions (Extended)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <Button 
+                        className="w-full bg-purple-600 hover:bg-purple-700 py-6 text-lg"
+                        onClick={() => {
+                          if ((coveredLessons[selectedSeries] || []).length === 0) {
+                            toast.error('Please select at least one covered lesson first');
+                            return;
+                          }
+                          toast.success('Launching GRinCH game...');
+                          // TODO: Navigate to actual game with filtered questions
+                          navigate('/gaming');
+                        }}
+                      >
+                        <Gamepad2 className="w-5 h-5 mr-2" />
+                        Start GRinCH Game
+                      </Button>
+                    </div>
+                  </div>
+                )}
+
+                {gameMode === 'passport' && (
+                  <div className="space-y-6">
+                    <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-16 h-16 rounded-xl bg-blue-500 flex items-center justify-center">
+                          <GraduationCap className="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-2xl font-bold text-blue-800">Passport Trek Setup</h3>
+                          <p className="text-blue-600">Stamp Collection Challenge</p>
+                        </div>
+                      </div>
+
+                      <div className="bg-white rounded-lg p-4 mb-4">
+                        <h4 className="font-semibold text-slate-800 mb-2">Available Stamps (Covered Lessons):</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {(coveredLessons[selectedSeries] || []).map(lessonId => {
+                            const lesson = [...(curriculumStructure[selectedSeries]?.lessons || []), ...(curriculumStructure[selectedSeries]?.bonusLessons || [])].find(l => l.id === lessonId);
+                            return lesson ? (
+                              <Badge key={lessonId} className="bg-blue-100 text-blue-700">
+                                🎫 {lesson.title}
+                              </Badge>
+                            ) : null;
+                          })}
+                          {(coveredLessons[selectedSeries] || []).length === 0 && (
+                            <p className="text-slate-500 text-sm">No lessons selected. Go back and mark covered lessons.</p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">Game Mode</label>
+                          <select className="w-full border rounded-lg p-2">
+                            <option>Individual (Each person)</option>
+                            <option>Team Race (Groups compete)</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-slate-700 mb-1">Challenges per Stamp</label>
+                          <select className="w-full border rounded-lg p-2">
+                            <option>1 Challenge (Quick)</option>
+                            <option>3 Challenges (Standard)</option>
+                            <option>6 Challenges (Full)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <Button 
+                        className="w-full bg-blue-600 hover:bg-blue-700 py-6 text-lg"
+                        onClick={() => {
+                          if ((coveredLessons[selectedSeries] || []).length === 0) {
+                            toast.error('Please select at least one covered lesson first');
+                            return;
+                          }
+                          toast.success('Launching Passport Trek...');
+                          navigate('/gaming');
+                        }}
+                      >
+                        <GraduationCap className="w-5 h-5 mr-2" />
+                        Start Passport Trek
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         );
 
