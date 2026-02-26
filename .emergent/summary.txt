@@ -1,0 +1,196 @@
+<analysis>**original_problem_statement:**
+The user's primary goal is to build and refine a full-stack e-commerce and learning platform, Soul Food.
+
+In this session, the user's focus was on a significant expansion of features, including:
+1.  Implementing free vs. paid Holiday Bonus Lessons.
+2.  Adding Game Pass Restriction Disclosures to the store.
+3.  Refactoring the hardcoded coupon system to be database-driven.
+4.  Creating a new Instructor Toolbox page with game filtering capabilities.
+5.  Adding a promotional banner with a countdown timer for a sales event.
+6.  Overhauling the homepage to replace a video with an audio intro and creating a new Multimedia page.
+7.  Implementing a comprehensive account and security system, including traditional/Google OAuth login, mandatory 2FA for instructors, gated checkout logic, and a customer rewards program.
+8.  Adding new audio content and preparing the UI for the creator's photo and a Meet the Team section.
+
+**User's preferred language**: English
+
+**what currently exists?**
+The platform is a full-stack application using React, FastAPI, and MongoDB with live Stripe integration.
+
+-   **Content & Products**: Holiday Bonus Lessons are live (AE/YE free, IE paid). The store page now features a Gaming Access section with restriction warnings.
+-   **Marketing**: A promotional banner with a live countdown timer for the Resurrection Sunday sale is active on the store page.
+-   **Instructor Features**: A new, gated  page exists for logged-in instructors. It includes a UI for filtering games based on lessons covered, which is fully responsive for mobile.
+-   **Coupon System**: The coupon system has been successfully refactored to use a MongoDB collection instead of a hardcoded list. Admin API endpoints for CRUD operations on coupons are available.
+-   **Media Content**: The homepage video was replaced by an audio player. A new  page has been created to host all video and audio files, including newly uploaded premium Holiday Series audio.
+-   **Account System (Backend)**: The backend for a comprehensive new authentication system is complete and tested via curl. It includes user registration, password/Google login, mandatory 2FA setup for instructors, a rewards points system, and checkout gating logic.
+-   **Deployment Readiness**: A deployment health check was successfully passed.
+
+**Last working item**:
+-   **Last item agent was working**: The user requested their photo be placed on the homepage with a specific caption and uploaded photos of the Soul Food Team. The agent downloaded all newly uploaded audio files (including the missing The Cross track) and team member photos. A layout with a placeholder for the creator's photo was created on the homepage, and all audio files were integrated into the Multimedia page. The next step is to place the creator's photo and build a Meet the Team section.
+-   **Status**: IN PROGRESS
+-   **Agent Testing Done**: N
+-   **Which testing method agent to use?**: screenshot tool
+-   **User Testing Done**: N
+
+**All Pending/In progress Issue list**:
+-   **Issue 1**: Photo and Team Section Implementation (P0)
+-   **Issue 2**: Frontend Implementation for New Auth System (P0)
+-   **Issue 3**: PDF files for individual Breakfast lessons are missing (P1)
+-   **Issue 4**: Hardcoded Product Catalog (Tech Debt) (P2)
+
+**Issues Detail**:
+-   **Issue 1**: Photo and Team Section Implementation
+    -   **Description**: The user wants their photo displayed on the homepage above the Why Soul Food? audio player, and wants a section to introduce the Soul Food Team using the photos provided. The agent has the photos and has created a placeholder layout.
+    -   **Next debug checklist**:
+        1.  Verify the user's photo () was uploaded and is accessible.
+        2.  Update  to replace the photo placeholder with the actual image of Dr. Shefa D. Brown.
+        3.  Create a Meet the Team section on the landing page to feature the team member photos.
+        4.  Verify the final The Cross audio file is correctly added to .
+    -   **Why fix this issue and what will be achieved with the fix?**: Personalizes the homepage, builds brand trust, and completes the Holiday audio series content.
+    -   **Status**: IN PROGRESS
+    -   **Is recurring issue?**: Y
+    -   **Should Test frontend/backend/both after fix?**: frontend
+
+-   **Issue 2**: Frontend Implementation for New Auth System
+    -   **Description**: The backend for the new auth system (Google OAuth, 2FA, rewards, checkout gating) is complete. The corresponding frontend UI for registration, login, 2FA setup, My Library dashboard, and rewards display is missing.
+    -   **Next debug checklist**:
+        1.  Create/Update frontend components (, , ).
+        2.  Integrate a Google OAuth login button.
+        3.  Implement the UI flow for mandatory 2FA setup for instructors.
+        4.  Modify the cart and checkout components to dynamically handle the new backend gating logic (i.e., force login for certain items).
+        5.  Create a My Library dashboard page to show purchased content and the user's rewards points balance.
+    -   **Why fix this issue and what will be achieved with the fix?**: This is a critical, user-requested feature required for launching instructor and subscription functionalities. It enables secure access and customer retention.
+    -   **Status**: NOT STARTED
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: both
+
+-   **Issue 3**: PDF files for individual Breakfast lessons are missing
+    -   **Description**: The store allows purchasing individual Breakfast lessons, but the backend is mapped to PDF files that do not exist, which will lead to a broken download link.
+    -   **Next debug checklist**:
+        1.  Wait for the user to provide page ranges or the split PDF files. The user has indicated they are working on this.
+        2.  Use  to split the main workbooks into individual lesson PDFs.
+        3.  Upload the new PDFs to .
+        4.  Update the  dictionary in .
+    -   **Why fix this issue and what will be achieved with the fix?**: This is a revenue-blocking issue for a specific product category.
+    -   **Status**: BLOCKED
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: backend
+
+-   **Issue 4**: Hardcoded Product Catalog (Tech Debt)
+    -   **Description**: The product catalog in  is a hardcoded Python dictionary, which is inflexible and difficult to manage.
+    -   **Next debug checklist**:
+        1.  Create a migration script to move products from the hardcoded dictionary to a  collection in MongoDB.
+        2.  Refactor backend routes to query the new  collection.
+        3.  Refactor the frontend to fetch product data from a new API endpoint.
+    -   **Why fix this issue and what will be achieved with the fix?**: This is a key piece of technical debt. Fixing it enables dynamic product management and is a prerequisite for a user-facing admin panel.
+    -   **Status**: NOT STARTED
+    -   **Is recurring issue?**: N
+    -   **Should Test frontend/backend/both after fix?**: both
+
+**Upcoming and Future Tasks**
+
+-   **Upcoming Tasks**:
+    -   P1: **Upload and Integrate Breakfast Series PDFs**: The user is creating the full Breakfast AE/YE/IE workbooks.
+    -   P2: **License Management UI**: Build the frontend for instructors to assign digital access to students after a bundle purchase.
+
+-   **Future Tasks**:
+    -   Implement the Word Search Game to replace the placeholder.
+    -   Custom Domain Linking.
+    -   Video Integration into the My Library dashboard.
+
+**Completed work in this session**
+-   **Holiday Bonus Lessons**: Implemented free (AE/YE) and paid (IE) versions.
+-   **Game Pass Disclosures**: Added a Gaming Access section with warnings to the store page.
+-   **Instructor Toolbox & Game Filtering**: Created a gated page for instructors with a responsive UI to filter game content.
+-   **Coupon System Refactor**: Migrated coupon logic to MongoDB with admin API endpoints.
+-   **Palm Sunday Marketing**: Added a promotional banner with a live countdown timer.
+-   **Homepage & Multimedia Page**: Replaced homepage video with an audio player and created a new  page for all media.
+-   **Account & Security System (Backend)**: Built the backend for Google OAuth, mandatory 2FA, gated checkout, and a rewards program.
+-   **Cart/Checkout Verified**: Confirmed the cart and checkout process are fully functional, addressing user concerns.
+
+**Earlier issues found/mentioned but not fixed**
+-   None. All identified issues are tracked in the pending/upcoming lists.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+-   **Authentication**: JWT, Google OAuth, 2-Factor Authentication (TOTP), Role-Based Access Control (RBAC).
+-   **E-commerce**: Gated checkout logic, customer rewards points system.
+-   **Frontend**: React hooks, responsive design with TailwindCSS.
+-   **Backend**: FastAPI, MongoDB (Motor), dependency injection.
+
+**key DB schema**
+-   **users:** 
+-   **coupons:** 
+
+**changes in tech stack**
+-   **New Python Libraries**: ,  for 2FA.  for Google Auth playbook.
+
+**All files of reference**
+-   
+-   
+-   
+-   
+-   
+-   
+
+**Areas that need refactoring**:
+-   ** Product Catalog**: High-priority technical debt; needs migration to a MongoDB collection.
+-   ****: This old file is now deprecated and should be removed to avoid confusion with .
+
+**key api endpoints**
+-   
+-   
+-   
+-   
+-   
+-   
+-   
+
+**Critical Info for New Agent**
+-   **User Priority**: The immediate focus is on completing the user-facing UI: adding the creator's photo and building the new authentication and account pages.
+-   **Auth System Status**: The backend for the new auth system is **complete**. The next major task is building the corresponding frontend UI. Do not modify  unless a bug is found.
+-   **Gated Checkout**: The backend enforces login for certain products. The frontend checkout UI must be updated to reflect this logic.
+-   **Blocked Tasks**: The Breakfast lesson PDF task is blocked on user input.
+
+**documents and test reports created in this job**
+-    (Updated)
+-    (New)
+
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **LATEST:** User uploaded team photos.
+2.  User uploaded the missing The Cross audio file.
+3.  User indicated their photo was a  file.
+4.  User requests their photo be placed above the Why Soul Food? audio player with a specific caption, and uploads more Holiday audio files.
+5.  User reported a cart loading issue, requested moving the homepage video to a new multimedia page, and replacing it with a still image and audio intro.
+6.  User approved Option B for the account system, clarifying requirements for 2FA, checkout gating, and introducing a rewards points idea.
+7.  User asked for a status report on RBAC, required checkout accounts, content access, Google Login, and 2FA.
+8.  User requested a deployment health check.
+9.  User requested that the mobile view for the Instructor Toolbox be seamless.
+10. User confirmed the agent's proposed instructor facilitation structure is correct.
+
+**Project Health Check:**
+-   **Broken**:
+    -   Purchase flow for individual Breakfast lessons.
+-   **Mocked**:
+    -   The entire frontend for the new account system (registration, login, 2FA, My Library).
+-   **Fragile**:
+    -   The hardcoded product catalog in .
+
+**3rd Party Integrations**
+-   **Stripe**: Live mode, payment processing.
+-   **Resend**: Transactional emails.
+-   **Google OAuth**: Backend implemented; frontend pending.
+-   **libreoffice**: Installed.
+
+**Testing status**
+-   **Testing agent used after significant changes**: NO
+-   **Test files created**: 
+-   **Known regressions**: None
+
+**Credentials to test flow:**
+-   **Test Coupon**:  (99% off).
+-   **Beta Users**: Defined in  (e.g., ). Use  endpoint for access.
+
+**What agent forgot to execute**
+-   The agent created  but did not delete the now-obsolete , which could cause confusion for future development.</analysis>
