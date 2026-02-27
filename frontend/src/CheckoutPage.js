@@ -518,6 +518,7 @@ const CheckoutPage = () => {
           order_notes: orderNotes,
           customer_email: customerEmail || null,
           customer_name: customerName || null,
+          customer_phone: customerPhone || null,
           shipping_address: hasPhysicalItems ? shippingAddress : null
         }),
       });
