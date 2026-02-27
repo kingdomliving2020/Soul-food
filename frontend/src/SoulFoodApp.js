@@ -793,6 +793,7 @@ const SoulFoodLanding = () => {
             ))}
 
             {/* Breakfast and Lunch */}
+            <div id="breakfast-series" className="scroll-mt-32"></div>
             {series.filter(s => s.id === 'breakfast' || s.id === 'lunch').map((s) => (
               <Card 
                 key={s.id} 
