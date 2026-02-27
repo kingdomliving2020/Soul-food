@@ -218,6 +218,50 @@ const GameAddToCartButton = () => {
   );
 };
 
+// Resurrection Sunday Countdown Component
+const ResurrectionCountdown = () => {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  
+  useEffect(() => {
+    // Resurrection Sunday 2026 is April 5, 2026
+    const resurrectionSunday = new Date('2026-04-05T06:00:00');
+    
+    const updateCountdown = () => {
+      const now = new Date();
+      const diff = resurrectionSunday - now;
+      
+      if (diff > 0) {
+        setTimeLeft({
+          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((diff / (1000 * 60)) % 60),
+          seconds: Math.floor((diff / 1000) % 60)
+        });
+      }
+    };
+    
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
+  }, []);
+  
+  return (
+    <div className="flex gap-2 sm:gap-3 justify-center lg:justify-end">
+      {[
+        { value: timeLeft.days, label: 'Days' },
+        { value: timeLeft.hours, label: 'Hrs' },
+        { value: timeLeft.minutes, label: 'Min' },
+        { value: timeLeft.seconds, label: 'Sec' }
+      ].map((item, idx) => (
+        <div key={idx} className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 min-w-[50px] sm:min-w-[60px] border border-purple-400/30">
+          <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-amber-300">{String(item.value).padStart(2, '0')}</div>
+          <div className="text-[10px] sm:text-xs text-purple-300 uppercase tracking-wide">{item.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 const SoulFoodLanding = () => {
   const [series, setSeries] = useState(SOUL_FOOD_SERIES);
   const [selectedSeries, setSelectedSeries] = useState(null);
