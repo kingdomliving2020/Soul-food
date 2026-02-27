@@ -1963,7 +1963,7 @@ const SoulFoodLanding = () => {
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border-2 border-purple-300 max-w-sm">
               <div className="h-72 overflow-hidden">
                 <img 
-                  src="/images/dr-shefa-brown.png" 
+                  src="/images/dr-shefa-brown-new.png" 
                   alt="Dr. Shefa D. Brown"
                   className="w-full h-full object-cover object-top"
                 />
