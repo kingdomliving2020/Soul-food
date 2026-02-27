@@ -1449,6 +1449,9 @@ async def stripe_webhook(request: Request):
                     try:
                         from email_service import send_order_confirmation
                         
+                        # Get customer phone from transaction
+                        customer_phone = transaction.get("customer_phone", "")
+                        
                         # Check for physical book purchases and generate audio codes
                         audio_codes_generated = []
                         for item in items:
@@ -1461,6 +1464,19 @@ async def stripe_webhook(request: Request):
                                     series_id = "holiday"
                                 elif "breakfast" in item_product_id.lower():
                                     series_id = "breakfast"
+                                elif "lunch" in item_product_id.lower():
+                                    series_id = "lunch"
+                                elif "dinner" in item_product_id.lower():
+                                    series_id = "dinner"
+                                elif "supper" in item_product_id.lower():
+                                    series_id = "supper"
+                                
+                                # Determine edition from product ID
+                                edition = "adult"
+                                if "-ye-" in item_product_id.lower() or "youth" in item_product_id.lower():
+                                    edition = "youth"
+                                elif "-ie-" in item_product_id.lower() or "instructor" in item_product_id.lower():
+                                    edition = "instructor"
                                 
                                 if series_id:
                                     try:
@@ -1469,16 +1485,29 @@ async def stripe_webhook(request: Request):
                                         
                                         # Only generate if series has audio content
                                         if series_id in AUDIO_CONTENT and AUDIO_CONTENT[series_id].get("lessons"):
-                                            code = generate_audio_code()
+                                            # Generate trackable code with new format
+                                            code = generate_audio_code(
+                                                series_id=series_id,
+                                                edition=edition,
+                                                lesson_number=0,  # 0 = full bundle
+                                                phone=customer_phone
+                                            )
                                             series_info = AUDIO_CONTENT[series_id]
                                             
-                                            # Store the code
+                                            # Parse code for tracking
+                                            code_parts = code.split("-")
+                                            phone_part = code_parts[1] if len(code_parts) > 1 else ""
+                                            
+                                            # Store the code with tracking metadata
                                             code_record = {
                                                 "code": code,
                                                 "series_id": series_id,
                                                 "series_name": series_info["name"],
                                                 "order_id": order_number,
                                                 "customer_email": customer_email.lower(),
+                                                "customer_phone_last5": phone_part,
+                                                "edition": edition,
+                                                "lesson_number": 0,
                                                 "is_physical_purchase": True,
                                                 "lessons_included": [l["id"] for l in series_info["lessons"]],
                                                 "redeemed": False,
@@ -1492,9 +1521,10 @@ async def stripe_webhook(request: Request):
                                             audio_codes_generated.append({
                                                 "code": code,
                                                 "series_name": series_info["name"],
-                                                "series_id": series_id
+                                                "series_id": series_id,
+                                                "edition": edition
                                             })
-                                            print(f"[Webhook] Audio code {code} generated for {series_info['name']} (physical purchase)")
+                                            print(f"[Webhook] Audio code {code} generated for {series_info['name']} ({edition} edition)")
                                     except Exception as audio_error:
                                         print(f"[Webhook] Error generating audio code: {audio_error}")
                         
