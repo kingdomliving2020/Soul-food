@@ -16,33 +16,25 @@ const AboutUs = () => {
     {
       id: 'dr-shefa-brown',
       name: 'Dr. Shefa D. Brown',
-      title: 'Creator & Visionary',
       image: '/images/dr-shefa-brown.png',
-      bio: 'The heart and soul behind Soul Food, Dr. Shefa D. Brown brings decades of ministry experience and a passion for making biblical education accessible to all ages. Her vision for spiritual nourishment "one meal at a time" has touched countless families.',
       isFounder: true
     },
     {
       id: 'dr-temia-julius',
       name: 'Pastor Temia Julius, Ph.D.',
-      title: 'Curriculum Advisor',
       image: '/images/team/dr-temia-julius.jpg',
-      bio: 'With extensive experience in Christian education and curriculum development, Pastor Temia brings theological depth and educational excellence to every Soul Food lesson.',
       isFounder: false
     },
     {
       id: 'evang-rose-doctor',
       name: 'Evangelist Rose Doctor',
-      title: 'Ministry Outreach',
       image: '/images/team/evang-rose-doctor.jpg',
-      bio: 'Evangelist Rose leads our outreach efforts, connecting churches and communities with Soul Food resources. Her heart for evangelism ensures the message reaches those who need it most.',
       isFounder: false
     },
     {
       id: 'pastor-mike-edwards',
       name: 'Pastor Mike Edwards',
-      title: 'Spiritual Guidance',
       image: '/images/team/pastor-mike-edwards.jpg',
-      bio: 'Pastor Mike provides pastoral oversight and theological wisdom to our content. His voice is featured in the Holiday Series audio teachings, bringing the 4 C\'s to life.',
       isFounder: false
     }
   ];
