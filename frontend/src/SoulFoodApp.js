@@ -600,12 +600,12 @@ const SoulFoodLanding = () => {
                   {/* Photo - uses new clear image */}
                   <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-purple-300 shadow-lg mb-3">
                     <img 
-                      src="/images/dr-shefa-brown-new.png" 
+                      src="/images/dr-shefa-brown-final.jpg" 
                       alt="Dr. Shefa D. Brown"
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         // Fallback to old image if new fails
-                        if (e.target.src.includes('-new')) {
+                        if (e.target.src.includes('-final')) {
                           e.target.src = '/images/dr-shefa-brown.png';
                         } else {
                           e.target.style.display = 'none';
@@ -1959,7 +1959,7 @@ const SoulFoodLanding = () => {
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border-2 border-purple-300 max-w-sm">
               <div className="h-72 overflow-hidden">
                 <img 
-                  src="/images/dr-shefa-brown-new.png" 
+                  src="/images/dr-shefa-brown-final.jpg" 
                   alt="Dr. Shefa D. Brown"
                   className="w-full h-full object-cover object-top"
                 />
