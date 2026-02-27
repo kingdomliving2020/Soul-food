@@ -158,7 +158,7 @@ const MyLibrary = () => {
                 onClick={() => navigate('/')}
                 className="text-slate-600 hover:text-slate-800"
               >
-                <img src="/soul-food-logo.png" alt="Soul Food" className="h-10 w-10" />
+                <img src="/soul-food-logo.png" alt="Soul Food" className="h-12 w-12" />
               </Button>
               <h1 className="text-xl font-bold text-slate-800">My Library</h1>
             </div>
