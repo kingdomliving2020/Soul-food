@@ -363,6 +363,81 @@ const MyLibrary = () => {
               </CardContent>
             </Card>
             
+            {/* My Audio Library */}
+            {audioAccess && audioAccess.has_access && (
+              <Card className="shadow-lg border-purple-200">
+                <CardHeader className="border-b bg-gradient-to-r from-purple-50 to-indigo-50">
+                  <CardTitle className="flex items-center gap-2">
+                    <Headphones className="w-5 h-5 text-purple-600" />
+                    My Audio Library
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    {audioAccess.series_access.map((seriesId) => {
+                      const seriesContent = audioAccess.audio_content?.[seriesId];
+                      if (!seriesContent) return null;
+                      
+                      return (
+                        <div key={seriesId} className="border border-purple-200 rounded-lg overflow-hidden">
+                          <div className="bg-gradient-to-r from-purple-100 to-indigo-100 px-4 py-3">
+                            <h4 className="font-semibold text-purple-800 flex items-center gap-2">
+                              <Music className="w-4 h-4" />
+                              {seriesContent.name}
+                            </h4>
+                            <p className="text-xs text-purple-600">{seriesContent.lessons?.length || 0} audio lessons</p>
+                          </div>
+                          <div className="divide-y divide-purple-100">
+                            {seriesContent.lessons?.map((lesson) => (
+                              <div 
+                                key={lesson.id}
+                                className="flex items-center justify-between p-3 hover:bg-purple-50 transition-colors"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <button
+                                    onClick={() => playAudio(lesson.id, `/audio/${seriesId}-${lesson.id}.m4a`)}
+                                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+                                      playingAudio === lesson.id 
+                                        ? 'bg-purple-600 text-white' 
+                                        : 'bg-purple-100 text-purple-600 hover:bg-purple-200'
+                                    }`}
+                                  >
+                                    {playingAudio === lesson.id ? (
+                                      <Pause className="w-4 h-4" />
+                                    ) : (
+                                      <Play className="w-4 h-4 ml-0.5" />
+                                    )}
+                                  </button>
+                                  <div>
+                                    <p className="font-medium text-slate-800">{lesson.title}</p>
+                                    <p className="text-xs text-slate-500">{lesson.speaker} • {lesson.duration}</p>
+                                  </div>
+                                </div>
+                                <Badge variant="outline" className="text-purple-600 border-purple-200">
+                                  Unlocked
+                                </Badge>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t border-purple-100">
+                    <Button
+                      variant="outline"
+                      onClick={() => navigate('/multimedia')}
+                      className="w-full border-purple-300 text-purple-600 hover:bg-purple-50"
+                    >
+                      <Music className="w-4 h-4 mr-2" />
+                      View All Audio Content
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            
             {/* Quick Access */}
             <Card className="shadow-lg">
               <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-amber-50">
