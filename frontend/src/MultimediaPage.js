@@ -155,6 +155,48 @@ const MultimediaPage = () => {
     }
   };
 
+  // Audio code redemption
+  const handleRedeemCode = async (e) => {
+    e.preventDefault();
+    setRedeemLoading(true);
+    setRedeemResult(null);
+    
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/audio/codes/redeem`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          code: redeemCode.toUpperCase().trim(), 
+          email: redeemEmail.trim() 
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setRedeemResult({ 
+          success: true, 
+          message: data.message || '🎉 Audio access unlocked!',
+          seriesName: data.series_name,
+          lessons: data.lessons_included
+        });
+        setRedeemCode('');
+      } else {
+        setRedeemResult({ 
+          success: false, 
+          message: data.detail || 'Failed to redeem code. Please check and try again.' 
+        });
+      }
+    } catch (error) {
+      setRedeemResult({ 
+        success: false, 
+        message: 'Connection error. Please try again.' 
+      });
+    }
+    
+    setRedeemLoading(false);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-purple-50">
       {/* Header */}
