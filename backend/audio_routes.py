@@ -322,3 +322,107 @@ async def get_audio_pricing():
         "physical_book_bonus": "Audio access code included with physical book purchases",
         "ie_bonus": "Instructor Edition includes all audio at no extra cost"
     }
+
+
+
+# Reverse mappings for code parsing
+SERIES_NAMES = {v: k for k, v in SERIES_CODES.items()}
+EDITION_NAMES = {"1": "adult", "2": "youth", "3": "instructor"}
+
+
+@router.get("/codes/decode/{code}")
+async def decode_audio_code(code: str):
+    """
+    Decode an audio code to see its embedded information
+    Useful for admin tracking and customer service
+    
+    Code format: YMMDD-PHONE5-ELV
+    """
+    code = code.upper().strip()
+    parts = code.split("-")
+    
+    if len(parts) != 3:
+        raise HTTPException(status_code=400, detail="Invalid code format. Expected: YMMDD-PHONE5-ELV")
+    
+    date_part, phone_part, product_part = parts
+    
+    # Parse date
+    try:
+        year_digit = date_part[0]
+        month = int(date_part[1:3])
+        day = int(date_part[3:5])
+        # Assume 2020s decade
+        year = 2020 + int(year_digit)
+        created_date = f"{year}-{month:02d}-{day:02d}"
+    except (ValueError, IndexError):
+        created_date = "Unknown"
+    
+    # Parse product info
+    try:
+        series_code = product_part[0]
+        lesson_num = int(product_part[1:3])
+        edition_code = product_part[3] if len(product_part) > 3 else "1"
+    except (ValueError, IndexError):
+        series_code = "?"
+        lesson_num = 0
+        edition_code = "1"
+    
+    series_name = SERIES_NAMES.get(series_code, "Unknown")
+    edition_name = EDITION_NAMES.get(edition_code, "adult")
+    
+    # Look up code in database
+    code_record = await db.audio_codes.find_one({"code": code}, {"_id": 0})
+    
+    return {
+        "code": code,
+        "decoded": {
+            "created_date": created_date,
+            "phone_last5": phone_part,
+            "series": series_name,
+            "series_code": series_code,
+            "lesson_number": lesson_num,
+            "lesson_type": "Full Bundle" if lesson_num == 0 else f"Lesson {lesson_num}",
+            "edition": edition_name,
+            "edition_code": edition_code
+        },
+        "database_record": code_record,
+        "is_valid": code_record is not None,
+        "is_redeemed": code_record.get("redeemed", False) if code_record else None
+    }
+
+
+@router.get("/codes/search")
+async def search_audio_codes(
+    phone: str = None,
+    email: str = None,
+    series: str = None,
+    redeemed: bool = None
+):
+    """Search audio codes with filters for admin tracking"""
+    
+    query = {}
+    
+    if phone:
+        # Search by last 5 digits of phone
+        digits = ''.join(c for c in phone if c.isdigit())
+        phone_search = digits[-5:] if len(digits) >= 5 else digits
+        query["customer_phone_last5"] = phone_search
+    
+    if email:
+        query["$or"] = [
+            {"customer_email": email.lower()},
+            {"redeemed_by_email": email.lower()}
+        ]
+    
+    if series:
+        query["series_id"] = series.lower()
+    
+    if redeemed is not None:
+        query["redeemed"] = redeemed
+    
+    codes = await db.audio_codes.find(query, {"_id": 0}).sort("created_at", -1).limit(50).to_list(50)
+    
+    return {
+        "count": len(codes),
+        "codes": codes
+    }
