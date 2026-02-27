@@ -679,29 +679,34 @@ const SoulFoodLanding = () => {
                 </div>
               </CardHeader>
               
-              <CardContent className="relative space-y-4 p-6">
+              <CardContent className="relative p-6 flex flex-col min-h-[280px]">
                 <p className="text-slate-700 leading-relaxed">Experience our teaching style with this platform-exclusive sample. Learn about Abel's faithful sacrifice and Enoch's consistency with God.</p>
                 
-                <div className="flex items-center justify-between pt-4">
+                <div className="pt-4">
                   <Badge className="bg-amber-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
                     🫴🏽 Try Before You Buy
                   </Badge>
+                </div>
+                
+                {/* Spacer to push buttons to bottom */}
+                <div className="flex-grow"></div>
+                
+                <div className="space-y-2 pt-4">
+                  <Button
+                    onClick={() => window.location.href = '/lesson/free-sample'}
+                    className="w-full bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 hover:opacity-90 shadow-lg text-white font-semibold py-3 rounded-xl transition-all"
+                  >
+                    Start Free Lesson Now →
+                  </Button>
                   
                   <Button
                     onClick={() => window.location.href = '/lesson/free-sample'}
                     variant="outline"
-                    className="border-2 border-amber-400 hover:border-amber-600 text-amber-700 hover:bg-amber-50 font-semibold px-4 py-2 rounded-lg transition-all shadow-md"
+                    className="w-full border-2 border-amber-400 hover:border-amber-600 text-amber-700 hover:bg-amber-50 font-semibold py-2.5 rounded-lg transition-all"
                   >
-                    🤲 Get Free Lesson
+                    🤲 Learn More
                   </Button>
                 </div>
-                
-                <Button
-                  onClick={() => window.location.href = '/lesson/free-sample'}
-                  className="w-full bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 hover:opacity-90 shadow-lg text-white font-semibold py-3 rounded-xl transition-all"
-                >
-                  Start Free Lesson Now →
-                </Button>
               </CardContent>
             </Card>
 
