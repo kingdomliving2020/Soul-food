@@ -647,9 +647,9 @@ const SoulFoodLanding = () => {
           </div>
 
           {/* Series Grid - Free Lesson + Holiday first, then Breakfast + Lunch, then Dinner + Supper */}
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
+          <div className="grid md:grid-cols-2 gap-8 mb-12 items-stretch">
             {/* Free Lesson Card */}
-            <Card className="relative overflow-hidden border-2 border-amber-300 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-white">
+            <Card className="relative overflow-hidden border-2 border-amber-300 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] bg-white flex flex-col">
               <div className="absolute top-4 right-4 z-10">
                 <Badge className="bg-amber-500 text-white px-4 py-2 text-sm font-bold shadow-lg">
                   🤲 FREE
