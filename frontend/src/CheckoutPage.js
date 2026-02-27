@@ -251,8 +251,7 @@ const CheckoutPage = () => {
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponError, setCouponError] = useState('');
   
-  // Gift & Order Notes
-  const [isGift, setIsGift] = useState(false);
+  // Order Notes
   const [orderNotes, setOrderNotes] = useState('');
   
   // Customer info for email delivery
