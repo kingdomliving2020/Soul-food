@@ -1106,7 +1106,7 @@ const SoulFoodLanding = () => {
                     />
                   </div>
                 </CardHeader>
-                <CardContent className="p-6 flex flex-col h-full">
+                <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-2xl font-bold text-slate-800">Trivia Mix-up</h4>
                     <span className="text-3xl">🎮</span>
@@ -1120,10 +1120,9 @@ const SoulFoodLanding = () => {
                     <Badge className="bg-cyan-100 text-cyan-700 text-xs">Youth Challenge</Badge>
                     <Badge className="bg-cyan-100 text-cyan-700 text-xs">Fun Mode</Badge>
                   </div>
-                  <div className="flex-grow"></div>
                   <Button
                     onClick={() => window.location.href = '/game/mixup?edition=youth'}
-                    className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-bold py-3 rounded-xl mt-auto"
+                    className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white font-bold py-3 rounded-xl"
                   >
                     Play Now →
                   </Button>
@@ -1146,7 +1145,7 @@ const SoulFoodLanding = () => {
                     />
                   </div>
                 </CardHeader>
-                <CardContent className="p-6 flex flex-col h-full">
+                <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-2xl font-bold text-slate-800">Tricky Testaments</h4>
                     <span className="text-3xl">🎮</span>
@@ -1160,10 +1159,9 @@ const SoulFoodLanding = () => {
                     <Badge className="bg-purple-100 text-purple-700 text-xs">Challenge Mode</Badge>
                     <Badge className="bg-purple-100 text-purple-700 text-xs">Class Mode</Badge>
                   </div>
-                  <div className="flex-grow"></div>
                   <Button
                     onClick={() => window.location.href = '/game/tricky-testament?edition=youth'}
-                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-xl mt-auto"
+                    className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-xl"
                   >
                     Play Now →
                   </Button>
@@ -1199,7 +1197,7 @@ const SoulFoodLanding = () => {
                   />
                 </div>
               </CardHeader>
-              <CardContent className="p-6 flex flex-col h-full">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="text-2xl font-bold text-slate-800">Trivia Mix-up</h4>
                   <span className="text-3xl">🎯</span>
@@ -1213,10 +1211,9 @@ const SoulFoodLanding = () => {
                   <Badge className="bg-orange-100 text-orange-700 text-xs">Quarter Challenge</Badge>
                   <Badge className="bg-orange-100 text-orange-700 text-xs">Millionaire Mode</Badge>
                 </div>
-                <div className="flex-grow"></div>
                 <Button
                   onClick={() => window.location.href = '/game/mixup?edition=adult'}
-                  className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-3 rounded-xl mt-auto"
+                  className="w-full bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold py-3 rounded-xl"
                 >
                   Play Now →
                 </Button>
@@ -1239,7 +1236,7 @@ const SoulFoodLanding = () => {
                   />
                 </div>
               </CardHeader>
-              <CardContent className="p-6 flex flex-col h-full">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-3">
                   <h4 className="text-2xl font-bold text-slate-800">Tricky Testaments</h4>
                   <span className="text-3xl">📚</span>
@@ -1253,10 +1250,9 @@ const SoulFoodLanding = () => {
                   <Badge className="bg-amber-100 text-amber-700 text-xs">Daily Double</Badge>
                   <Badge className="bg-amber-100 text-amber-700 text-xs">Final Jeopardy</Badge>
                 </div>
-                <div className="flex-grow"></div>
                 <Button
                   onClick={() => window.location.href = '/game/tricky-testament?edition=adult'}
-                  className="w-full bg-gradient-to-r from-amber-700 to-yellow-700 hover:from-amber-800 hover:to-yellow-800 text-white font-bold py-3 rounded-xl mt-auto"
+                  className="w-full bg-gradient-to-r from-amber-700 to-yellow-700 hover:from-amber-800 hover:to-yellow-800 text-white font-bold py-3 rounded-xl"
                 >
                   Play Now →
                 </Button>
