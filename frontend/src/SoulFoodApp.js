@@ -944,7 +944,7 @@ const SoulFoodLanding = () => {
                   </div>
                 </CardHeader>
                 
-                <CardContent className="relative p-6 flex flex-col min-h-[280px]">
+                <CardContent className="relative p-6 flex flex-col flex-1">
                   <p className="text-slate-700 leading-relaxed">{s.description}</p>
                   
                   {/* Status Badge */}
@@ -964,7 +964,7 @@ const SoulFoodLanding = () => {
                   <div className="flex-grow"></div>
                   
                   {/* Action Buttons - Stacked like Amazon */}
-                  <div className="space-y-2 pt-4">
+                  <div className="space-y-2 pt-4 mt-auto">
                     <Button
                       onClick={() => openProductModal(s)}
                       className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-semibold py-3 rounded-lg transition-all shadow-md"
