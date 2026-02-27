@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCart, PRODUCTS } from './CartContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { CreditCard, ShoppingBag, Trash2, Mail, User, LogIn, UserPlus, ArrowRight, ShieldCheck, X, MapPin, Loader2 } from 'lucide-react';
+import { CreditCard, ShoppingBag, Trash2, Mail, User, LogIn, UserPlus, ArrowRight, ShieldCheck, X, MapPin, Loader2, Gift, Package, Send } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
