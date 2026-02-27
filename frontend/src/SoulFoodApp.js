@@ -679,7 +679,7 @@ const SoulFoodLanding = () => {
                 </div>
               </CardHeader>
               
-              <CardContent className="relative p-6 flex flex-col min-h-[280px]">
+              <CardContent className="relative p-6 flex flex-col flex-1">
                 <p className="text-slate-700 leading-relaxed">Experience our teaching style with this platform-exclusive sample. Learn about Abel's faithful sacrifice and Enoch's consistency with God.</p>
                 
                 <div className="pt-4">
@@ -691,7 +691,7 @@ const SoulFoodLanding = () => {
                 {/* Spacer to push buttons to bottom */}
                 <div className="flex-grow"></div>
                 
-                <div className="space-y-2 pt-4">
+                <div className="space-y-2 pt-4 mt-auto">
                   <Button
                     onClick={() => window.location.href = '/lesson/free-sample'}
                     className="w-full bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 hover:opacity-90 shadow-lg text-white font-semibold py-3 rounded-xl transition-all"
