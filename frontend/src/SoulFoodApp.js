@@ -851,7 +851,7 @@ const SoulFoodLanding = () => {
                   </div>
                 </CardHeader>
                 
-                <CardContent className="relative p-6 flex flex-col min-h-[280px]">
+                <CardContent className="relative p-6 flex flex-col flex-1">
                   <p className="text-slate-700 leading-relaxed">{s.description}</p>
                   
                   {/* Status Badge */}
@@ -871,7 +871,7 @@ const SoulFoodLanding = () => {
                   <div className="flex-grow"></div>
                   
                   {/* Action Buttons - Stacked like Amazon */}
-                  <div className="space-y-2 pt-4">
+                  <div className="space-y-2 pt-4 mt-auto">
                     <Button
                       onClick={() => openProductModal(s)}
                       className={`w-full ${s.available 
@@ -911,7 +911,7 @@ const SoulFoodLanding = () => {
             {series.filter(s => s.id === 'dinner' || s.id === 'supper').map((s) => (
               <Card 
                 key={s.id} 
-                className={`relative overflow-hidden border-2 ${s.available ? 'border-purple-200' : 'border-slate-300'} ${s.available ? 'shadow-xl hover:shadow-2xl' : 'shadow-md'} transition-all duration-300 ${s.available ? 'hover:scale-[1.02]' : ''} bg-white`}
+                className={`relative overflow-hidden border-2 ${s.available ? 'border-purple-200' : 'border-slate-300'} ${s.available ? 'shadow-xl hover:shadow-2xl' : 'shadow-md'} transition-all duration-300 ${s.available ? 'hover:scale-[1.02]' : ''} bg-white flex flex-col`}
               >
                 {!s.available && (
                   <div className="absolute top-4 right-4 z-10">
