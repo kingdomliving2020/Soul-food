@@ -462,6 +462,7 @@ const CheckoutPage = () => {
             discount_dollars: couponApplied.discount_dollars || 0,
             customer_email: customerEmail || null,
             customer_name: customerName || null,
+            customer_phone: customerPhone || null,
             shipping_address: hasPhysicalItems ? shippingAddress : null
           }),
         });
