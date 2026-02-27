@@ -1448,12 +1448,63 @@ async def stripe_webhook(request: Request):
                 if customer_email:
                     try:
                         from email_service import send_order_confirmation
+                        
+                        # Check for physical book purchases and generate audio codes
+                        audio_codes_generated = []
+                        for item in items:
+                            item_product_id = item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
+                            # Check if this is a physical book (print version)
+                            if "print" in item_product_id.lower() or item.get("format") == "print":
+                                # Determine which series this belongs to
+                                series_id = None
+                                if "holiday" in item_product_id.lower():
+                                    series_id = "holiday"
+                                elif "breakfast" in item_product_id.lower():
+                                    series_id = "breakfast"
+                                
+                                if series_id:
+                                    try:
+                                        # Import and call audio code generator
+                                        from audio_routes import generate_audio_code, AUDIO_CONTENT
+                                        
+                                        # Only generate if series has audio content
+                                        if series_id in AUDIO_CONTENT and AUDIO_CONTENT[series_id].get("lessons"):
+                                            code = generate_audio_code()
+                                            series_info = AUDIO_CONTENT[series_id]
+                                            
+                                            # Store the code
+                                            code_record = {
+                                                "code": code,
+                                                "series_id": series_id,
+                                                "series_name": series_info["name"],
+                                                "order_id": order_number,
+                                                "customer_email": customer_email.lower(),
+                                                "is_physical_purchase": True,
+                                                "lessons_included": [l["id"] for l in series_info["lessons"]],
+                                                "redeemed": False,
+                                                "redeemed_at": None,
+                                                "redeemed_by_email": None,
+                                                "created_at": datetime.utcnow().isoformat(),
+                                                "expires_at": None
+                                            }
+                                            await db.audio_codes.insert_one(code_record)
+                                            
+                                            audio_codes_generated.append({
+                                                "code": code,
+                                                "series_name": series_info["name"],
+                                                "series_id": series_id
+                                            })
+                                            print(f"[Webhook] Audio code {code} generated for {series_info['name']} (physical purchase)")
+                                    except Exception as audio_error:
+                                        print(f"[Webhook] Error generating audio code: {audio_error}")
+                        
                         await send_order_confirmation(
                             to_email=customer_email,
                             order_id=order_number,
                             items=items,
                             total=transaction.get("total_amount", 0),
-                            customer_name=transaction.get("customer_name")
+                            customer_name=transaction.get("customer_name"),
+                            audio_codes=audio_codes_generated if audio_codes_generated else None
                         )
                         print(f"[Webhook] Order confirmation email sent to {customer_email}")
                     except Exception as email_error:
