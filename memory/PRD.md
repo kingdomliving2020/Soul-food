@@ -706,9 +706,20 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 **1. Audio Pricing & Code System - FULLY IMPLEMENTED**
 - Pricing: $2.49/lesson, $7.99/4-lesson bundle (20% savings)
+- **NEW Trackable Code Format: `YMMDD-PHONE5-ELV`**
+  - Y = last digit of year (2026 → 6)
+  - MM = 2-digit month
+  - DD = 2-digit day
+  - PHONE5 = last 5 digits of customer phone
+  - E = Series code (B=Breakfast, L=Lunch, D=Dinner, S=Supper, H=Holiday)
+  - L = Lesson number (00=bundle, 01-12=specific lesson)
+  - V = Version (1=Adult, 2=Youth, 3=Instructor)
+  - Example: `60227-34567-H001` = Feb 27 2026, phone ends 34567, Holiday, Full Bundle, Adult
 - Backend API endpoints:
-  - `POST /api/audio/codes/generate` - Creates unique SF-XXXX-XXXX codes
+  - `POST /api/audio/codes/generate` - Creates trackable codes
   - `POST /api/audio/codes/redeem` - Redeems codes and grants access
+  - `GET /api/audio/codes/decode/{code}` - **NEW** Decodes code for admin tracking
+  - `GET /api/audio/codes/search` - **NEW** Search codes by phone/email/series
   - `GET /api/audio/access/{email}` - Checks user's unlocked content
   - `GET /api/audio/pricing` - Returns current pricing
   - `GET /api/audio/content/{series_id}` - Returns series audio content
@@ -718,33 +729,39 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 **2. Multimedia Page - Audio Code Redemption UI**
 - "Redeem Code" button in header (icon-only on mobile)
-- Modal with code input (SF-XXXX-XXXX format) and email
+- Modal with code input and email
 - Success/error states with proper feedback
 - Links to purchase for those without codes
 
-**3. Checkout Page - Audio Bonus Note**
-- Purple info box shown for physical item purchases
-- Informs customers they'll receive free audio access code
+**3. Checkout Page Updates**
+- Phone number collection field (for trackable code generation)
+- Helper text: "Used for shipping notifications & audio code generation"
+- Purple "Bonus: Free Audio Access!" info box for physical purchases
 
-**4. Navigation Bar Update**
+**4. My Library - Audio Library Section**
+- Shows user's unlocked audio content
+- Play/pause functionality for each lesson
+- Links to full multimedia page
+
+**5. Navigation Bar Update**
 - Added "About Us" link pointing to "Why Soul Food?" audio section
 - Shortened labels for better fit: "Breakfast", "Games", "Bulk"
-- Removed duplicate "Resurrection Sale" focus (Holiday Series covers it)
 
-**5. Photo Update**
+**6. Photo Update**
 - Updated to clearer photo: `/images/dr-shefa-brown-final.jpg` (pearl sweater)
-- Updated across: Homepage, About Us, Multimedia thumbnail
 
 **Files Modified/Created:**
-- `/app/backend/audio_routes.py` - Full audio code system
-- `/app/backend/payment_routes.py` - Webhook integration for code generation
+- `/app/backend/audio_routes.py` - Full audio code system with tracking
+- `/app/backend/payment_routes.py` - Webhook integration with phone/edition support
 - `/app/backend/email_service.py` - Audio codes in order emails
 - `/app/frontend/src/MultimediaPage.js` - Redemption UI
-- `/app/frontend/src/CheckoutPage.js` - Audio bonus note
+- `/app/frontend/src/CheckoutPage.js` - Phone field + audio bonus note
+- `/app/frontend/src/MyLibrary.js` - Audio Library section
 - `/app/frontend/src/SoulFoodApp.js` - Nav bar, photo updates
 
 **API Testing Results:**
-- ✅ Code generation: SF-ZC61-RO04 generated for test order
+- ✅ Code generation: `60227-34567-H001` generated for test order
+- ✅ Code decoding: Correctly parsed date, phone, series, edition
 - ✅ Code redemption: Access granted successfully
 - ✅ Access check: Returns user's unlocked content
 
@@ -761,7 +778,8 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 - ~~Dr. Shefa D. Brown Photo~~ **DONE Feb 26, 2026**
 - ~~Logo Size Increase~~ **DONE Feb 27, 2026**
 - ~~Button Alignment on Tiles~~ **DONE Feb 27, 2026**
-- ~~Audio Pricing & Automated Code System~~ **DONE Feb 27, 2026**
+- ~~Audio Pricing & Trackable Code System~~ **DONE Feb 27, 2026**
+- ~~My Audio Library~~ **DONE Feb 27, 2026**
 
 ### P1 - High Priority
 - ~~Meet the Team Section~~ **DONE Feb 26**
