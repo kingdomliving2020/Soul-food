@@ -951,6 +951,17 @@ const CheckoutPage = () => {
             {/* Shipping Address for Physical Items */}
             {hasPhysicalItems && (
               <div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                {/* Audio Bonus Note */}
+                <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                  <div className="flex items-start gap-2">
+                    <span className="text-lg">🎧</span>
+                    <div>
+                      <p className="text-sm font-semibold text-purple-800">Bonus: Free Audio Access!</p>
+                      <p className="text-xs text-purple-600">Your physical book purchase includes a free audio access code. You'll receive it in your order confirmation email.</p>
+                    </div>
+                  </div>
+                </div>
+                
                 <div className="flex items-center gap-2 mb-3">
                   <MapPin className="w-4 h-4 text-amber-600" />
                   <span className="text-sm font-semibold text-amber-800">Billing Address</span>
