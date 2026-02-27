@@ -153,11 +153,7 @@ const AboutUs = () => {
                 </div>
                 <CardContent className="p-6 text-center">
                   <h3 className="text-xl font-bold text-slate-800 mb-1">{member.name}</h3>
-                  <p className="text-purple-600 font-medium text-sm mb-1">{member.title}</p>
-                  <p className="text-xs text-slate-500 font-medium mb-4">Kingdom Soul Team</p>
-                  <p className="text-slate-600 text-sm leading-relaxed">
-                    {member.bio}
-                  </p>
+                  <p className="text-sm text-slate-500 font-medium">Kingdom Soul Team</p>
                 </CardContent>
               </Card>
             ))}
