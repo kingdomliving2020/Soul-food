@@ -47,6 +47,21 @@ const AboutUs = () => {
     }
   ];
 
+  const missionStatement = {
+    main: "We exist to encourage, inspire, and enlighten those who are hungry for a deeper, more meaningful connection with the Great I AM. We share God's truth in a way that is relatable and life-giving, equipping believers to grow in faith, walk in purpose, and reflect Christ with confidence in everyday life.",
+    vision: "We aim to help raise up the \"walking epistles\" of this generation—living testimonies who carry God's Word with humility, courage, and love. Together, we gather to break bread in the Word, strengthen one another, and grow sharper through authentic discipleship—because iron sharpens iron.",
+    approach: "To support different learning styles and keep engagement high, we incorporate online and in-person games and interactive activities that reinforce each lesson, promote healthy discussion, and help learners retain truth through meaningful practice."
+  };
+
+  const scriptureAnchors = [
+    { reference: 'Exodus 3:14', topic: 'The Great "I AM"' },
+    { reference: '2 Corinthians 3:2–3', topic: '"Walking epistles" (living letters)' },
+    { reference: 'Acts 2:42, 46', topic: '"Break bread" fellowship & teaching' },
+    { reference: 'Proverbs 27:17', topic: '"Iron sharpens iron"' },
+    { reference: 'Ephesians 4:11–13', topic: 'Equipping the saints' },
+    { reference: '1 Thessalonians 5:11', topic: 'Encouraging/building one another' }
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-indigo-50">
       {/* Header */}
