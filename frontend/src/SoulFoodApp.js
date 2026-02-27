@@ -489,9 +489,10 @@ const SoulFoodLanding = () => {
               
               {/* Shipping Promo */}
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 max-w-md mx-auto lg:mx-0 border border-purple-400/30">
-                <p className="text-amber-300 font-bold text-sm sm:text-base mb-1">🚚 FREE SHIPPING</p>
+                <p className="text-amber-300 font-bold text-sm sm:text-base mb-1">🚚 FREE SHIPPING (US, APO/FPO, Canada)</p>
                 <p className="text-purple-100 text-xs sm:text-sm">Pre-orders & non-bulk orders before March 12th</p>
                 <p className="text-purple-200 text-xs mt-1">½ off shipping on bulk orders before March 15th</p>
+                <p className="text-purple-300 text-xs mt-2 italic">🌍 International: 25% off shipping - contact us for delivery estimates</p>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
