@@ -99,7 +99,7 @@ const AboutUs = () => {
             🙏 Our Ministry
           </Badge>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-            Meet the Soul Food Project Team
+            Meet the Kingdom Soul Team
           </h1>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
             Four ordained ministers united by a passion for spiritual education and a vision to nourish souls with God's Word—one lesson, one family, one community at a time.
