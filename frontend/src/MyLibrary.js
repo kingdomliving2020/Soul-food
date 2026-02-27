@@ -112,6 +112,58 @@ const MyLibrary = () => {
     }
   };
 
+  const fetchAudioAccess = async () => {
+    // Get email from stored user or fetch it
+    const storedUser = localStorage.getItem('soul_food_user');
+    let email = null;
+    
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        email = userData.email;
+      } catch (e) {}
+    }
+    
+    if (!email) return;
+    
+    try {
+      const response = await fetch(`${API}/audio/access/${encodeURIComponent(email)}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.has_access) {
+          setAudioAccess(data);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch audio access:', err);
+    }
+  };
+
+  const playAudio = (audioId, audioSrc) => {
+    if (playingAudio === audioId) {
+      // Pause current
+      if (audioElement) {
+        audioElement.pause();
+        setPlayingAudio(null);
+      }
+    } else {
+      // Stop any playing audio
+      if (audioElement) {
+        audioElement.pause();
+      }
+      
+      // Play new
+      const audio = new Audio(audioSrc);
+      audio.play();
+      setAudioElement(audio);
+      setPlayingAudio(audioId);
+      
+      audio.onended = () => {
+        setPlayingAudio(null);
+      };
+    }
+  };
+
   const handleRedeemReward = async (points) => {
     setRedeemingReward(true);
     try {
