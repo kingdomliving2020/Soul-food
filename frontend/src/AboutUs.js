@@ -106,7 +106,7 @@ const AboutUs = () => {
                 {/* Image */}
                 <div className="relative h-80 md:h-auto">
                   <img 
-                    src="/images/dr-shefa-brown-final.jpg" 
+                    src="/images/dr-shefa-brown-smile.png" 
                     alt="Dr. Shefa D. Brown"
                     className="w-full h-full object-cover object-top"
                   />

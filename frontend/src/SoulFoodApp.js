@@ -597,20 +597,15 @@ const SoulFoodLanding = () => {
               <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl shadow-lg p-6 max-w-lg w-full border border-purple-200">
                 {/* Founder Photo & Bio */}
                 <div className="text-center mb-4">
-                  {/* Photo - uses new clear image */}
+                  {/* Photo - uses original image for thumbnail */}
                   <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-purple-300 shadow-lg mb-3">
                     <img 
-                      src="/images/dr-shefa-brown-final.jpg" 
+                      src="/images/dr-shefa-brown.png" 
                       alt="Dr. Shefa D. Brown"
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        // Fallback to old image if new fails
-                        if (e.target.src.includes('-final')) {
-                          e.target.src = '/images/dr-shefa-brown.png';
-                        } else {
-                          e.target.style.display = 'none';
-                          e.target.parentElement.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center"><span class="text-4xl">🍽️</span></div>';
-                        }
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center"><span class="text-4xl">🍽️</span></div>';
                       }}
                     />
                   </div>
@@ -1959,7 +1954,7 @@ const SoulFoodLanding = () => {
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border-2 border-purple-300 max-w-sm">
               <div className="h-72 overflow-hidden">
                 <img 
-                  src="/images/dr-shefa-brown-final.jpg" 
+                  src="/images/dr-shefa-brown-smile.png" 
                   alt="Dr. Shefa D. Brown"
                   className="w-full h-full object-cover object-top"
                 />
