@@ -131,7 +131,7 @@ const AboutUs = () => {
                     Dr. Shefa D. Brown
                   </h2>
                   <p className="text-purple-600 font-semibold mb-1">Creator & Visionary</p>
-                  <p className="text-sm text-slate-500 font-medium mb-6">Soul Food Project Team</p>
+                  <p className="text-sm text-slate-500 font-medium mb-6">Kingdom Soul Team</p>
                   
                   <p className="text-slate-600 leading-relaxed mb-6">
                     The heart and soul behind Soul Food, Dr. Shefa D. Brown brings decades of ministry experience and a passion for making biblical education accessible to all ages. Her vision for spiritual nourishment "one meal at a time" has touched countless families across the nation.
