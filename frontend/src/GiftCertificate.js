@@ -335,7 +335,7 @@ const GiftCertificate = () => {
                     <img 
                       src="/soul-food-logo.png" 
                       alt="Soul Food" 
-                      className="w-24 h-24 mx-auto object-contain"
+                      className="w-28 h-28 mx-auto object-contain"
                     />
                   </div>
                   <h3 className="text-3xl font-bold text-orange-800 mb-2">Gift Certificate</h3>

@@ -359,7 +359,7 @@ const SnackPacksPage = () => {
             <img 
               src="/soul-food-logo.png" 
               alt="Soul Food Logo" 
-              className="w-10 h-10 object-contain"
+              className="w-12 h-12 object-contain"
             />
             <div>
               <h3 className="text-xl font-bold">Soul Food</h3>
