@@ -56,6 +56,7 @@ const MyLibrary = () => {
     
     fetchPurchases();
     fetchRewards();
+    fetchAudioAccess();
   }, [token, navigate]);
 
   const fetchUserData = async () => {
