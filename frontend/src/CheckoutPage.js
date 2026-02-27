@@ -861,6 +861,18 @@ const CheckoutPage = () => {
                     disabled={isLoggedIn}
                   />
                 </div>
+                {hasPhysicalItems && (
+                  <div>
+                    <input
+                      type="tel"
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      placeholder="Phone number (for shipping updates)"
+                      className="w-full px-3 py-2.5 text-sm border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <p className="text-xs text-indigo-500 mt-1">Used for shipping notifications & audio code generation</p>
+                  </div>
+                )}
               </div>
               <p className="text-xs text-indigo-600 mt-2">
                 📧 We'll send your order confirmation and download links to this email.
