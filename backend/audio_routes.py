@@ -145,29 +145,49 @@ async def generate_access_code(data: AudioCodeGenerate):
     
     series_info = AUDIO_CONTENT[data.series_id]
     
-    # Generate unique code
-    code = generate_audio_code()
+    # Generate trackable code with new format
+    code = generate_audio_code(
+        series_id=data.series_id,
+        edition=data.edition or "adult",
+        lesson_number=data.lesson_number or 0,
+        phone=data.customer_phone
+    )
     
-    # Check for uniqueness
+    # Check for uniqueness (very unlikely with this format, but be safe)
     existing = await db.audio_codes.find_one({"code": code})
-    while existing:
-        code = generate_audio_code()
+    attempt = 0
+    while existing and attempt < 10:
+        # Add random suffix if collision
+        code = code + secrets.choice(string.ascii_uppercase)
         existing = await db.audio_codes.find_one({"code": code})
+        attempt += 1
     
-    # Create the code record
+    # Parse code for tracking info
+    code_parts = code.split("-")
+    date_part = code_parts[0] if len(code_parts) > 0 else ""
+    phone_part = code_parts[1] if len(code_parts) > 1 else ""
+    product_part = code_parts[2] if len(code_parts) > 2 else ""
+    
+    # Create the code record with tracking metadata
     code_record = {
         "code": code,
         "series_id": data.series_id,
         "series_name": series_info["name"],
         "order_id": data.order_id,
         "customer_email": data.customer_email.lower(),
+        "customer_phone_last5": phone_part,
+        "edition": data.edition or "adult",
+        "lesson_number": data.lesson_number or 0,
         "is_physical_purchase": data.is_physical_purchase,
         "lessons_included": [l["id"] for l in series_info["lessons"]],
         "redeemed": False,
         "redeemed_at": None,
         "redeemed_by_email": None,
         "created_at": datetime.now(timezone.utc).isoformat(),
-        "expires_at": None  # Physical purchase codes don't expire
+        "expires_at": None,  # Physical purchase codes don't expire
+        # Tracking metadata
+        "code_date": date_part,
+        "code_product": product_part
     }
     
     await db.audio_codes.insert_one(code_record)
@@ -176,6 +196,7 @@ async def generate_access_code(data: AudioCodeGenerate):
         "code": code,
         "series_id": data.series_id,
         "series_name": series_info["name"],
+        "edition": data.edition or "adult",
         "lessons_included": code_record["lessons_included"],
         "message": f"Audio access code generated for {series_info['name']}"
     }
