@@ -1795,7 +1795,7 @@ const SoulFoodLanding = () => {
               👥 Our Family
             </Badge>
             <h3 className="text-4xl sm:text-5xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
-              Meet the Soul Food Project Team
+              Meet the Kingdom Soul Team
             </h3>
             <p className="text-xl text-slate-600 max-w-2xl mx-auto">
               Four ordained ministers dedicated to spiritual nourishment
@@ -1815,7 +1815,7 @@ const SoulFoodLanding = () => {
               <div className="p-6 text-center">
                 <h4 className="text-xl font-bold text-slate-800 mb-1">Pastor Temia Julius, Ph.D.</h4>
                 <p className="text-purple-600 font-medium text-sm mb-1">Curriculum Advisor</p>
-                <p className="text-xs text-slate-500 font-medium">Soul Food Project Team</p>
+                <p className="text-xs text-slate-500 font-medium">Kingdom Soul Team</p>
               </div>
             </div>
 
@@ -1831,7 +1831,7 @@ const SoulFoodLanding = () => {
               <div className="p-6 text-center">
                 <h4 className="text-xl font-bold text-slate-800 mb-1">Evangelist Rose Doctor</h4>
                 <p className="text-purple-600 font-medium text-sm mb-1">Ministry Outreach</p>
-                <p className="text-xs text-slate-500 font-medium">Soul Food Project Team</p>
+                <p className="text-xs text-slate-500 font-medium">Kingdom Soul Team</p>
               </div>
             </div>
 
@@ -1847,7 +1847,7 @@ const SoulFoodLanding = () => {
               <div className="p-6 text-center">
                 <h4 className="text-xl font-bold text-slate-800 mb-1">Pastor Mike Edwards</h4>
                 <p className="text-purple-600 font-medium text-sm mb-1">Spiritual Guidance</p>
-                <p className="text-xs text-slate-500 font-medium">Soul Food Project Team</p>
+                <p className="text-xs text-slate-500 font-medium">Kingdom Soul Team</p>
               </div>
             </div>
           </div>
@@ -1858,7 +1858,7 @@ const SoulFoodLanding = () => {
               <p className="text-lg text-slate-700 italic mb-4">
                 "Together, we're committed to nourishing souls with God's Word—one lesson, one family, one community at a time."
               </p>
-              <p className="text-purple-600 font-semibold mb-6">— The Soul Food Project Team</p>
+              <p className="text-purple-600 font-semibold mb-6">— The Kingdom Soul Team</p>
               <Button
                 onClick={() => window.location.href = '/about-us'}
                 className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
