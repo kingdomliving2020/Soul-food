@@ -3,11 +3,36 @@ import { X, Plus, Minus, ShoppingCart } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Edition-specific cover images
+const COVER_IMAGES = {
+  holiday: {
+    ae: '/covers/holiday-adult-front.jpg',
+    ye: '/covers/holiday-ye-front.jpg',
+    ie: '/covers/holiday-ie-front.jpg'
+  },
+  breakfast: {
+    ae: '/covers/breakfast-adult-front.jpg',
+    ye: '/covers/breakfast-youth-front.jpg',
+    ie: '/covers/breakfast-instructor-front.jpg'
+  },
+  lunch: {
+    ae: '/covers/breakfast-adult-front.jpg', // placeholder
+    ye: '/covers/breakfast-youth-front.jpg',
+    ie: '/covers/breakfast-instructor-front.jpg'
+  }
+};
+
 const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToCart }) => {
   const [selectedEdition, setSelectedEdition] = useState('ae'); // ae, ye, ie
   const [selectedMedium, setSelectedMedium] = useState('digital');
   const [quantity, setQuantity] = useState(1);
   const [showLargeOrderAlert, setShowLargeOrderAlert] = useState(false);
+
+  // Get the cover image for current selection
+  const getCoverImage = () => {
+    if (!seriesData?.id) return null;
+    return COVER_IMAGES[seriesData.id]?.[selectedEdition] || COVER_IMAGES[seriesData.id]?.ae;
+  };
 
   // Reset state when modal opens
   useEffect(() => {
@@ -40,6 +65,7 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
 
   const productKey = getProductKey();
   const currentProduct = productKey ? products?.[productKey] : null;
+  const coverImage = getCoverImage();
   
   // Get price - handle both number and object formats
   const getPrice = (priceValue) => {
