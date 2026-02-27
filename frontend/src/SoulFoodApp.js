@@ -341,7 +341,7 @@ const SoulFoodLanding = () => {
               <img 
                 src="/soul-food-logo.png" 
                 alt="Soul Food Logo" 
-                className="w-12 h-12 sm:w-24 sm:h-24 object-contain"
+                className="w-14 h-14 sm:w-28 sm:h-28 object-contain"
               />
               <div className="hidden sm:block">
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent leading-tight">

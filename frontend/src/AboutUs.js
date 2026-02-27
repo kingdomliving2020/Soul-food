@@ -70,7 +70,7 @@ const AboutUs = () => {
             </Button>
             
             <div className="flex items-center gap-3">
-              <img src="/soul-food-logo.png" alt="Soul Food" className="w-10 h-10" />
+              <img src="/soul-food-logo.png" alt="Soul Food" className="w-12 h-12" />
               <div>
                 <h1 className="text-lg font-bold text-slate-800">About Us</h1>
                 <p className="text-xs text-slate-500">Meet the Team</p>
@@ -106,7 +106,7 @@ const AboutUs = () => {
                 {/* Image */}
                 <div className="relative h-80 md:h-auto">
                   <img 
-                    src="/images/dr-shefa-brown.png" 
+                    src="/images/dr-shefa-brown-new.png" 
                     alt="Dr. Shefa D. Brown"
                     className="w-full h-full object-cover object-top"
                   />
