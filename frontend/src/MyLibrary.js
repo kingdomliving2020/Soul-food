@@ -7,7 +7,8 @@ import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
 import { 
   Book, Download, Gift, Shield, User, LogOut, 
-  Star, ChevronRight, Loader2, Award, Settings 
+  Star, ChevronRight, Loader2, Award, Settings,
+  Music, Play, Pause, Headphones
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -20,6 +21,11 @@ const MyLibrary = () => {
   const [purchases, setPurchases] = useState([]);
   const [rewards, setRewards] = useState({ points: 0, available_rewards: [] });
   const [redeemingReward, setRedeemingReward] = useState(false);
+  
+  // Audio library state
+  const [audioAccess, setAudioAccess] = useState(null);
+  const [playingAudio, setPlayingAudio] = useState(null);
+  const [audioElement, setAudioElement] = useState(null);
   
   const token = localStorage.getItem('soul_food_token');
   
