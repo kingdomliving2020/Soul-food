@@ -95,6 +95,14 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load gaming routes: {e}")
 
+# Import audio access routes
+try:
+    from audio_routes import router as audio_router
+    app.include_router(audio_router)
+    print("✅ Audio access routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load audio routes: {e}")
+
 # Import referral code routes
 try:
     from routes.referral_routes import router as referral_router
