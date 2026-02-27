@@ -770,10 +770,11 @@ const SoulFoodLanding = () => {
                       🎧 Audio Teachings by Pastor Mike Edwards
                     </p>
                     <div className="flex flex-wrap gap-2 text-xs">
-                      <span className="bg-white px-2 py-1 rounded border border-purple-200 text-purple-700">1 lesson: $1.99</span>
-                      <span className="bg-purple-600 text-white px-2 py-1 rounded font-semibold">All 4: $6.99</span>
+                      <span className="bg-white px-2 py-1 rounded border border-purple-200 text-purple-700">1 lesson: $2.49</span>
+                      <span className="bg-purple-600 text-white px-2 py-1 rounded font-semibold">All 4: $7.99 (Save 20%!)</span>
                     </div>
-                    <p className="text-xs text-purple-500 mt-2 italic">IE includes audio at no extra cost</p>
+                    <p className="text-xs text-purple-500 mt-2 italic">📦 Physical books include audio access code!</p>
+                    <p className="text-xs text-purple-400 mt-1 italic">IE includes audio at no extra cost</p>
                   </div>
                 </div>
                 
