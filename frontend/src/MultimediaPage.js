@@ -222,12 +222,124 @@ const MultimediaPage = () => {
               </div>
             </div>
 
-            <Button onClick={() => navigate('/quick-order')} className="bg-purple-600 hover:bg-purple-700">
-              Shop Now
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button 
+                onClick={() => setShowRedeemModal(true)} 
+                variant="outline"
+                className="border-purple-300 text-purple-700 hover:bg-purple-50"
+              >
+                <Ticket className="w-4 h-4 mr-1" />
+                <span className="hidden sm:inline">Redeem Code</span>
+              </Button>
+              <Button onClick={() => navigate('/quick-order')} className="bg-purple-600 hover:bg-purple-700">
+                Shop Now
+              </Button>
+            </div>
           </div>
         </div>
       </header>
+
+      {/* Audio Code Redemption Modal */}
+      {showRedeemModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative">
+            <button 
+              onClick={() => {
+                setShowRedeemModal(false);
+                setRedeemResult(null);
+              }}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600"
+            >
+              ✕
+            </button>
+            
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Ticket className="w-8 h-8 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800">Redeem Audio Access Code</h3>
+              <p className="text-sm text-slate-500 mt-1">Enter the code from your physical book purchase</p>
+            </div>
+            
+            {redeemResult ? (
+              <div className={`p-4 rounded-lg mb-4 ${redeemResult.success ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                <div className="flex items-start gap-3">
+                  {redeemResult.success ? (
+                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+                  ) : (
+                    <XCircle className="w-5 h-5 text-red-600 mt-0.5" />
+                  )}
+                  <div>
+                    <p className={`font-medium ${redeemResult.success ? 'text-green-800' : 'text-red-800'}`}>
+                      {redeemResult.message}
+                    </p>
+                    {redeemResult.success && redeemResult.seriesName && (
+                      <p className="text-sm text-green-600 mt-1">
+                        You now have access to: {redeemResult.seriesName}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                {redeemResult.success && (
+                  <Button 
+                    onClick={() => {
+                      setShowRedeemModal(false);
+                      setRedeemResult(null);
+                    }}
+                    className="w-full mt-4 bg-green-600 hover:bg-green-700"
+                  >
+                    Start Listening
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <form onSubmit={handleRedeemCode} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Access Code</label>
+                  <input
+                    type="text"
+                    value={redeemCode}
+                    onChange={(e) => setRedeemCode(e.target.value.toUpperCase())}
+                    placeholder="SF-XXXX-XXXX"
+                    required
+                    className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-center text-lg font-mono tracking-wider"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                  <input
+                    type="email"
+                    value={redeemEmail}
+                    onChange={(e) => setRedeemEmail(e.target.value)}
+                    placeholder="your@email.com"
+                    required
+                    className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">Used to track your audio access</p>
+                </div>
+                <Button 
+                  type="submit" 
+                  disabled={redeemLoading}
+                  className="w-full bg-purple-600 hover:bg-purple-700 py-3"
+                >
+                  {redeemLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    'Unlock Audio Access'
+                  )}
+                </Button>
+              </form>
+            )}
+            
+            <p className="text-xs text-slate-400 text-center mt-4">
+              Don't have a code? <a href="/quick-order" className="text-purple-600 hover:underline">Purchase a physical book</a> to get one!
+            </p>
+          </div>
+        </div>
+      )}
 
       <main className="container mx-auto px-4 sm:px-6 py-8">
         {/* Tabs */}
