@@ -411,9 +411,10 @@ async def send_order_confirmation(
     is_free_order: bool = False,
     coupon_code: str = None,
     download_links: List[Dict] = None,
-    customer_name: str = "Valued Customer"
+    customer_name: str = "Valued Customer",
+    audio_codes: List[Dict] = None
 ) -> Dict:
-    """Send order confirmation email"""
+    """Send order confirmation email with optional audio access codes"""
     subject = f"Order Confirmed! #{order_id}" if not is_free_order else f"🎁 Free Order Activated! #{order_id}"
     html = get_order_confirmation_template(
         order_id=order_id,
@@ -422,7 +423,8 @@ async def send_order_confirmation(
         is_free_order=is_free_order,
         coupon_code=coupon_code,
         download_links=download_links,
-        customer_name=customer_name
+        customer_name=customer_name,
+        audio_codes=audio_codes
     )
     return await send_email(to_email, subject, html)
 
