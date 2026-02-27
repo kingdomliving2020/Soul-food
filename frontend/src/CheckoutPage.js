@@ -274,6 +274,33 @@ const CheckoutPage = () => {
     country: 'USA'
   });
   
+  // Gift options
+  const [isGift, setIsGift] = useState(false);
+  const [shipToDifferentAddress, setShipToDifferentAddress] = useState(false);
+  const [sameAsBilling, setSameAsBilling] = useState(true);
+  const [giftOptions, setGiftOptions] = useState({
+    recipientName: '',
+    recipientEmail: '',
+    giftMessage: '',
+    includeGiftReceipt: false,
+    sendDigitalGift: false
+  });
+  const [billingAddress, setBillingAddress] = useState({
+    street: '',
+    city: '',
+    state: '',
+    zipCode: '',
+    country: 'USA'
+  });
+  
+  // Check if cart has digital-only items (for digital gift option)
+  const hasDigitalItems = cartItems.some(item => {
+    const medium = item.metadata?.medium || '';
+    return medium === 'digital' || medium === 'pdf' || 
+           item.name?.toLowerCase().includes('digital') ||
+           item.name?.toLowerCase().includes('pdf');
+  });
+  
   const subtotal = getCartTotal();
   // Handle both percentage and fixed dollar discounts (gift certificates)
   const discount = couponApplied 
