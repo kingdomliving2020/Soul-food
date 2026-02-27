@@ -1483,7 +1483,7 @@ const SoulFoodLanding = () => {
           </div>
 
           {/* Bulk Purchase Tiers */}
-          <Card className="border-4 border-purple-300 shadow-2xl bg-gradient-to-br from-purple-50 to-indigo-50">
+          <Card id="bulk-orders" className="border-4 border-purple-300 shadow-2xl bg-gradient-to-br from-purple-50 to-indigo-50 scroll-mt-32">
             <CardContent className="p-8">
               <div className="text-center mb-6">
                 <h4 className="text-3xl font-bold text-slate-800 mb-2">
