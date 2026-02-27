@@ -264,6 +264,9 @@ const CheckoutPage = () => {
   const [user, setUser] = useState(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
   
+  // Customer phone for audio code tracking
+  const [customerPhone, setCustomerPhone] = useState('');
+  
   // Shipping address for physical items
   const [shippingAddress, setShippingAddress] = useState({
     street: '',
