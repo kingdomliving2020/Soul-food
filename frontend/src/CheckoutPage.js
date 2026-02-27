@@ -863,20 +863,110 @@ const CheckoutPage = () => {
               </p>
             </div>
             
+            {/* Gift Options */}
+            <div className="mb-6 p-4 bg-pink-50 rounded-lg border border-pink-200">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isGift}
+                  onChange={(e) => setIsGift(e.target.checked)}
+                  className="w-5 h-5 rounded border-pink-300 text-pink-600 focus:ring-pink-500"
+                />
+                <div className="flex items-center gap-2">
+                  <Gift className="w-5 h-5 text-pink-600" />
+                  <span className="font-semibold text-pink-800">This is a gift</span>
+                </div>
+              </label>
+              
+              {isGift && (
+                <div className="mt-4 space-y-4 pl-8">
+                  {/* Recipient Name */}
+                  <div>
+                    <label className="block text-sm font-medium text-pink-700 mb-1">Recipient's Name</label>
+                    <input
+                      type="text"
+                      value={giftOptions.recipientName}
+                      onChange={(e) => setGiftOptions({...giftOptions, recipientName: e.target.value})}
+                      placeholder="Who is this gift for?"
+                      className="w-full px-3 py-2.5 text-sm border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    />
+                  </div>
+                  
+                  {/* Gift Receipt Option */}
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={giftOptions.includeGiftReceipt}
+                      onChange={(e) => setGiftOptions({...giftOptions, includeGiftReceipt: e.target.checked})}
+                      className="w-4 h-4 rounded border-pink-300 text-pink-600 focus:ring-pink-500"
+                    />
+                    <span className="text-sm text-pink-700">Include gift receipt (prices hidden)</span>
+                  </label>
+                  
+                  {/* Digital Gift Option */}
+                  {hasDigitalItems && (
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={giftOptions.sendDigitalGift}
+                        onChange={(e) => setGiftOptions({...giftOptions, sendDigitalGift: e.target.checked})}
+                        className="w-4 h-4 rounded border-pink-300 text-pink-600 focus:ring-pink-500"
+                      />
+                      <div className="flex items-center gap-1">
+                        <Send className="w-4 h-4 text-pink-600" />
+                        <span className="text-sm text-pink-700">Send digital items as gift card via email</span>
+                      </div>
+                    </label>
+                  )}
+                  
+                  {giftOptions.sendDigitalGift && (
+                    <div>
+                      <label className="block text-sm font-medium text-pink-700 mb-1">Recipient's Email</label>
+                      <input
+                        type="email"
+                        value={giftOptions.recipientEmail}
+                        onChange={(e) => setGiftOptions({...giftOptions, recipientEmail: e.target.value})}
+                        placeholder="recipient@email.com"
+                        className="w-full px-3 py-2.5 text-sm border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Gift Message */}
+                  <div>
+                    <label className="block text-sm font-medium text-pink-700 mb-1">Gift Message (optional)</label>
+                    <textarea
+                      value={giftOptions.giftMessage}
+                      onChange={(e) => setGiftOptions({...giftOptions, giftMessage: e.target.value})}
+                      placeholder="Add a personal message..."
+                      rows={3}
+                      maxLength={200}
+                      className="w-full px-3 py-2.5 text-sm border border-pink-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 resize-none"
+                    />
+                    <p className="text-xs text-pink-500 mt-1">{giftOptions.giftMessage.length}/200 characters</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            
             {/* Shipping Address for Physical Items */}
             {hasPhysicalItems && (
               <div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
                 <div className="flex items-center gap-2 mb-3">
                   <MapPin className="w-4 h-4 text-amber-600" />
-                  <span className="text-sm font-semibold text-amber-800">Shipping Address</span>
-                  <span className="text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded">Required for physical items</span>
+                  <span className="text-sm font-semibold text-amber-800">Billing Address</span>
                 </div>
-                <div className="space-y-3">
+                
+                {/* Billing Address Fields */}
+                <div className="space-y-3 mb-4">
                   <div>
                     <input
                       type="text"
-                      value={shippingAddress.street}
-                      onChange={(e) => setShippingAddress({...shippingAddress, street: e.target.value})}
+                      value={billingAddress.street}
+                      onChange={(e) => {
+                        setBillingAddress({...billingAddress, street: e.target.value});
+                        if (sameAsBilling) setShippingAddress({...shippingAddress, street: e.target.value});
+                      }}
                       placeholder="Street address"
                       required
                       className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -885,16 +975,22 @@ const CheckoutPage = () => {
                   <div className="grid grid-cols-2 gap-3">
                     <input
                       type="text"
-                      value={shippingAddress.city}
-                      onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
+                      value={billingAddress.city}
+                      onChange={(e) => {
+                        setBillingAddress({...billingAddress, city: e.target.value});
+                        if (sameAsBilling) setShippingAddress({...shippingAddress, city: e.target.value});
+                      }}
                       placeholder="City"
                       required
                       className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
                     />
                     <input
                       type="text"
-                      value={shippingAddress.state}
-                      onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})}
+                      value={billingAddress.state}
+                      onChange={(e) => {
+                        setBillingAddress({...billingAddress, state: e.target.value});
+                        if (sameAsBilling) setShippingAddress({...shippingAddress, state: e.target.value});
+                      }}
                       placeholder="State"
                       required
                       className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -903,8 +999,119 @@ const CheckoutPage = () => {
                   <div className="grid grid-cols-2 gap-3">
                     <input
                       type="text"
-                      value={shippingAddress.zipCode}
-                      onChange={(e) => setShippingAddress({...shippingAddress, zipCode: e.target.value})}
+                      value={billingAddress.zipCode}
+                      onChange={(e) => {
+                        setBillingAddress({...billingAddress, zipCode: e.target.value});
+                        if (sameAsBilling) setShippingAddress({...shippingAddress, zipCode: e.target.value});
+                      }}
+                      placeholder="ZIP Code"
+                      required
+                      className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                    <input
+                      type="text"
+                      value={billingAddress.country}
+                      onChange={(e) => {
+                        setBillingAddress({...billingAddress, country: e.target.value});
+                        if (sameAsBilling) setShippingAddress({...shippingAddress, country: e.target.value});
+                      }}
+                      placeholder="Country"
+                      className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    />
+                  </div>
+                </div>
+                
+                {/* Ship to Different Address Option */}
+                <div className="border-t border-amber-200 pt-4">
+                  <label className="flex items-center gap-2 cursor-pointer mb-3">
+                    <input
+                      type="checkbox"
+                      checked={!sameAsBilling}
+                      onChange={(e) => {
+                        setSameAsBilling(!e.target.checked);
+                        setShipToDifferentAddress(e.target.checked);
+                        if (!e.target.checked) {
+                          // Copy billing to shipping
+                          setShippingAddress({...billingAddress});
+                        }
+                      }}
+                      className="w-4 h-4 rounded border-amber-300 text-amber-600 focus:ring-amber-500"
+                    />
+                    <div className="flex items-center gap-1">
+                      <Package className="w-4 h-4 text-amber-600" />
+                      <span className="text-sm text-amber-700 font-medium">Ship to a different address</span>
+                    </div>
+                  </label>
+                  
+                  {/* Different Shipping Address Fields */}
+                  {shipToDifferentAddress && (
+                    <div className="space-y-3 mt-3 p-3 bg-amber-100/50 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <MapPin className="w-4 h-4 text-amber-700" />
+                        <span className="text-sm font-semibold text-amber-800">Shipping Address</span>
+                        {isGift && <span className="text-xs bg-pink-200 text-pink-800 px-2 py-0.5 rounded">🎁 Gift Recipient</span>}
+                      </div>
+                      
+                      {isGift && giftOptions.recipientName && (
+                        <div>
+                          <input
+                            type="text"
+                            value={giftOptions.recipientName}
+                            disabled
+                            className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg bg-amber-50 text-amber-800"
+                          />
+                          <p className="text-xs text-amber-600 mt-1">Recipient name from gift options</p>
+                        </div>
+                      )}
+                      
+                      <input
+                        type="text"
+                        value={shippingAddress.street}
+                        onChange={(e) => setShippingAddress({...shippingAddress, street: e.target.value})}
+                        placeholder="Street address"
+                        required
+                        className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      />
+                      <div className="grid grid-cols-2 gap-3">
+                        <input
+                          type="text"
+                          value={shippingAddress.city}
+                          onChange={(e) => setShippingAddress({...shippingAddress, city: e.target.value})}
+                          placeholder="City"
+                          required
+                          className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                        <input
+                          type="text"
+                          value={shippingAddress.state}
+                          onChange={(e) => setShippingAddress({...shippingAddress, state: e.target.value})}
+                          placeholder="State"
+                          required
+                          className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <input
+                          type="text"
+                          value={shippingAddress.zipCode}
+                          onChange={(e) => setShippingAddress({...shippingAddress, zipCode: e.target.value})}
+                          placeholder="ZIP Code"
+                          required
+                          className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                        <input
+                          type="text"
+                          value={shippingAddress.country}
+                          onChange={(e) => setShippingAddress({...shippingAddress, country: e.target.value})}
+                          placeholder="Country"
+                          className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}}
                       placeholder="ZIP Code"
                       required
                       className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
