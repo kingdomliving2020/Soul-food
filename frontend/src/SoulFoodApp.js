@@ -1814,8 +1814,7 @@ const SoulFoodLanding = () => {
               </div>
               <div className="p-6 text-center">
                 <h4 className="text-xl font-bold text-slate-800 mb-1">Pastor Temia Julius, Ph.D.</h4>
-                <p className="text-purple-600 font-medium text-sm mb-1">Curriculum Advisor</p>
-                <p className="text-xs text-slate-500 font-medium">Kingdom Soul Team</p>
+                <p className="text-sm text-slate-500 font-medium">Kingdom Soul Team</p>
               </div>
             </div>
 
@@ -1830,8 +1829,7 @@ const SoulFoodLanding = () => {
               </div>
               <div className="p-6 text-center">
                 <h4 className="text-xl font-bold text-slate-800 mb-1">Evangelist Rose Doctor</h4>
-                <p className="text-purple-600 font-medium text-sm mb-1">Ministry Outreach</p>
-                <p className="text-xs text-slate-500 font-medium">Kingdom Soul Team</p>
+                <p className="text-sm text-slate-500 font-medium">Kingdom Soul Team</p>
               </div>
             </div>
 
@@ -1846,8 +1844,7 @@ const SoulFoodLanding = () => {
               </div>
               <div className="p-6 text-center">
                 <h4 className="text-xl font-bold text-slate-800 mb-1">Pastor Mike Edwards</h4>
-                <p className="text-purple-600 font-medium text-sm mb-1">Spiritual Guidance</p>
-                <p className="text-xs text-slate-500 font-medium">Kingdom Soul Team</p>
+                <p className="text-sm text-slate-500 font-medium">Kingdom Soul Team</p>
               </div>
             </div>
           </div>
