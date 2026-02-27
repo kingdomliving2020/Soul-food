@@ -1111,42 +1111,10 @@ const CheckoutPage = () => {
                   )}
                 </div>
               </div>
-            )}}
-                      placeholder="ZIP Code"
-                      required
-                      className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    />
-                    <input
-                      type="text"
-                      value={shippingAddress.country}
-                      onChange={(e) => setShippingAddress({...shippingAddress, country: e.target.value})}
-                      placeholder="Country"
-                      className="w-full px-3 py-2.5 text-sm border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    />
-                  </div>
-                </div>
-                <p className="text-xs text-amber-600 mt-2">
-                  📦 Your physical items will be shipped to this address.
-                </p>
-              </div>
             )}
             
-            {/* Gift & Order Notes Section */}
+            {/* Order Notes */}
             <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-              <div className="flex items-start gap-3 mb-3">
-                <input
-                  type="checkbox"
-                  id="isGift"
-                  checked={isGift}
-                  onChange={(e) => setIsGift(e.target.checked)}
-                  className="mt-1 w-4 h-4 text-purple-600 rounded border-gray-300 focus:ring-purple-500"
-                />
-                <label htmlFor="isGift" className="flex-1">
-                  <span className="text-sm font-semibold text-slate-700">🎁 This is a gift</span>
-                  <p className="text-xs text-slate-500 mt-0.5">We'll include a gift message and remove pricing</p>
-                </label>
-              </div>
-              
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">
                   Order Notes <span className="text-slate-400 font-normal">(optional)</span>
