@@ -199,6 +199,22 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
 
         {/* Content */}
         <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
+          {/* Product Image Preview */}
+          {coverImage && (
+            <div className="flex justify-center">
+              <div className="relative">
+                <img 
+                  src={coverImage} 
+                  alt={`${seriesData.name} - ${editionLabels[selectedEdition]}`}
+                  className="w-40 sm:w-48 h-auto rounded-lg shadow-xl border-4 border-purple-200 transition-all duration-300"
+                />
+                <div className="absolute -bottom-2 -right-2 bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-lg shadow-md">
+                  {selectedEdition.toUpperCase()}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Edition Selection */}
           <div>
             <label className="block text-sm sm:text-base font-semibold text-gray-700 mb-2">
