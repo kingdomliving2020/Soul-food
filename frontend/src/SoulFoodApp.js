@@ -447,15 +447,15 @@ const SoulFoodLanding = () => {
         <div className="border-b border-purple-700/50">
           <div className="container mx-auto px-4">
             <nav className="flex items-center justify-center gap-1 sm:gap-4 py-2 overflow-x-auto text-xs sm:text-sm">
-              <a href="#resurrection-promo" className="px-2 sm:px-3 py-1 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🙏 Resurrection Sale</a>
+              <a href="#resurrection-promo" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🙏 Resurrection Sale</a>
               <span className="text-purple-400 hidden sm:inline">|</span>
-              <a href="#series" className="px-2 sm:px-3 py-1 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">📚 Holiday Series</a>
+              <a href="#series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">📚 Holiday Series</a>
               <span className="text-purple-400 hidden sm:inline">|</span>
-              <a href="#breakfast-series" className="px-2 sm:px-3 py-1 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🍳 Breakfast</a>
+              <a href="#breakfast-series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🍳 Breakfast Series</a>
               <span className="text-purple-400 hidden sm:inline">|</span>
-              <a href="#gaming" className="px-2 sm:px-3 py-1 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🎮 Games</a>
+              <a href="#gaming" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🎮 Gaming Center</a>
               <span className="text-purple-400 hidden sm:inline">|</span>
-              <a href="#bulk-orders" className="px-2 sm:px-3 py-1 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">📦 Bulk Orders</a>
+              <a href="#bulk-orders" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">📦 Bulk Orders</a>
             </nav>
           </div>
         </div>
