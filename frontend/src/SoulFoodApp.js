@@ -447,15 +447,15 @@ const SoulFoodLanding = () => {
         <div className="border-b border-purple-700/50">
           <div className="container mx-auto px-4">
             <nav className="flex items-center justify-center gap-1 sm:gap-4 py-2 overflow-x-auto text-xs sm:text-sm">
-              <a href="#resurrection-promo" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🙏 Resurrection Sale</a>
+              <a href="#about-us" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🎧 About Us</a>
               <span className="text-purple-400 hidden sm:inline">|</span>
               <a href="#series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">📚 Holiday Series</a>
               <span className="text-purple-400 hidden sm:inline">|</span>
-              <a href="#breakfast-series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🍳 Breakfast Series</a>
+              <a href="#breakfast-series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🍳 Breakfast</a>
               <span className="text-purple-400 hidden sm:inline">|</span>
-              <a href="#gaming" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🎮 Gaming Center</a>
+              <a href="#gaming" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🎮 Games</a>
               <span className="text-purple-400 hidden sm:inline">|</span>
-              <a href="#bulk-orders" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">📦 Bulk Orders</a>
+              <a href="#bulk-orders" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">📦 Bulk</a>
             </nav>
           </div>
         </div>
@@ -593,7 +593,7 @@ const SoulFoodLanding = () => {
             </p>
             
             {/* Why Soul Food - Audio Intro */}
-            <div className="mt-6 flex justify-center" ref={youtubeRef}>
+            <div id="about-us" className="mt-6 flex justify-center scroll-mt-32" ref={youtubeRef}>
               <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl shadow-lg p-6 max-w-lg w-full border border-purple-200">
                 {/* Founder Photo & Bio */}
                 <div className="text-center mb-4">
