@@ -742,54 +742,68 @@ const SoulFoodLanding = () => {
                   </div>
                 </CardHeader>
                 
-                <CardContent className="relative space-y-4 p-6">
-                  <p className="text-slate-700 leading-relaxed">{s.description}</p>
-                  
-                  {/* Status Badge */}
-                  <div className="pt-2">
-                    {s.available ? (
-                      <Badge className="bg-emerald-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
-                        ✅ Available Now
-                      </Badge>
-                    ) : (
-                      <Badge className="bg-slate-500 text-white px-3 py-1 text-sm font-semibold">
-                        🔒 Unlocks {s.unlockDate}
-                      </Badge>
-                    )}
+              <CardContent className="relative p-6 flex flex-col h-full min-h-[280px]">
+                <p className="text-slate-700 leading-relaxed">{s.description}</p>
+                
+                {/* Status Badge */}
+                <div className="pt-2">
+                  {s.available ? (
+                    <Badge className="bg-emerald-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
+                      ✅ Available Now
+                    </Badge>
+                  ) : (
+                    <Badge className="bg-slate-500 text-white px-3 py-1 text-sm font-semibold">
+                      🔒 Unlocks {s.unlockDate}
+                    </Badge>
+                  )}
+                </div>
+                
+                {/* Audio Format Option for Holiday */}
+                <div className="pt-3">
+                  <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-3 border border-purple-200">
+                    <p className="text-xs font-semibold text-purple-700 mb-2 flex items-center gap-1">
+                      🎧 Audio Teachings by Pastor Mike Edwards
+                    </p>
+                    <div className="flex flex-wrap gap-2 text-xs">
+                      <span className="bg-white px-2 py-1 rounded border border-purple-200 text-purple-700">1 lesson: $1.99</span>
+                      <span className="bg-purple-600 text-white px-2 py-1 rounded font-semibold">All 4: $6.99</span>
+                    </div>
+                    <p className="text-xs text-purple-500 mt-2 italic">IE includes audio at no extra cost</p>
                   </div>
+                </div>
+                
+                {/* Spacer to push buttons to bottom */}
+                <div className="flex-grow"></div>
+                
+                {/* Action Buttons - Stacked like Amazon */}
+                <div className="space-y-2 pt-4">
+                  <Button
+                    onClick={() => openProductModal(s)}
+                    className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-3 rounded-lg transition-all shadow-md"
+                  >
+                    🛒 Add to Cart
+                  </Button>
                   
-                  {/* Action Buttons - Stacked like Amazon */}
-                  <div className="space-y-2 pt-2">
-                    <Button
-                      onClick={() => openProductModal(s)}
-                      className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-semibold py-3 rounded-lg transition-all shadow-md"
-                    >
-                      🛒 Add to Cart
-                    </Button>
-                    
-                    <Button
-                      onClick={() => {
-                        setSelectedSeries(s);
-                        setShowPreview(true);
-                      }}
-                      variant="outline"
-                      className={`w-full border-2 border-slate-300 hover:border-slate-400 text-slate-700 hover:bg-slate-50 font-semibold py-2.5 rounded-lg transition-all`}
-                    >
-                      {s.available ? `Explore Full Series 📚` : `Preview Coming Lessons 📖`}
-                    </Button>
-                    
-                    {/* Interactive Lessons Link - Only for available series */}
-                    {s.available && (
-                      <Button
-                        onClick={() => window.location.href = '/snack-packs'}
-                        variant="outline"
-                        className="w-full border-2 border-purple-300 text-purple-600 hover:bg-purple-50 font-semibold py-2 rounded-lg"
-                      >
-                        ✨ Try Interactive Lessons
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
+                  <Button
+                    onClick={() => window.location.href = '/multimedia'}
+                    variant="outline"
+                    className="w-full border-2 border-purple-300 text-purple-600 hover:bg-purple-50 font-semibold py-2 rounded-lg"
+                  >
+                    🎧 Preview Audio
+                  </Button>
+                  
+                  <Button
+                    onClick={() => {
+                      setSelectedSeries(s);
+                      setShowPreview(true);
+                    }}
+                    variant="outline"
+                    className={`w-full border-2 border-slate-300 hover:border-slate-400 text-slate-700 hover:bg-slate-50 font-semibold py-2.5 rounded-lg transition-all`}
+                  >
+                    {s.available ? `Explore Full Series 📚` : `Preview Coming Lessons 📖`}
+                  </Button>
+                </div>
+              </CardContent>
               </Card>
             ))}
 
