@@ -397,6 +397,86 @@ const SoulFoodLanding = () => {
         </div>
       </header>
 
+      {/* Resurrection Sunday Marketing Banner with Countdown */}
+      <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-900 text-white">
+        {/* Jump-to Navigation Bar */}
+        <div className="border-b border-purple-700/50">
+          <div className="container mx-auto px-4">
+            <nav className="flex items-center justify-center gap-1 sm:gap-4 py-2 overflow-x-auto text-xs sm:text-sm">
+              <a href="#resurrection-promo" className="px-2 sm:px-3 py-1 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🙏 Resurrection Sale</a>
+              <span className="text-purple-400 hidden sm:inline">|</span>
+              <a href="#series" className="px-2 sm:px-3 py-1 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">📚 Holiday Series</a>
+              <span className="text-purple-400 hidden sm:inline">|</span>
+              <a href="#breakfast-series" className="px-2 sm:px-3 py-1 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🍳 Breakfast</a>
+              <span className="text-purple-400 hidden sm:inline">|</span>
+              <a href="#gaming" className="px-2 sm:px-3 py-1 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🎮 Games</a>
+              <span className="text-purple-400 hidden sm:inline">|</span>
+              <a href="#bulk-orders" className="px-2 sm:px-3 py-1 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">📦 Bulk Orders</a>
+            </nav>
+          </div>
+        </div>
+        
+        {/* Main Resurrection Sunday Promotion */}
+        <div id="resurrection-promo" className="container mx-auto px-4 py-6 sm:py-8">
+          <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
+            {/* Left - Holiday Cover Image */}
+            <div className="w-48 sm:w-56 lg:w-64 flex-shrink-0">
+              <img 
+                src="/images/holiday-cover-ae.png" 
+                alt="Holiday Series - The 4 C's" 
+                className="w-full rounded-xl shadow-2xl border-4 border-white/20"
+              />
+            </div>
+            
+            {/* Center - Marketing Message */}
+            <div className="flex-1 text-center lg:text-left">
+              <Badge className="mb-3 bg-amber-500 text-white px-4 py-1.5 text-xs sm:text-sm font-bold">
+                ✝️ RESURRECTION SUNDAY (Easter) 2026
+              </Badge>
+              
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 leading-tight">
+                Resurrection Ready:<br className="hidden sm:block" />
+                <span className="text-amber-300">A 4-Week Soul Food Study for the Heart of Easter</span>
+              </h2>
+              
+              <p className="text-purple-200 text-base sm:text-lg mb-4 max-w-xl mx-auto lg:mx-0">
+                "From Covenant to Cross to Comforter—walk the story that changed everything."
+              </p>
+              
+              {/* Shipping Promo */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 max-w-md mx-auto lg:mx-0 border border-purple-400/30">
+                <p className="text-amber-300 font-bold text-sm sm:text-base mb-1">🚚 FREE SHIPPING</p>
+                <p className="text-purple-100 text-xs sm:text-sm">Pre-orders & non-bulk orders before March 12th</p>
+                <p className="text-purple-200 text-xs mt-1">½ off shipping on bulk orders before March 15th</p>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+                <Button
+                  onClick={() => window.location.href = '/quick-order'}
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-6 py-3 rounded-xl font-bold shadow-xl"
+                >
+                  Get the Holiday Series →
+                </Button>
+                <Button
+                  onClick={() => document.getElementById('series')?.scrollIntoView({ behavior: 'smooth' })}
+                  variant="outline"
+                  className="border-2 border-white/50 text-white hover:bg-white/10 px-6 py-3 rounded-xl font-semibold"
+                >
+                  Learn More
+                </Button>
+              </div>
+            </div>
+            
+            {/* Right - Countdown Timer */}
+            <div className="text-center lg:text-right">
+              <p className="text-purple-300 text-sm mb-2 font-medium">Countdown to Resurrection Sunday</p>
+              <ResurrectionCountdown />
+              <p className="text-purple-400 text-xs mt-2">Sale ends Pentecost (May 24, 2026)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section with Background Image */}
       <section className="relative py-16 sm:py-24 px-4 sm:px-6 overflow-hidden">
         <div className="absolute inset-0 z-0">
