@@ -1927,23 +1927,26 @@ const SoulFoodLanding = () => {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Pastor Temia Julius */}
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border border-purple-100">
-              <div className="h-64 overflow-hidden">
+          {/* Dr. Shefa D. Brown - Featured at top center */}
+          <div className="flex justify-center mb-8">
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border-2 border-purple-300 max-w-sm">
+              <div className="h-72 overflow-hidden">
                 <img 
-                  src="/images/team/dr-temia-julius.jpg" 
-                  alt="Pastor Temia Julius, Ph.D."
+                  src="/images/dr-shefa-brown.png" 
+                  alt="Dr. Shefa D. Brown"
                   className="w-full h-full object-cover object-top"
                 />
               </div>
-              <div className="p-6 text-center">
-                <h4 className="text-xl font-bold text-slate-800 mb-1">Pastor Temia Julius, Ph.D.</h4>
+              <div className="p-6 text-center bg-gradient-to-br from-purple-50 to-indigo-50">
+                <h4 className="text-xl font-bold text-slate-800 mb-1">Dr. Shefa D. Brown</h4>
                 <p className="text-sm text-slate-500 font-medium">Kingdom Soul Team</p>
               </div>
             </div>
+          </div>
 
-            {/* Evangelist Rose Doctor */}
+          {/* Rose, Temia, Mike - in a row */}
+          <div className="grid sm:grid-cols-3 gap-6 lg:gap-8">
+            {/* Evangelist Rose Doctor - Left */}
             <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border border-purple-100">
               <div className="h-64 overflow-hidden">
                 <img 
@@ -1958,8 +1961,23 @@ const SoulFoodLanding = () => {
               </div>
             </div>
 
-            {/* Pastor Mike Edwards */}
-            <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border border-purple-100 sm:col-span-2 lg:col-span-1 sm:max-w-md sm:mx-auto lg:max-w-none">
+            {/* Pastor Temia Julius - Center */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border border-purple-100">
+              <div className="h-64 overflow-hidden">
+                <img 
+                  src="/images/team/dr-temia-julius.jpg" 
+                  alt="Pastor Temia Julius, Ph.D."
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+              <div className="p-6 text-center">
+                <h4 className="text-xl font-bold text-slate-800 mb-1">Pastor Temia Julius, Ph.D.</h4>
+                <p className="text-sm text-slate-500 font-medium">Kingdom Soul Team</p>
+              </div>
+            </div>
+
+            {/* Pastor Mike Edwards - Right */}
+            <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border border-purple-100">
               <div className="h-64 overflow-hidden">
                 <img 
                   src="/images/team/pastor-mike-edwards.jpg" 
