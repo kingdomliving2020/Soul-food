@@ -818,7 +818,7 @@ const SoulFoodLanding = () => {
               <Card 
                 key={s.id}
                 id={s.id === 'breakfast' ? 'breakfast-series' : undefined}
-                className={`relative overflow-hidden border-2 ${s.available ? 'border-purple-200' : 'border-slate-300'} ${s.available ? 'shadow-xl hover:shadow-2xl' : 'shadow-md'} transition-all duration-300 ${s.available ? 'hover:scale-[1.02]' : ''} bg-white scroll-mt-32`}
+                className={`relative overflow-hidden border-2 ${s.available ? 'border-purple-200' : 'border-slate-300'} ${s.available ? 'shadow-xl hover:shadow-2xl' : 'shadow-md'} transition-all duration-300 ${s.available ? 'hover:scale-[1.02]' : ''} bg-white scroll-mt-32 flex flex-col`}
               >
                 {!s.available && (
                   <div className="absolute top-4 right-4 z-10">
