@@ -106,7 +106,8 @@ def get_order_confirmation_template(
     is_free_order: bool = False,
     coupon_code: str = None,
     download_links: List[Dict] = None,
-    customer_name: str = "Valued Customer"
+    customer_name: str = "Valued Customer",
+    audio_codes: List[Dict] = None
 ) -> str:
     """Generate order confirmation email HTML"""
     
@@ -145,6 +146,30 @@ def get_order_confirmation_template(
             </a>
             """
         downloads_html += "</div>"
+    
+    # Build audio codes section if available (for physical book purchases)
+    audio_codes_html = ""
+    if audio_codes and len(audio_codes) > 0:
+        audio_codes_html = """
+        <div style="margin-top: 30px; padding: 20px; background-color: #faf5ff; border-radius: 8px; border-left: 4px solid #8b5cf6;">
+            <h3 style="margin: 0 0 15px 0; color: #6b21a8; font-size: 18px;">🎧 Bonus: Audio Access Included!</h3>
+            <p style="margin: 0 0 15px 0; color: #7c3aed; font-size: 14px;">Your physical book purchase includes free audio teachings! Use the code(s) below to unlock your audio content:</p>
+        """
+        for code_info in audio_codes:
+            code = code_info.get('code', '')
+            series_name = code_info.get('series_name', 'Audio Series')
+            audio_codes_html += f"""
+            <div style="margin: 10px 0; padding: 15px; background-color: #ffffff; border: 2px dashed #8b5cf6; border-radius: 8px; text-align: center;">
+                <p style="margin: 0 0 5px 0; color: #6b7280; font-size: 12px; text-transform: uppercase;">{series_name}</p>
+                <p style="margin: 0; color: #1f2937; font-size: 24px; font-weight: bold; font-family: monospace; letter-spacing: 2px;">{code}</p>
+            </div>
+            """
+        audio_codes_html += f"""
+            <p style="margin: 15px 0 0 0; color: #7c3aed; font-size: 14px;">
+                <strong>How to redeem:</strong> Visit <a href="{SITE_URL}/multimedia" style="color: #6366f1; font-weight: 600;">our multimedia page</a> and enter your code to unlock your audio lessons!
+            </p>
+        </div>
+        """
     
     # Coupon badge
     coupon_html = ""
@@ -185,6 +210,8 @@ def get_order_confirmation_template(
     </table>
     
     {downloads_html}
+    
+    {audio_codes_html}
     
     <div style="margin-top: 30px; text-align: center;">
         <a href="{SITE_URL}/order-success?order={order_id}" 
