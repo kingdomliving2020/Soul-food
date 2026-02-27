@@ -50,6 +50,9 @@ class AudioCodeGenerate(BaseModel):
     order_id: str
     series_id: str
     customer_email: str
+    customer_phone: Optional[str] = None
+    edition: Optional[str] = "adult"  # adult, youth, instructor
+    lesson_number: Optional[int] = 0  # 0 = full bundle, 1-12 = specific lesson
     is_physical_purchase: bool = True
 
 class AudioCodeRedeem(BaseModel):
@@ -64,12 +67,73 @@ class AudioCodeResponse(BaseModel):
     expires_at: Optional[str] = None
 
 
-def generate_audio_code(prefix: str = "SF") -> str:
-    """Generate a unique audio access code like SF-XXXX-XXXX"""
-    chars = string.ascii_uppercase + string.digits
-    part1 = ''.join(secrets.choice(chars) for _ in range(4))
-    part2 = ''.join(secrets.choice(chars) for _ in range(4))
-    return f"{prefix}-{part1}-{part2}"
+# Series code mapping
+SERIES_CODES = {
+    "breakfast": "B",
+    "lunch": "L", 
+    "dinner": "D",
+    "supper": "S",
+    "holiday": "H"
+}
+
+# Edition code mapping
+EDITION_CODES = {
+    "adult": "1",
+    "youth": "2",
+    "instructor": "3",
+    "ae": "1",
+    "ye": "2",
+    "ie": "3"
+}
+
+
+def generate_audio_code(
+    series_id: str,
+    edition: str = "adult",
+    lesson_number: int = 0,
+    phone: str = None
+) -> str:
+    """
+    Generate a trackable audio access code
+    Format: YMMDD-PHONE5-ELV
+    - Y = last digit of year
+    - MM = 2-digit month  
+    - DD = 2-digit day
+    - PHONE5 = last 5 digits of phone (or random if not provided)
+    - E = Series code (B/L/D/S/H)
+    - L = Lesson number (00-12, 00 = full bundle)
+    - V = Version/Edition (1=Adult, 2=Youth, 3=Instructor)
+    
+    Example: 60227-12345-H011 = Feb 27 2026, phone 12345, Holiday, Lesson 01, Adult
+    """
+    now = datetime.now(timezone.utc)
+    
+    # Date part: YMMDD
+    year_digit = str(now.year)[-1]  # Last digit of year
+    date_part = f"{year_digit}{now.month:02d}{now.day:02d}"
+    
+    # Phone part: last 5 digits or random
+    if phone and len(phone) >= 5:
+        # Extract digits only
+        digits = ''.join(c for c in phone if c.isdigit())
+        phone_part = digits[-5:] if len(digits) >= 5 else digits.zfill(5)
+    else:
+        # Generate random 5 digits
+        phone_part = ''.join(secrets.choice(string.digits) for _ in range(5))
+    
+    # Series code
+    series_code = SERIES_CODES.get(series_id.lower(), "X")
+    
+    # Lesson number (00 = full bundle)
+    lesson_part = f"{lesson_number:02d}"
+    
+    # Edition code
+    edition_code = EDITION_CODES.get(edition.lower(), "1")
+    
+    # Combine: YMMDD-PHONE5-ELV
+    code = f"{date_part}-{phone_part}-{series_code}{lesson_part}{edition_code}"
+    
+    return code
 
 
 @router.post("/codes/generate")
