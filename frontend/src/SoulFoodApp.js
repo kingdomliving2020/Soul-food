@@ -1032,7 +1032,7 @@ const SoulFoodLanding = () => {
       </section>
 
       {/* Gaming Central Section */}
-      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <section id="gaming" className="py-16 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 scroll-mt-32">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-10">
             <img 
