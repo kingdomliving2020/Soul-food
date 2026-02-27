@@ -850,7 +850,7 @@ const SoulFoodLanding = () => {
                   </div>
                 </CardHeader>
                 
-                <CardContent className="relative space-y-4 p-6">
+                <CardContent className="relative p-6 flex flex-col min-h-[280px]">
                   <p className="text-slate-700 leading-relaxed">{s.description}</p>
                   
                   {/* Status Badge */}
@@ -866,8 +866,11 @@ const SoulFoodLanding = () => {
                     )}
                   </div>
                   
+                  {/* Spacer to push buttons to bottom */}
+                  <div className="flex-grow"></div>
+                  
                   {/* Action Buttons - Stacked like Amazon */}
-                  <div className="space-y-2 pt-2">
+                  <div className="space-y-2 pt-4">
                     <Button
                       onClick={() => openProductModal(s)}
                       className={`w-full ${s.available 
