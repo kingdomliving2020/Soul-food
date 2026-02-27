@@ -714,7 +714,7 @@ const SoulFoodLanding = () => {
             {series.filter(s => s.id === 'holiday').map((s) => (
               <Card 
                 key={s.id} 
-                className={`relative overflow-hidden border-2 ${s.available ? 'border-purple-200' : 'border-slate-300'} ${s.available ? 'shadow-xl hover:shadow-2xl' : 'shadow-md'} transition-all duration-300 ${s.available ? 'hover:scale-[1.02]' : ''} bg-white`}
+                className={`relative overflow-hidden border-2 ${s.available ? 'border-purple-200' : 'border-slate-300'} ${s.available ? 'shadow-xl hover:shadow-2xl' : 'shadow-md'} transition-all duration-300 ${s.available ? 'hover:scale-[1.02]' : ''} bg-white flex flex-col`}
               >
                 {!s.available && (
                   <div className="absolute top-4 right-4 z-10">
