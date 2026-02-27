@@ -178,31 +178,61 @@ const AboutUs = () => {
         </div>
 
         {/* Mission Statement */}
-        <Card className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white shadow-2xl">
-          <CardContent className="p-8 md:p-12 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">Our Mission</h2>
-            <p className="text-xl md:text-2xl leading-relaxed mb-6 text-purple-100">
-              "Together, we're committed to nourishing souls with God's Word—one lesson, one family, one community at a time."
-            </p>
-            <p className="text-purple-200 font-medium">— The Soul Food Project Team</p>
+        <Card className="bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-600 text-white shadow-2xl mb-12">
+          <CardContent className="p-8 md:p-12">
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 text-center">Kingdom Soul Mission</h2>
             
-            <div className="mt-8 pt-8 border-t border-purple-400/30">
-              <p className="text-purple-200 mb-4">Ready to start your journey?</p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Button 
-                  onClick={() => navigate('/quick-order')}
-                  className="bg-white text-purple-600 hover:bg-purple-50 font-bold px-6"
-                >
-                  Browse Our Products
-                </Button>
-                <Button 
-                  onClick={() => navigate('/lesson/free-sample')}
-                  variant="outline"
-                  className="border-white text-white hover:bg-white/10 font-bold px-6"
-                >
-                  Try Free Sample
-                </Button>
-              </div>
+            <div className="space-y-6 text-purple-100 leading-relaxed">
+              <p className="text-lg md:text-xl">
+                {missionStatement.main}
+              </p>
+              
+              <p className="text-lg md:text-xl">
+                {missionStatement.vision}
+              </p>
+              
+              <p className="text-lg md:text-xl">
+                {missionStatement.approach}
+              </p>
+            </div>
+            
+            <p className="text-purple-200 font-medium text-center mt-8">— The Kingdom Soul Team</p>
+          </CardContent>
+        </Card>
+
+        {/* Scripture Anchors */}
+        <Card className="shadow-xl mb-12">
+          <CardContent className="p-8">
+            <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Scripture Anchors</h2>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {scriptureAnchors.map((scripture, idx) => (
+                <div key={idx} className="bg-purple-50 rounded-lg p-4 border border-purple-100">
+                  <p className="text-purple-700 font-semibold text-sm">{scripture.topic}</p>
+                  <p className="text-slate-600 text-sm mt-1">📖 {scripture.reference}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Call to Action */}
+        <Card className="bg-slate-50 shadow-xl">
+          <CardContent className="p-8 md:p-12 text-center">
+            <p className="text-slate-600 mb-4">Ready to start your journey?</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Button 
+                onClick={() => navigate('/quick-order')}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 font-bold px-6"
+              >
+                Browse Our Products
+              </Button>
+              <Button 
+                onClick={() => navigate('/lesson/free-sample')}
+                variant="outline"
+                className="border-purple-300 text-purple-600 hover:bg-purple-50 font-bold px-6"
+              >
+                Try Free Sample
+              </Button>
             </div>
           </CardContent>
         </Card>
