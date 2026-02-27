@@ -53,7 +53,7 @@ const MultimediaPage = () => {
       free: true,
       category: 'introduction',
       lessonLink: null,
-      thumbnail: '/images/dr-shefa-brown.png',
+      thumbnail: '/images/dr-shefa-brown-new.png',
       icon: '🍽️'
     },
     {
