@@ -87,7 +87,7 @@ const AuthCallback = () => {
       
       <div className="text-center">
         <div className="mb-6">
-          <img src="/soul-food-logo.png" alt="Soul Food" className="h-24 w-auto mx-auto" />
+          <img src="/soul-food-logo.png" alt="Soul Food" className="h-28 w-auto mx-auto" />
         </div>
         
         {status === 'processing' && (

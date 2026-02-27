@@ -297,7 +297,7 @@ const AuthPage = () => {
         <Card className="shadow-2xl border-2 border-purple-200">
           <CardHeader className="text-center bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white rounded-t-lg py-8">
             <div className="flex justify-center mb-4">
-              <img src="/soul-food-logo.png" alt="Soul Food Logo" className="h-24 w-auto" />
+              <img src="/soul-food-logo.png" alt="Soul Food Logo" className="h-28 w-auto" />
             </div>
             <CardTitle className="text-2xl font-bold">
               {authMode === 'beta' ? 'Beta Access' : authMode === 'login' ? 'Welcome Back!' : 'Join Soul Food'}
