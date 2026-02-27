@@ -7,12 +7,21 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Play, Music, Video, Lock } from 'lucide-react';
+import { ArrowLeft, Play, Music, Video, Lock, Ticket, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const MultimediaPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('audio'); // Default to audio until videos are ready
   const [playingPreview, setPlayingPreview] = useState(null);
+  
+  // Audio code redemption state
+  const [showRedeemModal, setShowRedeemModal] = useState(false);
+  const [redeemCode, setRedeemCode] = useState('');
+  const [redeemEmail, setRedeemEmail] = useState('');
+  const [redeemLoading, setRedeemLoading] = useState(false);
+  const [redeemResult, setRedeemResult] = useState(null); // { success: bool, message: string }
 
   const videos = [
     {
