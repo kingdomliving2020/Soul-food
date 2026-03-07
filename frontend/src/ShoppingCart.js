@@ -104,7 +104,10 @@ const ShoppingCart = () => {
                           </p>
                         </div>
                         <button
-                          onClick={() => removeFromCart(item.uniqueKey || item.productId)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeFromCart(item.uniqueKey || item.productId);
+                          }}
                           className="text-red-500 hover:text-red-700 p-1.5 rounded hover:bg-red-50 transition-colors flex-shrink-0"
                           aria-label="Remove item"
                         >
