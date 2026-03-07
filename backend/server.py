@@ -372,7 +372,8 @@ async def get_lessons(
     if edition:
         query["edition_access"] = edition
     
-    lessons = await db.lessons.find(query).sort([("series", 1), ("lesson_number", 1)]).to_list(length=None)
+    # Limit query results to prevent performance issues in production
+    lessons = await db.lessons.find(query).sort([("series", 1), ("lesson_number", 1)]).to_list(length=500)
     
     # Convert _id to string for JSON serialization
     for lesson in lessons:
