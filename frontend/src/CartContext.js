@@ -172,8 +172,8 @@ export const CartProvider = ({ children }) => {
       }
     });
     
-    // Open cart sidebar when item is added
-    setIsCartOpen(true);
+    // Open cart sidebar when item is added - small delay to prevent click-through issues
+    setTimeout(() => setIsCartOpen(true), 50);
   };
 
   const removeFromCart = (keyToMatch) => {
