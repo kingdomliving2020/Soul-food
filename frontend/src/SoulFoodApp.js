@@ -1378,7 +1378,7 @@ const SoulFoodLanding = () => {
               Start Your Journey Today
             </h3>
             <p className="text-xl text-slate-700 max-w-2xl mx-auto">
-              Interactive lessons, eBooks & digital downloads available now. Physical workbooks ship in 2-3 weeks!
+              Interactive lessons, eBooks & digital downloads available now. Print workbooks expected between Easter and Resurrection Sunday!
             </p>
           </div>
 
@@ -1443,10 +1443,10 @@ const SoulFoodLanding = () => {
               </CardContent>
             </Card>
 
-            {/* Print - Ships in 2-3 Weeks */}
+            {/* Print - Ships Easter to Resurrection Sunday */}
             <Card className="border-4 border-amber-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
               <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 text-sm font-bold z-10 shadow-xl rotate-12">
-                Ships in 2-3 Weeks
+                Ships by Resurrection Sunday
               </Badge>
               <CardHeader className="bg-gradient-to-br from-amber-50 to-orange-100 p-6">
                 <div className="flex items-center justify-between mb-4">
@@ -1491,8 +1491,9 @@ const SoulFoodLanding = () => {
                 </div>
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-sm text-slate-700">
-                  <p className="font-semibold">📦 Ships in 2-3 Weeks</p>
+                  <p className="font-semibold">📦 Ships Easter - Resurrection Sunday</p>
                   <p className="text-xs mt-1">Perfect for personal or group Bible study!</p>
+                  <p className="text-xs mt-1 text-purple-600 font-medium">🎧 Instructor Edition bundles available by Tuesday</p>
                 </div>
 
                 <Button 
