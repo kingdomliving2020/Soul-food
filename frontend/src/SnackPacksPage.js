@@ -143,28 +143,22 @@ const SnackPacksPage = () => {
                     <p className="text-slate-600 text-sm mb-4">{pack.description}</p>
                     
                     <div className="flex items-center justify-between mb-4">
-                      {pack.is_free || pack.price_download === 0 ? (
+                      {pack.is_free || pack.price === 0 ? (
                         <div className="w-full text-center">
                           <span className="bg-green-100 text-green-700 px-4 py-2 rounded-full font-bold text-lg">
                             🤲 FREE
                           </span>
                         </div>
                       ) : (
-                        <>
-                          <div className="space-y-1">
-                            <p className="text-sm text-slate-500">Download PDF</p>
-                            <p className="font-bold text-lg text-slate-800">${pack.price_download}</p>
-                          </div>
-                          <div className="space-y-1 text-right">
-                            <p className="text-sm text-slate-500">Interactive</p>
-                            <p className="font-bold text-lg text-indigo-600">${pack.price_interactive}</p>
-                          </div>
-                        </>
+                        <div className="w-full text-center">
+                          <p className="text-sm text-slate-500 mb-1">Snack Pack ({pack.lesson_count} lessons)</p>
+                          <p className="font-bold text-2xl text-indigo-600">${pack.price}</p>
+                        </div>
                       )}
                     </div>
                     
                     <Button 
-                      className={`w-full ${pack.is_free || pack.price_download === 0 
+                      className={`w-full ${pack.is_free || pack.price === 0 
                         ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700' 
                         : 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700'}`}
                       onClick={(e) => {
@@ -172,7 +166,7 @@ const SnackPacksPage = () => {
                         setSelectedPack(pack);
                       }}
                     >
-                      {pack.is_free || pack.price_download === 0 ? 'Start Free Lessons' : 'View Lessons'}
+                      {pack.is_free || pack.price === 0 ? 'Start Free Lessons' : 'View Lessons'}
                     </Button>
                   </CardContent>
                 </Card>
