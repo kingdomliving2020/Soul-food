@@ -1084,6 +1084,7 @@ const QuickOrder = () => {
                                meal.id === 'instructor' ? '/covers/breakfast-instructor-front.jpg' :
                                meal.id === 'workbooks' ? '/covers/breakfast-adult-front.jpg' :
                                meal.id === 'subscriptions' ? '/soul-food-logo.png' :
+                               meal.id === 'medallions' ? '/soul-food-logo.png' :
                                '/covers/breakfast-adult-front.jpg'} 
                           alt={meal.name}
                           className={`w-24 h-32 object-contain rounded-lg border border-slate-200 shadow-sm bg-white ${meal.preOrder ? 'opacity-80' : ''}`}
