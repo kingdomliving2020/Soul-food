@@ -860,7 +860,10 @@ const QuickOrder = () => {
                                   <h4 className="font-bold text-gray-900 text-sm truncate">{item.name}</h4>
                                 </div>
                                 <button
-                                  onClick={() => removeFromCart(item.uniqueKey || item.id)}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeFromCart(item.uniqueKey || item.id);
+                                  }}
                                   className="text-red-500 hover:text-red-700 p-1"
                                 >
                                   <Trash2 className="w-4 h-4" />
