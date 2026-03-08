@@ -1412,6 +1412,38 @@ const CheckoutPage = () => {
             {/* Shipping Address for Physical Items */}
             {hasPhysicalItems && (
               <div className="mb-6 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                {/* Shipping Timeline Banner */}
+                <div className="mb-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-200">
+                  <h4 className="font-bold text-indigo-800 mb-2 flex items-center gap-2">
+                    📦 Shipping Timeline - Spring 2026
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-start gap-2">
+                      <span className="text-emerald-500 font-bold">✓</span>
+                      <div>
+                        <span className="font-semibold text-indigo-900">Easter Delivery (Local)</span>
+                        <span className="text-indigo-700"> - Order by April 1st</span>
+                        <p className="text-xs text-indigo-600">MA, CT, SC, GA only. Delivery by April 11th.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-emerald-500 font-bold">✓</span>
+                      <div>
+                        <span className="font-semibold text-indigo-900">Standard Delivery</span>
+                        <span className="text-indigo-700"> - Order by Palm Sunday (April 5th)</span>
+                        <p className="text-xs text-indigo-600">Get FREE iPDF access while you wait! Delivery by Pentecost (May 31st).</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-blue-500 font-bold">ℹ</span>
+                      <div>
+                        <span className="font-semibold text-indigo-900">Bulk/Church Orders</span>
+                        <p className="text-xs text-indigo-600">Contact us for custom fulfillment: orders@kingdom-soul.com</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Audio Bonus Note */}
                 <div className="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
                   <div className="flex items-start gap-2">
