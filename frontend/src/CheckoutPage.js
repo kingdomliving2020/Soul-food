@@ -10,9 +10,28 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [mode, setMode] = useState('login'); // 'login' or 'register'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [suffix, setSuffix] = useState('');
+  const [dobMonth, setDobMonth] = useState('');
+  const [dobDay, setDobDay] = useState('');
+  const [dobYear, setDobYear] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Age verification - must be 18+ for online transactions
+  const validateAge = () => {
+    if (!dobMonth || !dobDay || !dobYear) return false;
+    const dob = new Date(parseInt(dobYear), parseInt(dobMonth) - 1, parseInt(dobDay));
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+      age--;
+    }
+    return age >= 18;
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
