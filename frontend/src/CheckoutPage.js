@@ -901,8 +901,8 @@ const CheckoutPage = () => {
           'Content-Type': 'application/json',
         };
       
-      // Add auth token if user is logged in
-      const token = localStorage.getItem('soulFoodToken');
+      // Add auth token if user is logged in (check all possible token keys)
+      const token = localStorage.getItem('token') || localStorage.getItem('soulFoodToken') || localStorage.getItem('soul_food_token');
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
       }
