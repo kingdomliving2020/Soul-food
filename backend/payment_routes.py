@@ -1094,6 +1094,19 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
     success_url = f"{origin_url}/payment-success?session_id={{CHECKOUT_SESSION_ID}}"
     cancel_url = f"{origin_url}/payment-cancel"
     
+    # Calculate total and check Stripe minimum ($0.50)
+    calculated_total = sum(item['price_data']['unit_amount'] * item['quantity'] for item in line_items)
+    if calculated_total < 50:  # 50 cents minimum
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": "amount_too_small",
+                "message": f"Order total (${calculated_total/100:.2f}) is below Stripe's minimum of $0.50. Please add more items or use a smaller discount.",
+                "minimum_required": 0.50,
+                "current_total": calculated_total / 100
+            }
+        )
+    
     try:
         # Create Stripe Checkout Session directly
         session = stripe.checkout.Session.create(
