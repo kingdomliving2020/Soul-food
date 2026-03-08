@@ -991,36 +991,41 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
     requires_account = False
     account_required_items = []
     
-    for item in request.items:
-        item_id = str(item.get('id', '')).lower()
-        item_type = str(item.get('type', '')).lower()
-        item_name = str(item.get('name', '')).lower()
-        
-        # Check if item requires account
-        for keyword in ACCOUNT_REQUIRED_KEYWORDS:
-            if keyword in item_id or keyword in item_type or keyword in item_name:
-                # But allow if it's also a guest-allowed type
-                is_guest_allowed = any(gk in item_id or gk in item_type for gk in GUEST_ALLOWED_KEYWORDS)
-                if not is_guest_allowed:
-                    requires_account = True
-                    account_required_items.append(item.get('name', item_id))
-                    break
+    # First, check if user is already logged in (check token BEFORE item validation)
+    SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
+    auth_header = http_request.headers.get("Authorization")
+    user_id = None
+    user_logged_in = False
     
-    # If account required, verify user is logged in
-    if requires_account:
-        SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
-        auth_header = http_request.headers.get("Authorization")
-        user_id = None
+    if auth_header and auth_header.startswith("Bearer "):
+        token = auth_header.split(" ")[1]
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+            user_id = payload.get("sub")
+            if user_id:
+                user_logged_in = True
+        except JWTError:
+            pass
+    
+    # Only check account requirements if user is NOT logged in
+    if not user_logged_in:
+        for item in request.items:
+            item_id = str(item.get('id', item.get('product_id', ''))).lower()
+            item_type = str(item.get('type', '')).lower()
+            item_name = str(item.get('name', '')).lower()
+            
+            # Check if item requires account
+            for keyword in ACCOUNT_REQUIRED_KEYWORDS:
+                if keyword in item_id or keyword in item_type or keyword in item_name:
+                    # But allow if it's also a guest-allowed type
+                    is_guest_allowed = any(gk in item_id or gk in item_type or gk in item_name for gk in GUEST_ALLOWED_KEYWORDS)
+                    if not is_guest_allowed:
+                        requires_account = True
+                        account_required_items.append(item.get('name', item_id))
+                        break
         
-        if auth_header and auth_header.startswith("Bearer "):
-            token = auth_header.split(" ")[1]
-            try:
-                payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-                user_id = payload.get("sub")
-            except JWTError:
-                pass
-        
-        if not user_id:
+        # If account required and user not logged in, return error
+        if requires_account:
             raise HTTPException(
                 status_code=401,
                 detail={
