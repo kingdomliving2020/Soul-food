@@ -302,6 +302,120 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 
   if (!isOpen) return null;
 
+  // OTP Verification Screen
+  if (mode === 'otp') {
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-indigo-600 to-purple-600 rounded-t-2xl">
+            <h2 className="text-xl font-bold text-white">Verify Your Identity</h2>
+            <button
+              onClick={() => { setMode('login'); setOtpCode(''); setError(''); }}
+              className="p-2 hover:bg-white/20 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+          </div>
+
+          <div className="p-6">
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                {error}
+              </div>
+            )}
+
+            {/* OTP Method Selection */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Verification Method</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => { setOtpMethod('email'); sendOtpCode(pendingToken); }}
+                  className={`p-3 rounded-lg border-2 text-sm font-medium transition-colors ${
+                    otpMethod === 'email' 
+                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  📧 Email Code
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOtpMethod('totp')}
+                  className={`p-3 rounded-lg border-2 text-sm font-medium transition-colors ${
+                    otpMethod === 'totp' 
+                      ? 'border-indigo-500 bg-indigo-50 text-indigo-700' 
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  📱 Auth App
+                </button>
+              </div>
+            </div>
+
+            <p className="text-sm text-gray-600 mb-4">
+              {otpMethod === 'email' 
+                ? 'Enter the 6-digit code sent to your email address.'
+                : 'Enter the 6-digit code from your authenticator app (Google Authenticator, Authy, etc.)'}
+            </p>
+
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Verification Code</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength={6}
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                  required
+                  autoFocus
+                  className="w-full px-4 py-4 text-2xl tracking-widest text-center font-mono border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="000000"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading || otpCode.length !== 6}
+                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {loading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>Verify & Continue <ArrowRight className="w-4 h-4" /></>
+                )}
+              </button>
+            </form>
+
+            {otpMethod === 'email' && (
+              <div className="mt-4 text-center">
+                <button
+                  onClick={handleResendOtp}
+                  disabled={loading}
+                  className="text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                >
+                  Didn't receive code? Resend
+                </button>
+              </div>
+            )}
+
+            <div className="mt-6 pt-4 border-t text-center">
+              <button
+                onClick={() => { setMode('login'); setOtpCode(''); setError(''); }}
+                className="text-gray-500 hover:text-gray-700 text-sm"
+              >
+                ← Back to login
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
