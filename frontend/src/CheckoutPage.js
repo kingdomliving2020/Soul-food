@@ -1201,8 +1201,22 @@ const CheckoutPage = () => {
             </div>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
-                {error}
+              <div className="mb-4 p-4 bg-red-50 border-2 border-red-300 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-red-100 rounded-full flex-shrink-0">
+                    <AlertCircle className="w-5 h-5 text-red-600" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-red-800 mb-1">Account Required</h4>
+                    <p className="text-red-700 text-sm whitespace-pre-line">{error}</p>
+                    <button
+                      onClick={() => setShowLoginModal(true)}
+                      className="mt-3 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg text-sm transition-colors"
+                    >
+                      Sign In or Create Account
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 
