@@ -611,6 +611,69 @@ const QuickOrder = () => {
       isGiftCertificate: true,
       link: '/gift-certificates'
     },
+    // Game Packs - Offline Board Games
+    {
+      id: 'game-pack-gridiron-ae',
+      name: 'GRinCH Game Pack (Adult)',
+      subtitle: 'Grid Iron Challenge - Instructions, Tracking Card, Player Cards, Chips',
+      image: '/covers/game-gridiron-ae.png',
+      price: 19.99,
+      isGamePack: true,
+      edition: 'adult',
+      description: 'Complete offline game kit for adult groups'
+    },
+    {
+      id: 'game-pack-gridiron-ye',
+      name: 'GRinCH Game Pack (Youth)',
+      subtitle: 'Grid Iron Challenge - Instructions, Tracking Card, Player Cards, Chips',
+      image: '/covers/game-gridiron-ye.png',
+      price: 19.99,
+      isGamePack: true,
+      edition: 'youth',
+      description: 'Complete offline game kit for youth groups'
+    },
+    {
+      id: 'game-pack-passport-ae',
+      name: 'Passport Trek Game Pack (Adult)',
+      subtitle: 'SOFU Passport Trek - Instructions, Tracking Card, Player Cards, Chips',
+      image: '/covers/game-passport-ae.png',
+      price: 19.99,
+      isGamePack: true,
+      edition: 'adult',
+      description: 'Complete offline game kit for adult groups'
+    },
+    {
+      id: 'game-pack-passport-ye',
+      name: 'Passport Trek Game Pack (Youth)',
+      subtitle: 'SOFU Passport Trek - Instructions, Tracking Card, Player Cards, Chips',
+      image: '/covers/game-passport-ye.png',
+      price: 19.99,
+      isGamePack: true,
+      edition: 'youth',
+      description: 'Complete offline game kit for youth groups'
+    },
+    {
+      id: 'game-pack-bundle-adult',
+      name: 'Game Bundle (Adult) - Both Games',
+      subtitle: 'GRinCH + Passport Trek - Save $10',
+      image: '/covers/game-gridiron-ae.png',
+      price: 29.99,
+      isGamePack: true,
+      edition: 'adult',
+      isBundle: true,
+      description: 'Both game packs at a discount'
+    },
+    {
+      id: 'game-pack-bundle-youth',
+      name: 'Game Bundle (Youth) - Both Games',
+      subtitle: 'GRinCH + Passport Trek - Save $10',
+      image: '/covers/game-gridiron-ye.png',
+      price: 29.99,
+      isGamePack: true,
+      edition: 'youth',
+      isBundle: true,
+      description: 'Both game packs at a discount'
+    },
     {
       id: 'bonus-ie-holiday',
       name: 'Holiday Bonus Lessons (Instructor)',
