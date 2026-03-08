@@ -96,6 +96,32 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     setLoading(true);
     setError('');
 
+    // Validate required fields
+    if (!firstName.trim() || !lastName.trim()) {
+      setError('First name and last name are required');
+      setLoading(false);
+      return;
+    }
+
+    // Validate password match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    // Validate age
+    if (!validateAge()) {
+      setError('You must be 18 years or older to make online purchases');
+      setLoading(false);
+      return;
+    }
+
+    // Build full name with suffix
+    const fullName = suffix 
+      ? `${firstName.trim()} ${lastName.trim()} ${suffix}`
+      : `${firstName.trim()} ${lastName.trim()}`;
+
     // Generate username from email (part before @)
     const username = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '_').toLowerCase();
 
