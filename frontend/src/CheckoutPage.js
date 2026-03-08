@@ -118,6 +118,105 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     }
   };
 
+  // Send OTP code via email
+  const sendOtpCode = async (token) => {
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${BACKEND_URL}/api/auth/2fa/send-code`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+      xhr.send();
+    } catch (err) {
+      console.error('Failed to send OTP:', err);
+    }
+  };
+
+  // Verify OTP code
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    if (otpCode.length !== 6) {
+      setError('Please enter a 6-digit code');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${BACKEND_URL}/api/auth/2fa/verify`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      if (pendingToken) {
+        xhr.setRequestHeader('Authorization', `Bearer ${pendingToken}`);
+      }
+      
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          setLoading(false);
+          try {
+            const data = JSON.parse(xhr.responseText);
+            if (xhr.status >= 200 && xhr.status < 300 && data.verified) {
+              // OTP verified - complete login
+              const finalToken = data.token || pendingToken;
+              const finalUser = data.user || pendingUserData;
+              
+              localStorage.setItem('token', finalToken);
+              localStorage.setItem('soulFoodToken', finalToken);
+              localStorage.setItem('soul_food_token', finalToken);
+              localStorage.setItem('user', JSON.stringify(finalUser));
+              localStorage.setItem('soul_food_user', JSON.stringify(finalUser));
+              onLoginSuccess(finalUser);
+            } else {
+              setError(data.detail || 'Invalid verification code');
+            }
+          } catch (e) {
+            setError('Invalid response from server');
+          }
+        }
+      };
+      
+      xhr.send(JSON.stringify({ 
+        code: otpCode,
+        user_id: pendingUserId
+      }));
+    } catch (err) {
+      setLoading(false);
+      setError('Connection error. Please try again.');
+    }
+  };
+
+  // Resend OTP code
+  const handleResendOtp = async () => {
+    setLoading(true);
+    try {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', `${BACKEND_URL}/api/auth/2fa/resend`, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+          setLoading(false);
+          try {
+            const data = JSON.parse(xhr.responseText);
+            if (xhr.status >= 200 && xhr.status < 300) {
+              setError('');
+              alert('New code sent to your email!');
+            } else {
+              setError(data.detail || 'Failed to resend code');
+            }
+          } catch (e) {
+            setError('Failed to resend code');
+          }
+        }
+      };
+      
+      xhr.send(JSON.stringify({ user_id: pendingUserId }));
+    } catch (err) {
+      setLoading(false);
+      setError('Connection error');
+    }
+  };
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setLoading(true);
