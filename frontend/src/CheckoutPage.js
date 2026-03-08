@@ -46,25 +46,22 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
     };
 
     try {
-      // Try regular login first
+      // Try regular login
       let result = await tryLogin(
         `${BACKEND_URL}/api/auth/login`,
         { identifier: email, password }
       );
 
-      // If regular login fails, try beta login (for test accounts)
-      if (!result.ok || !result.data.access_token) {
-        result = await tryLogin(
-          `${BACKEND_URL}/api/auth/beta-login`,
-          { username: email, password }
-        );
-      }
-
       if (result.ok && result.data.access_token) {
+        // Save to both token keys for compatibility
         localStorage.setItem('token', result.data.access_token);
+        localStorage.setItem('soulFoodToken', result.data.access_token);
+        localStorage.setItem('soul_food_token', result.data.access_token);
         localStorage.setItem('user', JSON.stringify(result.data.user));
+        localStorage.setItem('soul_food_user', JSON.stringify(result.data.user));
         onLoginSuccess(result.data.user);
       } else {
+        // Show the actual error from the login attempt
         setError(result.data.detail || 'Invalid email/username or password');
       }
     } catch (err) {
