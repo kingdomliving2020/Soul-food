@@ -643,6 +643,38 @@ async def send_2fa_code(request: Request):
     
     return {"message": "Verification code sent", "expires_in_minutes": 10}
 
+class TwoFactorResend(BaseModel):
+    user_id: str
+
+@router.post("/2fa/resend")
+async def resend_2fa_code(data: TwoFactorResend):
+    """Resend 2FA verification code during login"""
+    
+    user = await db.users.find_one({"id": data.user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Generate and send new code
+    code = generate_2fa_code()
+    expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
+    
+    # Remove any existing pending codes for this user
+    await db.tfa_codes.delete_many({"user_id": data.user_id, "purpose": "login"})
+    
+    await db.tfa_codes.insert_one({
+        "user_id": data.user_id,
+        "code": code,
+        "method": "email",
+        "expires_at": expires_at.isoformat(),
+        "used": False,
+        "purpose": "login",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    await send_2fa_email(user["email"], code, user.get("name", "User"))
+    
+    return {"message": "New verification code sent to your email", "expires_in_minutes": 10}
+
 # =============================================================================
 # Rewards Points Routes
 # =============================================================================
