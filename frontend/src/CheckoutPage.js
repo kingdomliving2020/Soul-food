@@ -541,8 +541,13 @@ const CheckoutPage = () => {
         // Clear cart before redirect
         clearCart();
         window.location.href = data.checkout_url || data.url;
+      } else if (data.detail?.error === 'account_required') {
+        // Handle account required error - show login modal
+        setError(`${data.detail.message}\n\nItems requiring account: ${data.detail.items_requiring_account?.join(', ')}`);
+        setShowLoginModal(true);
       } else {
-        throw new Error(data.detail || 'Failed to create checkout session');
+        const errorMsg = typeof data.detail === 'object' ? data.detail.message || JSON.stringify(data.detail) : data.detail;
+        throw new Error(errorMsg || 'Failed to create checkout session');
       }
     } catch (err) {
       setError(err.message);
