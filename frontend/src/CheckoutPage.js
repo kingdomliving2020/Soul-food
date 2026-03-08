@@ -92,8 +92,12 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
           const data = JSON.parse(xhr.responseText);
           
           if (xhr.status >= 200 && xhr.status < 300 && data.access_token) {
+            // Save to all token keys for compatibility
             localStorage.setItem('token', data.access_token);
+            localStorage.setItem('soulFoodToken', data.access_token);
+            localStorage.setItem('soul_food_token', data.access_token);
             localStorage.setItem('user', JSON.stringify(data.user));
+            localStorage.setItem('soul_food_user', JSON.stringify(data.user));
             onLoginSuccess(data.user);
           } else {
             // Parse validation errors from backend
