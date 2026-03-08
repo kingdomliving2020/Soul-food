@@ -26,52 +26,56 @@ Build a full-stack e-commerce and learning platform called "Soul Food" for spiri
 
 ---
 
-## March 7, 2026 - Shopping Cart Bug Fixes
+## March 8, 2026 - Multiple Bug Fixes
 
 ### Status: COMPLETED ✅
 
 **Issues Fixed:**
-1. **Items disappearing from cart** - Cart items would vanish when adding new items
-2. **Quantity adjustment not working** - +/- buttons for game passes weren't functional
-3. **Items not combinable** - Game passes couldn't be combined with other cart items
 
-**Root Cause:**
-When the cart auto-opened after adding an item, click events were propagating through to the delete button, causing the newly added item to be immediately removed.
+1. **Checkout Error Handling (Improved)**
+   - Added proper error message display for `account_required` errors
+   - Shows which items require an account
+   - Prompts login modal when account is needed
+   - Added Authorization header when user is logged in
 
-**Fixes Implemented:**
-1. Added `e.stopPropagation()` to delete buttons in:
-   - `/app/frontend/src/QuickOrder.js` (line 862-867)
-   - `/app/frontend/src/ShoppingCart.js` (line 106-112)
-2. Added 50ms delay before opening cart in `/app/frontend/src/CartContext.js` (line 176) to prevent race conditions
+2. **Game Pass Icons Fixed**
+   - Replaced broken `/images/bounty-stack-token.png` with 🎮 emoji
+   - Updated both 30-Day and 90-Day pass cards
+   - Icons now display in a gradient purple/indigo box
 
-**Testing Results:** 100% pass rate (7/7 cart features working)
-- ✅ Add game pass to cart
-- ✅ Increase quantity with + button
-- ✅ Decrease quantity with - button
-- ✅ Add multiple different items
-- ✅ Remove single item with trash icon
-- ✅ Multiple items show correct total
-- ✅ Cart persists after page refresh
+3. **2FA/OTP Verification Setup**
+   - Created `/app/frontend/src/TwoFactorVerify.js` for login verification
+   - Added `/2fa-verify` route to App.js
+   - Added `/api/auth/2fa/resend` backend endpoint for resending codes
+   - Complete flow: Login → 2FA prompt → Verify code → Continue
 
-**Content Update:**
-- Replaced corrected PDF: `/app/content/downloads/breakfast-ye-month3-snackpack.pdf`
+**Files Modified:**
+- `/app/frontend/src/CheckoutPage.js` - Better error handling, auth headers
+- `/app/frontend/src/QuickOrder.js` - Game pass icons to emoji
+- `/app/frontend/src/App.js` - Added TwoFactorVerify route
+- `/app/frontend/src/TwoFactorVerify.js` - NEW: 2FA verification page
+- `/app/backend/auth_routes_v2.py` - Added 2FA resend endpoint
 
 ---
 
-## February 27, 2026 - Audio System & UI Updates
+## March 7, 2026 - Shopping Cart & Image Updates
 
-### Status: COMPLETED
+### Status: COMPLETED ✅
 
-**Audio Pricing & Code System:**
-- Pricing: $2.49/lesson, $7.99/4-lesson bundle (20% savings)
-- Trackable Code Format: `YMMDD-PHONE5-ELV`
-- Backend endpoints: generate, redeem, decode, search codes
-- Webhook integration for physical book purchases
-- Email integration for order confirmations
+**Shopping Cart Bug Fixes:**
+- Items no longer disappear when adding to cart
+- Quantity +/- buttons work correctly
+- Game passes combinable with other items
+- Added `e.stopPropagation()` to delete buttons
+- Added 50ms delay to cart opening
 
-**My Audio Library:**
-- New section in MyLibrary.js for unlocked audio content
-- Play/pause functionality for each lesson
+**Image Updates:**
+- Holiday AE cover updated in both locations:
+  - `/app/frontend/public/covers/holiday-ae-front.jpg`
+  - `/app/frontend/public/images/holiday-cover-ae.png`
+
+**Performance Fix:**
+- Fixed unbounded query in server.py (added limit=500)
 
 ---
 
@@ -83,9 +87,13 @@ When the cart auto-opened after adding an item, click events were propagating th
 - Synchronous initialization to prevent race conditions
 - useEffect saves cart changes to localStorage
 
-**PDF Manipulation (pypdf):**
-- Used to combine multi-part PDFs
-- Split larger files into individual lessons ("Nibble" extraction)
+**2FA Authentication Flow:**
+1. User logs in with email/password
+2. If 2FA enabled, backend returns `requires_2fa_verification: true`
+3. Frontend redirects to `/2fa-verify`
+4. User enters code from email or authenticator app
+5. Backend verifies and returns full auth token
+6. User continues to original destination
 
 ---
 
@@ -93,13 +101,14 @@ When the cart auto-opened after adding an item, click events were propagating th
 
 ### P0 - Critical
 - ~~Shopping Cart Bug~~ **FIXED March 7, 2026**
-- ~~Audio Pricing & Trackable Code System~~ **DONE Feb 27, 2026**
+- ~~Checkout Error Handling~~ **FIXED March 8, 2026**
+- ~~Game Pass Icons~~ **FIXED March 8, 2026**
+- ~~2FA Verification Page~~ **FIXED March 8, 2026**
 
 ### P1 - High Priority
 - [ ] Process IE Breakfast PDF files (waiting on user upload)
 - [ ] License Management UI for instructors
 - [ ] Frontend for Referral System
-- [ ] Verify AE HOL thumbnail is correct (user reported as "outdated")
 
 ### P2 - Medium Priority
 - [ ] Word Search Game (replace placeholder)
@@ -108,23 +117,26 @@ When the cart auto-opened after adding an item, click events were propagating th
 
 ### P3 - Tech Debt
 - [ ] Migrate hardcoded product catalog to MongoDB `products` collection
-- [ ] Paginate unbounded database queries (server.py ~line 375)
+- [ ] Add more pagination to database queries
 
 ---
 
 ## Files Reference
 
+**Authentication:**
+- `/app/frontend/src/AuthPage.js` - Login/Register
+- `/app/frontend/src/TwoFactorSetup.js` - 2FA setup
+- `/app/frontend/src/TwoFactorVerify.js` - 2FA login verification
+- `/app/backend/auth_routes_v2.py` - Auth API endpoints
+
 **Cart System:**
 - `/app/frontend/src/CartContext.js` - Central cart state management
-- `/app/frontend/src/ShoppingCart.js` - Cart dropdown component (SoulFoodApp)
+- `/app/frontend/src/ShoppingCart.js` - Cart dropdown component
 - `/app/frontend/src/QuickOrder.js` - Quick order page with inline cart
+- `/app/frontend/src/CheckoutPage.js` - Checkout flow
 
 **Content Downloads:**
 - `/app/content/downloads/` - All PDF workbooks and lesson files
-
-**Backend Routes:**
-- `/app/backend/payment_routes.py` - Stripe checkout and webhooks
-- `/app/backend/audio_routes.py` - Audio code system
 
 ---
 
