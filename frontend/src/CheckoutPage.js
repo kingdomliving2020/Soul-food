@@ -7,7 +7,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Login Modal Component (Amazon/Walmart style)
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
-  const [mode, setMode] = useState('login'); // 'login' or 'register'
+  const [mode, setMode] = useState('login'); // 'login', 'register', or 'otp'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -19,6 +19,13 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [dobYear, setDobYear] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  // OTP state
+  const [otpCode, setOtpCode] = useState('');
+  const [otpMethod, setOtpMethod] = useState('email'); // 'email', 'totp', 'sms'
+  const [pendingUserId, setPendingUserId] = useState(null);
+  const [pendingToken, setPendingToken] = useState(null);
+  const [pendingUserData, setPendingUserData] = useState(null);
 
   // Age verification - must be 18+ for online transactions
   const validateAge = () => {
