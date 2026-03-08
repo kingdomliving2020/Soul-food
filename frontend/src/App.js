@@ -1924,6 +1924,7 @@ function App() {
             <Route path="/login" element={<AuthPage />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/2fa-setup" element={<TwoFactorSetup />} />
+            <Route path="/2fa-verify" element={<TwoFactorVerify />} />
             <Route path="/my-library" element={<MyLibrary />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/about" element={<AboutUs />} />
