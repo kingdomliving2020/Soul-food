@@ -1079,18 +1079,44 @@ const QuickOrder = () => {
                 <Card key={meal.id} className="shadow-lg hover:shadow-xl transition-shadow">
                   <CardContent className="p-5">
                     <div className="flex gap-4">
-                      {/* Cover Image */}
+                      {/* Cover Image - Dynamic based on edition selection */}
                       <div className="flex-shrink-0 relative">
                         <img 
-                          src={meal.id === 'holiday' ? '/covers/holiday-ae-front-new.png' : 
-                               meal.id === 'lunch' ? '/soul-food-logo.png' :
-                               meal.id === 'instructor' ? '/covers/breakfast-instructor-front.jpg' :
-                               meal.id === 'workbooks' ? '/covers/breakfast-adult-front.jpg' :
-                               meal.id === 'subscriptions' ? '/soul-food-logo.png' :
-                               meal.id === 'medallions' ? '/soul-food-logo.png' :
-                               '/covers/breakfast-adult-front.jpg'} 
+                          src={(() => {
+                            // Dynamic cover based on meal type and selected edition
+                            if (meal.id === 'holiday') {
+                              if (selectedEdition === 'youth') return '/covers/holiday-ye-front.jpg';
+                              if (selectedEdition === 'instructor') return '/covers/holiday-ie-front.jpg';
+                              return '/covers/holiday-ae-front-new.png';
+                            }
+                            if (meal.id === 'breakfast') {
+                              if (selectedEdition === 'youth') return '/covers/breakfast-youth-front.jpg';
+                              if (selectedEdition === 'instructor') return '/covers/breakfast-instructor-front.jpg';
+                              return '/covers/breakfast-adult-front.jpg';
+                            }
+                            if (meal.id === 'lunch') return '/soul-food-logo.png';
+                            if (meal.id === 'instructor') {
+                              // Check selected package for instructor section
+                              if (selectedPkg?.includes('holiday')) return '/covers/holiday-ie-front.jpg';
+                              return '/covers/breakfast-instructor-front.jpg';
+                            }
+                            if (meal.id === 'workbooks') {
+                              // Get workbook cover based on selected package
+                              const pkg = pkgData?.id || '';
+                              if (pkg.includes('holiday-ae')) return '/covers/holiday-ae-front-new.png';
+                              if (pkg.includes('holiday-ye')) return '/covers/holiday-ye-front.jpg';
+                              if (pkg.includes('holiday-ie')) return '/covers/holiday-ie-front.jpg';
+                              if (pkg.includes('breakfast-ye')) return '/covers/breakfast-youth-front.jpg';
+                              if (selectedEdition === 'youth') return '/covers/breakfast-youth-front.jpg';
+                              return '/covers/breakfast-adult-front.jpg';
+                            }
+                            if (meal.id === 'subscriptions') return '/soul-food-logo.png';
+                            if (meal.id === 'medallions') return '/soul-food-logo.png';
+                            if (meal.id === 'bookclub') return '/covers/breakfast-instructor-front.jpg';
+                            return '/covers/breakfast-adult-front.jpg';
+                          })()} 
                           alt={meal.name}
-                          className={`w-24 h-32 object-contain rounded-lg border border-slate-200 shadow-sm bg-white ${meal.preOrder ? 'opacity-80' : ''}`}
+                          className={`w-24 h-32 object-contain rounded-lg border border-slate-200 shadow-sm bg-white ${meal.preOrder ? 'opacity-80' : ''} transition-all duration-300`}
                         />
                         {meal.preOrder && (
                           <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">
