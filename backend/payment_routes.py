@@ -970,71 +970,9 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         raise HTTPException(status_code=400, detail="Cart is empty")
     
     # ============================================================
-    # CHECKOUT GATING LOGIC
-    # Account required for: subscriptions, IE editions, bundles
-    # Guest OK for: physical books, merchandise, game certificates
+    # ACCOUNT GATING TEMPORARILY DISABLED FOR LAUNCH
+    # All users can checkout any items - account linking handled post-purchase
     # ============================================================
-    
-    ACCOUNT_REQUIRED_KEYWORDS = [
-        'subscription', 'subscribe', 'monthly',  # Subscriptions
-        '-ie-', '_ie_', 'instructor',             # Instructor Edition
-        'bundle', 'pack', 'bulk',                 # Bundle packages
-        'gaming-pass-90', 'gaming-pass-30'        # Game passes (recurring access)
-    ]
-    
-    GUEST_ALLOWED_KEYWORDS = [
-        'print', 'physical', 'merch', 'merchandise',  # Physical products
-        'certificate', 'gift',                         # Gift certificates
-        'nibble', 'single'                             # Single lesson purchases
-    ]
-    
-    requires_account = False
-    account_required_items = []
-    
-    # First, check if user is already logged in (check token BEFORE item validation)
-    SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
-    auth_header = http_request.headers.get("Authorization")
-    user_id = None
-    user_logged_in = False
-    
-    if auth_header and auth_header.startswith("Bearer "):
-        token = auth_header.split(" ")[1]
-        try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-            user_id = payload.get("sub")
-            if user_id:
-                user_logged_in = True
-        except JWTError:
-            pass
-    
-    # Only check account requirements if user is NOT logged in
-    if not user_logged_in:
-        for item in request.items:
-            item_id = str(item.get('id', item.get('product_id', ''))).lower()
-            item_type = str(item.get('type', '')).lower()
-            item_name = str(item.get('name', '')).lower()
-            
-            # Check if item requires account
-            for keyword in ACCOUNT_REQUIRED_KEYWORDS:
-                if keyword in item_id or keyword in item_type or keyword in item_name:
-                    # But allow if it's also a guest-allowed type
-                    is_guest_allowed = any(gk in item_id or gk in item_type or gk in item_name for gk in GUEST_ALLOWED_KEYWORDS)
-                    if not is_guest_allowed:
-                        requires_account = True
-                        account_required_items.append(item.get('name', item_id))
-                        break
-        
-        # If account required and user not logged in, return error
-        if requires_account:
-            raise HTTPException(
-                status_code=401,
-                detail={
-                    "error": "account_required",
-                    "message": "Please sign in or create an account to purchase these items",
-                    "items_requiring_account": account_required_items,
-                    "reason": "Subscriptions, Instructor Editions, and Bundle packages require an account for license management and content access."
-                }
-            )
     
     # Get Stripe API key
     api_key = os.getenv('STRIPE_SECRET_KEY')
