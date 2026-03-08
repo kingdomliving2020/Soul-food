@@ -1509,13 +1509,11 @@ const QuickOrder = () => {
               <Card key={pass.id} className="shadow-lg hover:shadow-xl transition-shadow border-2 border-purple-200">
                 <CardContent className="p-5">
                   <div className="flex gap-4">
-                    {/* Game Token Image */}
+                    {/* Game Controller Emoji Icon */}
                     <div className="flex-shrink-0 relative">
-                      <img 
-                        src={pass.image} 
-                        alt={pass.name}
-                        className="w-20 h-20 object-contain rounded-lg"
-                      />
+                      <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-xl flex items-center justify-center border-2 border-purple-200">
+                        <span className="text-5xl">{pass.icon}</span>
+                      </div>
                       {pass.badge && (
                         <Badge className="absolute -top-2 -right-2 bg-emerald-500 text-xs">
                           {pass.badge}
@@ -1556,7 +1554,7 @@ const QuickOrder = () => {
                               name: pass.name,
                               price: pass.price,
                               quantity: 1,
-                              image: pass.image
+                              icon: pass.icon
                             });
                             toast.success(`Added ${pass.name} to cart!`);
                           }}
