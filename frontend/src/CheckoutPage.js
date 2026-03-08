@@ -202,22 +202,98 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 
           <form onSubmit={mode === 'login' ? handleLogin : handleRegister} className="space-y-4">
             {mode === 'register' && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="John Doe"
-                />
-              </div>
+              <>
+                {/* Name Fields */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">First Name *</label>
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      placeholder="John"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Last Name *</label>
+                    <input
+                      type="text"
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      required
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                      placeholder="Doe"
+                    />
+                  </div>
+                </div>
+
+                {/* Suffix */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Suffix (optional)</label>
+                  <select
+                    value={suffix}
+                    onChange={(e) => setSuffix(e.target.value)}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  >
+                    <option value="">None</option>
+                    <option value="Jr.">Jr.</option>
+                    <option value="Sr.">Sr.</option>
+                    <option value="II">II</option>
+                    <option value="III">III</option>
+                    <option value="IV">IV</option>
+                  </select>
+                </div>
+
+                {/* Date of Birth */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Date of Birth * <span className="text-xs text-gray-500">(Must be 18+)</span>
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <select
+                      value={dobMonth}
+                      onChange={(e) => setDobMonth(e.target.value)}
+                      required
+                      className="px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="">Month</option>
+                      {[...Array(12)].map((_, i) => (
+                        <option key={i+1} value={String(i+1)}>{new Date(0, i).toLocaleString('en', {month: 'long'})}</option>
+                      ))}
+                    </select>
+                    <select
+                      value={dobDay}
+                      onChange={(e) => setDobDay(e.target.value)}
+                      required
+                      className="px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="">Day</option>
+                      {[...Array(31)].map((_, i) => (
+                        <option key={i+1} value={String(i+1)}>{i+1}</option>
+                      ))}
+                    </select>
+                    <select
+                      value={dobYear}
+                      onChange={(e) => setDobYear(e.target.value)}
+                      required
+                      className="px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="">Year</option>
+                      {[...Array(100)].map((_, i) => {
+                        const year = new Date().getFullYear() - 18 - i;
+                        return <option key={year} value={String(year)}>{year}</option>;
+                      })}
+                    </select>
+                  </div>
+                </div>
+              </>
             )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {mode === 'login' ? 'Email or Username' : 'Email'}
+                {mode === 'login' ? 'Email or Username' : 'Email *'}
               </label>
               <input
                 type={mode === 'register' ? 'email' : 'text'}
@@ -230,17 +306,39 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Password *</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={8}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="••••••••"
+                placeholder="Min 8 characters"
               />
             </div>
+
+            {mode === 'register' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password *</label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Re-enter password"
+                />
+              </div>
+            )}
+
+            {mode === 'register' && (
+              <p className="text-xs text-gray-500">
+                By creating an account, you agree to our Terms of Service and Privacy Policy. 
+                You must be 18 years or older to make online purchases.
+              </p>
+            )}
 
             <button
               type="submit"
