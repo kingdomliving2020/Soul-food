@@ -615,6 +615,18 @@ async def verify_2fa(verify: TwoFactorVerify, request: Request):
             # Clean up pending
             await db.tfa_pending.delete_one({"user_id": user_id})
             
+            # Get updated user data and generate new token
+            user = await db.users.find_one({"id": user_id}, {"_id": 0, "hashed_password": 0, "totp_secret": 0})
+            if user:
+                access_token = create_access_token(data={"sub": user_id, "email": user.get("email", "")})
+                return {
+                    "verified": True, 
+                    "method": "totp", 
+                    "message": "Authenticator verified successfully",
+                    "token": access_token,
+                    "user": user
+                }
+            
             return {"verified": True, "method": "totp", "message": "Authenticator app enabled successfully"}
     
     raise HTTPException(status_code=400, detail="Invalid verification code")
