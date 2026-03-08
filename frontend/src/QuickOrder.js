@@ -582,7 +582,7 @@ const QuickOrder = () => {
       subtitle: '30-Day Access (Adult/Youth)',
       description: '30-day access to Soul Food game content for study groups and family nights',
       restrictions: '4 hrs/day limit • 20 min idle timeout',
-      image: '/images/bounty-stack-token.png',
+      icon: '🎮',
       listPrice: 7.99,
       price: 7.99,
       editions: ['adult', 'youth']
@@ -593,7 +593,7 @@ const QuickOrder = () => {
       subtitle: '90-Day Access - Best Value!',
       description: '90-day access to all game modes for churches, small groups, and quarterly study cycles',
       restrictions: '5 hrs/day limit • 30 min idle timeout',
-      image: '/images/bounty-stack-token.png',
+      icon: '🎮',
       listPrice: 24.99,
       price: 24.99,
       editions: ['adult', 'youth', 'instructor'],
