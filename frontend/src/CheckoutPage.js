@@ -634,6 +634,44 @@ const CheckoutPage = () => {
             </div>
           </div>
 
+          {/* Check for items requiring account */}
+          {(() => {
+            const accountRequiredKeywords = ['gaming-pass', 'subscription', 'instructor', 'bundle', '-ie-'];
+            const itemsRequiringAccount = cartItems.filter(item => {
+              const itemId = (item.productId || item.id || '').toLowerCase();
+              const itemName = (item.name || '').toLowerCase();
+              return accountRequiredKeywords.some(kw => itemId.includes(kw) || itemName.includes(kw));
+            });
+            
+            if (itemsRequiringAccount.length > 0) {
+              return (
+                <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 mb-6">
+                  <div className="flex items-start gap-3">
+                    <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-bold text-amber-800 mb-1">Account Required for Some Items</h3>
+                      <p className="text-amber-700 text-sm mb-2">
+                        The following items require an account for license management:
+                      </p>
+                      <ul className="text-amber-700 text-sm list-disc list-inside mb-3">
+                        {itemsRequiringAccount.map((item, idx) => (
+                          <li key={idx}>{item.name}</li>
+                        ))}
+                      </ul>
+                      <button
+                        onClick={handleSignIn}
+                        className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors"
+                      >
+                        Sign In to Continue
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          })()}
+
           {/* Sign In Option */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden mb-4">
             <div className="p-6">
