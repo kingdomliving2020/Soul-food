@@ -721,8 +721,9 @@ const CheckoutPage = () => {
 
   // Check if user is logged in on mount
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
+    // Check multiple possible token keys for compatibility
+    const token = localStorage.getItem('token') || localStorage.getItem('soul_food_token') || localStorage.getItem('soulFoodToken');
+    const savedUser = localStorage.getItem('user') || localStorage.getItem('soul_food_user');
     
     if (token && savedUser) {
       try {
