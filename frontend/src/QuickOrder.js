@@ -1302,8 +1302,8 @@ const QuickOrder = () => {
                             )}
                           </div>
                           
-                          {/* Action Buttons - equal width, stacked */}
-                          <div className="flex gap-2">
+                          {/* Action Buttons with Quantity */}
+                          <div className="flex gap-2 items-center">
                             {(meal.comingSoon && !meal.available) || pkgData?.comingSoon ? (
                               <Button
                                 size="sm"
@@ -1313,40 +1313,61 @@ const QuickOrder = () => {
                                 🔒 Coming Soon
                               </Button>
                             ) : (
-                              <Button
-                                size="sm"
-                                onClick={() => {
-                                  const itemName = pkgData?.selectMonth 
-                                    ? `${meal.name} - ${meal.monthOptions.find(m => m.id === selectedMonth)?.name}`
-                                    : pkgData?.selectLesson
-                                    ? `${meal.name} - ${meal.lessonOptions.find(l => l.id === selectedLesson)?.name}`
-                                    : `${meal.name} - ${pkgData?.name}`;
-                                  
-                                  const isPreOrder = meal.preOrder || pkgData?.preOrder;
-                                  const shipNote = pkgData?.note ? ` (${pkgData.note})` : '';
-                                  
-                                  addToCart({
-                                    id: `${meal.id}-${selectedPkg}${pkgData?.selectMonth ? `-${selectedMonth}` : ''}${pkgData?.selectLesson ? `-${selectedLesson}` : ''}-${selectedEdition}-${selectedFormat}`,
-                                    name: isPreOrder ? `[PRE-ORDER] ${itemName} - ${selectedEdition.toUpperCase()}${shipNote}` : `${itemName} - ${selectedEdition.toUpperCase()}${shipNote}`,
-                                    edition: selectedEdition,
-                                    format: selectedFormat,
-                                    price: price,
-                                    quantity: 1,
-                                    isPreOrder: isPreOrder
-                                  });
-                                  
-                                  if (isPreOrder) {
-                                    toast.success(`Pre-order added! ${itemName} will be available soon.`);
-                                  } else {
-                                    toast.success(`Added ${itemName} to cart!`);
-                                  }
-                                }}
-                                className={`flex-1 text-xs py-2 ${meal.preOrder || pkgData?.preOrder 
-                                  ? "bg-amber-500 hover:bg-amber-600" 
-                                  : "bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700"}`}
-                              >
-                                {meal.preOrder || pkgData?.preOrder ? '🛒 Pre-Order' : '🛒 Add to Cart'}
-                              </Button>
+                              <>
+                                {/* Quantity Selector */}
+                                <div className="flex items-center border rounded-md">
+                                  <button
+                                    onClick={() => updateSelection(meal.id, 'quantity', Math.max(1, (sel.quantity || 1) - 1))}
+                                    className="px-2 py-1 text-slate-600 hover:bg-slate-100 text-sm"
+                                  >
+                                    −
+                                  </button>
+                                  <span className="px-2 py-1 min-w-[30px] text-center text-sm font-medium">
+                                    {sel.quantity || 1}
+                                  </span>
+                                  <button
+                                    onClick={() => updateSelection(meal.id, 'quantity', (sel.quantity || 1) + 1)}
+                                    className="px-2 py-1 text-slate-600 hover:bg-slate-100 text-sm"
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    const itemName = pkgData?.selectMonth 
+                                      ? `${meal.name} - ${meal.monthOptions.find(m => m.id === selectedMonth)?.name}`
+                                      : pkgData?.selectLesson
+                                      ? `${meal.name} - ${meal.lessonOptions.find(l => l.id === selectedLesson)?.name}`
+                                      : `${meal.name} - ${pkgData?.name}`;
+                                    
+                                    const isPreOrder = meal.preOrder || pkgData?.preOrder;
+                                    const shipNote = pkgData?.note ? ` (${pkgData.note})` : '';
+                                    const qty = sel.quantity || 1;
+                                    
+                                    addToCart({
+                                      id: `${meal.id}-${selectedPkg}${pkgData?.selectMonth ? `-${selectedMonth}` : ''}${pkgData?.selectLesson ? `-${selectedLesson}` : ''}-${selectedEdition}-${selectedFormat}`,
+                                      name: isPreOrder ? `[PRE-ORDER] ${itemName} - ${selectedEdition.toUpperCase()}${shipNote}` : `${itemName} - ${selectedEdition.toUpperCase()}${shipNote}`,
+                                      edition: selectedEdition,
+                                      format: selectedFormat,
+                                      price: price,
+                                      quantity: qty,
+                                      isPreOrder: isPreOrder
+                                    });
+                                    
+                                    if (isPreOrder) {
+                                      toast.success(`Pre-order added! ${qty}x ${itemName}`);
+                                    } else {
+                                      toast.success(`Added ${qty}x ${itemName} to cart!`);
+                                    }
+                                  }}
+                                  className={`flex-1 text-xs py-2 ${meal.preOrder || pkgData?.preOrder 
+                                    ? "bg-amber-500 hover:bg-amber-600" 
+                                    : "bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700"}`}
+                                >
+                                  {meal.preOrder || pkgData?.preOrder ? '🛒 Pre-Order' : '🛒 Add to Cart'}
+                                </Button>
+                              </>
                             )}
                           </div>
                         </div>
