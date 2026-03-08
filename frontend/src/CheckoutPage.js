@@ -79,7 +79,27 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
       );
 
       if (result.ok && result.data.access_token) {
-        // Save to both token keys for compatibility
+        // Check if 2FA is required
+        if (result.data.requires_2fa_verification || result.data.requires_2fa_setup) {
+          // Store pending auth data
+          setPendingUserId(result.data.user?.id);
+          setPendingToken(result.data.access_token);
+          setPendingUserData(result.data.user);
+          setMode('otp');
+          
+          // If user has TOTP set up, default to that
+          if (result.data.user?.tfa_method === 'totp') {
+            setOtpMethod('totp');
+          } else {
+            // Send email code automatically
+            setOtpMethod('email');
+            await sendOtpCode(result.data.access_token);
+          }
+          setLoading(false);
+          return;
+        }
+        
+        // No 2FA required - complete login
         localStorage.setItem('token', result.data.access_token);
         localStorage.setItem('soulFoodToken', result.data.access_token);
         localStorage.setItem('soul_food_token', result.data.access_token);
