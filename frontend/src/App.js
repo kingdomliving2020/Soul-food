@@ -21,6 +21,7 @@ import SnackPacksPage from './SnackPacksPage';
 import AuthPage from './AuthPage';
 import AuthCallback from './AuthCallback';
 import TwoFactorSetup from './TwoFactorSetup';
+import TwoFactorVerify from './TwoFactorVerify';
 import MyLibrary from './MyLibrary';
 import AboutUs from './AboutUs';
 import AdminConsole from './AdminConsole';
