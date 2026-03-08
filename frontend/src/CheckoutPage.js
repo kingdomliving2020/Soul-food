@@ -158,7 +158,19 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
             if (xhr.status >= 200 && xhr.status < 300 && data.verified) {
               // OTP verified - complete login
               const finalToken = data.token || pendingToken;
-              const finalUser = data.user || pendingUserData;
+              // Prefer server user data, fallback to pending data, then try localStorage
+              let finalUser = data.user || pendingUserData;
+              
+              // If still no user data, try to construct minimal user from email
+              if (!finalUser && email) {
+                finalUser = { email: email, name: email.split('@')[0] };
+              }
+              
+              if (!finalToken || !finalUser) {
+                setError('Login verification failed. Please try again.');
+                setMode('login');
+                return;
+              }
               
               localStorage.setItem('token', finalToken);
               localStorage.setItem('soulFoodToken', finalToken);
