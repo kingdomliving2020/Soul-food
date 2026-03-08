@@ -903,8 +903,10 @@ const CheckoutPage = () => {
       
       // Add auth token if user is logged in (check all possible token keys)
       const token = localStorage.getItem('token') || localStorage.getItem('soulFoodToken') || localStorage.getItem('soul_food_token');
+      console.log('[Checkout] Token found:', token ? 'YES' : 'NO');
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
+        console.log('[Checkout] Authorization header added');
       }
 
       const response = await fetch(`${BACKEND_URL}/api/payments/checkout/cart`, {
