@@ -545,6 +545,14 @@ const CheckoutPage = () => {
         throw new Error('Unexpected error during checkout. Please try again.');
       }
 
+      // Check for account required error (401)
+      if (!response.ok && data.detail?.error === 'account_required') {
+        setError(`${data.detail.message}\n\nItems requiring account: ${data.detail.items_requiring_account?.join(', ')}`);
+        setShowLoginModal(true);
+        setLoading(false);
+        return;
+      }
+
       if (data.checkout_url || data.url) {
         // Clear cart before redirect
         clearCart();
