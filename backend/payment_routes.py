@@ -1352,15 +1352,16 @@ async def stripe_webhook(request: Request):
     """Handle Stripe webhook events"""
     from download_protection import create_download_link
     
-    # Get Stripe API key
+    # Get Stripe API key and webhook secret
     api_key = os.getenv('STRIPE_SECRET_KEY')
+    webhook_secret = os.getenv('STRIPE_WEBHOOK_SECRET')
     if not api_key:
         raise HTTPException(status_code=500, detail="Stripe API key not configured")
     
-    # Initialize Stripe Checkout
+    # Initialize Stripe Checkout with webhook secret for signature verification
     host_url = str(request.base_url).rstrip('/')
     webhook_url = f"{host_url}/api/payments/webhook/stripe"
-    stripe_checkout = StripeCheckout(api_key=api_key, webhook_url=webhook_url)
+    stripe_checkout = StripeCheckout(api_key=api_key, webhook_secret=webhook_secret, webhook_url=webhook_url)
     
     try:
         # Get request body and signature
