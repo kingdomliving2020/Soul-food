@@ -169,7 +169,8 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
       email, 
       username,
       password, 
-      name: name || email.split('@')[0]
+      name: fullName,
+      date_of_birth: `${dobYear}-${dobMonth.padStart(2, '0')}-${dobDay.padStart(2, '0')}`
     }));
   };
 
