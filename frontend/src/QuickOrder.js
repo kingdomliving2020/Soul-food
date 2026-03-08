@@ -1082,6 +1082,7 @@ const QuickOrder = () => {
                       {/* Cover Image - Dynamic based on edition selection */}
                       <div className="flex-shrink-0 relative">
                         <img 
+                          key={`${meal.id}-${selectedEdition}-${selectedPkg}`}
                           src={(() => {
                             // Dynamic cover based on meal type and selected edition
                             if (meal.id === 'holiday') {
