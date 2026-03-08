@@ -582,6 +582,19 @@ async def verify_2fa(verify: TwoFactorVerify, request: Request):
             {"$set": {"tfa_enabled": True, "tfa_method": "email"}}
         )
         
+        # Get updated user data and generate new token
+        user = await db.users.find_one({"id": user_id}, {"_id": 0, "hashed_password": 0, "totp_secret": 0})
+        if user:
+            # Generate fresh access token
+            access_token = create_access_token(data={"sub": user_id, "email": user.get("email", "")})
+            return {
+                "verified": True, 
+                "method": "email", 
+                "message": "2FA verified successfully",
+                "token": access_token,
+                "user": user
+            }
+        
         return {"verified": True, "method": "email", "message": "2FA enabled successfully"}
     
     # Check for TOTP
