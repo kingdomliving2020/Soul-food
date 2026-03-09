@@ -405,6 +405,96 @@ async def get_lesson(lesson_id: str):
 # Include the router in the main app
 app.include_router(api_router)
 
+# Refund Request Endpoint
+@app.post("/api/refund-request")
+async def submit_refund_request(request: Request):
+    """Handle refund/return requests from customers"""
+    from datetime import datetime, timezone
+    
+    try:
+        data = await request.json()
+    except:
+        raise HTTPException(status_code=400, detail="Invalid request data")
+    
+    # Validate required fields
+    order_number = data.get('order_number', '').strip()
+    email = data.get('email', '').strip()
+    reason = data.get('reason', '')
+    
+    if not order_number or not email or not reason:
+        raise HTTPException(status_code=400, detail="Order number, email, and reason are required")
+    
+    # Create refund request record
+    refund_request = {
+        "id": f"REF-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+        "order_number": order_number,
+        "email": email,
+        "refund_type": data.get('refund_type', 'full'),
+        "reason": reason,
+        "items_to_return": data.get('items_to_return', ''),
+        "description": data.get('description', ''),
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc),
+        "updated_at": datetime.now(timezone.utc)
+    }
+    
+    # Save to database
+    await db.refund_requests.insert_one(refund_request)
+    
+    # Send notification email to admin
+    try:
+        from email_service import send_email
+        admin_email_body = f"""
+        <h2>New Refund Request</h2>
+        <p><strong>Request ID:</strong> {refund_request['id']}</p>
+        <p><strong>Order Number:</strong> {order_number}</p>
+        <p><strong>Customer Email:</strong> {email}</p>
+        <p><strong>Type:</strong> {refund_request['refund_type'].title()}</p>
+        <p><strong>Reason:</strong> {reason}</p>
+        <p><strong>Items:</strong> {refund_request['items_to_return'] or 'All items'}</p>
+        <p><strong>Description:</strong> {refund_request['description'] or 'N/A'}</p>
+        <hr>
+        <p>Please review this request in the admin dashboard or Stripe.</p>
+        """
+        await send_email(
+            to_email="support@kingdom-soul.com",
+            subject=f"Refund Request: {order_number}",
+            html_content=admin_email_body
+        )
+    except Exception as email_err:
+        print(f"Failed to send admin notification: {email_err}")
+    
+    # Send confirmation to customer
+    try:
+        from email_service import send_email
+        customer_email_body = f"""
+        <h2>Refund Request Received</h2>
+        <p>Thank you for contacting us. We've received your refund request for order <strong>{order_number}</strong>.</p>
+        <p><strong>Request ID:</strong> {refund_request['id']}</p>
+        <p><strong>Type:</strong> {refund_request['refund_type'].title()} Refund</p>
+        <h3>What happens next?</h3>
+        <ul>
+            <li>Our team will review your request within 1-2 business days</li>
+            <li>You'll receive an email with our decision</li>
+            <li>If approved, refunds are processed within 5-7 business days</li>
+        </ul>
+        <p>If you have any questions, reply to this email or contact us at support@kingdom-soul.com</p>
+        <p>Blessings,<br>The Soul Food Team</p>
+        """
+        await send_email(
+            to_email=email,
+            subject=f"Refund Request Received - {order_number}",
+            html_content=customer_email_body
+        )
+    except Exception as email_err:
+        print(f"Failed to send customer confirmation: {email_err}")
+    
+    return {
+        "success": True,
+        "request_id": refund_request['id'],
+        "message": "Refund request submitted successfully"
+    }
+
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
