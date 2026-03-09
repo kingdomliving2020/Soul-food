@@ -162,10 +162,33 @@ const PaymentSuccess = () => {
                 </p>
               </div>
             ) : (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                <p className="text-yellow-800 text-sm">
-                  Your download links are being generated. Check your email for the download links, or refresh this page in a moment.
-                </p>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">⏳</div>
+                  <div>
+                    <h4 className="font-semibold text-yellow-800 mb-1">Downloads Processing</h4>
+                    <p className="text-yellow-700 text-sm mb-3">
+                      Your download links are being generated. This usually takes a few seconds.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => window.location.reload()}
+                        className="bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
+                      >
+                        🔄 Refresh Page
+                      </button>
+                      <button
+                        onClick={() => navigate('/my-library')}
+                        className="bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
+                      >
+                        📚 Go to My Library
+                      </button>
+                    </div>
+                    <p className="text-yellow-600 text-xs mt-3">
+                      Download links will also be sent to your email.
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 
