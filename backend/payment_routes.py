@@ -1352,6 +1352,8 @@ async def stripe_webhook(request: Request):
             transaction = await db.payment_transactions.find_one({"session_id": session_id}, {"_id": 0})
             
             if transaction:
+                logger.info(f"Found transaction for session {session_id}: order {transaction.get('order_number')}")
+                print(f"Found transaction for session {session_id}: order {transaction.get('order_number')}")
                 # Update transaction status
                 await db.payment_transactions.update_one(
                     {"session_id": session_id, "payment_status": {"$ne": "paid"}},
