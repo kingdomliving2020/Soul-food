@@ -1784,18 +1784,33 @@ async def get_my_purchases(request: Request):
             })
     
     for txn in transactions:
-        order_id = txn.get("order_id") or txn.get("session_id")
+        order_id = txn.get("order_number") or txn.get("order_id") or txn.get("session_id")
         if order_id in seen_orders:
             continue
         seen_orders.add(order_id)
         
+        # Check if this order has download links
+        has_downloads = txn.get("download_links_generated", False)
+        
         for item in txn.get("items", []):
+            item_product_id = item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
+            
+            # Find the specific download link for this item
+            download_link = await db.download_links.find_one({
+                "order_id": order_id,
+                "product_id": {"$regex": item_product_id, "$options": "i"},
+                "revoked": False
+            }, {"_id": 0, "token": 1})
+            
+            download_token = download_link.get("token") if download_link else None
+            
             purchases.append({
                 "order_id": order_id,
-                "product_id": item.get("product_id") or item.get("id"),
+                "product_id": item_product_id,
                 "product_name": item.get("name", "Soul Food Product"),
                 "purchased_at": txn.get("created_at"),
-                "download_url": f"{os.getenv('REACT_APP_BACKEND_URL', '')}/api/payments/order/{order_id}/downloads" if txn.get("has_digital") else None
+                "download_url": f"/api/download/{download_token}" if download_token else None,
+                "has_download": bool(download_token)
             })
     
     return {"purchases": purchases}
