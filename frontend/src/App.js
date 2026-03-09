@@ -1952,6 +1952,8 @@ function App() {
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancel" element={<PaymentCancel />} />
             <Route path="/order-success" element={<OrderSuccess />} />
+            <Route path="/refund-request" element={<RefundRequest />} />
+            <Route path="/returns" element={<RefundRequest />} />
             <Route path="/admin/*" element={<AdminConsole />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
