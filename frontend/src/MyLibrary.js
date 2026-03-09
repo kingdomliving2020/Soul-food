@@ -330,34 +330,75 @@ const MyLibrary = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {purchases.map((purchase, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-all"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-xl">
-                            📚
+                    {purchases.map((purchase, idx) => {
+                      // Determine thumbnail based on product name/id
+                      const getThumbnail = () => {
+                        const name = (purchase.product_name || '').toLowerCase();
+                        const id = (purchase.product_id || '').toLowerCase();
+                        
+                        if (name.includes('holiday') || id.includes('holiday')) {
+                          if (name.includes('youth') || id.includes('ye')) return '/covers/holiday-ye-front.jpg';
+                          if (name.includes('instructor') || id.includes('ie')) return '/covers/holiday-ie-front.jpg';
+                          return '/covers/holiday-ae-front-new.png';
+                        }
+                        if (name.includes('breakfast') || id.includes('breakfast')) {
+                          if (name.includes('youth') || id.includes('ye')) return '/covers/breakfast-youth-front.jpg';
+                          if (name.includes('instructor') || id.includes('ie')) return '/covers/breakfast-instructor-front.jpg';
+                          return '/covers/breakfast-adult-front.jpg';
+                        }
+                        if (name.includes('gridiron') || name.includes('grinch') || id.includes('gridiron')) {
+                          if (name.includes('youth') || id.includes('ye')) return '/covers/game-gridiron-ye.png';
+                          return '/covers/game-gridiron-ae.png';
+                        }
+                        if (name.includes('passport') || id.includes('passport')) {
+                          if (name.includes('youth') || id.includes('ye')) return '/covers/game-passport-ye.png';
+                          return '/covers/game-passport-ae.png';
+                        }
+                        return '/soul-food-logo.png';
+                      };
+                      
+                      return (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-all"
+                        >
+                          <div className="flex items-center gap-4">
+                            <img 
+                              src={getThumbnail()} 
+                              alt={purchase.product_name}
+                              className="w-16 h-20 object-contain rounded-lg border border-slate-200 bg-white shadow-sm"
+                            />
+                            <div>
+                              <h4 className="font-semibold text-slate-800">{purchase.product_name}</h4>
+                              <p className="text-sm text-slate-500">
+                                Purchased: {new Date(purchase.purchased_at).toLocaleDateString()}
+                              </p>
+                              <p className="text-xs text-slate-400">Order: {purchase.order_id}</p>
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="font-semibold text-slate-800">{purchase.product_name}</h4>
-                            <p className="text-sm text-slate-500">
-                              Purchased: {new Date(purchase.purchased_at).toLocaleDateString()}
-                            </p>
+                          <div className="flex gap-2">
+                            {purchase.download_url ? (
+                              <Button
+                                onClick={() => window.open(purchase.download_url, '_blank')}
+                                className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white"
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Download PDF
+                              </Button>
+                            ) : (
+                              <Button
+                                variant="outline"
+                                disabled
+                                className="border-slate-300 text-slate-400"
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Processing...
+                              </Button>
+                            )}
                           </div>
                         </div>
-                        {purchase.download_url && (
-                          <Button
-                            variant="outline"
-                            onClick={() => window.open(purchase.download_url, '_blank')}
-                            className="border-purple-300 text-purple-600 hover:bg-purple-50"
-                          >
-                            <Download className="w-4 h-4 mr-2" />
-                            Download
-                          </Button>
-                        )}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </CardContent>
