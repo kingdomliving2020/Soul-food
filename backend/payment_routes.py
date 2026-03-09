@@ -1874,7 +1874,7 @@ async def get_my_purchases(request: Request):
                 "product_id": item_product_id,
                 "product_name": item.get("name", "Soul Food Product"),
                 "purchased_at": txn.get("created_at"),
-                "download_url": f"/api/download/{download_token}" if download_token else None,
+                "download_url": f"/api/downloads/file/{download_token}" if download_token else None,
                 "has_download": bool(download_token)
             })
     
