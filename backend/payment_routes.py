@@ -1581,6 +1581,71 @@ async def get_download_links(order_id: str):
     }
 
 
+@router.post("/admin/generate-downloads/{order_number}")
+async def admin_generate_downloads(order_number: str, request: Request):
+    """Admin endpoint to manually generate download links for an order"""
+    from download_protection import create_download_link
+    
+    # Get items from request body
+    try:
+        body = await request.json()
+        items = body.get("items", [])
+        customer_email = body.get("customer_email", "admin@kingdom-soul.com")
+    except:
+        items = []
+        customer_email = "admin@kingdom-soul.com"
+    
+    if not items:
+        return {"error": "No items provided. Send JSON body with 'items' array containing product_id and name for each item"}
+    
+    download_links_created = []
+    
+    for item in items:
+        item_product_id = item.get("product_id", "")
+        item_name = item.get("name", item_product_id)
+        
+        # Normalize product ID
+        normalized_id = normalize_product_id(item_product_id)
+        pdf_path = get_pdf_path(normalized_id)
+        
+        if pdf_path:
+            try:
+                token, expires_at = await create_download_link(
+                    order_id=order_number,
+                    user_id=order_number,
+                    user_email=customer_email,
+                    product_id=normalized_id,
+                    product_name=item_name,
+                    file_path=pdf_path,
+                    payment_verified=True
+                )
+                download_links_created.append({
+                    "product_id": normalized_id,
+                    "name": item_name,
+                    "token": token,
+                    "pdf_path": pdf_path
+                })
+                print(f"[Admin] Download link created for {item_name} ({normalized_id})")
+            except Exception as dl_error:
+                download_links_created.append({
+                    "product_id": normalized_id,
+                    "name": item_name,
+                    "error": str(dl_error)
+                })
+        else:
+            download_links_created.append({
+                "product_id": item_product_id,
+                "name": item_name,
+                "error": f"No PDF found for product ID: {normalized_id}"
+            })
+    
+    return {
+        "order_number": order_number,
+        "downloads_created": len([d for d in download_links_created if "token" in d]),
+        "links": download_links_created
+    }
+
+
 @router.post("/notify-large-order")
 async def notify_large_order(request: Request):
     """Send email notification for large print orders (>25 items)"""
