@@ -1523,6 +1523,11 @@ async def stripe_webhook(request: Request):
                         print(f"[Webhook] Awarded {points_awarded} rewards points to {user_id}")
                 except Exception as points_error:
                     print(f"[Webhook] Error awarding points: {points_error}")
+            else:
+                # Transaction not found - log this critical issue
+                logger.error(f"CRITICAL: Transaction not found for session {session_id}")
+                print(f"CRITICAL: Transaction not found for session {session_id}")
+                # Still return success to prevent Stripe retries, but log the issue
         
         return {"status": "success", "event_type": webhook_response.event_type}
         
