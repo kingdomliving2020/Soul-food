@@ -1913,6 +1913,7 @@ import RefundPolicy from './RefundPolicy';
 import AdminOrders from './AdminOrders';
 import InstructorToolbox from './InstructorToolbox';
 import MultimediaPage from './MultimediaPage';
+import RefundRequest from './RefundRequest';
 
 function App() {
   return (
