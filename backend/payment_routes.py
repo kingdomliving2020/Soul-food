@@ -1307,11 +1307,17 @@ async def get_checkout_status(session_id: str):
 async def stripe_webhook(request: Request):
     """Handle Stripe webhook events"""
     from download_protection import create_download_link
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logger.info("=== STRIPE WEBHOOK RECEIVED ===")
+    print("=== STRIPE WEBHOOK RECEIVED ===")
     
     # Get Stripe API key and webhook secret
     api_key = os.getenv('STRIPE_SECRET_KEY')
     webhook_secret = os.getenv('STRIPE_WEBHOOK_SECRET')
     if not api_key:
+        logger.error("Stripe API key not configured")
         raise HTTPException(status_code=500, detail="Stripe API key not configured")
     
     # Initialize Stripe Checkout with webhook secret for signature verification
@@ -1324,16 +1330,25 @@ async def stripe_webhook(request: Request):
         body = await request.body()
         signature = request.headers.get("Stripe-Signature")
         
+        logger.info(f"Webhook signature present: {bool(signature)}")
+        print(f"Webhook signature present: {bool(signature)}")
+        
         if not signature:
             raise HTTPException(status_code=400, detail="Missing Stripe signature")
         
         # Handle webhook
         webhook_response = await stripe_checkout.handle_webhook(body, signature)
         
+        logger.info(f"Webhook event type: {webhook_response.event_type}")
+        print(f"Webhook event type: {webhook_response.event_type}")
+        
         # Process the webhook event
         if webhook_response.event_type == "checkout.session.completed":
             # Get session ID and find transaction
             session_id = webhook_response.session_id
+            logger.info(f"Processing checkout.session.completed for session: {session_id}")
+            print(f"Processing checkout.session.completed for session: {session_id}")
+            
             transaction = await db.payment_transactions.find_one({"session_id": session_id}, {"_id": 0})
             
             if transaction:
