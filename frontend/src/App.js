@@ -812,7 +812,10 @@ const LandingPage = () => {
             <a href="/terms-of-service" className="text-slate-400 hover:text-white transition-colors duration-200">
               Terms of Service
             </a>
-            <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
+            <a href="/refund-request" className="text-slate-400 hover:text-white transition-colors duration-200">
+              Returns & Refunds
+            </a>
+            <a href="mailto:support@kingdom-soul.com" className="text-slate-400 hover:text-white transition-colors duration-200">
               Contact
             </a>
           </div>
