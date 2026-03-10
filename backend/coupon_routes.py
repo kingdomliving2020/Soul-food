@@ -84,12 +84,15 @@ DEFAULT_COUPONS = [
     {"code": "SoulX1059", "contributor": "Vicky", "max_uses": 50, "discount_percent": 10, "conditions": "All items, single purchase transaction"},
     {"code": "SoulX1073", "contributor": "Lee", "max_uses": 50, "discount_percent": 10, "conditions": "All items, single purchase transaction"},
     
-    # Beta Test Coupons
+    # Beta Test Coupons - TESTII DISABLED
     {"code": "Beta1!2!3!", "max_uses": 20, "discount_percent": 100, "conditions": "Games, holiday, breakfast set 24hr pass, single login session"},
     {"code": "Beta123abc", "max_uses": 20, "discount_percent": 100, "conditions": "Games, holiday, breakfast set 24hr pass, single login session"},
     {"code": "Beta123abcd", "max_uses": 20, "discount_percent": 100, "conditions": "Games, holiday, breakfast set 24hr pass, single login session"},
     {"code": "BETATEST", "max_uses": 100, "discount_percent": 100, "conditions": "Beta tester full access - all items"},
-    {"code": "TESTII", "max_uses": 100, "discount_percent": 99, "conditions": "Live testing - 99% off all items"},
+    # {"code": "TESTII", "max_uses": 100, "discount_percent": 99, "conditions": "DISABLED - Live testing"},
+    
+    # $1 Cart Override Coupon - For testing checkout flow
+    {"code": "DOLLARTEST", "max_uses": 50, "discount_type": "fixed_cart", "discount_amount": 0, "override_total": 1.00, "conditions": "Sets entire cart to $1 for checkout testing"},
     
     # RBAC Test Accounts
     {"code": "test12345", "role": "instructor", "max_uses": 100, "discount_percent": 100, "session_limit_mins": 120, "conditions": "IE test - can select game categories, users and lessons to unlock, 2hr session limit"},
