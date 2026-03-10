@@ -276,10 +276,19 @@ async def validate_coupon(request: CouponValidateRequest):
     
     # Coupon is valid!
     discount_percent = coupon.get("discount_percent", 0)
+    override_total = coupon.get("override_total")  # For $1 test coupon
+    
+    # Build response message
+    if override_total is not None:
+        message = f"Coupon applied! Cart total set to ${override_total:.2f}"
+    else:
+        message = f"Coupon applied! You get {discount_percent}% off"
+    
     return CouponValidateResponse(
         valid=True,
         discount_percent=discount_percent,
-        message=f"Coupon applied! You get {discount_percent}% off",
+        override_total=override_total,
+        message=message,
         code=coupon["code"]
     )
 
