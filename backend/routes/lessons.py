@@ -1871,17 +1871,20 @@ async def download_nibble_pdf(nibble_id: str):
     import os
     from fastapi.responses import FileResponse
     
-    # Check for uploaded PDF first (professional quality)
-    pdf_folder = "/app/backend/lesson_pdfs"
-    uploaded_pdf_path = os.path.join(pdf_folder, f"{nibble_id}.pdf")
+    # Check multiple possible locations for uploaded PDFs
+    possible_paths = [
+        f"/app/content/downloads/{nibble_id}.pdf",
+        f"/app/backend/lesson_pdfs/{nibble_id}.pdf",
+        f"/app/content/{nibble_id}.pdf"
+    ]
     
-    if os.path.exists(uploaded_pdf_path):
-        # Serve the professionally designed uploaded PDF
-        return FileResponse(
-            uploaded_pdf_path,
-            media_type="application/pdf",
-            filename=f"SoulFood_{nibble_id}.pdf"
-        )
+    for uploaded_pdf_path in possible_paths:
+        if os.path.exists(uploaded_pdf_path):
+            return FileResponse(
+                uploaded_pdf_path,
+                media_type="application/pdf",
+                filename=f"SoulFood_{nibble_id}.pdf"
+            )
     
     # Find the nibble for fallback generation
     nibble = None
