@@ -789,6 +789,7 @@ const CheckoutPage = () => {
           code: couponCode.toUpperCase(),
           discount_percent: data.discount_percent,
           discount_dollars: data.discount_dollars || 0,
+          override_total: data.override_total,  // For $1 test coupon
           is_gift_certificate: data.is_gift_certificate || false,
           message: data.message
         });
