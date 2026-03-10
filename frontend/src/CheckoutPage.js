@@ -701,13 +701,17 @@ const CheckoutPage = () => {
   });
   
   const subtotal = getCartTotal();
-  // Handle both percentage and fixed dollar discounts (gift certificates)
+  // Handle percentage, fixed dollar discounts, and override_total
   const discount = couponApplied 
-    ? (couponApplied.is_gift_certificate && couponApplied.discount_dollars > 0
+    ? (couponApplied.override_total !== null && couponApplied.override_total !== undefined
+        ? subtotal - couponApplied.override_total  // Override: discount is the difference to reach target
+        : couponApplied.is_gift_certificate && couponApplied.discount_dollars > 0
         ? Math.min(subtotal, couponApplied.discount_dollars)  // Gift cert: use dollar amount, cap at subtotal
         : (subtotal * couponApplied.discount_percent / 100))  // Regular coupon: use percentage
     : 0;
-  const total = subtotal - discount;
+  const total = couponApplied?.override_total !== null && couponApplied?.override_total !== undefined
+    ? couponApplied.override_total  // Use override total directly
+    : subtotal - discount;
   
   // Check if cart has physical items that need shipping
   const hasPhysicalItems = cartItems.some(item => {
