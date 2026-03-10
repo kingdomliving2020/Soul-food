@@ -2055,8 +2055,6 @@ async def download_in_his_image(edition: str):
     import os
     from fastapi.responses import FileResponse
     
-    pdf_folder = "/app/backend/lesson_pdfs"
-    
     # Normalize edition
     if edition.lower() in ['adult', 'ae']:
         filename = "in-his-image-adult-full.pdf"
@@ -2067,16 +2065,22 @@ async def download_in_his_image(edition: str):
     else:
         raise HTTPException(status_code=400, detail="Invalid edition. Use 'adult' or 'youth'")
     
-    pdf_path = os.path.join(pdf_folder, filename)
+    # Check multiple possible locations
+    possible_paths = [
+        f"/app/content/downloads/{filename}",
+        f"/app/backend/lesson_pdfs/{filename}",
+        f"/app/content/{filename}"
+    ]
     
-    if os.path.exists(pdf_path):
-        return FileResponse(
-            pdf_path,
-            media_type="application/pdf",
-            filename=f"SoulFood_InHisImage_{edition_label}_FREE.pdf"
-        )
+    for pdf_path in possible_paths:
+        if os.path.exists(pdf_path):
+            return FileResponse(
+                pdf_path,
+                media_type="application/pdf",
+                filename=f"SoulFood_InHisImage_{edition_label}_FREE.pdf"
+            )
     
-    raise HTTPException(status_code=404, detail=f"In His Image {edition_label} Edition not found")
+    raise HTTPException(status_code=404, detail=f"In His Image {edition_label} Edition not found. Please contact support.")
 
 
 @router.get("/download/series/{series_name}")
