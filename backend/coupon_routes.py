@@ -44,6 +44,7 @@ class CouponValidateResponse(BaseModel):
     valid: bool
     discount_percent: int = 0
     discount_dollars: float = 0
+    override_total: Optional[float] = None  # If set, this becomes the cart total
     message: str
     code: str
     is_gift_certificate: bool = False
