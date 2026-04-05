@@ -820,6 +820,38 @@ BULK_COUPONS = {
 }
 
 
+@router.get("/catalog")
+async def get_product_catalog():
+    """Public endpoint: returns the full product catalog with current prices"""
+    from datetime import date
+    today = date.today().isoformat()
+    catalog = []
+    for pid, p in PRODUCTS.items():
+        effective_price = p.get("sale_price", p.get("list_price", 0))
+        promo_until = p.get("promo_until")
+        if promo_until and today <= promo_until and p.get("promo_sale_price") is not None:
+            effective_price = p["promo_sale_price"]
+        catalog.append({
+            "product_id": pid,
+            "name": p.get("name", ""),
+            "sku": p.get("sku", ""),
+            "list_price": p.get("list_price", 0),
+            "sale_price": p.get("sale_price", 0),
+            "effective_price": effective_price,
+            "promo_sale_price": p.get("promo_sale_price"),
+            "promo_until": promo_until,
+            "edition": p.get("edition", ""),
+            "medium": p.get("medium", ""),
+            "type": p.get("type", ""),
+            "preorder": p.get("preorder", False),
+            "free": p.get("free", False),
+            "physical": p.get("physical", False),
+            "is_bundle": p.get("is_bundle", False),
+            "description": p.get("description", ""),
+        })
+    return {"products": catalog, "total": len(catalog)}
+
+
 class CheckoutRequest(BaseModel):
     product_id: str
     quantity: int = 1

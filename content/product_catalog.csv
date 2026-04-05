@@ -1,0 +1,50 @@
+product_id,name,sku,stripe_id,list_price,sale_price,promo_sale_price,promo_until,currency,edition,medium,type,preorder,free,physical,is_bundle
+snack_pack_ae_m1,Break*fast Snack Pack AE M1,BKFT-SP-AE-M1,prod_Tl6meQRKMfxtOq,8.99,8.99,,,usd,AE,,,False,False,False,False
+snack_pack_ae_m2,Break*fast Snack Pack AE M2,BKFT-SP-AE-M2,prod_Tl6wX9CvgMB8Tz,8.99,8.99,,,usd,AE,,,False,False,False,False
+snack_pack_ae_m3,Break*fast Snack Pack AE M3,BKFT-SP-AE-M3,prod_Tl6zPmnPaSE4iQ,8.99,8.99,,,usd,AE,,,False,False,False,False
+snack_pack_ye_m1,Break*fast Snack Pack YE M1,BKFT-SP-YE-M1,prod_Tl5jzNmDkKJnth,8.99,8.99,,,usd,YE,,,False,False,False,False
+snack_pack_ye_m2,Break*fast Snack Pack YE M2,BKFT-SP-YE-M2,prod_Tl5oCtBvc2kGHX,8.99,8.99,,,usd,YE,,,False,False,False,False
+snack_pack_ye_m3,Break*fast Snack Pack YE M3,BKFT-SP-YE-M3,prod_Tl5vC3AqFX0CBp,8.99,8.99,,,usd,YE,,,False,False,False,False
+breakfast_ie_digital,Break*fast IE (Digital) — Pre-Order,BKFT-IE-DIG,prod_Tl5P17AYZd8eAR,19.99,16.99,,,usd,IE,digital,,True,False,False,False
+breakfast_ie_paperback,Break*fast Instructor Edition (WBK) — Pre-Order,BKFT-IE-PB,prod_Tl5DmbgIRsGRbR,29.99,26.99,,,usd,IE,paperback,,True,False,False,False
+breakfast_ae_digital,Break*fast AE (Digital) — Pre-Order,BKFT-AE-DIG,prod_Tl5TzIALgCR5AX,14.99,11.99,,,usd,AE,digital,,True,False,False,False
+breakfast_ae_paperback,Break*fast Adult Edition (WBK) — Pre-Order,BKFT-AE-PB,prod_Tl5GHVPeUEeqRH,27.99,24.99,,,usd,AE,paperback,,True,False,False,False
+breakfast_ye_digital,Break*fast YE (Digital) — Pre-Order,BKFT-YE-DIG,prod_Tl5WM3aZcWrBB1,12.99,9.99,,,usd,YE,digital,,True,False,False,False
+breakfast_ye_paperback,Break*fast Youth Edition (WBK) — Pre-Order,BKFT-YE-PB,prod_Tl5KYUQVq7fgKd,24.99,21.99,,,usd,YE,paperback,,True,False,False,False
+lunch_ie_paperback,Lunch Instructor Edition (WBK) — Pre-Order,LNCH-IE-PB,prod_Tl5bF463nMytFx,29.99,26.99,,,usd,IE,paperback,,True,False,False,False
+lunch_ae_paperback,Lunch Adult Edition (WBK) — Pre-Order,LNCH-AE-PB,prod_Tl5dMEyGFDitEf,27.99,24.99,,,usd,AE,paperback,,True,False,False,False
+lunch_ye_paperback,Lunch Youth Edition (WBK) — Pre-Order,LNCH-YE-PB,prod_Tl5hAx8RL8Vvjh,24.99,21.99,,,usd,YE,paperback,,True,False,False,False
+holiday_ie,Holiday Instructor Edition (WBK),HOL-IE-WBK,prod_Tl6IOtuiMAgrwC,19.99,19.99,,,usd,IE,,,False,False,False,False
+holiday_ae,Holiday Adult Edition (WBK),HOL-AE-WBK,prod_Tl6LmJkJxDrzLA,16.99,16.99,,,usd,AE,,,False,False,False,False
+holiday_ye,Holiday Youth Edition (WBK),HOL-YE-WBK,prod_Tl6WIl0O7XFFgg,16.99,16.99,,,usd,YE,,,False,False,False,False
+nibble_ae,Break*fast Nibble AE,BKFT-NIB-AE-DIG,prod_Tl6dXzvc89fzpU,3.99,3.99,,,usd,AE,,,False,False,False,False
+nibble_ye,Break*fast Nibble YE,BKFT-NIB-YE-DIG,prod_Tl6hePoHzLo5pi,3.99,3.99,,,usd,YE,,,False,False,False,False
+game_pass_30,Digital Games Subscription (30-Day),GAMEPASS-30D,prod_Tl7ZEakAImOyVc,7.99,7.99,6.39,2026-05-24,usd,,,,False,False,False,False
+game_pass_90,Game Pass (90-Day Access),GAMEPASS-90D,prod_Tl7mje38Mzyynu,24.99,24.99,19.99,2026-05-24,usd,,,,False,False,False,False
+subscription_ye_monthly,Digital Subscriber Youth (Monthly),SUB-DIG-YE-MO,prod_Tl7prlu7F5iyEO,9.99,9.99,,,usd,,,subscription,False,False,False,False
+subscription_ae_monthly,Digital Subscriber Adult (Monthly),SUB-DIG-AE-MO,prod_Tl7rxDr2e2mEJD,9.99,9.99,,,usd,,,subscription,False,False,False,False
+subscription_annual,Digital Subscriber (Annual),SUB-DIG-YR,prod_Tl7u6eq2D4eq2l,99.0,99.0,,,usd,,,subscription,False,False,False,False
+subscription_group,Ministry/Small Group (Monthly),SUB-GROUP-MO,prod_Tl7xoZNf3clBV7,24.99,24.99,,,usd,,,subscription,False,False,False,False
+holiday_table_bundle,Holiday Table Bundle,BUNDLE-HOL-TABLE,prod_bundle_hol_table,23.98,19.99,,,usd,,,,False,False,False,True
+full_table_experience,Full Table Experience,BUNDLE-FULL-TABLE,prod_bundle_full_table,43.97,34.99,,,usd,,,,False,False,False,True
+pen_lighted,SOFU Journal Pen - Lighted,MERCH-PEN-LIT,prod_Tl7Opou94EsuJ5,9.99,9.99,,,usd,,,,False,False,False,False
+pen_standard,SOFU Journal Pen (Branded),MERCH-PEN-STD,prod_Tl7P1p5sTgCvlS,7.99,7.99,,,usd,,,,False,False,False,False
+bookmarks_set,Magnetic Bookmarks (Set of 3),MAG-BMK-3PK,prod_Tl7RVhKKT4hXht,6.99,6.99,,,usd,,,,False,False,False,False
+bookmark_leather,Magnetic Leather Bookmarks,MAG-LEA-BMK,prod_Tl7VKMwhaPnq8t,4.99,4.99,,,usd,,,,False,False,False,False
+study_kit,Study Kit Add-On (Pen + Bookmark Set),MERCH-STUDYKIT,prod_Tl7Xhx1eHZIomZ,9.99,9.99,,,usd,,,,False,False,False,False
+bonus_names_of_god,Bonus Lessons: Names of God,BONUS-NOG,prod_Tl7I5X9MoZQt1S,0.0,0.0,,,usd,,,,False,True,False,False
+bonus_times_seasons,Bonus Lessons: Times and Seasons,BONUS-TAS,prod_Tl7J55jWsk72EY,0.0,0.0,,,usd,,,,False,True,False,False
+bonus_in_his_image,Bonus Lesson: In His Image,BONUS-IHI,prod_Tl7LiH0xsvjnHp,0.0,0.0,,,usd,,,,False,True,False,False
+bonus-ae-holiday,Holiday Bonus Lessons (Adult Edition),BONUS-HOL-AE,,0.0,0.0,,,usd,AE,,,False,True,False,False
+bonus-ye-holiday,Holiday Bonus Lessons (Youth Edition),BONUS-HOL-YE,,0.0,0.0,,,usd,YE,,,False,True,False,False
+bonus-ie-holiday,Holiday Bonus Lessons (Instructor Edition),BONUS-HOL-IE,,9.99,9.99,,,usd,IE,,,False,False,False,False
+medallion-grinch-ae,GRinCH Champion Medallion (Adult),MEDAL-GRINCH-AE,,9.99,9.99,,,usd,AE,,,False,False,True,False
+medallion-grinch-ye,GRinCH Champion Medallion (Youth),MEDAL-GRINCH-YE,,9.99,9.99,,,usd,YE,,,False,False,True,False
+medallion-grinch-ie,GRinCH Iron vs Iron Medallion (Instructor),MEDAL-GRINCH-IE,,9.99,9.99,,,usd,IE,,,False,False,True,False
+medallion-passport-ae,Passport Trek Medallion (Adult),MEDAL-PASSPORT-AE,,9.99,9.99,,,usd,AE,,,False,False,True,False
+medallion-passport-ye,Passport Trek Medallion (Youth),MEDAL-PASSPORT-YE,,9.99,9.99,,,usd,YE,,,False,False,True,False
+medallion-passport-ie,Passport Trek Medallion (Instructor),MEDAL-PASSPORT-IE,,9.99,9.99,,,usd,IE,,,False,False,True,False
+medallion-teacher-pack,Teacher Pack (3 Medallions),MEDAL-PACK-3,,29.97,24.99,,,usd,,,,False,False,True,False
+medallion-ministry-pack,Ministry Pack (10 Medallions),MEDAL-PACK-10,,99.9,69.99,,,usd,,,,False,False,True,False
+medallion-church-bundle,Church Bundle (25 Medallions),MEDAL-PACK-25,,249.75,149.99,,,usd,,,,False,False,True,False
+

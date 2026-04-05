@@ -1400,3 +1400,203 @@ async def get_system_health(admin: AdminUser = Depends(get_current_admin)):
         "collection_counts": collections,
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
+
+
+
+# ==================== CATALOG CSV MANAGEMENT ====================
+
+@router.get("/catalog/csv")
+async def download_catalog_csv(admin: AdminUser = Depends(get_current_admin)):
+    """Download the current hardcoded product catalog as CSV"""
+    import csv as csv_mod
+    import ast
+    
+    catalog_path = "/app/backend/payment_routes.py"
+    with open(catalog_path, "r") as f:
+        content = f.read()
+    
+    start = content.find("PRODUCTS = {")
+    if start == -1:
+        raise HTTPException(status_code=500, detail="Could not locate PRODUCTS dict")
+    
+    depth = 0
+    i = start + len("PRODUCTS = ")
+    end = i
+    for j in range(i, len(content)):
+        if content[j] == '{':
+            depth += 1
+        elif content[j] == '}':
+            depth -= 1
+        if depth == 0:
+            end = j + 1
+            break
+    
+    products = ast.literal_eval(content[i:end])
+    
+    output = BytesIO()
+    import io as io_mod
+    text_output = io_mod.TextIOWrapper(output, encoding='utf-8', newline='')
+    
+    fields = ['product_id', 'name', 'sku', 'stripe_id', 'list_price', 'sale_price',
+              'promo_sale_price', 'promo_until', 'currency', 'edition', 'medium',
+              'type', 'preorder', 'free', 'physical', 'is_bundle', 'description']
+    
+    writer = csv_mod.DictWriter(text_output, fieldnames=fields)
+    writer.writeheader()
+    
+    for pid, p in products.items():
+        writer.writerow({
+            'product_id': pid,
+            'name': p.get('name', ''),
+            'sku': p.get('sku', ''),
+            'stripe_id': p.get('stripe_id', ''),
+            'list_price': p.get('list_price', ''),
+            'sale_price': p.get('sale_price', ''),
+            'promo_sale_price': p.get('promo_sale_price', ''),
+            'promo_until': p.get('promo_until', ''),
+            'currency': p.get('currency', 'usd'),
+            'edition': p.get('edition', ''),
+            'medium': p.get('medium', ''),
+            'type': p.get('type', ''),
+            'preorder': p.get('preorder', False),
+            'free': p.get('free', False),
+            'physical': p.get('physical', False),
+            'is_bundle': p.get('is_bundle', False),
+            'description': p.get('description', ''),
+        })
+    
+    text_output.flush()
+    text_output.detach()
+    output.seek(0)
+    
+    return StreamingResponse(
+        output,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=sofu_product_catalog.csv"}
+    )
+
+
+@router.post("/catalog/csv")
+async def upload_catalog_csv(
+    file: UploadFile = File(...),
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Upload a CSV to update product prices. Only list_price and sale_price columns are updated.
+    The CSV must have a 'product_id' column matching existing products."""
+    import csv as csv_mod
+    import ast
+    import io as io_mod
+    
+    contents = await file.read()
+    text = contents.decode('utf-8-sig')
+    reader = csv_mod.DictReader(io_mod.StringIO(text))
+    
+    catalog_path = "/app/backend/payment_routes.py"
+    with open(catalog_path, "r") as f:
+        file_content = f.read()
+    
+    start = file_content.find("PRODUCTS = {")
+    if start == -1:
+        raise HTTPException(status_code=500, detail="Could not locate PRODUCTS dict")
+    
+    depth = 0
+    i = start + len("PRODUCTS = ")
+    end = i
+    for j in range(i, len(file_content)):
+        if file_content[j] == '{':
+            depth += 1
+        elif file_content[j] == '}':
+            depth -= 1
+        if depth == 0:
+            end = j + 1
+            break
+    
+    products = ast.literal_eval(file_content[i:end])
+    
+    updated = []
+    skipped = []
+    errors = []
+    
+    for row in reader:
+        pid = row.get('product_id', '').strip()
+        if not pid:
+            continue
+        
+        if pid not in products:
+            skipped.append(pid)
+            continue
+        
+        try:
+            changes = {}
+            if row.get('list_price', '').strip():
+                new_list = float(row['list_price'])
+                if new_list != products[pid].get('list_price'):
+                    products[pid]['list_price'] = new_list
+                    changes['list_price'] = new_list
+            
+            if row.get('sale_price', '').strip():
+                new_sale = float(row['sale_price'])
+                if new_sale != products[pid].get('sale_price'):
+                    products[pid]['sale_price'] = new_sale
+                    changes['sale_price'] = new_sale
+            
+            if row.get('promo_sale_price', '').strip():
+                new_promo = float(row['promo_sale_price'])
+                if new_promo != products[pid].get('promo_sale_price'):
+                    products[pid]['promo_sale_price'] = new_promo
+                    changes['promo_sale_price'] = new_promo
+            
+            if row.get('name', '').strip():
+                new_name = row['name'].strip()
+                if new_name != products[pid].get('name'):
+                    products[pid]['name'] = new_name
+                    changes['name'] = new_name
+            
+            if row.get('description', '').strip():
+                new_desc = row['description'].strip()
+                if new_desc != products[pid].get('description'):
+                    products[pid]['description'] = new_desc
+                    changes['description'] = new_desc
+            
+            if changes:
+                updated.append({"product_id": pid, "changes": changes})
+        except ValueError as e:
+            errors.append({"product_id": pid, "error": str(e)})
+    
+    if updated:
+        # Rebuild the PRODUCTS dict in the file
+        import textwrap
+        lines = ["PRODUCTS = {"]
+        for pid, p in products.items():
+            lines.append(f'    "{pid}": {{')
+            for k, v in p.items():
+                if isinstance(v, str):
+                    escaped = v.replace('\\', '\\\\').replace('"', '\\"')
+                    lines.append(f'        "{k}": "{escaped}",')
+                elif isinstance(v, bool):
+                    lines.append(f'        "{k}": {v},')
+                elif isinstance(v, (int, float)):
+                    lines.append(f'        "{k}": {v},')
+                elif isinstance(v, list):
+                    lines.append(f'        "{k}": {v},')
+            lines.append("    },")
+        lines.append("}")
+        
+        new_products_text = "\n".join(lines)
+        new_content = file_content[:start] + new_products_text + file_content[end:]
+        
+        with open(catalog_path, "w") as f:
+            f.write(new_content)
+    
+    await log_admin_action("catalog_csv_upload", admin.id, "catalog", None, {
+        "updated_count": len(updated),
+        "skipped_count": len(skipped),
+        "error_count": len(errors)
+    })
+    
+    return {
+        "message": f"Catalog updated: {len(updated)} products changed",
+        "updated": updated,
+        "skipped": skipped,
+        "errors": errors
+    }
