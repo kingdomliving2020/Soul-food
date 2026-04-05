@@ -1248,7 +1248,7 @@ const CheckoutPage = () => {
             {/* Coupon Code Section */}
             <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-orange-50 rounded-lg border border-purple-100">
               <label className="block text-sm font-semibold text-purple-700 mb-2">
-                Have a coupon or gift certificate?
+                Have a coupon or gift certificate? <span className="text-xs font-normal text-slate-500">(one per order)</span>
               </label>
               {couponApplied ? (
                 <div className="flex items-center justify-between bg-green-100 p-3 rounded-lg">

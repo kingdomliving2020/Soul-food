@@ -1,0 +1,126 @@
+{
+  "summary": "Completed comprehensive testing of Soul Food soft launch features. All 10 test cases passed. Backend API returns correct pricing with preorder flags. Frontend displays correct banner, pricing, and merchandise badges.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_soft_launch.py",
+    "/app/test_reports/pytest/pytest_soft_launch.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Backend PRODUCTS dictionary correctly has preorder:True and $3 off sale prices for all BKFT and Lunch workbooks",
+    "Frontend QuickOrder.js correctly displays Pre-Order badges on merchandise (game packs, pens, study kit) with amber buttons",
+    "Bookmarks (Set of 3 and Leather) correctly show green 'Add to Cart' buttons without Pre-Order badge",
+    "PaymentSuccess.js uses useRef for retry counter and handles 404/500 gracefully with retries",
+    "CheckoutPage.js shows '(one per order)' note next to coupon label"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_soft_launch.py"
+  ],
+  "success_rate": {
+    "backend": "100% (26/26 tests passed)",
+    "frontend": "100% (all 10 features verified)"
+  },
+  "test_credentials": {
+    "beta_instructor": {
+      "username": "instructor",
+      "password": "test123"
+    }
+  },
+  "seed_data_creation": "None - used existing data",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All soft launch features verified working. Backend API at /api/payments/products returns correct pricing with preorder flags. Frontend displays correct banner, pricing, and merchandise badges.",
+  "features_verified": {
+    "banner_he_is_risen": {
+      "status": "WORKING",
+      "details": "Banner shows 'He Is Risen! Soul Food Is LIVE!' with Holiday Available Now, Break*fast Pre-Order $3 Off, Lunch Pre-Order $3 Off"
+    },
+    "breakfast_pricing": {
+      "status": "WORKING",
+      "details": "AE Digital $11.99, AE Paperback $24.99, YE Digital $9.99, YE Paperback $21.99 - all with preorder=True"
+    },
+    "lunch_pricing": {
+      "status": "WORKING",
+      "details": "AE $24.99, YE $21.99, IE $26.99 - all with preorder=True"
+    },
+    "holiday_pricing": {
+      "status": "WORKING",
+      "details": "AE Digital $14.99, AE Paperback $16.99 - no preorder flag (available now)"
+    },
+    "breakfast_nibbles_snack_packs": {
+      "status": "WORKING",
+      "details": "Nibbles $3.99, Snack Packs $8.99 - available now (no preorder)"
+    },
+    "merchandise_badges": {
+      "status": "WORKING",
+      "details": "Bookmarks (Set of 3 $6.99, Leather $4.99) show green 'Add to Cart'. Pens, Study Kit, Game Packs show amber 'Pre-Order' button and badge"
+    },
+    "instructor_section": {
+      "status": "WORKING",
+      "details": "Holiday IE $19.99 available (no pre-order badge), Break*fast IE Digital $16.99 and Paperback $26.99 with pre-order"
+    },
+    "backend_api_products": {
+      "status": "WORKING",
+      "endpoint": "GET /api/payments/products",
+      "details": "breakfast_ae_digital: sale_price=11.99, preorder=True; lunch_ae_paperback: sale_price=24.99, preorder=True"
+    },
+    "payment_success_page": {
+      "status": "WORKING",
+      "details": "Component loads without errors. Shows 'Payment Issue - No payment session found' when accessed without session_id"
+    },
+    "checkout_coupon_note": {
+      "status": "WORKING",
+      "details": "Coupon section shows '(one per order)' note next to the label"
+    }
+  },
+  "tests_passed": {
+    "backend_api_tests": [
+      "test_breakfast_ae_digital_price (11.99)",
+      "test_breakfast_ae_digital_preorder (True)",
+      "test_breakfast_ae_paperback_price (24.99)",
+      "test_breakfast_ae_paperback_preorder (True)",
+      "test_breakfast_ye_digital_price (9.99)",
+      "test_breakfast_ye_digital_preorder (True)",
+      "test_breakfast_ye_paperback_price (21.99)",
+      "test_breakfast_ye_paperback_preorder (True)",
+      "test_lunch_ae_paperback_price (24.99)",
+      "test_lunch_ae_paperback_preorder (True)",
+      "test_lunch_ye_paperback_price (21.99)",
+      "test_lunch_ye_paperback_preorder (True)",
+      "test_lunch_ie_paperback_price (26.99)",
+      "test_lunch_ie_paperback_preorder (True)",
+      "test_holiday_ae_price (16.99)",
+      "test_holiday_ae_not_preorder (None/False)",
+      "test_holiday_ie_price (19.99)",
+      "test_holiday_ie_not_preorder (None/False)",
+      "test_snack_pack_ae_m1_price (8.99)",
+      "test_snack_pack_not_preorder (None/False)",
+      "test_nibble_ae_price (3.99)",
+      "test_nibble_not_preorder (None/False)",
+      "test_bookmarks_set_price (6.99)",
+      "test_bookmark_leather_price (4.99)",
+      "test_payment_success_no_session_returns_error",
+      "test_coupon_validation_endpoint_exists"
+    ],
+    "frontend_ui_tests": [
+      "Banner 'He Is Risen! Soul Food Is LIVE!' displayed",
+      "Holiday Series 'Available Now' in banner",
+      "Break*fast Pre-Order $3 Off in banner",
+      "Lunch Pre-Order $3 Off in banner",
+      "Bookmarks merchandise with green Add to Cart button",
+      "Game Packs with Pre-Order badge and amber button",
+      "PaymentSuccess page shows 'No payment session found'",
+      "Checkout page shows '(one per order)' coupon note",
+      "Lunch Series shows $24.99 with Pre-Order badge",
+      "Instructor Edition Holiday IE shows $19.99 with Add to Cart"
+    ]
+  }
+}

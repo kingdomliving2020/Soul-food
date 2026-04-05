@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { CheckCircle, Loader, XCircle, Download, ExternalLink, Package } from 'lucide-react';
 import { useCart } from './CartContext';
@@ -10,29 +10,21 @@ const PaymentSuccess = () => {
   const navigate = useNavigate();
   const { clearCart } = useCart();
   
-  const [status, setStatus] = useState('checking'); // checking, success, failed
+  const [status, setStatus] = useState('checking');
   const [paymentData, setPaymentData] = useState(null);
   const [downloadLinks, setDownloadLinks] = useState([]);
   const [error, setError] = useState(null);
   const [attempts, setAttempts] = useState(0);
   
   const sessionId = searchParams.get('session_id');
-  const maxAttempts = 10; // Increased to allow more time for download link generation
+  const maxAttempts = 15;
+  const attemptsRef = useRef(0);
+  const timerRef = useRef(null);
 
-  useEffect(() => {
-    if (!sessionId) {
-      setStatus('failed');
-      setError('No payment session found');
-      return;
-    }
-
-    checkPaymentStatus();
-  }, [sessionId]);
-
-  const checkPaymentStatus = async () => {
-    if (attempts >= maxAttempts) {
+  const checkPaymentStatus = useCallback(async () => {
+    if (attemptsRef.current >= maxAttempts) {
       setStatus('timeout');
-      setError('Payment verification timed out. Please check your email for confirmation.');
+      setError('Payment verification is taking longer than expected. Your payment was likely successful — please check your email for confirmation or visit My Library.');
       return;
     }
 
@@ -40,7 +32,12 @@ const PaymentSuccess = () => {
       const response = await fetch(`${BACKEND_URL}/api/payments/checkout/status/${sessionId}`);
       
       if (!response.ok) {
-        throw new Error('Failed to check payment status');
+        // Don't fail on 404/500 — the webhook may still be processing
+        console.log(`[PaymentSuccess] Status check attempt ${attemptsRef.current + 1}: HTTP ${response.status}, retrying...`);
+        attemptsRef.current += 1;
+        setAttempts(attemptsRef.current);
+        timerRef.current = setTimeout(checkPaymentStatus, 2500);
+        return;
       }
 
       const data = await response.json();
@@ -48,34 +45,60 @@ const PaymentSuccess = () => {
 
       if (data.payment_status === 'paid') {
         setStatus('success');
-        // Clear the cart after successful payment
         clearCart();
         
-        // Fetch download links
+        // Fetch download links with a small delay to let webhook finish
         const orderId = data.transaction?.order_number || sessionId;
-        try {
-          const dlResponse = await fetch(`${BACKEND_URL}/api/payments/download-links/${orderId}`);
-          if (dlResponse.ok) {
-            const dlData = await dlResponse.json();
-            setDownloadLinks(dlData.links || []);
+        const fetchDownloads = async (retries = 3) => {
+          try {
+            const dlResponse = await fetch(`${BACKEND_URL}/api/payments/download-links/${orderId}`);
+            if (dlResponse.ok) {
+              const dlData = await dlResponse.json();
+              if (dlData.links && dlData.links.length > 0) {
+                setDownloadLinks(dlData.links);
+              } else if (retries > 0) {
+                setTimeout(() => fetchDownloads(retries - 1), 3000);
+              }
+            }
+          } catch (dlErr) {
+            console.error('Error fetching download links:', dlErr);
+            if (retries > 0) setTimeout(() => fetchDownloads(retries - 1), 3000);
           }
-        } catch (dlErr) {
-          console.error('Error fetching download links:', dlErr);
-        }
+        };
+        setTimeout(() => fetchDownloads(), 1000);
       } else if (data.status === 'expired') {
         setStatus('failed');
         setError('Payment session expired');
       } else {
-        // Still pending, check again after 2 seconds
-        setAttempts(prev => prev + 1);
-        setTimeout(checkPaymentStatus, 2000);
+        // Still pending — retry
+        attemptsRef.current += 1;
+        setAttempts(attemptsRef.current);
+        timerRef.current = setTimeout(checkPaymentStatus, 2000);
       }
     } catch (err) {
-      console.error('Error checking payment status:', err);
-      setStatus('failed');
-      setError(err.message || 'Failed to verify payment');
+      // Network error — retry instead of immediately failing
+      console.log(`[PaymentSuccess] Network error on attempt ${attemptsRef.current + 1}:`, err.message);
+      attemptsRef.current += 1;
+      setAttempts(attemptsRef.current);
+      if (attemptsRef.current < maxAttempts) {
+        timerRef.current = setTimeout(checkPaymentStatus, 3000);
+      } else {
+        setStatus('timeout');
+        setError('Could not verify payment. Your purchase may still be processing — check your email or visit My Library.');
+      }
     }
-  };
+  }, [sessionId, clearCart]);
+
+  useEffect(() => {
+    if (!sessionId) {
+      setStatus('failed');
+      setError('No payment session found');
+      return;
+    }
+    attemptsRef.current = 0;
+    checkPaymentStatus();
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [sessionId, checkPaymentStatus]);
 
   const renderContent = () => {
     switch (status) {
