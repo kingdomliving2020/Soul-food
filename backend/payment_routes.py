@@ -367,13 +367,11 @@ def normalize_product_id(product_id: str) -> str:
     return product_id  # Return original if no match found
 
 def get_pdf_path(product_id: str) -> Optional[str]:
-    """Get the full path to a product's PDF file"""
-    # Normalize the product ID first
+    """Get the full path to a product's PDF file (hardcoded fallback)"""
     normalized_id = normalize_product_id(product_id)
     
     filename = PRODUCT_FILES.get(normalized_id)
     if not filename:
-        # Log for debugging
         print(f"[PDF Path] No mapping found for product_id: {product_id} (normalized: {normalized_id})")
         return None
     
@@ -384,6 +382,25 @@ def get_pdf_path(product_id: str) -> Optional[str]:
     
     print(f"[PDF Path] File not found: {full_path}")
     return None
+
+
+async def get_pdf_path_async(product_id: str) -> Optional[str]:
+    """Get PDF path — checks MongoDB product_file_mappings first, then hardcoded fallback.
+    Use this in async contexts (webhooks, fulfillment) for no-redeploy mapping support."""
+    normalized_id = normalize_product_id(product_id)
+    
+    # 1. Check MongoDB mapping first
+    mapping = await db.product_file_mappings.find_one(
+        {"product_id": {"$in": [product_id, normalized_id]}, "active": True},
+        {"_id": 0, "file_path": 1, "filename": 1}
+    )
+    if mapping:
+        path = mapping.get("file_path") or os.path.join(PDF_DIR, mapping.get("filename", ""))
+        if os.path.exists(path):
+            return path
+    
+    # 2. Fall back to hardcoded PRODUCT_FILES
+    return get_pdf_path(product_id)
 
 # Product catalog with list and sale prices
 # Cost = wholesale/production cost, List Price = MSRP, Sale Price = current selling price
@@ -1106,8 +1123,7 @@ async def process_free_order(request: FreeOrderRequest):
     for item in request.items:
         product_id = item.product_id
         # Try to get PDF path for this product
-        pdf_path = get_pdf_path(product_id)
-        
+        pdf_path = await get_pdf_path_async(product_id)        
         if pdf_path:
             try:
                 token, expires_at = await create_download_link(
@@ -1546,9 +1562,8 @@ async def get_checkout_status(session_id: str):
                         print(f"[Status Check] Error creating gift certificate: {gc_error}")
                     continue
                 
-                # Normalize product ID
                 normalized_id = normalize_product_id(item_product_id)
-                pdf_path = get_pdf_path(normalized_id)
+                pdf_path = await get_pdf_path_async(normalized_id) or await get_pdf_path_async(item_product_id)
                 
                 if pdf_path:
                     try:
@@ -1740,9 +1755,8 @@ async def stripe_webhook(request: Request):
                     item_product_id = item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
                     item_name = item.get("name", item_product_id)
                     
-                    # Normalize product ID
                     normalized_id = normalize_product_id(item_product_id)
-                    pdf_path = get_pdf_path(normalized_id)
+                    pdf_path = await get_pdf_path_async(normalized_id) or await get_pdf_path_async(item_product_id)
                     
                     if pdf_path:
                         try:
@@ -1973,9 +1987,8 @@ async def admin_generate_downloads(order_number: str, request: Request):
         item_product_id = item.get("product_id", "")
         item_name = item.get("name", item_product_id)
         
-        # Normalize product ID
         normalized_id = normalize_product_id(item_product_id)
-        pdf_path = get_pdf_path(normalized_id)
+        pdf_path = await get_pdf_path_async(normalized_id) or await get_pdf_path_async(item_product_id)
         
         if pdf_path:
             try:

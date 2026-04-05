@@ -1600,3 +1600,377 @@ async def upload_catalog_csv(
         "skipped": skipped,
         "errors": errors
     }
+
+
+# ==================== CONTENT FULFILLMENT MANAGEMENT ====================
+
+@router.post("/fulfillment/seed-mappings")
+async def seed_product_file_mappings(admin: AdminUser = Depends(get_current_admin)):
+    """Seed the product_file_mappings collection from the hardcoded PRODUCT_FILES dict.
+    This is a one-time migration — after this, all mappings live in MongoDB."""
+    from payment_routes import PRODUCT_FILES
+    
+    count = 0
+    for product_id, filename in PRODUCT_FILES.items():
+        existing = await db.product_file_mappings.find_one({"product_id": product_id})
+        if not existing:
+            await db.product_file_mappings.insert_one({
+                "product_id": product_id,
+                "filename": filename,
+                "file_path": f"/app/content/downloads/{filename}",
+                "active": True,
+                "created_at": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc)
+            })
+            count += 1
+    
+    total = await db.product_file_mappings.count_documents({})
+    return {"message": f"Seeded {count} new mappings. Total: {total}"}
+
+
+@router.get("/fulfillment/mappings")
+async def list_product_file_mappings(
+    search: Optional[str] = None,
+    page: int = 1,
+    limit: int = 50,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """List all product-to-file mappings (from MongoDB, not code)"""
+    query = {}
+    if search:
+        query["$or"] = [
+            {"product_id": {"$regex": search, "$options": "i"}},
+            {"filename": {"$regex": search, "$options": "i"}}
+        ]
+    
+    skip = (page - 1) * limit
+    total = await db.product_file_mappings.count_documents(query)
+    mappings = await db.product_file_mappings.find(
+        query, {"_id": 0}
+    ).sort("product_id", 1).skip(skip).limit(limit).to_list(limit)
+    
+    return {"mappings": mappings, "total": total, "page": page, "limit": limit}
+
+
+@router.post("/fulfillment/mappings")
+async def add_product_file_mapping(
+    request: Request,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Add a new product-to-file mapping. No redeploy needed."""
+    body = await request.json()
+    product_id = body.get("product_id", "").strip()
+    filename = body.get("filename", "").strip()
+    
+    if not product_id or not filename:
+        raise HTTPException(status_code=400, detail="product_id and filename are required")
+    
+    # Verify file exists
+    file_path = f"/app/content/downloads/{filename}"
+    if not os.path.exists(file_path):
+        # List available files for convenience
+        available = [f for f in os.listdir("/app/content/downloads") if f.endswith('.pdf')]
+        raise HTTPException(status_code=400, detail=f"File not found: {filename}. Available: {available[:20]}")
+    
+    existing = await db.product_file_mappings.find_one({"product_id": product_id})
+    if existing:
+        await db.product_file_mappings.update_one(
+            {"product_id": product_id},
+            {"$set": {"filename": filename, "file_path": file_path, "active": True, "updated_at": datetime.now(timezone.utc)}}
+        )
+        return {"message": f"Updated mapping: {product_id} → {filename}"}
+    else:
+        await db.product_file_mappings.insert_one({
+            "product_id": product_id,
+            "filename": filename,
+            "file_path": file_path,
+            "active": True,
+            "created_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(timezone.utc)
+        })
+        return {"message": f"Created mapping: {product_id} → {filename}"}
+
+
+@router.delete("/fulfillment/mappings/{product_id}")
+async def delete_product_file_mapping(
+    product_id: str,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Deactivate a product-to-file mapping"""
+    result = await db.product_file_mappings.update_one(
+        {"product_id": product_id},
+        {"$set": {"active": False, "updated_at": datetime.now(timezone.utc)}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Mapping not found")
+    return {"message": f"Deactivated mapping: {product_id}"}
+
+
+@router.get("/fulfillment/files")
+async def list_available_files(admin: AdminUser = Depends(get_current_admin)):
+    """List all PDF/content files available in the downloads directory"""
+    download_dir = "/app/content/downloads"
+    files = []
+    for root, dirs, filenames in os.walk(download_dir):
+        for f in sorted(filenames):
+            if f.endswith(('.pdf', '.epub', '.zip')):
+                full_path = os.path.join(root, f)
+                size = os.path.getsize(full_path)
+                rel_path = os.path.relpath(full_path, download_dir)
+                files.append({
+                    "filename": rel_path,
+                    "size_bytes": size,
+                    "size_mb": round(size / (1024*1024), 2)
+                })
+    return {"files": files, "total": len(files), "directory": download_dir}
+
+
+# ==================== MANUAL ACCESS GRANT (File Drop) ====================
+
+@router.post("/fulfillment/grant-access")
+async def grant_digital_access(
+    request: Request,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Manually grant digital content access to a user by email.
+    This is the 'file drop' — adds download links to someone's library without needing a purchase."""
+    from download_protection import create_download_link
+    
+    body = await request.json()
+    email = body.get("email", "").strip().lower()
+    product_ids = body.get("product_ids", [])  # List of product_id strings
+    reason = body.get("reason", "Manual admin grant")
+    
+    if not email:
+        raise HTTPException(status_code=400, detail="email is required")
+    if not product_ids:
+        raise HTTPException(status_code=400, detail="product_ids list is required")
+    
+    granted = []
+    errors = []
+    
+    for pid in product_ids:
+        # Look up file mapping from MongoDB first, then fall back to hardcoded
+        mapping = await db.product_file_mappings.find_one({"product_id": pid, "active": True}, {"_id": 0})
+        
+        if mapping:
+            file_path = mapping["file_path"]
+        else:
+            from payment_routes import get_pdf_path, normalize_product_id
+            normalized = normalize_product_id(pid)
+            file_path = get_pdf_path(normalized)
+        
+        if not file_path or not os.path.exists(file_path):
+            errors.append({"product_id": pid, "error": "File not found"})
+            continue
+        
+        # Create the download link
+        order_id = f"ADMIN-GRANT-{secrets.token_hex(4).upper()}"
+        token, expires_at = await create_download_link(
+            order_id=order_id,
+            user_id=email,
+            user_email=email,
+            product_id=pid,
+            product_name=pid.replace("-", " ").replace("_", " ").title(),
+            file_path=file_path,
+            payment_verified=True
+        )
+        
+        # Also create a fake "paid" transaction so it shows in My Library
+        await db.payment_transactions.update_one(
+            {"order_number": order_id},
+            {"$set": {
+                "session_id": order_id,
+                "order_number": order_id,
+                "items": [{"product_id": pid, "name": pid.replace("-", " ").replace("_", " ").title(), "quantity": 1}],
+                "total_amount": 0,
+                "currency": "usd",
+                "payment_status": "paid",
+                "status": "admin_grant",
+                "customer_email": email,
+                "download_links_generated": True,
+                "admin_granted_by": admin.id,
+                "admin_grant_reason": reason,
+                "created_at": datetime.now(timezone.utc),
+                "updated_at": datetime.now(timezone.utc)
+            }},
+            upsert=True
+        )
+        
+        granted.append({"product_id": pid, "token": token[:20] + "...", "expires": expires_at.isoformat()})
+    
+    await log_admin_action("grant_access", admin.id, "fulfillment", None, {
+        "email": email,
+        "granted_count": len(granted),
+        "error_count": len(errors),
+        "reason": reason
+    })
+    
+    return {
+        "message": f"Granted {len(granted)} items to {email}",
+        "granted": granted,
+        "errors": errors
+    }
+
+
+# ==================== RETRY FULFILLMENT ====================
+
+@router.post("/fulfillment/retry/{order_number}")
+async def retry_order_fulfillment(
+    order_number: str,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Retry generating download links for a paid order that failed fulfillment.
+    No redeploy needed — uses MongoDB mappings + hardcoded fallback."""
+    from download_protection import create_download_link
+    from payment_routes import get_pdf_path, normalize_product_id
+    
+    order = await db.payment_transactions.find_one(
+        {"order_number": order_number},
+        {"_id": 0}
+    )
+    if not order:
+        raise HTTPException(status_code=404, detail=f"Order {order_number} not found")
+    
+    if order.get("payment_status") != "paid":
+        raise HTTPException(status_code=400, detail=f"Order is not paid (status: {order.get('payment_status')})")
+    
+    email = order.get("customer_email", "")
+    items = order.get("items", [])
+    
+    # Get existing download links
+    existing = await db.download_links.find(
+        {"order_id": order_number, "revoked": False},
+        {"_id": 0, "product_id": 1}
+    ).to_list(50)
+    existing_pids = {dl.get("product_id") for dl in existing}
+    
+    created = []
+    skipped = []
+    errors = []
+    
+    for item in items:
+        pid = item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
+        name = item.get("name", pid)
+        
+        # Check MongoDB mapping first
+        mapping = await db.product_file_mappings.find_one(
+            {"product_id": pid, "active": True}, {"_id": 0}
+        )
+        
+        if mapping:
+            file_path = mapping["file_path"]
+            matched_pid = pid
+        else:
+            # Fall back to hardcoded
+            normalized = normalize_product_id(pid)
+            file_path = get_pdf_path(normalized)
+            matched_pid = normalized
+        
+        if not file_path:
+            errors.append({"product_id": pid, "name": name, "error": "No file mapping found"})
+            continue
+        
+        if matched_pid in existing_pids or pid in existing_pids:
+            skipped.append({"product_id": pid, "name": name, "reason": "Already has download link"})
+            continue
+        
+        token, expires_at = await create_download_link(
+            order_id=order_number,
+            user_id=email,
+            user_email=email,
+            product_id=matched_pid,
+            product_name=name,
+            file_path=file_path,
+            payment_verified=True
+        )
+        created.append({"product_id": pid, "name": name, "token": token[:20] + "..."})
+    
+    if created:
+        await db.payment_transactions.update_one(
+            {"order_number": order_number},
+            {"$set": {"download_links_generated": True, "updated_at": datetime.now(timezone.utc)}}
+        )
+    
+    await log_admin_action("retry_fulfillment", admin.id, "order", order_number, {
+        "created": len(created), "skipped": len(skipped), "errors": len(errors)
+    })
+    
+    return {
+        "message": f"Retry complete for {order_number}",
+        "created": created,
+        "skipped": skipped,
+        "errors": errors
+    }
+
+
+# ==================== ORDER MANAGEMENT ====================
+
+@router.get("/orders")
+async def list_orders(
+    status: Optional[str] = None,
+    email: Optional[str] = None,
+    page: int = 1,
+    limit: int = 20,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """List all orders with filtering"""
+    query = {}
+    if status:
+        query["payment_status"] = status
+    if email:
+        query["customer_email"] = {"$regex": email, "$options": "i"}
+    
+    skip = (page - 1) * limit
+    total = await db.payment_transactions.count_documents(query)
+    orders = await db.payment_transactions.find(
+        query, {"_id": 0}
+    ).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    # Add download link count for each
+    for order in orders:
+        order_num = order.get("order_number")
+        if order_num:
+            dl_count = await db.download_links.count_documents({"order_id": order_num})
+            order["download_link_count"] = dl_count
+    
+    return {"orders": orders, "total": total, "page": page}
+
+
+@router.post("/orders/{order_number}/send-email")
+async def resend_order_email(
+    order_number: str,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Resend the order confirmation + download links email"""
+    from email_service import send_order_confirmation
+    
+    order = await db.payment_transactions.find_one(
+        {"order_number": order_number}, {"_id": 0}
+    )
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    email = order.get("customer_email")
+    if not email:
+        raise HTTPException(status_code=400, detail="No customer email on order")
+    
+    links = await db.download_links.find(
+        {"order_id": order_number, "revoked": False},
+        {"_id": 0, "token": 1, "product_name": 1}
+    ).to_list(50)
+    
+    download_links = [{"token": l["token"], "product_name": l.get("product_name", "Digital Content")} for l in links]
+    
+    result = await send_order_confirmation(
+        to_email=email,
+        order_id=order_number,
+        items=order.get("items", []),
+        total=order.get("total_amount", 0),
+        download_links=download_links,
+        customer_name=order.get("customer_name", "")
+    )
+    
+    await log_admin_action("resend_email", admin.id, "order", order_number, {"email": email})
+    
+    return {"message": f"Email sent to {email}", "result": result}

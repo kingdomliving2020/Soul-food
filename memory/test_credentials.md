@@ -1,9 +1,12 @@
 # Soul Food - Test Credentials
 
+## Admin Account
+- `overflowharvest@gmail.com` — Role: admin (full access to admin panel)
+
 ## Registration
 Use `/register` to create new test accounts.
 
-## Launch Coupons (New - April 2026)
+## Launch Coupons (Active)
 - `WELCOME10` — 10% off all products
 - `SOFU5` — $5 off bundles (fixed dollar)
 - `GAMENIGHT` — $10 off Game Pass (fixed dollar)
@@ -35,10 +38,7 @@ Use `/register` to create new test accounts.
 - `test1234` — Youth role, 45-min session
 - `test12345` — Instructor role, 120-min session
 
-## Stripe
-Stripe API key and webhook secret configured in backend/.env.
-Test mode active — no real charges.
-
-## Resend Email
-RESEND_API_KEY configured in backend/.env.
-Domain kingdom-soul.com verified and sending-enabled.
+## Integrations
+- Stripe: Live mode, API key in backend/.env
+- Resend: Configured, kingdom-soul.com verified
+- MongoDB: Connection string in backend/.env

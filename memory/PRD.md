@@ -6,87 +6,68 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Su
 ## Tech Stack
 - Frontend: React, Tailwind CSS, Shadcn/UI
 - Backend: FastAPI, MongoDB
-- Payments: Stripe Checkout Sessions + Webhooks (dynamic pricing via unit_amount)
-- Email: Resend (configured, kingdom-soul.com domain verified)
-
-## Store Structure (Launch Configuration)
-| Section | Products | Status |
-|---------|----------|--------|
-| Featured | Holiday Table Bundle ($19.99), Full Table Experience ($34.99), Holiday ePub ($14.99) | LIVE |
-| Instant Access | HOL ePub AE/YE/IE, BKFT Snack Pack M1, Game Passes (20% off) | LIVE |
-| Pre-Order | HOL Physical Books, BKFT Full Book ($3 off) | LIVE |
-| Free Resources | Interactive lessons, samples | LIVE |
-| Games | Game Night Lite (30-Day, $6.39), Game Pass Full (90-Day, $19.99) | LIVE |
-| Merchandise | Bookmarks only; pens/study kit/game packs = pre-order | LIVE |
-
-## Active Coupons
-### Launch Coupons
-| Code | Type | Discount |
-|------|------|----------|
-| WELCOME10 | Percentage | 10% off all |
-| SOFU5 | Fixed dollar | $5 off bundles |
-| GAMENIGHT | Fixed dollar | $10 off game pass |
-| DOLLARTEST | Override | Cart = $1.00 |
-| BETATEST | Percentage | 100% off |
-
-### Contributor Coupons (50 uses each)
-| Contributor | Code | Discount |
-|-------------|------|----------|
-| Dee | SoulX1079 | 15% |
-| Jafari | SoulZ1003 | 15% |
-| Rose | SoulX1060 | 10% |
-| Temia | SoulX1072 | 10% |
-| Mike | SoulX1080 | 10% |
-| Vicky | SoulX1059 | 10% |
+- Payments: Stripe Checkout Sessions + Webhooks (dynamic pricing)
+- Email: Resend (kingdom-soul.com verified)
 
 ## What's Implemented
 
+### Admin Content Management (Apr 5, 2026) — NO REDEPLOY NEEDED
+- [x] Product-file mappings stored in MongoDB (230 mappings seeded)
+- [x] Admin "Grant Access" — manually drop digital content into any user's library
+- [x] Admin "Retry Fulfillment" — re-process failed orders
+- [x] Admin "Resend Email" — resend download links to customer
+- [x] Admin "Add Mapping" — map new product IDs to PDF files
+- [x] Admin "List Files" — see all available PDFs on server
+- [x] Admin "Orders" — view/filter all orders with download counts
+- [x] ADMIN_GUIDE.md — full README for content management
+- [x] overflowharvest@gmail.com elevated to admin role
+- [x] All fulfillment paths (webhook, status-check, manual) use MongoDB-first lookup
+
 ### Easter Day Fixes (Apr 5, 2026)
-- [x] Fixed landing page crash: selectedSeries?.available null reference
-- [x] Updated landing page banner: "HE IS RISEN! Soul Food Is LIVE!" (post-Easter messaging)
-- [x] Changed countdown from Easter → Pentecost (May 24, 2026) — shows ~49 days
-- [x] Updated ALL shipping timelines: "Digital instantly / Physical 2-3 weeks" (removed March/Easter dates)
-- [x] Added Amazon-style +/- quantity controls in checkout
-- [x] Removed "Account Required" gate from checkout (guest checkout for all items)
-- [x] Improved PaymentCancel page: "No Worries!" with Return to Checkout / Continue Shopping / Back to Home
-- [x] Added product catalog API (GET /api/payments/catalog JSON + CSV download)
-- [x] Added admin catalog CSV upload endpoint
+- [x] Fixed landing page crash (selectedSeries null reference)
+- [x] Updated banner: "HE IS RISEN! Soul Food Is LIVE!"
+- [x] Countdown targets Pentecost (May 24, 2026)
+- [x] All shipping timelines updated (no more March/Easter dates)
+- [x] Amazon-style +/- quantity controls in checkout
+- [x] Removed account-required gate (guest checkout for all)
+- [x] PaymentCancel page with navigation buttons
+- [x] Product naming fix (no more "YE Paperback - ADULT" double-label)
+
+### Download/Fulfillment Fixes (Apr 5, 2026)
+- [x] 60+ new product ID → PDF file mappings
+- [x] Smart normalizer with epub/ebook format support
+- [x] My Library downloads now use fuzzy matching by order + name
+- [x] DOLLARTEST coupon override_total + discount_dollars in checkout API
+- [x] Retroactively fulfilled 5 paid orders with download links
+- [x] Sent confirmation emails with download links
+- [x] Reward points dynamically calculated from purchase history
 
 ### Store Launch (Apr 5, 2026)
-- [x] Featured section with 3 bundle/product cards
-- [x] Store organized: Featured > Instant Access > Pre-Order > Free Resources
-- [x] 3 launch coupons + 6 contributor coupons with max_uses enforcement
-- [x] Gift certificates disabled for launch
-- [x] Email templates: digital delivery, preorder confirmation, game pass access
-- [x] About Us page with real team photos
-- [x] Fixed dollar coupon support in frontend checkout
-- [x] Pentecost countdown timer (sale ends May 24, 2026)
-
-### Previously Completed
-- [x] 20% off game passes (no coupon, until Pentecost)
-- [x] Payment success webhook race condition fixed (polling)
-- [x] Stripe dynamic pricing (no dashboard sync needed)
-- [x] Resend email integration (kingdom-soul.com verified)
+- [x] Featured > Instant Access > Pre-Order > Free Resources layout
+- [x] 6 contributor coupons + 5 launch coupons
+- [x] Resend email integration (digital, preorder, game pass templates)
+- [x] About Us page with team photos
+- [x] Pentecost countdown + $3 off pre-orders + 20% off game passes
+- [x] Product catalog CSV download + JSON API
 
 ## Prioritized Backlog
 ### P0
-- Run live $1 test purchase through the UI (recommended)
+- Live $1 test purchase through the UI (recommended)
 
 ### P1
-- Build "Redeem Code" flow for guest purchases
-- BKFT Months 2-3 content (when user finalizes)
+- "Redeem Code" flow for guest post-purchase account linking
+- Admin UI frontend for fulfillment management
+- BKFT Months 2-3 content (when finalized)
 
 ### P2
 - SMS OTP, License Management, Referral System
 - Word Search Game, Video Integration
-- Product Catalog migration to MongoDB
+- Product Catalog migration to MongoDB (prices)
 - Gift Certificates, Subscription billing
 
-## Critical Notes
-- GUEST CHECKOUT IS INTENTIONAL — no account gating at checkout
-- Stripe minimum $0.50
-- Can't combine coupons (one per order)
-- Game pass 20% off auto-expires May 24, 2026
-- Gift certificates DISABLED for launch
-- Subscriptions DEFERRED (Coming Soon sign on landing page)
-- Stripe uses dynamic pricing — catalog is source of truth, no dashboard sync needed
+## Critical Architecture Notes
+- Product-file mappings: MongoDB `product_file_mappings` collection (primary) → hardcoded PRODUCT_FILES (fallback)
+- Admin endpoints: `/api/admin/fulfillment/*` for content management
+- No redeploy needed for: new file mappings, granting access, retrying orders, resending emails
+- Stripe uses dynamic pricing (unit_amount) — catalog in code is source of truth for PRICES
+- Guest checkout is intentional — no account gating
