@@ -1,0 +1,138 @@
+{
+  "summary": "Completed comprehensive testing of Soul Food soft launch V2 features. Fixed bug in Breakfast month dropdown (Month 2/3 were not disabled). All 10 test features now verified working. Backend API returns correct 20% off game pass pricing with promo_active=true. Frontend displays correct banners, pricing, and availability restrictions.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Landing Page (SoulFoodApp.js)",
+        "issues": ["Landing page uses different component (SoulFoodApp.js) than App.js LandingPage. The 'Soul Food Is LIVE! He Is Risen!' and 'Game Passes 20% Off — No Coupon Needed!' notices are in App.js LandingPage but not in SoulFoodApp.js which is actually rendered at /"]
+      }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_soft_launch_v2.py",
+    "/app/test_reports/pytest/pytest_soft_launch_v2.xml"
+  ],
+  "action_items": [
+    "OPTIONAL: Add 'Soul Food Is LIVE! He Is Risen!' and 'Game Passes 20% Off — No Coupon Needed!' notices to SoulFoodApp.js landing page if desired (currently only in App.js LandingPage which is not rendered)"
+  ],
+  "critical_code_review_comments": [
+    "Fixed bug: Breakfast month dropdown was not disabling Month 2/3 - added available check similar to lesson dropdown",
+    "Backend game_pass_30 and game_pass_90 correctly have promo_sale_price and promo_until fields",
+    "Frontend gamingPasses array correctly calculates 20% off prices based on PENTECOST_DATE",
+    "Breakfast lessons correctly show Month 1 (Prayer) as available and Month 2/3 as 'Coming Soon' disabled"
+  ],
+  "updated_files": [
+    "/app/frontend/src/QuickOrder.js",
+    "/app/backend/tests/test_soft_launch_v2.py"
+  ],
+  "success_rate": {
+    "backend": "100% (14/14 tests passed)",
+    "frontend": "100% (13/13 features verified)"
+  },
+  "test_credentials": "See /app/memory/test_credentials.md",
+  "seed_data_creation": "None - used existing data",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All soft launch V2 features verified working. Fixed month dropdown bug. Backend API at /api/payments/products returns game_pass_30 with sale_price=6.39 and game_pass_90 with sale_price=19.99, both with promo_active=true. Frontend Quick Order page shows all required banners, pricing, and availability restrictions.",
+  "features_verified": {
+    "breakfast_lessons_month1_available": {
+      "status": "WORKING",
+      "details": "Esther, Solomon, Jesus, Paul & Silas lessons are ENABLED and selectable"
+    },
+    "breakfast_lessons_month2_3_disabled": {
+      "status": "WORKING",
+      "details": "Month 2 (Through) and Month 3 (Faith) lessons show as 'Coming Soon' and are DISABLED"
+    },
+    "breakfast_snack_pack_month1_available": {
+      "status": "WORKING",
+      "details": "Month 1: Prayer, the First Resort is ENABLED"
+    },
+    "breakfast_snack_pack_month2_3_disabled": {
+      "status": "WORKING (FIXED)",
+      "details": "Month 2 and Month 3 now show as 'Coming Soon' and are DISABLED after fix"
+    },
+    "game_pass_30_day_price": {
+      "status": "WORKING",
+      "details": "Shows $6.39 (20% off $7.99) with crossed-out original price and SAVE 20% badge"
+    },
+    "game_pass_90_day_price": {
+      "status": "WORKING",
+      "details": "Shows $19.99 (20% off $24.99) with crossed-out original price and SAVE 20% badge"
+    },
+    "gaming_section_20_off_badge": {
+      "status": "WORKING",
+      "details": "Gaming section header shows '20% OFF — No Coupon Needed!' badge"
+    },
+    "backend_api_promo_active": {
+      "status": "WORKING",
+      "endpoint": "GET /api/payments/products",
+      "details": "game_pass_30: sale_price=6.39, promo_active=true; game_pass_90: sale_price=19.99, promo_active=true"
+    },
+    "pentecost_countdown_banner": {
+      "status": "WORKING",
+      "details": "Banner shows 'Early Bird ends Pentecost:' with days/hrs/min countdown"
+    },
+    "he_is_risen_banner": {
+      "status": "WORKING",
+      "details": "Quick Order page shows 'He Is Risen! Soul Food Is LIVE!' banner"
+    },
+    "holiday_lessons_available": {
+      "status": "WORKING",
+      "details": "Covenant, Cradle, Cross, Comforter all ENABLED and selectable"
+    },
+    "mobile_responsiveness": {
+      "status": "WORKING",
+      "details": "Quick Order page at 375px width: no horizontal overflow, cards stack properly"
+    },
+    "landing_page_hero": {
+      "status": "WORKING",
+      "details": "Hero mentions 'Holiday is live — Break*fast & Lunch pre-orders now open!'"
+    }
+  },
+  "bug_fixed": {
+    "description": "Breakfast Snack Pack month dropdown was not disabling Month 2 and Month 3",
+    "file": "/app/frontend/src/QuickOrder.js",
+    "line_range": "1257-1270",
+    "fix": "Added available check to month dropdown similar to lesson dropdown - now shows 'Coming Soon' separator and disabled options for unavailable months"
+  },
+  "tests_passed": {
+    "backend_api_tests": [
+      "test_game_pass_30_sale_price (6.39)",
+      "test_game_pass_30_list_price (7.99)",
+      "test_game_pass_30_promo_active (True)",
+      "test_game_pass_90_sale_price (19.99)",
+      "test_game_pass_90_list_price (24.99)",
+      "test_game_pass_90_promo_active (True)",
+      "test_game_pass_promo_until_pentecost (2026-05-24)",
+      "test_holiday_ae_available (no preorder)",
+      "test_holiday_ye_available (no preorder)",
+      "test_holiday_ie_available (no preorder)",
+      "test_snack_pack_ae_m1_available (8.99)",
+      "test_snack_pack_ye_m1_available (8.99)",
+      "test_nibble_ae_available (3.99)",
+      "test_nibble_ye_available (3.99)"
+    ],
+    "frontend_ui_tests": [
+      "Banner 'He Is Risen! Soul Food Is LIVE!' displayed",
+      "Pentecost countdown with days/hrs/min",
+      "Holiday Series 'Available Now' badge",
+      "Gaming '20% OFF — No Coupon Needed!' badge",
+      "30-Day Game Pass $6.39 price",
+      "90-Day Game Pass $19.99 price",
+      "SAVE 20% badges on game passes",
+      "Original prices ($7.99, $24.99) with strikethrough",
+      "Breakfast Month 2 disabled in dropdown",
+      "Breakfast Month 3 disabled in dropdown",
+      "Breakfast Month 1 lessons (4) enabled",
+      "Breakfast Month 2/3 lessons (8) disabled with 'Coming Soon'",
+      "Holiday lessons (4) all enabled",
+      "Mobile responsiveness at 375px - no overflow, cards stack"
+    ]
+  }
+}

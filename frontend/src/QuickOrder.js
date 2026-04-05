@@ -38,11 +38,40 @@ const useCountdown = (targetDate) => {
   return timeLeft;
 };
 
+// Pentecost countdown hook for early bird deals
+const usePentecostCountdown = () => {
+  const pentecostDate = new Date('2026-05-24T23:59:59');
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, expired: false });
+  
+  useEffect(() => {
+    const update = () => {
+      const now = new Date();
+      const diff = pentecostDate - now;
+      if (diff <= 0) {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, expired: true });
+        return;
+      }
+      setTimeLeft({
+        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((diff / (1000 * 60)) % 60),
+        expired: false
+      });
+    };
+    update();
+    const timer = setInterval(update, 60000);
+    return () => clearInterval(timer);
+  }, []);
+  
+  return timeLeft;
+};
+
 // Soft Launch Banner with Resurrection Sunday Theme
 const PalmSundayBanner = () => {
   // Palm Sunday shipping deadlines still apply
   const expeditedDeadline = useCountdown('2026-03-15T23:59:59');
   const standardDeadline = useCountdown('2026-03-10T23:59:59');
+  const pentecost = usePentecostCountdown();
 
   return (
     <div className="mb-8 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
@@ -95,6 +124,29 @@ const PalmSundayBanner = () => {
             <p className="text-xs text-purple-200 mt-1">Ships May-June 2026</p>
           </div>
         </div>
+
+        {/* Early Bird Countdown */}
+        {!pentecost.expired && (
+          <div className="mt-5 flex justify-center">
+            <div className="bg-white/15 backdrop-blur-sm rounded-xl px-6 py-3 flex items-center gap-4">
+              <span className="text-amber-300 font-semibold text-sm">Early Bird ends Pentecost:</span>
+              <div className="flex gap-2">
+                <div className="bg-white/25 rounded-lg px-3 py-1 text-center">
+                  <span className="text-lg font-bold">{pentecost.days}</span>
+                  <p className="text-xs text-purple-200">days</p>
+                </div>
+                <div className="bg-white/25 rounded-lg px-3 py-1 text-center">
+                  <span className="text-lg font-bold">{pentecost.hours}</span>
+                  <p className="text-xs text-purple-200">hrs</p>
+                </div>
+                <div className="bg-white/25 rounded-lg px-3 py-1 text-center">
+                  <span className="text-lg font-bold">{pentecost.minutes}</span>
+                  <p className="text-xs text-purple-200">min</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Shipping Deadlines for Easter */}
         {!expeditedDeadline.expired && (
@@ -248,29 +300,29 @@ const QuickOrder = () => {
   // Breakfast Series monthly topics for Snack Pack selection
   const breakfastMonths = [
     { id: 'month-1', name: 'Month 1: Prayer, the First Resort', lessons: 4, available: true },
-    { id: 'month-2', name: 'Month 2: The Art of Through', lessons: 4, available: true },
-    { id: 'month-3', name: 'Month 3: Faith & Foresight', lessons: 4, available: true }
+    { id: 'month-2', name: 'Month 2: The Art of Through', lessons: 4, available: false },
+    { id: 'month-3', name: 'Month 3: Faith & Foresight', lessons: 4, available: false }
   ];
 
   // Breakfast individual lessons for Nibble selection (organized by month)
   // IDs must match backend BREAKFAST_AE_NIBBLES / BREAKFAST_YE_NIBBLES
   // Format: breakfast-{ae|ye}-{theme}-{lesson#}
   const breakfastLessons = [
-    // Month 1 - Prayer, the First Resort
+    // Month 1 - Prayer, the First Resort (AVAILABLE NOW)
     { id: 'prayer-1', name: 'Esther: Second Is the Best', available: true, month: 1 },
     { id: 'prayer-2', name: 'Solomon: The Question That Unlocked a Legacy', available: true, month: 1 },
     { id: 'prayer-3', name: 'Jesus: Prayer the First Resort', available: true, month: 1 },
     { id: 'prayer-4', name: 'Paul & Silas: Faith in the Dark', available: true, month: 1 },
-    // Month 2 - The Art of Through
-    { id: 'through-1', name: 'Joseph – The Young Dreamer', available: true, month: 2 },
-    { id: 'through-2', name: 'Hannah – Barren but Not Lifeless', available: true, month: 2 },
-    { id: 'through-3', name: 'Abram – No Heir, Wait Here', available: true, month: 2 },
-    { id: 'through-4', name: 'Victory Through the Blood', available: true, month: 2 },
-    // Month 3 - Faith & Foresight
-    { id: 'faith-1', name: 'Rahab: Faith That Took Action', available: true, month: 3 },
-    { id: 'faith-2', name: 'Abigail: Wisdom on the Move', available: true, month: 3 },
-    { id: 'faith-3', name: 'The Centurion: Faith That Commands Results', available: true, month: 3 },
-    { id: 'faith-4', name: 'Joseph of Arimathea: Trust the Process', available: true, month: 3 }
+    // Month 2 - The Art of Through (COMING SOON - content being finalized)
+    { id: 'through-1', name: 'Joseph – The Young Dreamer', available: false, month: 2 },
+    { id: 'through-2', name: 'Hannah – Barren but Not Lifeless', available: false, month: 2 },
+    { id: 'through-3', name: 'Abram – No Heir, Wait Here', available: false, month: 2 },
+    { id: 'through-4', name: 'Victory Through the Blood', available: false, month: 2 },
+    // Month 3 - Faith & Foresight (COMING SOON - content being finalized)
+    { id: 'faith-1', name: 'Rahab: Faith That Took Action', available: false, month: 3 },
+    { id: 'faith-2', name: 'Abigail: Wisdom on the Move', available: false, month: 3 },
+    { id: 'faith-3', name: 'The Centurion: Faith That Commands Results', available: false, month: 3 },
+    { id: 'faith-4', name: 'Joseph of Arimathea: Trust the Process', available: false, month: 3 }
   ];
 
   // Holiday lessons for Nibble selection - IDs must match backend ALL_NIBBLES
@@ -538,7 +590,10 @@ const QuickOrder = () => {
     }
   ];
 
-  // Gaming passes - prices from Stripe catalog
+  // Gaming passes - 20% OFF until Pentecost (May 24, 2026) - NO COUPON REQUIRED
+  const PENTECOST_DATE = new Date('2026-05-24T23:59:59');
+  const isGameSaleActive = new Date() < PENTECOST_DATE;
+  
   const gamingPasses = [
     {
       id: 'gaming-pass-30',
@@ -548,7 +603,7 @@ const QuickOrder = () => {
       restrictions: '4 hrs/day limit • 20 min idle timeout',
       icon: '🎮',
       listPrice: 7.99,
-      price: 7.99,
+      price: isGameSaleActive ? 6.39 : 7.99,
       editions: ['adult', 'youth']
     },
     {
@@ -559,7 +614,7 @@ const QuickOrder = () => {
       restrictions: '5 hrs/day limit • 30 min idle timeout',
       icon: '🎮',
       listPrice: 24.99,
-      price: 24.99,
+      price: isGameSaleActive ? 19.99 : 24.99,
       editions: ['adult', 'youth', 'instructor'],
       badge: 'Best Value'
     }
@@ -1205,10 +1260,25 @@ const QuickOrder = () => {
                             <select
                               className="w-full p-2 border border-purple-300 rounded-lg text-sm bg-purple-50"
                               value={selectedMonth}
-                              onChange={(e) => updateSelection(meal.id, 'month', e.target.value)}
+                              onChange={(e) => {
+                                const month = meal.monthOptions.find(m => m.id === e.target.value);
+                                if (month?.available !== false) {
+                                  updateSelection(meal.id, 'month', e.target.value);
+                                }
+                              }}
                             >
-                              {meal.monthOptions.map(month => (
+                              {meal.monthOptions.filter(m => m.available !== false).map(month => (
                                 <option key={month.id} value={month.id}>{month.name}</option>
+                              ))}
+                              {meal.monthOptions.some(m => m.available === false) && (
+                                <option disabled className="text-gray-400">
+                                  ── Coming Soon ──
+                                </option>
+                              )}
+                              {meal.monthOptions.filter(m => m.available === false).map(month => (
+                                <option key={month.id} value={month.id} disabled className="text-gray-400">
+                                  {month.name} (Coming Soon)
+                                </option>
                               ))}
                             </select>
                           </div>
@@ -1587,7 +1657,12 @@ const QuickOrder = () => {
 
         {/* Gaming Passes Section */}
         <section className="mb-12">
-          <h3 className="text-2xl font-bold mb-6 text-slate-800">🎮 Gaming Access</h3>
+          <div className="flex items-center gap-3 mb-6">
+            <h3 className="text-2xl font-bold text-slate-800">🎮 Gaming Access</h3>
+            {isGameSaleActive && (
+              <Badge className="bg-red-500 text-white text-sm px-3 py-1 animate-pulse">20% OFF — No Coupon Needed!</Badge>
+            )}
+          </div>
           <div className="grid md:grid-cols-2 gap-6">
             {gamingPasses.map(pass => (
               <Card key={pass.id} className="shadow-lg hover:shadow-xl transition-shadow border-2 border-purple-200">
@@ -1629,13 +1704,21 @@ const QuickOrder = () => {
                       
                       {/* Price & Add to Cart */}
                       <div className="flex items-center justify-between">
-                        <span className="text-xl font-bold text-purple-600">${pass.price.toFixed(2)}</span>
+                        <div>
+                          {isGameSaleActive && pass.listPrice !== pass.price && (
+                            <span className="text-sm text-slate-400 line-through mr-2">${pass.listPrice.toFixed(2)}</span>
+                          )}
+                          <span className="text-xl font-bold text-purple-600">${pass.price.toFixed(2)}</span>
+                          {isGameSaleActive && pass.listPrice !== pass.price && (
+                            <span className="text-xs text-red-500 font-bold ml-2">SAVE 20%</span>
+                          )}
+                        </div>
                         <Button
                           size="sm"
                           onClick={() => {
                             addToCart({
                               id: pass.id,
-                              name: pass.name,
+                              name: isGameSaleActive ? `${pass.name} (20% Off)` : pass.name,
                               price: pass.price,
                               quantity: 1,
                               icon: pass.icon
@@ -1653,6 +1736,12 @@ const QuickOrder = () => {
               </Card>
             ))}
           </div>
+          {/* Pentecost deadline */}
+          {isGameSaleActive && (
+            <div className="mt-4 text-center">
+              <p className="text-sm text-slate-500">20% off game passes — no coupon required. Sale ends Pentecost (May 24, 2026).</p>
+            </div>
+          )}
         </section>
 
         {/* Merchandise Section */}

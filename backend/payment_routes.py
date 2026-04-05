@@ -487,24 +487,28 @@ PRODUCTS = {
         "edition": "YE"
     },
     
-    # ==================== GAME PASSES ====================
+    # ==================== GAME PASSES (20% OFF until Pentecost May 24, 2026 — no coupon needed) ====================
     "game_pass_30": {
         "name": "Digital Games Subscription (30-Day)",
         "sku": "GAMEPASS-30D",
         "stripe_id": "prod_Tl7ZEakAImOyVc",
-        "description": "30‑day access to SOFU game content (Jeopardy‑style, group activities, and review challenges) for study groups and family nights.",
+        "description": "30-day access to SOFU game content (Jeopardy-style, group activities, and review challenges) for study groups and family nights.",
         "list_price": 7.99,
         "sale_price": 7.99,
-        "currency": "usd"
+        "currency": "usd",
+        "promo_sale_price": 6.39,
+        "promo_until": "2026-05-24"
     },
     "game_pass_90": {
         "name": "Game Pass (90-Day Access)",
         "sku": "GAMEPASS-90D",
         "stripe_id": "prod_Tl7mje38Mzyynu",
-        "description": "90‑day access to SOFU game content—best for churches, small groups, and quarterly study cycles.",
+        "description": "90-day access to SOFU game content—best for churches, small groups, and quarterly study cycles.",
         "list_price": 24.99,
         "sale_price": 24.99,
-        "currency": "usd"
+        "currency": "usd",
+        "promo_sale_price": 19.99,
+        "promo_until": "2026-05-24"
     },
     
     # ==================== SUBSCRIPTIONS ====================
@@ -1576,8 +1580,22 @@ async def stripe_webhook(request: Request):
 
 @router.get("/products")
 async def get_products():
-    """Get list of available products with pricing"""
-    return {"products": PRODUCTS}
+    """Get list of available products with pricing - applies time-limited promos"""
+    from datetime import date
+    today = date.today()
+    
+    products_with_promos = {}
+    for key, product in PRODUCTS.items():
+        p = dict(product)
+        # Apply promo pricing if within promo window
+        promo_until = p.get("promo_until")
+        if promo_until and today <= date.fromisoformat(promo_until):
+            p["original_sale_price"] = p["sale_price"]
+            p["sale_price"] = p["promo_sale_price"]
+            p["promo_active"] = True
+        products_with_promos[key] = p
+    
+    return {"products": products_with_promos}
 
 
 @router.get("/download-links/{order_id}")

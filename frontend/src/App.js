@@ -182,8 +182,8 @@ const LandingPage = () => {
             Armor of God
           </h2>
           <p className="text-lg sm:text-xl text-slate-700 mb-8 sm:mb-12 max-w-3xl mx-auto leading-relaxed px-4">
-            Renew your mind and strengthen your faith through our year-long journey of spiritual growth, 
-            interactive Bible study lessons, and supportive Christian community for ALL nations.
+            Renew your mind and strengthen your faith through interactive Bible study lessons, 
+            games, and a supportive Christian community for ALL nations. Holiday is live — Break*fast & Lunch pre-orders now open!
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center px-4">
@@ -776,12 +776,19 @@ const LandingPage = () => {
           </div>
           
           {/* Available Now Notice */}
-          <div className="mt-12 text-center">
+          <div className="mt-12 text-center space-y-4">
             <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm px-6 py-4 rounded-2xl shadow-lg border border-emerald-200">
-              <span className="text-2xl">✨</span>
+              <span className="text-2xl">✝️</span>
               <div className="text-left">
-                <p className="font-bold text-slate-800">Digital Downloads Available Now!</p>
-                <p className="text-sm text-slate-600">Interactive lessons, eBooks & subscriptions ready for instant access. Print books ship in 2-3 weeks.</p>
+                <p className="font-bold text-slate-800">Soul Food Is LIVE! He Is Risen!</p>
+                <p className="text-sm text-slate-600">Holiday Series available now. Break*fast & Lunch pre-orders open — save $3 on full workbooks!</p>
+              </div>
+            </div>
+            <div className="inline-flex items-center gap-3 bg-purple-50/80 backdrop-blur-sm px-6 py-3 rounded-2xl shadow-md border border-purple-200">
+              <span className="text-xl">🎮</span>
+              <div className="text-left">
+                <p className="font-bold text-purple-800">Game Passes 20% Off — No Coupon Needed!</p>
+                <p className="text-xs text-purple-600">Sale runs through Pentecost (May 24, 2026)</p>
               </div>
             </div>
           </div>
