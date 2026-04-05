@@ -2223,25 +2223,55 @@ async def get_my_purchases(request: Request):
             continue
         seen_orders.add(order_id)
         
-        # Check if this order has download links
-        has_downloads = txn.get("download_links_generated", False)
+        # Get ALL download links for this order
+        order_downloads = await db.download_links.find(
+            {"order_id": order_id, "revoked": False},
+            {"_id": 0, "token": 1, "product_name": 1, "product_id": 1}
+        ).to_list(50)
+        
+        # Build a lookup by product name keywords
+        download_tokens_by_name = {}
+        for dl in order_downloads:
+            download_tokens_by_name[dl.get("product_id", "")] = dl.get("token")
+            download_tokens_by_name[dl.get("product_name", "")] = dl.get("token")
         
         for item in txn.get("items", []):
             item_product_id = item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
+            item_name = item.get("name", "Soul Food Product")
             
-            # Find the specific download link for this item
-            download_link = await db.download_links.find_one({
-                "order_id": order_id,
-                "product_id": {"$regex": item_product_id, "$options": "i"},
-                "revoked": False
-            }, {"_id": 0, "token": 1})
+            # Try to find a matching download token
+            download_token = None
             
-            download_token = download_link.get("token") if download_link else None
+            # 1. Direct match by product_id
+            if item_product_id in download_tokens_by_name:
+                download_token = download_tokens_by_name[item_product_id]
+            
+            # 2. Try normalized match
+            if not download_token:
+                normalized = normalize_product_id(item_product_id)
+                if normalized in download_tokens_by_name:
+                    download_token = download_tokens_by_name[normalized]
+            
+            # 3. Fuzzy match by name keywords
+            if not download_token and order_downloads:
+                item_lower = item_name.lower()
+                for dl in order_downloads:
+                    dl_name = (dl.get("product_name") or "").lower()
+                    # Match if significant words overlap
+                    item_words = set(w for w in item_lower.split() if len(w) > 3)
+                    dl_words = set(w for w in dl_name.split() if len(w) > 3)
+                    if item_words and dl_words and len(item_words & dl_words) >= 2:
+                        download_token = dl.get("token")
+                        break
+            
+            # 4. If only one download link for the order, just use it
+            if not download_token and len(order_downloads) == 1:
+                download_token = order_downloads[0].get("token")
             
             purchases.append({
                 "order_id": order_id,
                 "product_id": item_product_id,
-                "product_name": item.get("name", "Soul Food Product"),
+                "product_name": item_name,
                 "purchased_at": txn.get("created_at"),
                 "download_url": f"/api/downloads/file/{download_token}" if download_token else None,
                 "has_download": bool(download_token)

@@ -706,7 +706,7 @@ async def resend_2fa_code(data: TwoFactorResend):
 
 @router.get("/rewards/balance")
 async def get_rewards_balance(request: Request):
-    """Get user's rewards points balance"""
+    """Get user's rewards points balance — dynamically calculated from purchase history"""
     
     auth_header = request.headers.get("Authorization")
     if not auth_header or not auth_header.startswith("Bearer "):
@@ -716,17 +716,45 @@ async def get_rewards_balance(request: Request):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("sub")
+        user_email = payload.get("email")
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
     
-    user = await db.users.find_one({"id": user_id}, {"_id": 0, "rewards_points": 1, "name": 1})
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "rewards_points": 1, "email": 1, "name": 1})
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    points = user.get("rewards_points", 0)
+    email = user_email or user.get("email")
+    
+    # Calculate points from purchase history (1 point per $10 spent)
+    query = {"payment_status": "paid"}
+    if email:
+        query["$or"] = [{"user_id": user_id}, {"customer_email": email}]
+    else:
+        query["user_id"] = user_id
+    
+    paid_orders = await db.payment_transactions.find(
+        query, {"_id": 0, "total_amount": 1, "amount_total": 1}
+    ).to_list(200)
+    
+    total_spent = sum(o.get("total_amount", o.get("amount_total", 0)) or 0 for o in paid_orders)
+    earned_points = int(total_spent / 10)  # 1 point per $10
+    
+    # First purchase bonus: 10 extra points if they have any order
+    if len(paid_orders) > 0:
+        earned_points += 10
+    
+    # Check if user has redeemed any points
+    redeemed = user.get("rewards_points_redeemed", 0)
+    points = max(0, earned_points - redeemed)
+    
+    # Update stored points
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {"rewards_points": points, "rewards_total_earned": earned_points, "rewards_total_spent_tracked": total_spent}}
+    )
     
     # Calculate available rewards
-    # Example: 100 points = $5 off, 200 points = $10 off
     available_rewards = []
     if points >= 50:
         available_rewards.append({"points": 50, "discount": 2.50, "description": "$2.50 off"})
@@ -737,9 +765,11 @@ async def get_rewards_balance(request: Request):
     
     return {
         "points": points,
-        "points_value": points * 0.05,  # $0.05 per point
+        "points_value": points * 0.05,
         "available_rewards": available_rewards,
-        "earn_rate": "1 point per $10 spent"
+        "earn_rate": "1 point per $10 spent",
+        "total_spent": round(total_spent, 2),
+        "total_orders": len(paid_orders)
     }
 
 @router.post("/rewards/redeem")
