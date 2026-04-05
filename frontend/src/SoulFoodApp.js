@@ -1429,16 +1429,16 @@ const SoulFoodLanding = () => {
                   <div className="flex items-center justify-center gap-4 mb-2">
                     <div className="text-center">
                       <p className="text-xs text-slate-500 uppercase">ePub</p>
-                      <div className="text-2xl font-bold text-indigo-600">${selectedSeries.available ? '14.99' : '24.99'}</div>
+                      <div className="text-2xl font-bold text-indigo-600">${selectedSeries?.available ? '14.99' : '24.99'}</div>
                     </div>
                     <div className="text-slate-400">or</div>
                     <div className="text-center">
                       <p className="text-xs text-slate-500 uppercase">Physical</p>
-                      <div className="text-2xl font-bold text-purple-600">${selectedSeries.available ? '16.99' : '27.99'}</div>
+                      <div className="text-2xl font-bold text-purple-600">${selectedSeries?.available ? '16.99' : '27.99'}</div>
                     </div>
                   </div>
                   <Badge className="bg-emerald-500 text-white text-xs px-3 py-1 mt-2">
-                    {selectedSeries.available ? 'Instant Download Available' : 'Pre-Order — $3 Off'}
+                    {selectedSeries?.available ? 'Instant Download Available' : 'Pre-Order — $3 Off'}
                   </Badge>
                 </div>
 
