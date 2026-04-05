@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@kingdom-soul.com')
 SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'support@kingdom-soul.com')
-SITE_URL = "https://kingdom-soul.com"
+SITE_URL = os.environ.get('FRONTEND_URL', 'https://kingdom-soul.com')
 
 # Initialize Resend
 if RESEND_API_KEY:
