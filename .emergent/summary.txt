@@ -1,194 +1,188 @@
 <analysis>**original_problem_statement:**
-The user's primary goal is to build and refine a full-stack e-commerce and learning platform, Soul Food. The user is highly involved in the UI/UX, marketing copy, and feature set, providing frequent, detailed feedback.
+The user's primary goal is to build and refine a full-stack e-commerce and learning platform, Soul Food. The user is highly involved in the UI/UX, marketing copy, and feature set, providing frequent feedback.
+Recent objectives included: 
+1. Fixing login persistence issues and testing the 2FA auth flow.
+2. Resolving dynamic thumbnail bugs on the frontend.
+3. Enabling seamless checkout by removing account-required blockers.
+4. Ensuring Stripe webhooks properly capture transactions and generate download links for digital content.
+5. Updating branding (removing Emergent logos), adding a Refund page, and configuring a  test coupon.
+6. Preparing the system to accept BKFT IE (Breakfast Instructor Edition) files for integration.
 
-Recent key objectives included:
-1.  Implementing a new, trackable audio access code system and a My Audio Library feature for users.
-2.  Performing numerous UI/UX refinements, including updating the creator's photos, ensuring button alignment on all content tiles, and standardizing navigation elements.
-3.  Processing a large number of user-provided PDF files, combining multi-part workbooks, and programmatically extracting individual Nibble lessons from larger Snack Pack files to enable individual sales.
-4.  Fixing multiple content-related bugs, such as incorrect pricing displays on the Snack Packs page and wrong thumbnail images.
-5.  Updating marketing copy across the site to reflect new product availability and shipping timelines.
-6.  Debugging a critical shopping cart issue where items cannot be added or removed.
+PRODUCT REQUIREMENTS: Platform must support physical and digital sales via Stripe, allow guest checkout with post-purchase redemption, provide a My Library for digital downloads, and include comprehensive UI/UX refinements.
 
-**User's preferred language**: English
+**User's preferred language**: English. (INSTRUCT NEXT AGENT: You MUST respond in English).
 
-**what currently exists?**
-The application is a full-stack platform using React, FastAPI, and MongoDB with live Stripe integration.
--   **Homepage**: Features a Resurrection Sunday promotional banner, a countdown timer, an updated jump-to navigation bar, and a Meet the Team section with recently updated photos. All product and content tiles have had their button alignment standardized.
--   **Authentication**: A complete frontend and backend for user authentication is in place, including registration, login, Google OAuth, and 2FA. The My Library dashboard now includes a My Audio Library section to display a user's unlocked audio content.
--   **Content Pages**: A  page hosts audio content and a new Redeem Code modal. An  page is present.
--   **E-commerce**:
-    -   The checkout page has been enhanced with a phone number field (for audio code generation) and a note informing users about the free audio access with physical book purchases.
-    -   Bugs related to incorrect pricing on the  and wrong images on the  page have been fixed.
--   **Backend & Content**:
-    -   A new, sophisticated audio code generation system ( format) is fully implemented in  and integrated with the Stripe webhook in .
-    -   All user-provided PDF workbooks for Breakfast AE and Breakfast YE have been combined.
-    -   **24 individual Nibble lesson PDFs have been programmatically extracted** from the Snack Pack files and are correctly mapped for individual purchase, resolving a major content blocker.
-    -   All downloadable files have been consolidated into .
+**what currently exists?** 
+A full-stack React and FastAPI platform with live Stripe integration. The checkout flow has been modified to allow guest checkouts for all items (removing account requirements to reduce friction). Stripe webhooks are configured to handle  events for order fulfillment and download link generation. My Library now displays product thumbnails and download buttons. A  coupon exists to override cart totals to .00 for live testing.
 
 **Last working item**:
--   **Last item agent was working**: Investigating a critical bug where the user cannot delete items from the shopping cart. The agent discovered that after an item is added to the cart (confirmed by a toast notification), the cart's UI does not update and still shows Your cart is empty. This points to a state management issue in the frontend.
--   **Status**: IN PROGRESS
--   **Agent Testing Done**: N
--   **Which testing method agent to use?**: frontend testing agent. The agent must verify the entire cart lifecycle: adding items, seeing them correctly in the cart UI, updating quantities, and successfully removing items. The primary focus should be on the state synchronization between the  and the components that consume it.
--   **User Testing Done**: N
+- **Last item agent was working**: Validating the  override coupon () and ensuring the free In His Image PDF downloads successfully fetch from the server. The user acknowledged the fixes and stated they are gathering the BKFT IE (Breakfast Instructor Edition) files to upload next.
+- **Status**: USER VERIFICATION PENDING
+- **Agent Testing Done**: Y
+- **Which testing method agent to use?**: NA (Testing for the coupon and downloads is already done; await user files).
+- **User Testing Done**: N (User stated they will test the flows themselves).
 
 **All Pending/In progress Issue list**:
--   **Issue 1**: Shopping cart not updating/deleting items (P0)
--   **Issue 2**: Individual Breakfast lesson files for the Instructor Edition (IE) are missing (P1)
--   **Issue 3**: Hardcoded Product Catalog in  (Tech Debt) (P2)
--   **Issue 4**: Unbounded Database Query in  (Performance) (P2)
--   **Issue 5**: Typo in  (Content) (P2)
+Issue 1: Stripe Webhook Race Condition / No order found on Success Page (P0)
+Issue 2: 24 New Nibble PDFs not mapped to product catalog (P1)
 
-**Issues Detail**:
--   **Issue 1**: Shopping cart not updating/deleting items
-    -   **Attempted fixes**: The agent investigated  and . Screenshots confirmed a state desynchronization: a toast message confirms an item was added, but the cart UI component does not re-render to show the new item.
-    -   **Next debug checklist**:
-        1.  In , add  statements inside the  and  functions to trace the  state before and after the update.
-        2.  Check the  hook that saves to  to ensure it's being triggered with the correct data.
-        3.  Using browser developer tools, monitor the application's  to see if the  key is being updated correctly upon adding/removing items.
-        4.  The issue is likely that the React state update is not causing components that consume the context () to re-render. Verify how the state is being spread and updated.
-    -   **Why fix this issue and what will be achieved with the fix?**: This is a critical, revenue-blocking bug. Users cannot purchase any products until they can successfully manage their shopping cart.
-    -   **Status**: IN PROGRESS
-    -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: frontend
+Issues Detail:
+- Issue 1: Stripe Webhook Race Condition / No order found
+   - Attempted fixes: Agent added logging and an admin endpoint to generate missing links, and updated  to retry fetching. However, the user reported the confirmation page still says no order found.
+   - Next debug checklist: Check  polling logic. The user is redirected from Stripe immediately, but the webhook might take a few seconds to create the  and  in MongoDB. Ensure the frontend properly polls the backend until the order appears. 
+   - Why fix this issue and what will be achieved with the fix?: Prevents customer panic when they complete a purchase but immediately see an error on the success page.
+   - Status: IN PROGRESS
+   - Is recurring issue? Y
+   - Should Test frontend/backend/both after fix? both
+   - Blocked on other issue: None
 
--   **Issue 2**: Individual Breakfast lesson files for the Instructor Edition (IE) are missing
-    -   **Attempted fixes**: None. This is a content issue.
-    -   **Next debug checklist**: The agent must wait for the user to upload the IE PDF files. Once uploaded, the agent will need to combine them (if provided in parts) and place them in the  directory, then update the product mapping in .
-    -   **Why fix this issue and what will be achieved with the fix?**: Unlocks a key product line (Instructor Edition) for sale.
-    -   **Status**: BLOCKED
-    -   **Is recurring issue?**: Y
-    -   **Blocked on other issue**: User providing the files.
-
--   **Issue 3**: Hardcoded Product Catalog in  (Tech Debt)
-    -   **Next debug checklist**:
-        1.  Design a  schema for MongoDB.
-        2.  Write a one-time migration script to transfer the product data from the Python dictionary in  to the new MongoDB collection.
-        3.  Refactor all backend routes and frontend components to fetch product data from a new API endpoint instead of using hardcoded data.
-    -   **Why fix this issue and what will be achieved with the fix?**: Massively improves scalability and makes product management easier, paving the way for a future admin panel.
-    -   **Status**: NOT STARTED
-    -   **Is recurring issue?**: Y
-    -   **Should Test frontend/backend/both after fix?**: both
-
--   **Issue 4**: Unbounded Database Query in  (Performance)
-    -   **Next debug checklist**:
-        1.  Locate the unbounded query in  (identified around line 375 in a previous health check).
-        2.  Implement pagination by adding  and  query parameters to the corresponding API endpoint.
-        3.  Update the frontend component that calls this endpoint to handle the paginated response.
-    -   **Why fix this issue and what will be achieved with the fix?**: Prevents potential performance degradation or server crashes as the amount of content grows.
-    -   **Status**: NOT STARTED
-    -   **Is recurring issue?**: N
-    -   **Should Test frontend/backend/both after fix?**: both
-
--   **Issue 5**: Typo in  (Content)
-    -   **Attempted fixes**: Agent identified the typo (acknowledgments) and reported it to the user. The user decided to proceed with the file as-is to avoid delays.
-    -   **Next debug checklist**: Wait for the user to provide the corrected file, then replace the existing file in .
-    -   **Why fix this issue and what will be achieved with the fix?**: Ensures content quality and professionalism.
-    -   **Status**: BLOCKED
-    -   **Is recurring issue?**: N
-    -   **Blocked on other issue**: User providing the corrected file.
+- Issue 2: 24 New Nibble PDFs not mapped to product catalog
+   - Attempted fixes: Previous agent extracted 24 PDF files into  and downloaded covers, but never mapped them to the products array. Current agent completely missed this.
+   - Next debug checklist: Edit the product catalog dictionary in  to add entries for the 24 new Nibble lessons. Update the product map in  to use the new cover images.
+   - Why fix this issue and what will be achieved with the fix?: Makes previously processed content available for actual sale.
+   - Status: NOT STARTED
+   - Is recurring issue? N
+   - Should Test frontend/backend/both after fix? both
+   - Blocked on other issue: None
 
 **In progress Task List**:
--   **Task 1**: Debug Shopping Cart Functionality
-    -   **Where to resume**: . Start by instrumenting the code with  to trace state updates.
-    -   **What will be achieved with this?**: A fully functional e-commerce shopping cart where users can add, view, and remove items correctly.
-    -   **Status**: IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?**: frontend
+Task 1: Process and Integrate BKFT IE Files (P0)
+Task 2: Build Redeem Code Flow for Guest Purchases (P1)
+
+Task Detail:
+- Task 1:
+   - Where to resume: Await user upload of BKFT IE (Breakfast Instructor Edition) files.
+   - What will be achieved with this?: Finalizing the content library for the Instructor Edition.
+   - Status: BLOCKED
+   - Should Test frontend/backend/both after fix? both
+   - Blocked on something: User uploading the files.
+
+- Task 2:
+   - Where to resume: Create a  page on the frontend and a backend endpoint to link guest-purchase transaction confirmation codes to newly registered user accounts.
+   - What will be achieved with this?: Allows users to checkout as guests (reducing friction) but register later to access their digital content in My Library.
+   - Status: NOT STARTED
+   - Should Test frontend/backend/both after fix? both
+   - Blocked on something: None
 
 **Upcoming and Future Tasks**
--   **Upcoming Tasks**:
-    -   P1: **Process IE Content**: Receive and combine the IE Breakfast PDF files when the user uploads them.
-    -   P1: **License Management UI**: Build the frontend for instructors to assign digital access after a bundle purchase.
-    -   P1: **Frontend for Referral System**: Build the UI for the existing referral system backend.
--   **Future Tasks**:
-    -   Implement the Word Search Game.
-    -   Video Integration into My Library.
-    -   Custom Domain Linking.
-    -   Tech Debt: Product Catalog Migration (Issue #3).
-    -   Performance: Paginate Lessons Query (Issue #4).
+Upcoming Tasks:
+- P1: Add SMS Option for OTP (Blocked on user providing Twilio credentials).
+- P1: Add Comprehensive Registration Fields (Middle initial, suffix, billing address, shipping address).
+- P1: License Management UI (Frontend for instructors to assign digital access).
+- P1: Frontend for Referral System.
+
+Future Tasks:
+- Implement the Word Search Game.
+- Video Integration into My Library.
+- Tech Debt: Product Catalog Migration to MongoDB (currently hardcoded in ).
 
 **Completed work in this session**
--   **Audio Content System Implemented**:
-    -   A new, trackable audio code format () was implemented.
-    -   The backend (, , ) was updated to generate, track, and email these codes.
-    -   A My Audio Library section was added to  to display unlocked content.
--   **Massive Content Processing**:
-    -   **Programmatically extracted 24 individual Nibble PDFs** from larger Snack Pack PDFs using , enabling individual lesson sales.
-    -   Combined multi-part user-uploaded PDFs for Breakfast AE and Breakfast YE into single, full-length workbooks.
-    -   Organized all final PDF files in the  directory and fixed all backend file mappings.
--   **UI/UX Refinements**:
-    -   Updated all instances of the creator's photo with a new, clearer, smiling version provided by the user.
-    -   Fixed button alignment and ensured consistent layout for all content tiles across the site.
-    -   Adjusted the homepage jump-to navigation buttons to be of equal size and added an About Us link.
--   **Bug Fixes**:
-    -   Fixed a bug causing prices to display incorrectly on the .
-    -   Fixed a bug showing an incorrect thumbnail for Achievement Medallions on the  page.
--   **Deployment Readiness**:
-    -   Ran multiple successful deployment health checks, confirming the application is ready for a production push.
+- Fixed dynamic thumbnails in  based on variant selection (DONE)
+- Fixed login persistence dropping tokens during checkout by checking multiple localStorage keys (DONE)
+- Configured Stripe Webhook secret to properly receive events (DONE)
+- Removed Account Required blockers for checkout & enforced Stripe /bin/bash.50 minimum (DONE)
+- Added Quantity selectors  to Quick Order page (DONE)
+- Added Game Packs to the Merchandise section (DONE)
+- Fixed My Library UI to show product thumbnails and proper PDF download buttons (DONE)
+- Updated  OpenGraph meta tags to remove Emergent branding (DONE)
+- Built Refund/Return Request page and backend routing (DONE)
+- Fixed file paths for free In His Image downloads (DONE)
+- Disabled  coupon and implemented  .00 cart override coupon (DONE)
+
+**Earlier issues found/mentioned but not fixed**
+Issue 1: 24 Nibble PDFs extracted but not mapped
+- Debug checklist: Map the 24 files located in  inside  and .
+- Why to solve this issue and what will be achieved with this?: Without mapping, the content isn't sellable.
+- Should Test frontend/backend/both after fix: both
+- Is recurring issue? N
 
 **Known issue recurrence from previous fork**
--   **Misaligned Buttons on Homepage Tiles**: This was noted as recurring. The agent addressed it again, and the user has now made it a permanent rule for the agent to verify mobile/desktop UI consistency after every change.
--   **Missing PDF files**: A blocker in the previous fork. This session saw huge progress, with the agent processing all AE/YE files and programmatically creating the missing Nibble files. The only remaining blocker is for the IE files.
+- Issue recurrence in previous fork: Stripe Webhook fulfillment / No order found on success. 
+- Recurrence count: 2
+- Status: IN PROGRESS
+- Note: This keeps happening because Stripe checkout redirects the user immediately, but the webhook takes a moment to process. Frontend needs robust polling.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **PDF Manipulation (pypdf)**: Used extensively to combine multi-part PDFs and to split larger files into individual lessons (Nibble extraction), a key enabler for the business logic.
--   **State Management (React Context)**: The current bug investigation is focused on a state desynchronization issue within , where the UI does not re-render after the state is updated.
--   **REST API Design**: New endpoints were added for audio code management (, ), audio access (), and interactive lessons ().
+- Frontend: React, Tailwind CSS, LocalStorage state management.
+- Backend: FastAPI, MongoDB.
+- Payment: Stripe Checkout Sessions, Webhook event handling ().
+- File Management: PDF delivery via secure tokens ().
 
 **key DB schema**
--   **users:** 
--   **audio_codes:** 
+- : 
+- : 
+- : 
+- : 
+
+**changes in tech stack**
+- None.
 
 **All files of reference**
--    (Primary file for the current P0 bug)
--   
--   
--   
--   
+-  (Removed account gating, fixed token reading).
+-  (Added quantity selectors, game packs, dynamic thumbnails).
+-  (Stripe integration, /bin/bash.50 minimum check, webhook logging).
+-  (Added thumbnails and download buttons).
+-  (Updated OG meta tags for branding).
+-  (Newly created refund page).
+-  (Added override_total logic for  test coupon).
+
+**Areas that need refactoring**
+- : File is over 1800 lines long and contains the entire hardcoded product catalog. Needs migration to MongoDB.
+
+**key api endpoints**
+- : Handles Stripe fulfillment.
+- : Serves protected PDF files.
+- : Validates coupons (now supports ).
 
 **Critical Info for New Agent**
--   **IMMEDIATE PRIORITY**: The shopping cart is non-functional. Users cannot add or remove items, which blocks all sales. This is a P0, show-stopping bug. The investigation has narrowed the cause to a state management issue in . This must be the first thing you fix.
--   **USER'S PERMANENT RULE**: After any change, you **must** verify that the UI looks and works correctly on both desktop and mobile views. The user has explicitly requested this to be a standard part of your workflow.
--   **CONTENT IS CODE**: Be prepared to handle file manipulation tasks. The agent in this session successfully used  to combine and split PDFs provided by the user. This is a core part of the workflow for this project.
--   **LET IT RIDE MENTALITY**: The user is willing to overlook minor, non-blocking issues (like a typo in a PDF) in favor of pushing updates and maintaining momentum. Focus on fixing critical blockers first.
+- **GUEST CHECKOUT IS INTENTIONAL**: The previous agent entirely removed the Account Required block for instructor/game items in  and . DO NOT re-add this block unless explicitly told to. The user agreed to a Buy now, register later to redeem flow.
+- **WAITING FOR FILES**: The user is currently gathering BKFT IE (Breakfast Instructor Edition) files. Await their upload before trying to implement them.
+- **STRIPE PRICING**: Stripe strictly rejects transactions under /bin/bash.50. The agent added a validation check to gracefully handle this. The new  coupon forces the cart to .00 specifically to bypass this limitation during user testing.
 
 **documents and test reports created in this job**
--    (Updated)
--   24+ new and combined PDF files have been created and placed in .
+- 
+- 
+-  (Updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **LATEST**: didnt the redeployment happen? - User is asking about the status of the production deployment.
-2.  what was the pending items that needed to be addressed today? - User asking for a status update.
-3.  Call Deployer Agent and Run Health Check to Check for Readiness for Deployment - User requested a final health check.
-4.  you said you could extract nibbles from the snack packs without me having to send 36 individual files...help me out EM... - User requesting the agent to perform the PDF splitting.
-5.  make sure that the front side as well as the quick order pages are all mapped apporpaitely... - User requesting a full verification pass on product/thumbnail mappings.
-6.  let it ride... lol the devil has been delaying me with minor stuff far too long. - User agreeing to ignore a minor typo to avoid delaying deployment.
-7.  ok, these should be it...please delete and replace old files and combine the epub... - User providing more corrected PDF files and asking to prepare for deployment.
-8.  i realized that i had an e missing in acknowledgements!! yikes, so im resending those last files..." - User found a typo and is uploading corrected files.
-9.  "alright.... heres the rest of AE and the start of YE... - User uploading more content files.
-10. i will start uploaded the YE afterward. please EM, replace the old files accordingly. - User providing instructions for processing uploaded PDF files and updating marketing copy.
+1. *(Latest)* User acknowledged test setup. Said they are going to test it themselves, and will get the BKFT IE files together for upload. (Status: FINISHED / AWAITING UPLOAD)
+2. User requested disabling  coupon, enabling a  override coupon, and reported Free In His Image downloads gave 404s. Complained success page still says no order found. (Status: RESOLVED except for no order found polling issue)
+3. User requested a Refund/Return Request page. (Status: RESOLVED)
+4. User asked to remove Emergent branding from the shared URL links. (Status: RESOLVED)
+5. User complained about no downloads found on order completion, questioned the preview URL, and requested proper thumbnails instead of generic icons in My Library. (Status: RESOLVED)
+6. User asked if  was also needed as a webhook. (Status: RESOLVED - agent clarified only  is needed).
+7. User requested Deployer Agent health check. (Status: RESOLVED)
+8. User asked to add Game Packs to the merchandise section and uploaded logos. (Status: RESOLVED)
+9. User proposed a Buy now, register later and submit confirmation code to redeem flow. (Status: ACKNOWLEDGED, REDEEM FLOW PENDING)
+10. User reported Account Required error still occurring when logged in during checkout with Instructor items. (Status: RESOLVED by removing the account requirement).
 
 **Project Health Check:**
--   **Broken**:
-    -   **Shopping Cart**: Core e-commerce functionality is broken due to a state management bug. Users cannot add/remove items.
-    -   Purchase flow for Breakfast IE lessons is blocked pending content from the user.
--   **Mocked**:
-    -   License Management UI.
-    -   Referral System UI.
+- Broken: The No order found display on  due to a race condition with the Stripe webhook.
+- Mocked: License Management UI, Referral System UI, SMS-based OTP (Pending Twilio).
 
 **3rd Party Integrations**
--   **Stripe**: Live mode, payment processing.
--   **Resend**: Transactional emails.
--   **Google OAuth**: Backend and frontend implemented.
+- Stripe (Payments) — requires User API Key & Webhook Secret (Both are currently configured).
+- Google OAuth (Auth) — configured.
 
 **Testing status**
--   **Testing agent used after significant changes**: NO
--   **Troubleshoot agent used after agent stuck in loop**: NO
--   **Test files created**: None.
--   **Known regressions**: The shopping cart functionality has regressed and is now broken.
+- Testing agent used after significant changes: YES
+- Troubleshoot agent used after agent stuck in loop: NO
+- Test files created: None
+- Known regressions: Webhook race condition on the success page.
+
+**Credentials to test flow:**
+Use the  flow to create new test users as needed.
 
 **What agent forgot to execute**
--   The agent was in the middle of diagnosing the critical shopping cart bug when the session ended. The fix has not been implemented.</analysis>
+- The agent completely forgot to map the 24 new Nibble PDFs (extracted in the previous session) into the  product catalog.
+- The agent discussed building the Redeem Code flow for guest purchases but did not actually build it before the user switched topics to game packs and refunds.
+
+**Debugging checklist for current issue**
+    Issue: Stripe Webhook Race Condition / No order found on Success Page
+    Frontend files to check: 
+    -  (Add robust polling mechanism to wait for the backend to finish processing the webhook instead of instantly displaying No order found).
+    Backend files to check:
+    -  (Ensure  and  are committed as fast as possible).</analysis>

@@ -8,7 +8,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://recipe-platform-4.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-food-store.preview.emergentagent.com')
 
 class TestBetaLogin:
     """Beta login endpoint tests"""
