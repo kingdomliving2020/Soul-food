@@ -8,6 +8,14 @@ Use `/register` to create new test accounts.
 - `SOFU5` — $5 off bundles (fixed dollar)
 - `GAMENIGHT` — $10 off Game Pass (fixed dollar)
 
+## Contributor Coupons (50 uses each)
+- `SoulX1079` (Dee) — 15% off
+- `SoulZ1003` (Jafari) — 15% off
+- `SoulX1060` (Rose) — 10% off
+- `SoulX1072` (Temia) — 10% off
+- `SoulX1080` (Mike) — 10% off
+- `SoulX1059` (Vicky) — 10% off
+
 ## Beta Test Coupons
 - `BETATEST` — 100% off all items
 - `Beta1!2!3!` — 100% off
@@ -27,10 +35,10 @@ Use `/register` to create new test accounts.
 - `test1234` — Youth role, 45-min session
 - `test12345` — Instructor role, 120-min session
 
-## Contributor Coupons
-- `SoulX1079` (Dee) — 15% off
-- `SoulZ1003` (Jafari) — 15% off
-- `SoulX1060` (Rose) — 10% off
-
 ## Stripe
 Stripe API key and webhook secret configured in backend/.env.
+Test mode active — no real charges.
+
+## Resend Email
+RESEND_API_KEY configured in backend/.env.
+Domain kingdom-soul.com verified and sending-enabled.
