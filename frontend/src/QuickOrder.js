@@ -461,16 +461,16 @@ const QuickOrder = () => {
       editions: ['adult', 'youth'],
       formats: ['digital', 'physical'],
       packages: [
-        { id: 'holiday-ae-digital', name: 'Holiday AE Digital', price: 14.99, edition: 'adult', format: 'digital', available: true },
-        { id: 'holiday-ae-paperback', name: 'Holiday AE Paperback', price: 16.99, edition: 'adult', format: 'physical', available: true, note: '2-3 wk ship' },
-        { id: 'holiday-ye-digital', name: 'Holiday YE Digital', price: 12.99, edition: 'youth', format: 'digital', available: true },
-        { id: 'holiday-ye-paperback', name: 'Holiday YE Paperback', price: 16.99, edition: 'youth', format: 'physical', available: true, note: '2-3 wk ship' },
-        { id: 'holiday-ie-digital', name: 'Holiday IE Digital', price: 19.99, edition: 'instructor', format: 'digital', available: true },
-        { id: 'holiday-ie-paperback', name: 'Holiday IE Paperback', price: 24.99, edition: 'instructor', format: 'physical', available: true, note: '2-3 wk ship' },
-        { id: 'breakfast-ae-digital', name: 'Break*fast AE Digital — $3 Off', price: 11.99, edition: 'adult', format: 'digital', available: true, preOrder: true },
-        { id: 'breakfast-ae-paperback', name: 'Break*fast AE Paperback — $3 Off', price: 24.99, edition: 'adult', format: 'physical', available: true, preOrder: true, note: 'Pre-Order' },
-        { id: 'breakfast-ye-digital', name: 'Break*fast YE Digital — $3 Off', price: 9.99, edition: 'youth', format: 'digital', available: true, preOrder: true },
-        { id: 'breakfast-ye-paperback', name: 'Break*fast YE Paperback — $3 Off', price: 21.99, edition: 'youth', format: 'physical', available: true, preOrder: true, note: 'Pre-Order' }
+        { id: 'holiday-ae-digital', name: 'Holiday Digital (Adult)', price: 14.99, edition: 'adult', format: 'digital', available: true },
+        { id: 'holiday-ae-paperback', name: 'Holiday Paperback (Adult)', price: 16.99, edition: 'adult', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'holiday-ye-digital', name: 'Holiday Digital (Youth)', price: 12.99, edition: 'youth', format: 'digital', available: true },
+        { id: 'holiday-ye-paperback', name: 'Holiday Paperback (Youth)', price: 16.99, edition: 'youth', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'holiday-ie-digital', name: 'Holiday Digital (Instructor)', price: 19.99, edition: 'instructor', format: 'digital', available: true },
+        { id: 'holiday-ie-paperback', name: 'Holiday Paperback (Instructor)', price: 24.99, edition: 'instructor', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'breakfast-ae-digital', name: 'Break*fast Digital (Adult) — $3 Off', price: 11.99, edition: 'adult', format: 'digital', available: true, preOrder: true },
+        { id: 'breakfast-ae-paperback', name: 'Break*fast Paperback (Adult) — $3 Off', price: 24.99, edition: 'adult', format: 'physical', available: true, preOrder: true, note: 'Pre-Order' },
+        { id: 'breakfast-ye-digital', name: 'Break*fast Digital (Youth) — $3 Off', price: 9.99, edition: 'youth', format: 'digital', available: true, preOrder: true },
+        { id: 'breakfast-ye-paperback', name: 'Break*fast Paperback (Youth) — $3 Off', price: 21.99, edition: 'youth', format: 'physical', available: true, preOrder: true, note: 'Pre-Order' }
       ],
       salePercent: 0
     },
@@ -1542,7 +1542,9 @@ const QuickOrder = () => {
                                     
                                     addToCart({
                                       id: `${meal.id}-${selectedPkg}${pkgData?.selectMonth ? `-${selectedMonth}` : ''}${pkgData?.selectLesson ? `-${selectedLesson}` : ''}-${selectedEdition}-${selectedFormat}`,
-                                      name: isPreOrder ? `[PRE-ORDER] ${itemName} - ${selectedEdition.toUpperCase()}${shipNote}` : `${itemName} - ${selectedEdition.toUpperCase()}${shipNote}`,
+                                      name: isPreOrder 
+                                        ? `[PRE-ORDER] ${itemName}${shipNote}` 
+                                        : `${itemName}${shipNote}`,
                                       edition: selectedEdition,
                                       format: selectedFormat,
                                       price: price,
