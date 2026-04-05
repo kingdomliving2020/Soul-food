@@ -39,58 +39,38 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Su
 | Mike | SoulX1080 | 10% |
 | Vicky | SoulX1059 | 10% |
 
-## Content Availability
-- Holiday AE/YE/IE: AVAILABLE NOW
-- BKFT Month 1 (Prayer): Nibbles + Snack Pack available NOW
-- BKFT Months 2-3: COMING SOON (content being finalized)
-- BKFT Full Workbook: PRE-ORDER ($3 off)
-- Lunch: PRE-ORDER ($3 off until Pentecost, ships May-Jun 2026)
-- Game Passes: 20% off until Pentecost (May 24, 2026)
-
 ## What's Implemented
+
+### Easter Day Fixes (Apr 5, 2026)
+- [x] Fixed landing page crash: selectedSeries?.available null reference
+- [x] Updated landing page banner: "HE IS RISEN! Soul Food Is LIVE!" (post-Easter messaging)
+- [x] Changed countdown from Easter → Pentecost (May 24, 2026) — shows ~49 days
+- [x] Updated ALL shipping timelines: "Digital instantly / Physical 2-3 weeks" (removed March/Easter dates)
+- [x] Added Amazon-style +/- quantity controls in checkout
+- [x] Removed "Account Required" gate from checkout (guest checkout for all items)
+- [x] Improved PaymentCancel page: "No Worries!" with Return to Checkout / Continue Shopping / Back to Home
+- [x] Added product catalog API (GET /api/payments/catalog JSON + CSV download)
+- [x] Added admin catalog CSV upload endpoint
 
 ### Store Launch (Apr 5, 2026)
 - [x] Featured section with 3 bundle/product cards
-- [x] Holiday Table Bundle ($19.99) and Full Table Experience ($34.99)
 - [x] Store organized: Featured > Instant Access > Pre-Order > Free Resources
-- [x] 3 new coupons (WELCOME10, SOFU5, GAMENIGHT) with fixed dollar support
-- [x] 6 contributor coupons with 50-use limits
+- [x] 3 launch coupons + 6 contributor coupons with max_uses enforcement
 - [x] Gift certificates disabled for launch
-- [x] Game Night Lite (30-day) option added
-- [x] Thank You page: "Check your email for access" + support contact
-- [x] Global message: "Start now. Grow with us. Full releases coming soon."
 - [x] Email templates: digital delivery, preorder confirmation, game pass access
 - [x] About Us page with real team photos
 - [x] Fixed dollar coupon support in frontend checkout
-- [x] Product catalog CSV download endpoint (GET /api/payments/catalog/csv)
-- [x] Product catalog JSON API (GET /api/payments/catalog)
-- [x] Admin catalog CSV upload endpoint (POST /api/admin/catalog/csv)
-
-### Bug Fixes (Apr 5, 2026)
-- [x] Fixed landing page crash: selectedSeries.available null reference (changed to selectedSeries?.available)
-- [x] Payment success webhook race condition fixed (polling mechanism)
+- [x] Pentecost countdown timer (sale ends May 24, 2026)
 
 ### Previously Completed
 - [x] 20% off game passes (no coupon, until Pentecost)
-- [x] Pentecost countdown timer
-- [x] Landing page launch messaging
-- [x] All soft launch pricing updates
-- [x] "Coming Soon" construction sign on subscription section
-
-## Email Service Status
-- Templates ready: Digital delivery, Preorder confirmation, Game pass access
-- RESEND_API_KEY configured and verified
-- kingdom-soul.com domain verified and sending-enabled
-
-## Stripe Integration
-- Dynamic pricing: prices sent via unit_amount at checkout time
-- No Stripe dashboard price sync needed — catalog in payment_routes.py is source of truth
-- Apple Pay / Google Pay enabled via Stripe Checkout
-- Test mode active
+- [x] Payment success webhook race condition fixed (polling)
+- [x] Stripe dynamic pricing (no dashboard sync needed)
+- [x] Resend email integration (kingdom-soul.com verified)
 
 ## Prioritized Backlog
 ### P0
-- Run live $1 test purchase to verify end-to-end flow (recommended)
+- Run live $1 test purchase through the UI (recommended)
 
 ### P1
 - Build "Redeem Code" flow for guest purchases
@@ -100,15 +80,13 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Su
 - SMS OTP, License Management, Referral System
 - Word Search Game, Video Integration
 - Product Catalog migration to MongoDB
-- Gift Certificates implementation
-- Subscription/Recurring Billing full build
+- Gift Certificates, Subscription billing
 
 ## Critical Notes
-- GUEST CHECKOUT IS INTENTIONAL
+- GUEST CHECKOUT IS INTENTIONAL — no account gating at checkout
 - Stripe minimum $0.50
 - Can't combine coupons (one per order)
 - Game pass 20% off auto-expires May 24, 2026
 - Gift certificates DISABLED for launch
 - Subscriptions DEFERRED (Coming Soon sign on landing page)
-- Landing page is SoulFoodApp.js
-- Apple Pay/Google Pay enabled via Stripe Checkout
+- Stripe uses dynamic pricing — catalog is source of truth, no dashboard sync needed
