@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import Dict, Optional, List
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -850,6 +851,52 @@ async def get_product_catalog():
             "description": p.get("description", ""),
         })
     return {"products": catalog, "total": len(catalog)}
+
+
+@router.get("/catalog/csv")
+async def download_catalog_csv():
+    """Download the product catalog as a CSV file"""
+    import csv as csv_mod
+    import io as io_mod
+    from datetime import date
+    today = date.today().isoformat()
+
+    output = io_mod.StringIO()
+    fields = ['product_id', 'name', 'sku', 'list_price', 'sale_price', 'effective_price',
+              'promo_sale_price', 'promo_until', 'edition', 'medium', 'type',
+              'preorder', 'free', 'physical', 'is_bundle']
+    writer = csv_mod.DictWriter(output, fieldnames=fields)
+    writer.writeheader()
+
+    for pid, p in PRODUCTS.items():
+        effective = p.get("sale_price", p.get("list_price", 0))
+        promo_until = p.get("promo_until")
+        if promo_until and today <= promo_until and p.get("promo_sale_price") is not None:
+            effective = p["promo_sale_price"]
+        writer.writerow({
+            'product_id': pid,
+            'name': p.get('name', ''),
+            'sku': p.get('sku', ''),
+            'list_price': p.get('list_price', ''),
+            'sale_price': p.get('sale_price', ''),
+            'effective_price': effective,
+            'promo_sale_price': p.get('promo_sale_price', ''),
+            'promo_until': promo_until or '',
+            'edition': p.get('edition', ''),
+            'medium': p.get('medium', ''),
+            'type': p.get('type', ''),
+            'preorder': p.get('preorder', False),
+            'free': p.get('free', False),
+            'physical': p.get('physical', False),
+            'is_bundle': p.get('is_bundle', False),
+        })
+
+    csv_bytes = io_mod.BytesIO(output.getvalue().encode('utf-8'))
+    return StreamingResponse(
+        csv_bytes,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=sofu_product_catalog.csv"}
+    )
 
 
 class CheckoutRequest(BaseModel):
