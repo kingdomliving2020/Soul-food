@@ -9,6 +9,7 @@ import os
 import time
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soulfood-go-live.preview.emergentagent.com')
+TEST_PASSWORD = os.environ.get('TEST_PASSWORD', 'TestPass123!')
 
 class TestBetaLogin:
     """Beta login endpoint tests"""
@@ -23,8 +24,8 @@ class TestBetaLogin:
         data = response.json()
         assert "access_token" in data
         assert data["user"]["role"] == "instructor_tester"
-        assert data["user"]["is_beta"] == True
-        assert data["user"]["tfa_enabled"] == True
+        assert data["user"]["is_beta"] is True
+        assert data["user"]["tfa_enabled"] is True
         assert data["session_config"]["message"] == "Beta access granted: Instructor Edition Access"
     
     def test_beta_login_invalid_username(self):
@@ -53,14 +54,14 @@ class TestUserRegistration:
         response = requests.post(f"{BASE_URL}/api/auth/register", json={
             "email": f"test_reg_{timestamp}@example.com",
             "username": f"testreg{timestamp[-8:]}",
-            "password": "TestPass123!",
+            "password": TEST_PASSWORD,
             "name": "Test Registration User"
         })
         assert response.status_code == 200
         data = response.json()
         assert "access_token" in data
         assert data["user"]["role"] == "member"
-        assert data["user"]["tfa_enabled"] == False
+        assert data["user"]["tfa_enabled"] is False
         assert data["user"]["rewards_points"] == 0
     
     def test_registration_duplicate_email(self):
@@ -71,7 +72,7 @@ class TestUserRegistration:
         requests.post(f"{BASE_URL}/api/auth/register", json={
             "email": email,
             "username": f"testdup{timestamp[-8:]}",
-            "password": "TestPass123!",
+            "password": TEST_PASSWORD,
             "name": "Test User"
         })
         
@@ -79,7 +80,7 @@ class TestUserRegistration:
         response = requests.post(f"{BASE_URL}/api/auth/register", json={
             "email": email,
             "username": f"testdup2{timestamp[-8:]}",
-            "password": "TestPass123!",
+            "password": TEST_PASSWORD,
             "name": "Test User 2"
         })
         assert response.status_code == 400
@@ -106,9 +107,9 @@ class TestUserLogin:
         timestamp = str(int(time.time() * 1000))
         email = f"test_login_{timestamp}@example.com"
         username = f"testlogin{timestamp[-8:]}"
-        password = "TestPass123!"
+        password = TEST_PASSWORD
         
-        response = requests.post(f"{BASE_URL}/api/auth/register", json={
+        requests.post(f"{BASE_URL}/api/auth/register", json={
             "email": email,
             "username": username,
             "password": password,

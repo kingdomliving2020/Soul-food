@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone, timedelta
 import random
+import secrets
 import uuid
 
 router = APIRouter(prefix="/trivia", tags=["trivia"])
@@ -409,7 +410,7 @@ async def use_lifeline(
         # Remove 2 wrong answers
         correct = question["correct_answer"]
         wrong_answers = [opt for opt in question["options"] if opt != correct]
-        remaining_wrong = random.choice(wrong_answers)
+        remaining_wrong = secrets.choice(wrong_answers)
         result["remaining_options"] = [correct, remaining_wrong]
         
     elif lifeline == "ask_congregation":
@@ -419,9 +420,9 @@ async def use_lifeline(
         poll = {}
         for opt in options:
             if opt == correct:
-                poll[opt] = random.randint(40, 70)
+                poll[opt] = secrets.randbelow(31) + 40  # 40-70
             else:
-                poll[opt] = random.randint(5, 20)
+                poll[opt] = secrets.randbelow(16) + 5   # 5-20
         # Normalize to 100%
         total = sum(poll.values())
         poll = {k: round((v/total)*100) for k, v in poll.items()}

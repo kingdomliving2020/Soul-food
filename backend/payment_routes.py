@@ -217,9 +217,6 @@ PRODUCT_FILES = {
     "holiday-full-adult-interactive": "holiday-ae-full.pdf",
     "holiday-full-youth-interactive": "holiday-ye-full.pdf",
     "holiday-full-instructor-interactive": "holiday-ie-full.pdf",
-    "holiday-full-adult-digital": "holiday-ae-full.pdf",
-    "holiday-full-youth-digital": "holiday-ye-full.pdf",
-    "holiday-full-instructor-digital": "holiday-ie-full.pdf",
     # Lunch series workbooks (pre-order, map to placeholder or same PDF)
     "lunch-workbook-adult-physical": "holiday-ae-full.pdf",
     "lunch-workbook-youth-physical": "holiday-ye-full.pdf",
@@ -1852,7 +1849,7 @@ async def stripe_webhook(request: Request):
                                                 "edition": edition,
                                                 "lesson_number": 0,
                                                 "is_physical_purchase": True,
-                                                "lessons_included": [l["id"] for l in series_info["lessons"]],
+                                                "lessons_included": [lesson["id"] for lesson in series_info["lessons"]],
                                                 "redeemed": False,
                                                 "redeemed_at": None,
                                                 "redeemed_by_email": None,
@@ -1974,7 +1971,7 @@ async def admin_generate_downloads(order_number: str, request: Request):
         body = await request.json()
         items = body.get("items", [])
         customer_email = body.get("customer_email", "admin@kingdom-soul.com")
-    except:
+    except Exception:
         items = []
         customer_email = "admin@kingdom-soul.com"
     

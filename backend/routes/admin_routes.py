@@ -646,7 +646,6 @@ async def upload_media(
         file_type = "other"
     
     # Generate unique filename
-    file_ext = file.filename.split(".")[-1] if "." in file.filename else ""
     unique_filename = f"{secrets.token_hex(8)}_{file.filename}"
     
     # Save file
@@ -1960,7 +1959,7 @@ async def resend_order_email(
         {"_id": 0, "token": 1, "product_name": 1}
     ).to_list(50)
     
-    download_links = [{"token": l["token"], "product_name": l.get("product_name", "Digital Content")} for l in links]
+    download_links = [{"token": link["token"], "product_name": link.get("product_name", "Digital Content")} for link in links]
     
     result = await send_order_confirmation(
         to_email=email,

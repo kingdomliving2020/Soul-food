@@ -59,7 +59,7 @@ const OrderSuccess = () => {
     };
     
     loadOrderData();
-  }, [orderId]);
+  }, [orderId, isFreeOrder]);
 
   const handleDownload = async (item, downloadLink) => {
     const itemKey = downloadLink?.product_id || item?.name;

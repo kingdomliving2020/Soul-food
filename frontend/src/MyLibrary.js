@@ -121,7 +121,9 @@ const MyLibrary = () => {
       try {
         const userData = JSON.parse(storedUser);
         email = userData.email;
-      } catch (e) {}
+      } catch (e) {
+        console.warn('Failed to parse stored user data');
+      }
     }
     
     if (!email) return;
