@@ -180,6 +180,68 @@ PRODUCT_FILES = {
     "in-his-image-full-ye-digital": "in-his-image-youth-full.pdf",
     "in-his-image-ae-digital": "in-his-image-adult-full.pdf",
     "in-his-image-ye-digital": "in-his-image-youth-full.pdf",
+    # =============== FRONTEND CART ID MAPPINGS ===============
+    # Featured Section direct addToCart IDs
+    "holiday-ae-digital": "holiday-ae-full.pdf",
+    "holiday-ye-digital": "holiday-ye-full.pdf",
+    "holiday-ie-digital": "holiday-ie-full.pdf",
+    "holiday-ae-paperback": "holiday-ae-full.pdf",
+    "holiday-ye-paperback": "holiday-ye-full.pdf",
+    "holiday-ie-paperback": "holiday-ie-full.pdf",
+    # Featured Bundles
+    "holiday-table-bundle": "holiday-ae-full.pdf",
+    "full-table-experience": "holiday-ae-full.pdf",
+    # Workbooks section (prefixed with "workbooks-")
+    "workbooks-holiday-ae-digital-adult-digital": "holiday-ae-full.pdf",
+    "workbooks-holiday-ae-paperback-adult-physical": "holiday-ae-full.pdf",
+    "workbooks-holiday-ye-digital-youth-digital": "holiday-ye-full.pdf",
+    "workbooks-holiday-ye-paperback-youth-physical": "holiday-ye-full.pdf",
+    "workbooks-holiday-ie-digital-instructor-digital": "holiday-ie-full.pdf",
+    "workbooks-holiday-ie-paperback-instructor-physical": "holiday-ie-full.pdf",
+    "workbooks-breakfast-ae-digital-adult-digital": "breakfast-ae-full.pdf",
+    "workbooks-breakfast-ae-paperback-adult-physical": "breakfast-ae-full.pdf",
+    "workbooks-breakfast-ye-digital-youth-digital": "breakfast-ye-full.pdf",
+    "workbooks-breakfast-ye-paperback-youth-physical": "breakfast-ye-full.pdf",
+    # Breakfast series (nibble/snack/meal sections)
+    "breakfast-nibble-adult-interactive": "breakfast-ae-esther.pdf",
+    "breakfast-nibble-youth-interactive": "breakfast-ye-esther.pdf",
+    "breakfast-snack-adult-interactive": "breakfast-ae-month1-snackpack.pdf",
+    "breakfast-snack-youth-interactive": "breakfast-ye-month1-snackpack.pdf",
+    "breakfast-meal-adult-digital": "breakfast-ae-full.pdf",
+    "breakfast-meal-youth-digital": "breakfast-ye-full.pdf",
+    "breakfast-meal-adult-physical": "breakfast-ae-full.pdf",
+    "breakfast-meal-youth-physical": "breakfast-ye-full.pdf",
+    # Holiday series (nibble/full sections)
+    "holiday-nibble-adult-interactive": "holiday-ae-full.pdf",
+    "holiday-nibble-youth-interactive": "holiday-ye-full.pdf",
+    "holiday-full-adult-interactive": "holiday-ae-full.pdf",
+    "holiday-full-youth-interactive": "holiday-ye-full.pdf",
+    "holiday-full-instructor-interactive": "holiday-ie-full.pdf",
+    "holiday-full-adult-digital": "holiday-ae-full.pdf",
+    "holiday-full-youth-digital": "holiday-ye-full.pdf",
+    "holiday-full-instructor-digital": "holiday-ie-full.pdf",
+    # Lunch series workbooks (pre-order, map to placeholder or same PDF)
+    "lunch-workbook-adult-physical": "holiday-ae-full.pdf",
+    "lunch-workbook-youth-physical": "holiday-ye-full.pdf",
+    "lunch-workbook-instructor-physical": "holiday-ie-full.pdf",
+    # Instructor edition section (prefixed with "instructor-")
+    "instructor-holiday-ie-instructor-physical": "holiday-ie-full.pdf",
+    "instructor-breakfast-digital-instructor-digital": "breakfast-ie-full.pdf",
+    "instructor-breakfast-paperback-instructor-physical": "breakfast-ie-full.pdf",
+    "instructor-lunch-ie-preorder-instructor-physical": "holiday-ie-full.pdf",
+    # Direct product IDs (from handleAddToCart for gaming/products grid)
+    "gaming-pass-30-adult-digital": "holiday-ae-full.pdf",
+    "gaming-pass-30-youth-digital": "holiday-ye-full.pdf",
+    "gaming-pass-90-adult-digital": "holiday-ae-full.pdf",
+    "gaming-pass-90-youth-digital": "holiday-ye-full.pdf",
+    "gaming-pass-90-instructor-digital": "holiday-ie-full.pdf",
+    # Breakfast direct IDs
+    "breakfast-ae-digital": "breakfast-ae-full.pdf",
+    "breakfast-ye-digital": "breakfast-ye-full.pdf",
+    "breakfast-ie-digital": "breakfast-ie-full.pdf",
+    "breakfast-ae-paperback": "breakfast-ae-full.pdf",
+    "breakfast-ye-paperback": "breakfast-ye-full.pdf",
+    "breakfast-ie-paperback": "breakfast-ie-full.pdf",
 }
 
 def normalize_product_id(product_id: str) -> str:
@@ -203,29 +265,46 @@ def normalize_product_id(product_id: str) -> str:
     if underscore_version in PRODUCT_FILES:
         return underscore_version
     
-    # Try extracting components: series-package-edition-format
+    # Smart extraction: cart IDs are often like "workbooks-holiday-ae-digital-adult-digital"
+    # or "breakfast-snack-month-1-adult-interactive"
+    # Try progressively shorter prefixes
     parts = normalized.split('-')
-    if len(parts) >= 3:
-        series = parts[0]  # e.g., "breakfast", "holiday"
-        edition = None
-        format_type = None
-        
-        for part in parts:
-            if part in ['ae', 'ye', 'ie']:
-                edition = part
-            if part in ['digital', 'print']:
-                format_type = part
-        
-        if edition:
-            # Try series_edition_digital format
-            key = f"{series}_{edition}_digital"
-            if key in PRODUCT_FILES:
-                return key
-            
-            # Try series_edition format
-            key = f"{series}_{edition}"
-            if key in PRODUCT_FILES:
-                return key
+    for end in range(len(parts), 1, -1):
+        candidate = '-'.join(parts[:end])
+        if candidate in PRODUCT_FILES:
+            return candidate
+        # Also try underscore version
+        candidate_us = '_'.join(parts[:end])
+        if candidate_us in PRODUCT_FILES:
+            return candidate_us
+    
+    # Try extracting known series + edition patterns
+    series_map = {
+        'holiday': {'ae': 'holiday_ae', 'ye': 'holiday_ye', 'ie': 'holiday_ie', 'adult': 'holiday_ae', 'youth': 'holiday_ye', 'instructor': 'holiday_ie'},
+        'breakfast': {'ae': 'breakfast_ae_digital', 'ye': 'breakfast_ye_digital', 'ie': 'breakfast_ie_digital', 'adult': 'breakfast_ae_digital', 'youth': 'breakfast_ye_digital', 'instructor': 'breakfast_ie_digital'},
+    }
+    
+    for series_key, editions in series_map.items():
+        if series_key in normalized:
+            for ed_key, file_key in editions.items():
+                if ed_key in normalized:
+                    if file_key in PRODUCT_FILES:
+                        return file_key
+    
+    # Try extracting just the package portion (skip section prefix)
+    # e.g., "workbooks-holiday-ae-digital-adult-digital" -> "holiday-ae-digital"
+    known_sections = ['workbooks', 'instructor', 'bookclub']
+    for section in known_sections:
+        if normalized.startswith(section + '-'):
+            remainder = normalized[len(section) + 1:]
+            if remainder in PRODUCT_FILES:
+                return remainder
+            # Try trimming trailing edition-format
+            remainder_parts = remainder.split('-')
+            for end in range(len(remainder_parts), 1, -1):
+                sub = '-'.join(remainder_parts[:end])
+                if sub in PRODUCT_FILES:
+                    return sub
     
     return product_id  # Return original if no match found
 
