@@ -125,10 +125,13 @@ const PaymentSuccess = () => {
               <CheckCircle className="w-12 h-12 text-green-600" />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Payment Successful!
+              Thank You! Order Confirmed
             </h2>
-            <p className="text-lg text-gray-600 mb-6">
-              Thank you for your purchase!
+            <p className="text-lg text-gray-600 mb-2">
+              Your purchase was successful!
+            </p>
+            <p className="text-sm text-purple-600 font-medium mb-6">
+              Check your email for access links and download instructions.
             </p>
             
             {paymentData && (
@@ -215,9 +218,15 @@ const PaymentSuccess = () => {
               </div>
             )}
 
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-4">
               A confirmation email has been sent to your email address.
             </p>
+
+            {/* Support info + global message */}
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-6">
+              <p className="text-purple-700 font-semibold text-sm mb-1">Start now. Grow with us. Full releases coming soon.</p>
+              <p className="text-slate-500 text-xs">Questions? Contact us at support@kingdom-soul.com</p>
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button

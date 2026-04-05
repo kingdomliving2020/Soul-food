@@ -705,8 +705,8 @@ const CheckoutPage = () => {
   const discount = couponApplied 
     ? (couponApplied.override_total !== null && couponApplied.override_total !== undefined
         ? subtotal - couponApplied.override_total  // Override: discount is the difference to reach target
-        : couponApplied.is_gift_certificate && couponApplied.discount_dollars > 0
-        ? Math.min(subtotal, couponApplied.discount_dollars)  // Gift cert: use dollar amount, cap at subtotal
+        : couponApplied.discount_dollars > 0
+        ? Math.min(subtotal, couponApplied.discount_dollars)  // Fixed dollar amount (gift cert or fixed coupon)
         : (subtotal * couponApplied.discount_percent / 100))  // Regular coupon: use percentage
     : 0;
   const total = couponApplied?.override_total !== null && couponApplied?.override_total !== undefined
@@ -836,8 +836,8 @@ const CheckoutPage = () => {
       // Calculate total with discount (handle both percentage and dollar amounts)
       let totalAmount = subtotal;
       if (couponApplied) {
-        if (couponApplied.is_gift_certificate && couponApplied.discount_dollars > 0) {
-          // Gift certificate: fixed dollar discount
+        if (couponApplied.discount_dollars > 0) {
+          // Fixed dollar discount (gift cert, SOFU5, GAMENIGHT, etc.)
           totalAmount = Math.max(0, totalAmount - couponApplied.discount_dollars);
         } else {
           // Regular coupon: percentage discount

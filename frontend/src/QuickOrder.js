@@ -388,7 +388,7 @@ const QuickOrder = () => {
       formats: ['interactive', 'epub'],
       packages: [
         { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, selectLesson: true, available: true },
-        { id: 'snack', name: 'Snack Pack (4 Lessons)', lessons: 4, selectMonth: true, available: true },
+        { id: 'snack', name: 'Snack Pack (4 Lessons)', lessons: 4, selectMonth: true, available: true, note: 'Includes Prayer Month 1 (available now). Additional content in future updates.' },
         { id: 'meal', name: 'Meal Bundle (12 Lessons) — $3 Off Pre-Order', lessons: 12, available: true, preOrder: true, note: 'Ready Jan 2026' },
         { id: 'subscription', name: 'Subscription (All Access)', isSubscription: true, available: true }
       ],
@@ -597,20 +597,20 @@ const QuickOrder = () => {
   const gamingPasses = [
     {
       id: 'gaming-pass-30',
-      name: 'Game Pass (30-Day)',
-      subtitle: '30-Day Access (Adult/Youth)',
-      description: '30-day access to Soul Food game content for study groups and family nights',
+      name: 'Game Night Lite (30-Day)',
+      subtitle: '30-Day Single-Game Access',
+      description: 'Perfect for a single study session or family game night. 30-day access to one game mode.',
       restrictions: '4 hrs/day limit • 20 min idle timeout',
-      icon: '🎮',
+      icon: '🎲',
       listPrice: 7.99,
       price: isGameSaleActive ? 6.39 : 7.99,
       editions: ['adult', 'youth']
     },
     {
       id: 'gaming-pass-90',
-      name: 'Game Pass (90-Day)',
-      subtitle: '90-Day Access - Best Value!',
-      description: '90-day access to all game modes for churches, small groups, and quarterly study cycles',
+      name: 'Game Pass Full (90-Day)',
+      subtitle: '90-Day All-Access — Best Value!',
+      description: '90-day access to ALL game modes for churches, small groups, and quarterly study cycles',
       restrictions: '5 hrs/day limit • 30 min idle timeout',
       icon: '🎮',
       listPrice: 24.99,
@@ -628,7 +628,8 @@ const QuickOrder = () => {
       image: '/soul-food-logo.png',
       price: 25.00,
       isGiftCertificate: true,
-      link: '/gift-certificates'
+      link: '/gift-certificates',
+      hidden: true
     },
     // Game Packs - Offline Board Games (Pre-Order)
     {
@@ -1023,22 +1024,115 @@ const QuickOrder = () => {
       </header>
 
       <div className="container mx-auto px-4 sm:px-6 py-8">
-        {/* Hero Section - Updated tagline instead of repeating Quick Order */}
+        {/* Hero Section */}
         <div className="text-center mb-8">
           <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-purple-600 bg-clip-text text-transparent">
-            🍽️ What&apos;s on Your Plate Today?
+            Truth, Served Daily
           </h2>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-            Holiday Series is live! Break*fast & Lunch pre-orders now open with $3 off full workbooks.
+            Start now. Grow with us. Full releases coming soon.
           </p>
         </div>
 
-        {/* 🌿 PALM SUNDAY / RESURRECTION SUNDAY PROMO BANNER WITH COUNTDOWN */}
+        {/* 🌿 LAUNCH BANNER */}
         <PalmSundayBanner />
+
+        {/* ===================== FEATURED SECTION ===================== */}
+        <section className="mb-12" data-testid="featured-section">
+          <div className="flex items-center gap-3 mb-6">
+            <h3 className="text-2xl font-bold text-slate-800">Featured</h3>
+            <Badge className="bg-emerald-500 text-white text-xs px-2 py-0.5">New</Badge>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Holiday Table Bundle */}
+            <Card className="shadow-lg hover:shadow-xl transition-all border-2 border-purple-200 bg-gradient-to-br from-white to-purple-50" data-testid="holiday-table-bundle">
+              <CardContent className="p-5">
+                <Badge className="mb-3 bg-purple-600 text-white text-xs">Bundle — Save $4</Badge>
+                <h4 className="text-lg font-bold text-slate-800 mb-1">Holiday Table Bundle</h4>
+                <p className="text-sm text-slate-600 mb-3">Holiday ePub + Break*fast Snack Pack (Prayer Month 1)</p>
+                <div className="flex items-baseline gap-2 mb-3">
+                  <span className="text-sm text-slate-400 line-through">$23.98</span>
+                  <span className="text-2xl font-bold text-purple-600">$19.99</span>
+                </div>
+                <p className="text-xs text-slate-500 mb-4">Instant digital access to both!</p>
+                <Button
+                  onClick={() => {
+                    addToCart({ id: 'holiday-table-bundle', name: 'Holiday Table Bundle (ePub + SP)', price: 19.99, quantity: 1, isBundle: true });
+                    toast.success('Holiday Table Bundle added!');
+                  }}
+                  className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                  data-testid="add-holiday-bundle-btn"
+                >
+                  Add to Cart — $19.99
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Full Table Experience */}
+            <Card className="shadow-lg hover:shadow-xl transition-all border-2 border-amber-300 bg-gradient-to-br from-white to-amber-50 relative" data-testid="full-table-experience">
+              <div className="absolute -top-2 -right-2">
+                <Badge className="bg-amber-500 text-white text-xs px-3 py-1 shadow-lg">Best Value</Badge>
+              </div>
+              <CardContent className="p-5">
+                <Badge className="mb-3 bg-amber-600 text-white text-xs">Bundle — Save $9</Badge>
+                <h4 className="text-lg font-bold text-slate-800 mb-1">Full Table Experience</h4>
+                <p className="text-sm text-slate-600 mb-3">Holiday ePub + Break*fast Snack Pack + 90-Day Game Pass</p>
+                <div className="flex items-baseline gap-2 mb-3">
+                  <span className="text-sm text-slate-400 line-through">$43.97</span>
+                  <span className="text-2xl font-bold text-amber-600">$34.99</span>
+                </div>
+                <p className="text-xs text-slate-500 mb-4">Complete Soul Food experience with games!</p>
+                <Button
+                  onClick={() => {
+                    addToCart({ id: 'full-table-experience', name: 'Full Table Experience (ePub + SP + Game Pass)', price: 34.99, quantity: 1, isBundle: true });
+                    toast.success('Full Table Experience added!');
+                  }}
+                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                  data-testid="add-full-table-btn"
+                >
+                  Add to Cart — $34.99
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Quick Pick - HOL ePub */}
+            <Card className="shadow-lg hover:shadow-xl transition-all border border-emerald-200" data-testid="quick-pick-hol">
+              <CardContent className="p-5">
+                <Badge className="mb-3 bg-emerald-500 text-white text-xs">Instant Access</Badge>
+                <h4 className="text-lg font-bold text-slate-800 mb-1">Holiday ePub (AE)</h4>
+                <p className="text-sm text-slate-600 mb-3">Complete Holiday Adult Edition — downloadable PDF workbook</p>
+                <div className="mb-3">
+                  <span className="text-2xl font-bold text-emerald-600">$14.99</span>
+                </div>
+                <p className="text-xs text-slate-500 mb-4">Download instantly after purchase</p>
+                <Button
+                  onClick={() => {
+                    addToCart({ id: 'holiday-ae-digital', name: 'Holiday AE (ePub)', price: 14.99, quantity: 1 });
+                    toast.success('Holiday AE ePub added!');
+                  }}
+                  className="w-full bg-emerald-600 hover:bg-emerald-700"
+                  data-testid="add-hol-epub-btn"
+                >
+                  Add to Cart — $14.99
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+
+        {/* ===================== INSTANT ACCESS ===================== */}
+        <section className="mb-12" data-testid="instant-access-section">
+          <div className="flex items-center gap-3 mb-2">
+            <h3 className="text-2xl font-bold text-slate-800">Instant Access</h3>
+            <Badge className="bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5">Digital Downloads</Badge>
+          </div>
+          <p className="text-sm text-slate-500 mb-6">Download immediately after purchase. Available on any device.</p>
+        </section>
 
         {/* FREE LESSONS CARD - Same style as Holiday/Breakfast cards */}
         <section className="mb-12">
-          <h3 className="text-2xl font-bold mb-6 text-slate-800">🤲 Free Lessons</h3>
+          <h3 className="text-2xl font-bold mb-6 text-slate-800">Free Resources</h3>
           <div className="grid md:grid-cols-2 gap-6">
             {/* Free Lessons Card - PINNED LAYOUT: Do not modify structure */}
             <Card className="shadow-lg hover:shadow-xl transition-shadow overflow-hidden border-2 border-green-200">
@@ -1744,11 +1838,25 @@ const QuickOrder = () => {
           )}
         </section>
 
+        {/* ===================== PRE-ORDER SECTION DIVIDER ===================== */}
+        <section className="mb-8 mt-4" data-testid="preorder-section">
+          <div className="flex items-center gap-3 mb-2">
+            <h3 className="text-2xl font-bold text-slate-800">Pre-Order</h3>
+            <Badge className="bg-amber-100 text-amber-700 text-xs px-2 py-0.5">Ships Soon</Badge>
+          </div>
+          <p className="text-sm text-slate-500 mb-2">
+            Pre-order now and save $3 on full workbooks! Includes 2 months of complimentary digital access while you wait.
+          </p>
+          <p className="text-xs text-amber-700 bg-amber-50 rounded-lg px-4 py-2 inline-block border border-amber-200">
+            Preorder items will ship in their estimated delivery window. You&apos;ll receive courtesy digital access immediately after purchase.
+          </p>
+        </section>
+
         {/* Merchandise Section */}
         <section>
           <h3 className="text-2xl font-bold mb-6 text-slate-800">🎁 Extras & Merchandise</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {merchandise.map(item => (
+            {merchandise.filter(item => !item.hidden).map(item => (
               <Card key={item.id} className="shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full relative">
                 <CardContent className="p-4 flex flex-col flex-1">
                   <img 

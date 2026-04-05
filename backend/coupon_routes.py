@@ -104,6 +104,11 @@ DEFAULT_COUPONS = [
     {"code": "BOOK10", "max_uses": 1000, "discount_percent": 10, "min_quantity": 5, "conditions": "Book Club Special - 10% off for 5+ items"},
     {"code": "BULK15", "max_uses": 1000, "discount_percent": 15, "min_quantity": 10, "conditions": "Small Bulk Order - 15% off for 10+ items"},
     {"code": "MEGA30", "max_uses": 500, "discount_percent": 30, "min_quantity": 25, "conditions": "Mega Bulk Order - 30% off for 25+ items"},
+    
+    # Launch Coupons (New - April 2026)
+    {"code": "WELCOME10", "max_uses": 500, "discount_percent": 10, "conditions": "Welcome - 10% off all products"},
+    {"code": "SOFU5", "max_uses": 300, "discount_type": "fixed_cart", "discount_amount": 5.00, "conditions": "$5 off bundles"},
+    {"code": "GAMENIGHT", "max_uses": 200, "discount_type": "fixed_cart", "discount_amount": 10.00, "conditions": "$10 off Game Pass"},
 ]
 
 # =============================================================================
@@ -277,16 +282,26 @@ async def validate_coupon(request: CouponValidateRequest):
     # Coupon is valid!
     discount_percent = coupon.get("discount_percent", 0)
     override_total = coupon.get("override_total")  # For $1 test coupon
+    discount_amount = coupon.get("discount_amount", 0)  # Fixed dollar discount
+    discount_type = coupon.get("discount_type", "percent")
+    
+    # Calculate discount_dollars for fixed amount coupons
+    discount_dollars = 0.0
+    if discount_type == "fixed_cart" and discount_amount > 0:
+        discount_dollars = min(discount_amount, request.cart_total)  # Don't exceed cart
     
     # Build response message
     if override_total is not None:
         message = f"Coupon applied! Cart total set to ${override_total:.2f}"
+    elif discount_type == "fixed_cart" and discount_amount > 0:
+        message = f"Coupon applied! ${discount_amount:.2f} off your order"
     else:
         message = f"Coupon applied! You get {discount_percent}% off"
     
     return CouponValidateResponse(
         valid=True,
         discount_percent=discount_percent,
+        discount_dollars=discount_dollars,
         override_total=override_total,
         message=message,
         code=coupon["code"]

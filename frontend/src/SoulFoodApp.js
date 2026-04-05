@@ -2058,8 +2058,11 @@ const SoulFoodLanding = () => {
               <p className="text-sm text-slate-400">Kingdom Living Project</p>
             </div>
           </div>
-          <p className="text-slate-400 mb-6 text-lg">
+          <p className="text-slate-400 mb-2 text-lg">
             Spiritual nourishment for every season of life - one meal at a time
+          </p>
+          <p className="text-amber-400 font-semibold text-sm mb-6">
+            Start now. Grow with us. Full releases coming soon.
           </p>
           <div className="flex flex-wrap justify-center gap-6 text-sm text-slate-400">
             <a href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</a>

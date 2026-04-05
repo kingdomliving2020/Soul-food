@@ -394,6 +394,147 @@ def get_bulk_order_notification_template(
     return get_base_template(content, f"🚨 Bulk Order: {quantity} items from {customer_email}")
 
 
+def get_preorder_confirmation_template(
+    order_id: str,
+    items: List[Dict],
+    total: float,
+    delivery_month: str,
+    courtesy_links: List[Dict] = None,
+    customer_name: str = "Valued Customer",
+    coupon_code: str = None
+) -> str:
+    """Generate preorder confirmation email with courtesy digital access"""
+    
+    items_html = ""
+    for item in items:
+        price = item.get('price', 0) or item.get('salePrice', 0)
+        qty = item.get('quantity', 1)
+        items_html += f"""
+        <tr>
+            <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
+                <strong style="color: #1f2937;">{item.get('name', 'Product')}</strong>
+                <div style="color: #6b7280; font-size: 14px;">Qty: {qty}</div>
+            </td>
+            <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; text-align: right; color: #1f2937;">
+                ${price * qty:.2f}
+            </td>
+        </tr>
+        """
+    
+    courtesy_html = ""
+    if courtesy_links and len(courtesy_links) > 0:
+        courtesy_html = """
+        <div style="margin-top: 25px; padding: 20px; background-color: #eff6ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <h3 style="margin: 0 0 10px 0; color: #1e40af; font-size: 18px;">🎁 Your Complimentary Digital Access</h3>
+            <p style="margin: 0 0 15px 0; color: #1d4ed8; font-size: 14px;">While your physical book is being prepared, enjoy 2 months of complimentary digital access:</p>
+        """
+        for link in courtesy_links:
+            token = link.get('token', '')
+            product_name = link.get('product_name', 'Content')
+            courtesy_html += f"""
+            <a href="{SITE_URL}/api/downloads/file/{token}" 
+               style="display: inline-block; margin: 5px 5px 5px 0; padding: 10px 20px; background-color: #3b82f6; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600; font-size: 14px;">
+                📖 {product_name}
+            </a>
+            """
+        courtesy_html += "</div>"
+    
+    coupon_html = ""
+    if coupon_code:
+        coupon_html = f'<div style="margin-bottom: 20px; padding: 10px 15px; background-color: #fef3c7; border-radius: 6px; display: inline-block;"><span style="color: #92400e; font-weight: 600;">🎉 Coupon Applied: {coupon_code}</span></div>'
+    
+    content = f"""
+    <h2 style="margin: 0 0 20px 0; color: #1f2937; font-size: 24px;">📦 Pre-Order Confirmed!</h2>
+    
+    <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
+        Hi {customer_name},<br><br>
+        Thank you for your pre-order! Your purchase has been confirmed.
+    </p>
+    
+    {coupon_html}
+    
+    <div style="margin: 20px 0; padding: 20px; background-color: #fefce8; border-radius: 8px; border: 1px solid #fde68a;">
+        <h3 style="margin: 0 0 8px 0; color: #92400e; font-size: 16px;">📅 Estimated Delivery: {delivery_month}</h3>
+        <p style="margin: 0; color: #a16207; font-size: 14px;">
+            While your physical book is being prepared, you will receive 2 months of complimentary digital access.
+        </p>
+    </div>
+    
+    {courtesy_html}
+    
+    <div style="margin: 25px 0; padding: 15px; background-color: #f9fafb; border-radius: 8px;">
+        <p style="margin: 0; color: #6b7280; font-size: 14px;">Order ID</p>
+        <p style="margin: 5px 0 0 0; color: #1f2937; font-size: 18px; font-weight: bold;">{order_id}</p>
+    </div>
+    
+    <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 18px;">Order Summary</h3>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+        {items_html}
+        <tr>
+            <td style="padding: 15px 0; font-weight: bold; color: #1f2937; font-size: 18px;">Total</td>
+            <td style="padding: 15px 0; text-align: right; font-weight: bold; color: #6366f1; font-size: 18px;">${total:.2f}</td>
+        </tr>
+    </table>
+    
+    <div style="margin-top: 30px; padding: 20px; background-color: #faf5ff; border-radius: 8px; text-align: center;">
+        <p style="margin: 0 0 8px 0; color: #6b21a8; font-weight: bold; font-size: 16px;">Start now. Grow with us. Full releases coming soon.</p>
+        <a href="{SITE_URL}/my-library" 
+           style="display: inline-block; margin-top: 8px; padding: 14px 30px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+            Go to My Library
+        </a>
+    </div>
+    """
+    
+    return get_base_template(content, f"Pre-order confirmed! #{order_id} — Estimated delivery: {delivery_month}")
+
+
+def get_game_pass_template(
+    order_id: str,
+    pass_type: str,
+    customer_name: str = "Valued Customer"
+) -> str:
+    """Generate game pass access delivery email"""
+    
+    content = f"""
+    <h2 style="margin: 0 0 20px 0; color: #1f2937; font-size: 24px;">🎮 Game On! Your Pass Is Ready</h2>
+    
+    <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
+        Hi {customer_name},<br><br>
+        Your {pass_type} Game Pass has been activated! Here's how to get started:
+    </p>
+    
+    <div style="margin: 25px 0; padding: 25px; background: linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%); border-radius: 12px; text-align: center; border: 2px solid #c4b5fd;">
+        <p style="margin: 0 0 15px 0; color: #7c3aed; font-size: 20px; font-weight: bold;">Your Game Pass</p>
+        <p style="margin: 0 0 15px 0; color: #6b7280; font-size: 14px;">{pass_type} Access — Holiday + Break*fast Content</p>
+        <a href="{SITE_URL}/my-library" 
+           style="display: inline-block; padding: 14px 35px; background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px;">
+            🎮 Start Playing
+        </a>
+    </div>
+    
+    <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 18px;">How to Play</h3>
+    <ol style="color: #4b5563; line-height: 2; font-size: 15px;">
+        <li>Click "Start Playing" above or visit your My Library</li>
+        <li>Select a game mode (Jeopardy-style, Group Review, etc.)</li>
+        <li>Choose your content (Holiday or Break*fast lessons)</li>
+        <li>Play solo or with your study group!</li>
+    </ol>
+    
+    <div style="margin-top: 25px; padding: 15px; background-color: #fef3c7; border-radius: 8px;">
+        <p style="margin: 0; color: #92400e; font-size: 13px;">
+            <strong>Note:</strong> Game content includes Holiday series and Art of Through. 
+            Session limits apply per your pass type.
+        </p>
+    </div>
+    
+    <div style="margin: 25px 0; padding: 15px; background-color: #f9fafb; border-radius: 8px;">
+        <p style="margin: 0; color: #6b7280; font-size: 14px;">Order ID: <strong>{order_id}</strong></p>
+    </div>
+    """
+    
+    return get_base_template(content, f"Your {pass_type} Game Pass is ready! Order #{order_id}")
+
+
 # =============================================================================
 # EMAIL SENDING FUNCTIONS
 # =============================================================================
@@ -512,3 +653,43 @@ async def send_bulk_order_notification(
     )
     # Send to support email
     return await send_email(SUPPORT_EMAIL, subject, html, reply_to=customer_email)
+
+
+async def send_preorder_confirmation(
+    to_email: str,
+    order_id: str,
+    items: List[Dict],
+    total: float,
+    delivery_month: str = "Coming Soon",
+    courtesy_links: List[Dict] = None,
+    customer_name: str = "Valued Customer",
+    coupon_code: str = None
+) -> Dict:
+    """Send preorder confirmation email with courtesy digital access"""
+    subject = f"📦 Pre-Order Confirmed! #{order_id}"
+    html = get_preorder_confirmation_template(
+        order_id=order_id,
+        items=items,
+        total=total,
+        delivery_month=delivery_month,
+        courtesy_links=courtesy_links,
+        customer_name=customer_name,
+        coupon_code=coupon_code
+    )
+    return await send_email(to_email, subject, html)
+
+
+async def send_game_pass_access(
+    to_email: str,
+    order_id: str,
+    pass_type: str = "90-Day",
+    customer_name: str = "Valued Customer"
+) -> Dict:
+    """Send game pass access email"""
+    subject = f"🎮 Your {pass_type} Game Pass Is Ready! #{order_id}"
+    html = get_game_pass_template(
+        order_id=order_id,
+        pass_type=pass_type,
+        customer_name=customer_name
+    )
+    return await send_email(to_email, subject, html)

@@ -558,6 +558,30 @@ PRODUCTS = {
         "billing_cycle": "monthly"
     },
     
+    # ==================== PRODUCT BUNDLES ====================
+    "holiday_table_bundle": {
+        "name": "Holiday Table Bundle",
+        "sku": "BUNDLE-HOL-TABLE",
+        "stripe_id": "prod_bundle_hol_table",
+        "description": "Holiday ePub + Break*fast Snack Pack Month 1 (Prayer). Get started with both series at a bundle discount!",
+        "list_price": 23.98,
+        "sale_price": 19.99,
+        "currency": "usd",
+        "is_bundle": True,
+        "bundle_items": ["holiday_ae_digital", "breakfast_sp_prayer_ae"]
+    },
+    "full_table_experience": {
+        "name": "Full Table Experience",
+        "sku": "BUNDLE-FULL-TABLE",
+        "stripe_id": "prod_bundle_full_table",
+        "description": "Holiday ePub + Break*fast Snack Pack Month 1 + 90-Day Game Pass. The complete Soul Food experience!",
+        "list_price": 43.97,
+        "sale_price": 34.99,
+        "currency": "usd",
+        "is_bundle": True,
+        "bundle_items": ["holiday_ae_digital", "breakfast_sp_prayer_ae", "game_pass_90"]
+    },
+
     # ==================== MERCHANDISE ====================
     "pen_lighted": {
         "name": "SOFU Journal Pen - Lighted",
@@ -1309,15 +1333,54 @@ async def get_checkout_status(session_id: str):
             # Send order confirmation email  
             if customer_email:
                 try:
-                    from email_service import send_order_confirmation
+                    from email_service import send_order_confirmation, send_preorder_confirmation, send_game_pass_access
+                    
+                    # Classify items by type
+                    has_preorder = any(item.get("preorder") or "Pre-Order" in item.get("name", "") or "preorder" in item.get("id", "").lower() for item in items)
+                    has_game_pass = any("gaming-pass" in item.get("id", "").lower() or "game" in item.get("name", "").lower() for item in items)
+                    customer_name = transaction.get("customer_name", "")
+                    total = transaction.get("total_amount", 0)
+                    
+                    # Send order confirmation for digital items
                     await send_order_confirmation(
                         to_email=customer_email,
                         order_id=order_number,
                         items=items,
-                        total=transaction.get("total_amount", 0),
-                        customer_name=transaction.get("customer_name")
+                        total=total,
+                        download_links=[{"token": dl["token"], "product_name": dl["name"]} for dl in download_links_created] if download_links_created else None,
+                        customer_name=customer_name
                     )
-                    print(f"[Status Check] Order confirmation email sent to {customer_email}")
+                    
+                    # Send preorder confirmation if applicable
+                    if has_preorder:
+                        preorder_items = [i for i in items if i.get("preorder") or "Pre-Order" in i.get("name", "")]
+                        try:
+                            await send_preorder_confirmation(
+                                to_email=customer_email,
+                                order_id=order_number,
+                                items=preorder_items,
+                                total=total,
+                                delivery_month="Spring 2026",
+                                courtesy_links=[{"token": dl["token"], "product_name": dl["name"]} for dl in download_links_created[:2]] if download_links_created else None,
+                                customer_name=customer_name
+                            )
+                        except Exception as pe:
+                            print(f"[Status Check] Error sending preorder email: {pe}")
+                    
+                    # Send game pass email if applicable
+                    if has_game_pass:
+                        pass_type = "90-Day" if any("90" in i.get("name", "") for i in items if "game" in i.get("name", "").lower()) else "30-Day"
+                        try:
+                            await send_game_pass_access(
+                                to_email=customer_email,
+                                order_id=order_number,
+                                pass_type=pass_type,
+                                customer_name=customer_name
+                            )
+                        except Exception as ge:
+                            print(f"[Status Check] Error sending game pass email: {ge}")
+                    
+                    print(f"[Status Check] Order confirmation email(s) sent to {customer_email}")
                 except Exception as email_error:
                     print(f"[Status Check] Error sending email: {email_error}")
         
