@@ -1,98 +1,90 @@
 # Soul Food - Product Requirements Document
 
 ## Original Problem Statement
-Build and refine a full-stack e-commerce and learning platform, "Soul Food." Supports physical and digital sales via Stripe, guest checkout with post-purchase redemption, "My Library" for digital downloads, and comprehensive UI/UX refinements.
+Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Supports digital/physical sales via Stripe, guest checkout, "My Library" for downloads, and comprehensive Bible study content.
 
 ## Tech Stack
-- **Frontend**: React, Tailwind CSS, Shadcn/UI, LocalStorage cart
-- **Backend**: FastAPI, MongoDB
-- **Payments**: Stripe Checkout Sessions + Webhooks
-- **File Delivery**: PDF delivery via secure download tokens
+- Frontend: React, Tailwind CSS, Shadcn/UI
+- Backend: FastAPI, MongoDB
+- Payments: Stripe Checkout Sessions + Webhooks
+- Email: Resend (configured, needs RESEND_API_KEY for live sending)
 
-## Core Architecture
-```
-/app/
-  backend/
-    server.py, payment_routes.py, coupon_routes.py
-    routes/ (auth_routes_v2.py, lessons.py, admin_routes.py)
-  frontend/src/
-    App.js, SoulFoodApp.js (landing page), QuickOrder.js, CheckoutPage.js
-    PaymentSuccess.js, MyLibrary.js, RefundRequest.js
-  content/downloads/ (PDFs + nibbles/ subdirectory)
-```
+## Store Structure (Launch Configuration)
+| Section | Products | Status |
+|---------|----------|--------|
+| Featured | Holiday Table Bundle ($19.99), Full Table Experience ($34.99), Holiday ePub ($14.99) | LIVE |
+| Instant Access | HOL ePub AE/YE/IE, BKFT Snack Pack M1, Game Passes (20% off) | LIVE |
+| Pre-Order | HOL Physical Books, BKFT Full Book ($3 off) | LIVE |
+| Free Resources | Interactive lessons, samples | LIVE |
+| Games | Game Night Lite (30-Day, $6.39), Game Pass Full (90-Day, $19.99) | LIVE |
+| Merchandise | Bookmarks only; pens/study kit/game packs = pre-order | LIVE |
 
-## Key DB Schema
-- `users`: email, name, hashed_password, two_factor_enabled
-- `payment_transactions`: session_id, amount_total, items, customer_email, payment_status
-- `download_links`: order_id, token, file_path, expires_at
-- `coupons`: code, active, discount_percent, override_total
+## Active Coupons
+| Code | Type | Discount |
+|------|------|----------|
+| WELCOME10 | Percentage | 10% off all |
+| SOFU5 | Fixed dollar | $5 off bundles |
+| GAMENIGHT | Fixed dollar | $10 off game pass |
+| DOLLARTEST | Override | Cart = $1.00 |
+| BETATEST | Percentage | 100% off |
 
-## What's Been Implemented
+## Content Availability
+- Holiday AE/YE/IE: AVAILABLE NOW
+- BKFT Month 1 (Prayer): Nibbles + Snack Pack available NOW
+- BKFT Months 2-3: COMING SOON (content being finalized)
+- BKFT Full Workbook: PRE-ORDER ($3 off)
+- Lunch: PRE-ORDER ($3 off until Pentecost, ships May-Jun 2026)
+- Game Passes: 20% off until Pentecost (May 24, 2026)
 
-### Soft Launch Update #2 (Apr 5, 2026)
-- [x] Only Holiday + Breakfast Month 1 (Prayer the First Resort) content available
-- [x] Breakfast Months 2 (Through) & 3 (Faith) marked as "Coming Soon" / disabled
-- [x] Game Passes 20% off — NO COUPON REQUIRED until Pentecost (May 24, 2026)
-  - 30-Day: $7.99 → $6.39
-  - 90-Day: $24.99 → $19.99
-- [x] Backend promo_sale_price + promo_until fields for auto-expiry
-- [x] Early Bird Pentecost countdown timer in banner
-- [x] SoulFoodApp.js landing page updated: "HE IS RISEN! SOUL FOOD IS LIVE!"
-- [x] Launch status badges on landing page (Holiday available, pre-orders open, game pass 20% off)
-- [x] Lunch pre-order dates updated to "Ships May-Jun 2026"
-- [x] Preview modal shows "Coming Soon" for Breakfast Month 2/3 themes
-- [x] Mobile responsiveness verified at 375px
+## What's Implemented
 
-### Soft Launch Update #1 (Apr 5, 2026)
-- [x] "He Is Risen! Soul Food Is LIVE!" banner on Quick Order
-- [x] Holiday Series: Available NOW (all editions, current pricing)
-- [x] Break*fast pre-order: $3 off full workbooks
-- [x] Lunch pre-order: $3 off until Pentecost
-- [x] Break*fast Snack Pack Month 1 + Nibbles: Available NOW
-- [x] Holiday Nibbles: Available NOW
-- [x] Merchandise: Only bookmarks available, rest pre-order
-- [x] Single coupon enforcement ("one per order")
-- [x] Fixed PaymentSuccess.js webhook race condition (useRef polling)
-- [x] 24 breakfast nibble PDFs mapped to backend catalog
+### Store Launch (Apr 5, 2026)
+- [x] Featured section with 3 bundle/product cards
+- [x] Holiday Table Bundle ($19.99) and Full Table Experience ($34.99)
+- [x] Store organized: Featured → Instant Access → Pre-Order → Free Resources
+- [x] 3 new coupons (WELCOME10, SOFU5, GAMENIGHT) with fixed dollar support
+- [x] Gift certificates disabled for launch
+- [x] Game Night Lite (30-day) option added
+- [x] Thank You page: "Check your email for access" + support contact
+- [x] Global message: "Start now. Grow with us. Full releases coming soon."
+- [x] BKFT Snack Pack clarification: "Includes Prayer Month 1..."
+- [x] Pre-order messaging: "Includes 2 months complimentary digital access"
+- [x] Email templates: digital delivery, preorder confirmation, game pass access
+- [x] About Us page with real team photos (Dr. Brown, Dr. Temia, Pastor Edwards, Evang. Rose Doctor)
+- [x] BKFT IE PDF uploaded and mapped to product catalog
+- [x] Fixed dollar coupon support in frontend checkout
 
 ### Previously Completed
-- [x] Dynamic thumbnails, login persistence, guest checkout, qty selectors
-- [x] Game Packs, My Library, Refund page, branding updates
-- [x] DOLLARTEST $1 coupon, free "In His Image" downloads
+- [x] Payment success webhook race condition fixed
+- [x] 20% off game passes (no coupon, until Pentecost)
+- [x] Pentecost countdown timer
+- [x] Landing page launch messaging
+- [x] All soft launch pricing updates
 
-## Content Availability Status
-| Content | Status | Notes |
-|---------|--------|-------|
-| Holiday AE/YE/IE | AVAILABLE NOW | All digital + physical |
-| BKFT Month 1: Prayer | AVAILABLE NOW | Nibbles + Snack Pack |
-| BKFT Month 2: Through | COMING SOON | Content being finalized |
-| BKFT Month 3: Faith | COMING SOON | Content being finalized |
-| BKFT Full Workbook | PRE-ORDER | $3 off, ships ~2 weeks |
-| Lunch All Editions | PRE-ORDER | $3 off until Pentecost, ships May-Jun 2026 |
-| Game Passes | 20% OFF | No coupon needed, expires Pentecost |
-| Bookmarks | AVAILABLE NOW | |
-| Pens/Study Kit/Game Packs | PRE-ORDER | |
+## Email Service Status
+- Templates ready: Digital delivery, Preorder confirmation, Game pass access
+- **RESEND_API_KEY needed** for live email sending
+- Currently logs emails but doesn't send in preview
 
 ## Prioritized Backlog
-
 ### P0
-- Process "BKFT IE" (Breakfast Instructor Edition) files — BLOCKED on user upload
+- Get RESEND_API_KEY configured for live emails
+- Run live $1 test purchase to verify end-to-end flow
 
 ### P1
 - Build "Redeem Code" flow for guest purchases
-- SMS OTP (needs Twilio credentials)
-- Comprehensive registration fields
-- License Management UI
-- Referral System UI
+- BKFT Months 2-3 content (when user finalizes)
 
 ### P2
-- Word Search Game
-- Video Integration into My Library
+- SMS OTP, License Management, Referral System
+- Word Search Game, Video Integration
 - Product Catalog migration to MongoDB
 
 ## Critical Notes
 - GUEST CHECKOUT IS INTENTIONAL
-- Stripe minimum $0.50 — DOLLARTEST coupon sets cart to $1.00
-- Can't combine coupons — one per order
-- Game pass 20% off auto-expires May 24, 2026 (Pentecost)
-- Landing page is SoulFoodApp.js (NOT App.js LandingPage component)
+- Stripe minimum $0.50
+- Can't combine coupons (one per order)
+- Game pass 20% off auto-expires May 24, 2026
+- Gift certificates DISABLED for launch
+- Landing page is SoulFoodApp.js
+- Apple Pay/Google Pay enabled via Stripe Checkout

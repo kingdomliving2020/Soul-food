@@ -3,6 +3,11 @@
 ## Registration
 Use `/register` to create new test accounts.
 
+## Launch Coupons (New - April 2026)
+- `WELCOME10` — 10% off all products
+- `SOFU5` — $5 off bundles (fixed dollar)
+- `GAMENIGHT` — $10 off Game Pass (fixed dollar)
+
 ## Beta Test Coupons
 - `BETATEST` — 100% off all items
 - `Beta1!2!3!` — 100% off
