@@ -1822,6 +1822,64 @@ const SoulFoodLanding = () => {
             </Card>
           </div>
 
+          {/* Subscription vs eBook Comparison — COMING SOON */}
+          <div className="mt-12 relative">
+            {/* "Construction Fence" overlay */}
+            <div className="absolute inset-0 z-10 bg-white/60 backdrop-blur-[2px] rounded-2xl flex items-center justify-center">
+              <div className="text-center px-8 py-6 bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-500 rounded-2xl shadow-2xl border-4 border-amber-600 transform -rotate-1">
+                <div className="flex items-center justify-center gap-3 mb-2">
+                  <span className="text-3xl">🚧</span>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white tracking-wide uppercase" style={{textShadow: '2px 2px 0 rgba(0,0,0,0.2)'}}>Coming Soon!</h3>
+                  <span className="text-3xl">🚧</span>
+                </div>
+                <p className="text-amber-900 font-semibold text-sm sm:text-base">Monthly & Annual Subscription Plans</p>
+                <p className="text-amber-800 text-xs mt-1">Unlimited access to all content, games, and new releases</p>
+              </div>
+            </div>
+            
+            {/* Blurred content behind the fence */}
+            <div className="bg-white rounded-2xl p-8 border-2 border-slate-200 shadow-lg opacity-50 pointer-events-none select-none">
+              <h4 className="text-2xl font-bold text-center mb-6 text-slate-800">
+                Subscription vs. eBook - What's the Difference?
+              </h4>
+              <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <div className="bg-gradient-to-br from-emerald-50 to-green-50 p-6 rounded-xl border-2 border-emerald-300">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-xl font-bold">✓</span>
+                    </div>
+                    <h5 className="text-xl font-bold text-slate-800">Monthly Subscription</h5>
+                  </div>
+                  <ul className="space-y-3 text-sm text-slate-700">
+                    <li className="flex items-start space-x-2"><span className="text-emerald-600 font-bold mt-0.5">✓</span><span>All series unlocked automatically</span></li>
+                    <li className="flex items-start space-x-2"><span className="text-emerald-600 font-bold mt-0.5">✓</span><span>Games, multimedia & new content included</span></li>
+                    <li className="flex items-start space-x-2"><span className="text-emerald-600 font-bold mt-0.5">✓</span><span>Cancel anytime, no commitment</span></li>
+                  </ul>
+                  <div className="mt-4 p-3 bg-emerald-100 rounded-lg">
+                    <p className="text-xs font-semibold text-emerald-800">Best for: Year-long journey with all updates</p>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-slate-50 to-gray-50 p-6 rounded-xl border-2 border-slate-300">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <div className="w-10 h-10 bg-slate-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-xl font-bold">📕</span>
+                    </div>
+                    <h5 className="text-xl font-bold text-slate-800">One-Time eBook</h5>
+                  </div>
+                  <ul className="space-y-3 text-sm text-slate-700">
+                    <li className="flex items-start space-x-2"><span className="text-slate-600 font-bold mt-0.5">✓</span><span>Downloadable PDF, keep forever</span></li>
+                    <li className="flex items-start space-x-2"><span className="text-slate-600 font-bold mt-0.5">✓</span><span>Print at home or read offline</span></li>
+                    <li className="flex items-start space-x-2"><span className="text-amber-600 font-bold mt-0.5">⚠️</span><span>Each series purchased separately</span></li>
+                  </ul>
+                  <div className="mt-4 p-3 bg-amber-100 rounded-lg">
+                    <p className="text-xs font-semibold text-amber-800">Best for: Single quarter study or gift giving</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Multimedia Content Explanation */}
           <div className="mt-12 bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8 border-2 border-orange-200">
             <h4 className="text-2xl font-bold text-center mb-6 text-slate-800">
