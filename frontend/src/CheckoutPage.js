@@ -927,6 +927,8 @@ const CheckoutPage = () => {
           origin_url: window.location.origin,
           coupon_code: couponApplied?.code || null,
           discount_percent: couponApplied?.discount_percent || 0,
+          discount_dollars: couponApplied?.discount_dollars || 0,
+          override_total: couponApplied?.override_total ?? null,
           is_gift: isGift,
           order_notes: orderNotes,
           customer_email: customerEmail || null,

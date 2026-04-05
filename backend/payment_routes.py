@@ -242,6 +242,58 @@ PRODUCT_FILES = {
     "breakfast-ae-paperback": "breakfast-ae-full.pdf",
     "breakfast-ye-paperback": "breakfast-ye-full.pdf",
     "breakfast-ie-paperback": "breakfast-ie-full.pdf",
+    # =============== EPUB FORMAT MAPPINGS ===============
+    # Frontend sends "-epub" for ebook format selections
+    "breakfast-snack-month-1-adult-epub": "breakfast-ae-month1-snackpack.pdf",
+    "breakfast-snack-month-2-adult-epub": "breakfast-ae-month2-snackpack.pdf",
+    "breakfast-snack-month-3-adult-epub": "breakfast-ae-month3-snackpack.pdf",
+    "breakfast-snack-month-1-youth-epub": "breakfast-ye-month1-snackpack.pdf",
+    "breakfast-snack-month-2-youth-epub": "breakfast-ye-month2-snackpack.pdf",
+    "breakfast-snack-month-3-youth-epub": "breakfast-ye-month3-snackpack.pdf",
+    "breakfast-nibble-prayer-1-adult-epub": "breakfast-ae-prayer-lesson1.pdf",
+    "breakfast-nibble-prayer-2-adult-epub": "breakfast-ae-prayer-lesson2.pdf",
+    "breakfast-nibble-prayer-3-adult-epub": "breakfast-ae-prayer-lesson3.pdf",
+    "breakfast-nibble-prayer-4-adult-epub": "breakfast-ae-prayer-lesson4.pdf",
+    "breakfast-nibble-prayer-1-youth-epub": "breakfast-ye-prayer-lesson1.pdf",
+    "breakfast-nibble-prayer-2-youth-epub": "breakfast-ye-prayer-lesson2.pdf",
+    "breakfast-nibble-prayer-3-youth-epub": "breakfast-ye-prayer-lesson3.pdf",
+    "breakfast-nibble-prayer-4-youth-epub": "breakfast-ye-prayer-lesson4.pdf",
+    "breakfast-nibble-through-1-adult-epub": "breakfast-ae-through-lesson1.pdf",
+    "breakfast-nibble-through-2-adult-epub": "breakfast-ae-through-lesson2.pdf",
+    "breakfast-nibble-through-3-adult-epub": "breakfast-ae-through-lesson3.pdf",
+    "breakfast-nibble-through-4-adult-epub": "breakfast-ae-through-lesson4.pdf",
+    "breakfast-nibble-through-1-youth-epub": "breakfast-ye-through-lesson1.pdf",
+    "breakfast-nibble-through-2-youth-epub": "breakfast-ye-through-lesson2.pdf",
+    "breakfast-nibble-through-3-youth-epub": "breakfast-ye-through-lesson3.pdf",
+    "breakfast-nibble-through-4-youth-epub": "breakfast-ye-through-lesson4.pdf",
+    "breakfast-nibble-faith-1-adult-epub": "breakfast-ae-faith-lesson1.pdf",
+    "breakfast-nibble-faith-2-adult-epub": "breakfast-ae-faith-lesson2.pdf",
+    "breakfast-nibble-faith-3-adult-epub": "breakfast-ae-faith-lesson3.pdf",
+    "breakfast-nibble-faith-4-adult-epub": "breakfast-ae-faith-lesson4.pdf",
+    "breakfast-nibble-faith-1-youth-epub": "breakfast-ye-faith-lesson1.pdf",
+    "breakfast-nibble-faith-2-youth-epub": "breakfast-ye-faith-lesson2.pdf",
+    "breakfast-nibble-faith-3-youth-epub": "breakfast-ye-faith-lesson3.pdf",
+    "breakfast-nibble-faith-4-youth-epub": "breakfast-ye-faith-lesson4.pdf",
+    "breakfast-meal-adult-epub": "breakfast-ae-full.pdf",
+    "breakfast-meal-youth-epub": "breakfast-ye-full.pdf",
+    # Holiday epub format
+    "holiday-nibble-holiday-ae-covenant-adult-epub": "holiday-ae-full.pdf",
+    "holiday-nibble-holiday-ae-cradle-adult-epub": "holiday-ae-full.pdf",
+    "holiday-nibble-holiday-ae-cross-adult-epub": "holiday-ae-full.pdf",
+    "holiday-nibble-holiday-ae-comforter-adult-epub": "holiday-ae-full.pdf",
+    "holiday-nibble-holiday-ye-covenant-youth-epub": "holiday-ye-full.pdf",
+    "holiday-nibble-holiday-ye-cradle-youth-epub": "holiday-ye-full.pdf",
+    "holiday-nibble-holiday-ye-cross-youth-epub": "holiday-ye-full.pdf",
+    "holiday-nibble-holiday-ye-comforter-youth-epub": "holiday-ye-full.pdf",
+    "holiday-full-adult-epub": "holiday-ae-full.pdf",
+    "holiday-full-youth-epub": "holiday-ye-full.pdf",
+    "holiday-full-instructor-epub": "holiday-ie-full.pdf",
+    # Workbooks epub format
+    "workbooks-holiday-ae-digital-adult-epub": "holiday-ae-full.pdf",
+    "workbooks-holiday-ye-digital-youth-epub": "holiday-ye-full.pdf",
+    "workbooks-holiday-ie-digital-instructor-epub": "holiday-ie-full.pdf",
+    "workbooks-breakfast-ae-digital-adult-epub": "breakfast-ae-full.pdf",
+    "workbooks-breakfast-ye-digital-youth-epub": "breakfast-ye-full.pdf",
 }
 
 def normalize_product_id(product_id: str) -> str:
@@ -283,6 +335,12 @@ def normalize_product_id(product_id: str) -> str:
         'holiday': {'ae': 'holiday_ae', 'ye': 'holiday_ye', 'ie': 'holiday_ie', 'adult': 'holiday_ae', 'youth': 'holiday_ye', 'instructor': 'holiday_ie'},
         'breakfast': {'ae': 'breakfast_ae_digital', 'ye': 'breakfast_ye_digital', 'ie': 'breakfast_ie_digital', 'adult': 'breakfast_ae_digital', 'youth': 'breakfast_ye_digital', 'instructor': 'breakfast_ie_digital'},
     }
+    
+    # Try with epub/ebook -> interactive/digital substitution
+    for old_fmt, new_fmt in [('epub', 'interactive'), ('epub', 'digital'), ('ebook', 'interactive'), ('ebook', 'digital')]:
+        swapped = normalized.replace(f'-{old_fmt}', f'-{new_fmt}')
+        if swapped in PRODUCT_FILES:
+            return swapped
     
     for series_key, editions in series_map.items():
         if series_key in normalized:
@@ -1102,6 +1160,8 @@ class CartCheckoutRequest(BaseModel):
     origin_url: str
     coupon_code: Optional[str] = None
     discount_percent: int = 0
+    discount_dollars: float = 0
+    override_total: Optional[float] = None
     is_gift: bool = False
     order_notes: Optional[str] = None
     customer_email: Optional[str] = None
@@ -1221,36 +1281,61 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
     
     # Apply discount if coupon provided
     discount_multiplier = 1.0
-    if request.discount_percent > 0:
+    override_total_cents = None
+    
+    if request.override_total is not None and request.override_total > 0:
+        # Override total: set the entire cart to this fixed amount
+        override_total_cents = max(50, int(request.override_total * 100))  # min $0.50
+    elif request.discount_percent > 0:
         discount_multiplier = (100 - request.discount_percent) / 100
         total_amount = total_amount * discount_multiplier
+    elif request.discount_dollars > 0:
+        total_amount = round(max(0.50, total_amount - request.discount_dollars), 2)
     
     # Build line items with discount applied to each item
-    for item in request.items:
-        item_price = item.get('salePrice', item.get('price', 0))
-        item_qty = item.get('quantity', 1)
-        item_name = item.get('name', 'Soul Food Product')
-        
-        # Apply discount to item price
-        discounted_price = item_price * discount_multiplier
-        
-        # Add discount indicator to name if coupon applied
-        display_name = item_name
-        if request.discount_percent > 0:
-            display_name = f"{item_name} ({request.discount_percent}% off)"
-        
-        # Create line item for Stripe with discounted price
+    if override_total_cents:
+        # For override_total: create a single line item with the override amount
         line_items.append({
             'price_data': {
                 'currency': 'usd',
                 'product_data': {
-                    'name': display_name,
-                    'description': item.get('description', 'Soul Food Digital Content'),
+                    'name': f"Soul Food Order ({len(request.items)} items)" + (f" — Coupon: {request.coupon_code}" if request.coupon_code else ""),
+                    'description': ', '.join(item_names)[:500],
                 },
-                'unit_amount': max(1, int(discounted_price * 100)),  # Stripe uses cents, min 1 cent
+                'unit_amount': override_total_cents,
             },
-            'quantity': item_qty,
+            'quantity': 1,
         })
+    else:
+        for item in request.items:
+            item_price = item.get('salePrice', item.get('price', 0))
+            item_qty = item.get('quantity', 1)
+            item_name = item.get('name', 'Soul Food Product')
+            
+            # Apply discount to item price
+            discounted_price = item_price * discount_multiplier
+            if request.discount_dollars > 0 and len(request.items) == 1:
+                discounted_price = max(0.50, item_price - request.discount_dollars)
+            
+            # Add discount indicator to name if coupon applied
+            display_name = item_name
+            if request.discount_percent > 0:
+                display_name = f"{item_name} ({request.discount_percent}% off)"
+            elif request.discount_dollars > 0:
+                display_name = f"{item_name} (${request.discount_dollars:.0f} off)"
+            
+            # Create line item for Stripe with discounted price
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': display_name,
+                        'description': item.get('description', 'Soul Food Digital Content'),
+                    },
+                    'unit_amount': max(1, int(discounted_price * 100)),  # Stripe uses cents, min 1 cent
+                },
+                'quantity': item_qty,
+            })
     
     # Build URLs
     origin_url = request.origin_url.rstrip('/')
@@ -1297,17 +1382,23 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         random_part = ''.join(secrets.choice(chars) for _ in range(5))
         order_number = f"SF-{year}-{random_part}"
         
+        # Actual charged amount (accounts for override)
+        actual_amount = request.override_total if request.override_total is not None else total_amount
+        
         # Store pending transaction with order number
         transaction = {
             "session_id": session.id,
             "order_number": order_number,
             "items": request.items,
-            "total_amount": total_amount,
+            "total_amount": actual_amount,
+            "original_subtotal": sum(item.get('salePrice', item.get('price', 0)) * item.get('quantity', 1) for item in request.items),
             "currency": "usd",
             "payment_status": "pending",
             "status": "initiated",
             "coupon_code": request.coupon_code,
             "discount_percent": request.discount_percent,
+            "discount_dollars": request.discount_dollars,
+            "override_total": request.override_total,
             "is_gift": request.is_gift,
             "order_notes": request.order_notes,
             "customer_email": request.customer_email,
@@ -1323,7 +1414,7 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
             "url": session.url,
             "session_id": session.id,
             "order_number": order_number,
-            "amount": total_amount
+            "amount": actual_amount
         }
         
     except stripe.error.StripeError as e:
