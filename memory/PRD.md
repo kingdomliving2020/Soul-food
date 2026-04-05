@@ -16,7 +16,8 @@ Build and refine a full-stack e-commerce and learning platform, "Soul Food." Sup
     server.py, payment_routes.py, coupon_routes.py
     routes/ (auth_routes_v2.py, lessons.py, admin_routes.py)
   frontend/src/
-    App.js, QuickOrder.js, CheckoutPage.js, PaymentSuccess.js, MyLibrary.js, RefundRequest.js
+    App.js, SoulFoodApp.js (landing page), QuickOrder.js, CheckoutPage.js
+    PaymentSuccess.js, MyLibrary.js, RefundRequest.js
   content/downloads/ (PDFs + nibbles/ subdirectory)
 ```
 
@@ -26,34 +27,51 @@ Build and refine a full-stack e-commerce and learning platform, "Soul Food." Sup
 - `download_links`: order_id, token, file_path, expires_at
 - `coupons`: code, active, discount_percent, override_total
 
-## What's Been Implemented (as of Apr 5, 2026)
+## What's Been Implemented
 
-### Soft Launch (Apr 5, 2026)
-- [x] "He Is Risen! Soul Food Is LIVE!" launch banner
-- [x] Holiday Series: Available NOW (all 3 editions, current pricing)
-- [x] Break*fast pre-order: $3 off full workbooks (AE Digital $11.99, AE Print $24.99, etc.)
-- [x] Lunch pre-order: $3 off until Pentecost (AE $24.99, YE $21.99, IE $26.99)
-- [x] Break*fast Snack Pack Month 1 (Prayer the First Resort): Available NOW
-- [x] Break*fast Nibbles Month 1: Available NOW, no discount
+### Soft Launch Update #2 (Apr 5, 2026)
+- [x] Only Holiday + Breakfast Month 1 (Prayer the First Resort) content available
+- [x] Breakfast Months 2 (Through) & 3 (Faith) marked as "Coming Soon" / disabled
+- [x] Game Passes 20% off — NO COUPON REQUIRED until Pentecost (May 24, 2026)
+  - 30-Day: $7.99 → $6.39
+  - 90-Day: $24.99 → $19.99
+- [x] Backend promo_sale_price + promo_until fields for auto-expiry
+- [x] Early Bird Pentecost countdown timer in banner
+- [x] SoulFoodApp.js landing page updated: "HE IS RISEN! SOUL FOOD IS LIVE!"
+- [x] Launch status badges on landing page (Holiday available, pre-orders open, game pass 20% off)
+- [x] Lunch pre-order dates updated to "Ships May-Jun 2026"
+- [x] Preview modal shows "Coming Soon" for Breakfast Month 2/3 themes
+- [x] Mobile responsiveness verified at 375px
+
+### Soft Launch Update #1 (Apr 5, 2026)
+- [x] "He Is Risen! Soul Food Is LIVE!" banner on Quick Order
+- [x] Holiday Series: Available NOW (all editions, current pricing)
+- [x] Break*fast pre-order: $3 off full workbooks
+- [x] Lunch pre-order: $3 off until Pentecost
+- [x] Break*fast Snack Pack Month 1 + Nibbles: Available NOW
 - [x] Holiday Nibbles: Available NOW
-- [x] Merchandise: Only bookmarks available, pens/study kit/game packs pre-order
-- [x] Single coupon enforcement ("one per order" note on checkout)
-- [x] Fixed PaymentSuccess.js webhook race condition (robust polling with useRef)
-- [x] 24 breakfast nibble PDFs mapped to product catalog
-- [x] Updated marketing copy for soft launch
+- [x] Merchandise: Only bookmarks available, rest pre-order
+- [x] Single coupon enforcement ("one per order")
+- [x] Fixed PaymentSuccess.js webhook race condition (useRef polling)
+- [x] 24 breakfast nibble PDFs mapped to backend catalog
 
 ### Previously Completed
-- [x] Dynamic thumbnails in QuickOrder.js
-- [x] Login persistence during checkout
-- [x] Stripe Webhook configuration
-- [x] Guest checkout (no account required)
-- [x] Quantity selectors on order page
-- [x] Game Packs in merchandise
-- [x] My Library with thumbnails and download buttons
-- [x] Removed Emergent branding from OG tags
-- [x] Refund/Return Request page
-- [x] "In His Image" free downloads fixed
-- [x] DOLLARTEST $1 coupon for testing
+- [x] Dynamic thumbnails, login persistence, guest checkout, qty selectors
+- [x] Game Packs, My Library, Refund page, branding updates
+- [x] DOLLARTEST $1 coupon, free "In His Image" downloads
+
+## Content Availability Status
+| Content | Status | Notes |
+|---------|--------|-------|
+| Holiday AE/YE/IE | AVAILABLE NOW | All digital + physical |
+| BKFT Month 1: Prayer | AVAILABLE NOW | Nibbles + Snack Pack |
+| BKFT Month 2: Through | COMING SOON | Content being finalized |
+| BKFT Month 3: Faith | COMING SOON | Content being finalized |
+| BKFT Full Workbook | PRE-ORDER | $3 off, ships ~2 weeks |
+| Lunch All Editions | PRE-ORDER | $3 off until Pentecost, ships May-Jun 2026 |
+| Game Passes | 20% OFF | No coupon needed, expires Pentecost |
+| Bookmarks | AVAILABLE NOW | |
+| Pens/Study Kit/Game Packs | PRE-ORDER | |
 
 ## Prioritized Backlog
 
@@ -61,26 +79,20 @@ Build and refine a full-stack e-commerce and learning platform, "Soul Food." Sup
 - Process "BKFT IE" (Breakfast Instructor Edition) files — BLOCKED on user upload
 
 ### P1
-- Build "Redeem Code" flow for guest purchases (buy now, register later)
-- Add SMS OTP option (blocked on Twilio credentials)
-- Add comprehensive registration fields
+- Build "Redeem Code" flow for guest purchases
+- SMS OTP (needs Twilio credentials)
+- Comprehensive registration fields
 - License Management UI
 - Referral System UI
 
 ### P2
 - Word Search Game
 - Video Integration into My Library
-- Product Catalog migration to MongoDB (payment_routes.py is 1800+ lines)
-
-## Key API Endpoints
-- `POST /api/payments/checkout/cart` — Cart checkout via Stripe
-- `POST /api/payments/webhook/stripe` — Stripe webhook handler
-- `GET /api/payments/checkout/status/{session_id}` — Payment status polling
-- `GET /api/payments/download-links/{order_id}` — Download links for order
-- `POST /api/coupons/validate` — Coupon validation (one per order)
-- `GET /api/downloads/file/{token}` — Secure PDF file download
+- Product Catalog migration to MongoDB
 
 ## Critical Notes
-- GUEST CHECKOUT IS INTENTIONAL — do not re-add account requirements
-- Stripe minimum is $0.50 — DOLLARTEST coupon sets cart to $1.00
-- Can't combine coupons — one per order enforced
+- GUEST CHECKOUT IS INTENTIONAL
+- Stripe minimum $0.50 — DOLLARTEST coupon sets cart to $1.00
+- Can't combine coupons — one per order
+- Game pass 20% off auto-expires May 24, 2026 (Pentecost)
+- Landing page is SoulFoodApp.js (NOT App.js LandingPage component)

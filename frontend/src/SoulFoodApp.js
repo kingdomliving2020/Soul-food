@@ -64,7 +64,7 @@ const SOUL_FOOD_SERIES = [
     bgColor: "bg-gradient-to-br from-blue-50 to-cyan-50",
     bgImage: "https://images.pexels.com/photos/8513088/pexels-photo-8513088.jpeg?w=800&h=400&fit=crop&crop=center",
     available: false,
-    unlockDate: "Q1 2026",
+    unlockDate: "Pre-Order — $3 Off (Ships May-Jun 2026)",
     description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity.",
     themes: [
       {
@@ -535,9 +535,9 @@ const SoulFoodLanding = () => {
         </div>
         
         <div className="relative z-10 container mx-auto text-center max-w-5xl">
-          {/* Available Now Badge */}
+          {/* Soft Launch Badge */}
           <Badge className="mb-6 bg-gradient-to-r from-emerald-600 to-teal-700 text-white px-6 py-2 text-sm font-bold shadow-xl">
-            ✨ NOW AVAILABLE - Digital Downloads Ready
+            ✝️ HE IS RISEN! SOUL FOOD IS LIVE!
           </Badge>
           
           <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
@@ -551,8 +551,8 @@ const SoulFoodLanding = () => {
           </h2>
           
           <p className="text-lg sm:text-xl text-white/95 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-            A year-long journey through Scripture designed to strengthen your foundation, 
-            deepen relationships, discover purpose, and mature in faith - one meal at a time.
+            Holiday Series is live! Break*fast & Lunch pre-orders now open — save $3 on full workbooks.
+            Game Passes are 20% off, no coupon needed, through Pentecost!
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -571,12 +571,20 @@ const SoulFoodLanding = () => {
             </Button>
           </div>
 
-          {/* Available Now Badge */}
-          <div className="mt-8 inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full shadow-2xl border border-emerald-300">
-            <span className="text-2xl">✨</span>
-            <span className="text-slate-800 font-semibold">
-              Start your spiritual journey today with Soul Food Bible Study Series
-            </span>
+          {/* Launch Status */}
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm px-5 py-3 rounded-full shadow-2xl border border-emerald-300">
+              <span className="text-lg">✝️</span>
+              <span className="text-slate-800 font-semibold text-sm sm:text-base">
+                Holiday available now! Pre-orders open for Break*fast & Lunch
+              </span>
+            </div>
+            <div className="inline-flex items-center space-x-2 bg-purple-100/90 backdrop-blur-sm px-5 py-3 rounded-full shadow-xl border border-purple-300">
+              <span className="text-lg">🎮</span>
+              <span className="text-purple-800 font-semibold text-sm">
+                Game Passes 20% Off — No Coupon Needed!
+              </span>
+            </div>
           </div>
         </div>
       </section>
@@ -1634,12 +1642,13 @@ const SoulFoodLanding = () => {
                   <span className="text-white text-xl">✨</span>
                 </div>
                 <div className="text-left">
-                  <h4 className="font-bold text-slate-800 mb-2">📚 Available Now!</h4>
+                  <h4 className="font-bold text-slate-800 mb-2">✝️ Soul Food Is LIVE!</h4>
                   <div className="text-sm text-slate-700 space-y-2">
-                    <p><strong>Interactive Subscription ($7.99-$11.99/month):</strong> Full access to interactive lessons, progress tracking, games, and community features. New content added quarterly.</p>
-                    <p><strong>eBook ($24.99-$68.99 one-time):</strong> Downloadable PDF workbooks you own forever. Print at home or use on any device.</p>
-                    <p><strong>Physical Books ($39.99-$79.99):</strong> Premium spiral-bound workbooks shipping in 2-3 weeks.</p>
-                    <p className="font-semibold text-emerald-700 bg-emerald-100 px-3 py-2 rounded-lg mt-3">💡 Get started today - digital downloads available instantly!</p>
+                    <p><strong>Holiday Series:</strong> All editions available now — digital downloads + physical books (ships 2-3 weeks).</p>
+                    <p><strong>Break*fast Pre-Order ($3 off full workbooks):</strong> Month 1 "Prayer the First Resort" nibbles & snack packs available now. Full workbooks ship soon!</p>
+                    <p><strong>Lunch Pre-Order ($3 off until Pentecost):</strong> Ships May-June 2026.</p>
+                    <p><strong>🎮 Game Passes 20% Off — No Coupon Needed!</strong> Through Pentecost (May 24, 2026).</p>
+                    <p className="font-semibold text-emerald-700 bg-emerald-100 px-3 py-2 rounded-lg mt-3">Get started today — Holiday digital downloads available instantly!</p>
                   </div>
                 </div>
               </div>
@@ -2166,14 +2175,21 @@ const SoulFoodLanding = () => {
 
               {/* Themes and Lessons */}
               <div className="space-y-8">
-                {selectedSeries.themes && selectedSeries.themes.map((theme, themeIndex) => (
-                  <div key={themeIndex} className="space-y-3">
+                {selectedSeries.themes && selectedSeries.themes.map((theme, themeIndex) => {
+                  // Breakfast: only Month 1 (Prayer) is available, Months 2 & 3 are coming soon
+                  const isComingSoon = selectedSeries.id === 'breakfast' && themeIndex > 0;
+                  
+                  return (
+                  <div key={themeIndex} className={`space-y-3 ${isComingSoon ? 'opacity-60' : ''}`}>
                     {/* Theme Header */}
-                    <div className={`bg-gradient-to-r ${selectedSeries.gradient} p-4 rounded-xl shadow-lg`}>
+                    <div className={`bg-gradient-to-r ${selectedSeries.gradient} p-4 rounded-xl shadow-lg flex items-center justify-between`}>
                       <h4 className="text-xl font-bold text-white flex items-center">
                         <span className="mr-2">✨</span>
                         Theme: {theme.themeName}
                       </h4>
+                      {isComingSoon && (
+                        <span className="bg-white/25 text-white text-xs font-bold px-3 py-1 rounded-full">Coming Soon</span>
+                      )}
                     </div>
 
                     {/* Lessons for this theme */}
@@ -2250,7 +2266,8 @@ const SoulFoodLanding = () => {
                       })}
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Call to Action */}
