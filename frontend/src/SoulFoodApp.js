@@ -1428,17 +1428,17 @@ const SoulFoodLanding = () => {
                 <div className="text-center py-4">
                   <div className="flex items-center justify-center gap-4 mb-2">
                     <div className="text-center">
-                      <p className="text-xs text-slate-500 uppercase">Subscription</p>
-                      <div className="text-2xl font-bold text-purple-600">$7.99<span className="text-sm text-slate-500">/mo</span></div>
+                      <p className="text-xs text-slate-500 uppercase">ePub</p>
+                      <div className="text-2xl font-bold text-indigo-600">${selectedSeries.available ? '14.99' : '24.99'}</div>
                     </div>
                     <div className="text-slate-400">or</div>
                     <div className="text-center">
-                      <p className="text-xs text-slate-500 uppercase">eBook</p>
-                      <div className="text-2xl font-bold text-indigo-600">$24.99</div>
+                      <p className="text-xs text-slate-500 uppercase">Physical</p>
+                      <div className="text-2xl font-bold text-purple-600">${selectedSeries.available ? '16.99' : '27.99'}</div>
                     </div>
                   </div>
                   <Badge className="bg-emerald-500 text-white text-xs px-3 py-1 mt-2">
-                    Instant Download Available
+                    {selectedSeries.available ? 'Instant Download Available' : 'Pre-Order — $3 Off'}
                   </Badge>
                 </div>
 
@@ -1820,90 +1820,6 @@ const SoulFoodLanding = () => {
                 </Button>
               </CardContent>
             </Card>
-          </div>
-
-          {/* Subscription vs eBook Comparison */}
-          <div className="mt-12 bg-white rounded-2xl p-8 border-2 border-slate-200 shadow-lg">
-            <h4 className="text-2xl font-bold text-center mb-6 text-slate-800">
-              💰 Subscription vs. eBook - What's the Difference?
-            </h4>
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-              <div className="bg-gradient-to-br from-emerald-50 to-green-50 p-6 rounded-xl border-2 border-emerald-300">
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-10 h-10 bg-emerald-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xl font-bold">✓</span>
-                  </div>
-                  <h5 className="text-xl font-bold text-slate-800">Monthly Subscription</h5>
-                </div>
-                <ul className="space-y-3 text-sm text-slate-700">
-                  <li className="flex items-start space-x-2">
-                    <span className="text-emerald-600 font-bold mt-0.5">✓</span>
-                    <span><strong>Break*fast</strong> available immediately</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-emerald-600 font-bold mt-0.5">✓</span>
-                    <span><strong>Lunch</strong> unlocks automatically Q1 2026</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-emerald-600 font-bold mt-0.5">✓</span>
-                    <span><strong>Dinner</strong> unlocks automatically Q2 2026</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-emerald-600 font-bold mt-0.5">✓</span>
-                    <span><strong>Supper</strong> unlocks automatically Q3 2026</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-emerald-600 font-bold mt-0.5">✓</span>
-                    <span>All multimedia (audio, video) as released</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-emerald-600 font-bold mt-0.5">✓</span>
-                    <span>Cancel anytime, no commitment</span>
-                  </li>
-                </ul>
-                <div className="mt-4 p-3 bg-emerald-100 rounded-lg">
-                  <p className="text-xs font-semibold text-emerald-800">Best for: Year-long journey with all updates</p>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-slate-50 to-gray-50 p-6 rounded-xl border-2 border-slate-300">
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-10 h-10 bg-slate-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xl font-bold">📕</span>
-                  </div>
-                  <h5 className="text-xl font-bold text-slate-800">One-Time eBook</h5>
-                </div>
-                <ul className="space-y-3 text-sm text-slate-700">
-                  <li className="flex items-start space-x-2">
-                    <span className="text-slate-600 font-bold mt-0.5">✓</span>
-                    <span><strong>Break*fast</strong> included (currently available)</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-amber-600 font-bold mt-0.5">⚠️</span>
-                    <span><strong>Lunch</strong> requires separate purchase in Q1</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-amber-600 font-bold mt-0.5">⚠️</span>
-                    <span><strong>Dinner</strong> requires separate purchase in Q2</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-amber-600 font-bold mt-0.5">⚠️</span>
-                    <span><strong>Supper</strong> requires separate purchase in Q3</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-slate-600 font-bold mt-0.5">✓</span>
-                    <span>Downloadable PDF, keep forever</span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-slate-600 font-bold mt-0.5">✓</span>
-                    <span>Print at home or read offline</span>
-                  </li>
-                </ul>
-                <div className="mt-4 p-3 bg-amber-100 rounded-lg">
-                  <p className="text-xs font-semibold text-amber-800">Best for: Single quarter study or gift giving</p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Multimedia Content Explanation */}

@@ -389,8 +389,7 @@ const QuickOrder = () => {
       packages: [
         { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, selectLesson: true, available: true },
         { id: 'snack', name: 'Snack Pack (4 Lessons)', lessons: 4, selectMonth: true, available: true, note: 'Includes Prayer Month 1 (available now). Additional content in future updates.' },
-        { id: 'meal', name: 'Meal Bundle (12 Lessons) — $3 Off Pre-Order', lessons: 12, available: true, preOrder: true, note: 'Ready Jan 2026' },
-        { id: 'subscription', name: 'Subscription (All Access)', isSubscription: true, available: true }
+        { id: 'meal', name: 'Meal Bundle (12 Lessons) — $3 Off Pre-Order', lessons: 12, available: true, preOrder: true, note: 'Ready Jan 2026' }
       ],
       pricing: {
         nibble: {
@@ -404,9 +403,6 @@ const QuickOrder = () => {
         meal: {
           listPrices: { adult: { interactive: 26.97, epub: 26.97 }, youth: { interactive: 26.97, epub: 26.97 } },
           prices: { adult: { interactive: 18.99, epub: 18.99 }, youth: { interactive: 18.99, epub: 18.99 } }
-        },
-        subscription: {
-          prices: { adult: { subscription_monthly: 9.99, subscription_annual: 99.00 }, youth: { subscription_monthly: 9.99, subscription_annual: 99.00 } }
         }
       },
       monthOptions: breakfastMonths,
@@ -485,13 +481,14 @@ const QuickOrder = () => {
       name: 'Subscriptions',
       tagline: 'All-Access Plans',
       description: 'Unlimited access to interactive lessons, games, and new content',
-      available: true,
+      available: false,
+      hidden: true,
       editions: ['adult', 'youth', 'instructor'],
       formats: ['subscription'],
       packages: [
-        { id: 'monthly', name: 'Monthly Plan', price: 9.99, billing: 'month', available: true },
-        { id: 'annual', name: 'Annual Plan (Save 17%)', price: 99.00, billing: 'year', available: true, badge: 'Best Value' },
-        { id: 'ministry', name: 'Ministry/Small Group', price: 24.99, billing: 'month', available: true, note: 'For groups & leaders' }
+        { id: 'monthly', name: 'Monthly Plan', price: 9.99, billing: 'month', available: false },
+        { id: 'annual', name: 'Annual Plan (Save 17%)', price: 99.00, billing: 'year', available: false },
+        { id: 'ministry', name: 'Ministry/Small Group', price: 24.99, billing: 'month', available: false }
       ],
       salePercent: 0
     },
@@ -1221,7 +1218,7 @@ const QuickOrder = () => {
         <section className="mb-12">
           <h3 className="text-2xl font-bold mb-6 text-slate-800">📚 Soul Food Meals</h3>
           <div className="grid md:grid-cols-2 gap-6">
-            {mealSeries.map(meal => {
+            {mealSeries.filter(meal => !meal.hidden).map(meal => {
               const sel = selections[meal.id] || {};
               const defaultPkg = meal.packages?.[0]?.id || 'full';
               const selectedPkg = sel.package || defaultPkg;
