@@ -218,17 +218,17 @@ const GameAddToCartButton = () => {
   );
 };
 
-// Resurrection Sunday Countdown Component
+// Pentecost Sale Countdown Component
 const ResurrectionCountdown = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   
   useEffect(() => {
-    // Resurrection Sunday 2026 is April 5, 2026
-    const resurrectionSunday = new Date('2026-04-05T06:00:00');
+    // Pentecost 2026 is May 24, 2026 — sale/promo end date
+    const pentecostDate = new Date('2026-05-24T23:59:59');
     
     const updateCountdown = () => {
       const now = new Date();
-      const diff = resurrectionSunday - now;
+      const diff = pentecostDate - now;
       
       if (diff > 0) {
         setTimeLeft({
@@ -441,7 +441,7 @@ const SoulFoodLanding = () => {
         </div>
       </header>
 
-      {/* Resurrection Sunday Marketing Banner with Countdown */}
+      {/* Post-Easter Launch Banner */}
       <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-900 text-white">
         {/* Jump-to Navigation Bar */}
         <div className="border-b border-purple-700/50">
@@ -460,7 +460,7 @@ const SoulFoodLanding = () => {
           </div>
         </div>
         
-        {/* Main Resurrection Sunday Promotion */}
+        {/* Main Promotion - He Is Risen */}
         <div id="resurrection-promo" className="container mx-auto px-4 py-6 sm:py-8">
           <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
             {/* Left - Holiday Cover Image */}
@@ -475,24 +475,24 @@ const SoulFoodLanding = () => {
             {/* Center - Marketing Message */}
             <div className="flex-1 text-center lg:text-left">
               <Badge className="mb-3 bg-amber-500 text-white px-4 py-1.5 text-xs sm:text-sm font-bold">
-                ✝️ RESURRECTION SUNDAY (Easter) 2026
+                ✝️ HE IS RISEN! Soul Food Is LIVE!
               </Badge>
               
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 leading-tight">
-                Resurrection Ready:<br className="hidden sm:block" />
-                <span className="text-amber-300">A 4-Week Soul Food Study for the Heart of Easter</span>
+                Truth, Served Daily<br className="hidden sm:block" />
+                <span className="text-amber-300">Start your journey with the Holiday Series</span>
               </h2>
               
               <p className="text-purple-200 text-base sm:text-lg mb-4 max-w-xl mx-auto lg:mx-0">
                 "From Covenant to Cross to Comforter—walk the story that changed everything."
               </p>
               
-              {/* Shipping Promo */}
+              {/* Shipping Info - Updated */}
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 max-w-md mx-auto lg:mx-0 border border-purple-400/30">
-                <p className="text-amber-300 font-bold text-sm sm:text-base mb-1">🚚 FREE SHIPPING (US, APO/FPO, Canada)</p>
-                <p className="text-purple-100 text-xs sm:text-sm">Pre-orders & non-bulk orders before March 12th</p>
-                <p className="text-purple-200 text-xs mt-1">½ off shipping on bulk orders before March 15th</p>
-                <p className="text-purple-300 text-xs mt-2 italic">🌍 International: 25% off shipping - contact us for delivery estimates</p>
+                <p className="text-amber-300 font-bold text-sm sm:text-base mb-1">📖 Digital downloads available instantly</p>
+                <p className="text-purple-100 text-xs sm:text-sm">Physical books ship within 2-3 weeks of order</p>
+                <p className="text-purple-200 text-xs mt-1">Pre-orders include complimentary digital access while you wait</p>
+                <p className="text-purple-300 text-xs mt-2 italic">🌍 International: Contact us for delivery estimates</p>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
@@ -500,7 +500,7 @@ const SoulFoodLanding = () => {
                   onClick={() => window.location.href = '/quick-order'}
                   className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-6 py-3 rounded-xl font-bold shadow-xl"
                 >
-                  Get the Holiday Series →
+                  Shop Now →
                 </Button>
                 <Button
                   onClick={() => document.getElementById('series')?.scrollIntoView({ behavior: 'smooth' })}
@@ -512,11 +512,11 @@ const SoulFoodLanding = () => {
               </div>
             </div>
             
-            {/* Right - Countdown Timer */}
+            {/* Right - Pentecost Sale Countdown */}
             <div className="text-center lg:text-right">
-              <p className="text-purple-300 text-sm mb-2 font-medium">Countdown to Resurrection Sunday</p>
+              <p className="text-purple-300 text-sm mb-2 font-medium">Early Bird Sale ends Pentecost</p>
               <ResurrectionCountdown />
-              <p className="text-purple-400 text-xs mt-2">Sale ends Pentecost (May 24, 2026)</p>
+              <p className="text-purple-400 text-xs mt-2">$3 off pre-orders + 20% off Game Passes</p>
             </div>
           </div>
         </div>
@@ -1386,7 +1386,7 @@ const SoulFoodLanding = () => {
               Start Your Journey Today
             </h3>
             <p className="text-xl text-slate-700 max-w-2xl mx-auto">
-              Interactive lessons, eBooks & digital downloads available now. Print workbooks expected between Easter and Resurrection Sunday!
+              Interactive lessons, eBooks & digital downloads available now. Print workbooks ship within 2-3 weeks!
             </p>
           </div>
 

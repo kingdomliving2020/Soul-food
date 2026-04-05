@@ -638,7 +638,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 };
 
 const CheckoutPage = () => {
-  const { cartItems, getCartTotal, clearCart, removeFromCart } = useCart();
+  const { cartItems, getCartTotal, clearCart, removeFromCart, updateQuantity } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
@@ -1039,41 +1039,11 @@ const CheckoutPage = () => {
             </div>
           </div>
 
-          {/* Check for items requiring account */}
+          {/* Check for items requiring account — Disabled for launch (guest checkout enabled) */}
           {(() => {
-            const accountRequiredKeywords = ['gaming-pass', 'subscription', 'instructor', 'bundle', '-ie-'];
-            const itemsRequiringAccount = cartItems.filter(item => {
-              const itemId = (item.productId || item.id || '').toLowerCase();
-              const itemName = (item.name || '').toLowerCase();
-              return accountRequiredKeywords.some(kw => itemId.includes(kw) || itemName.includes(kw));
-            });
-            
-            if (itemsRequiringAccount.length > 0) {
-              return (
-                <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <h3 className="font-bold text-amber-800 mb-1">Account Required for Some Items</h3>
-                      <p className="text-amber-700 text-sm mb-2">
-                        The following items require an account for license management:
-                      </p>
-                      <ul className="text-amber-700 text-sm list-disc list-inside mb-3">
-                        {itemsRequiringAccount.map((item, idx) => (
-                          <li key={idx}>{item.name}</li>
-                        ))}
-                      </ul>
-                      <button
-                        onClick={handleSignIn}
-                        className="bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-4 rounded-lg text-sm transition-colors"
-                      >
-                        Sign In to Continue
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            }
+            // Account gating disabled for soft launch — all items purchasable as guest
+            // Uncomment when license management is implemented:
+            // const accountRequiredKeywords = ['subscription'];
             return null;
           })()}
 
@@ -1218,17 +1188,36 @@ const CheckoutPage = () => {
                     <h3 className="font-semibold text-gray-900">{item.name}</h3>
                     <p className="text-sm text-gray-500">
                       {item.seriesName && `${item.seriesName} • `}
-                      Qty: {item.quantity}
+                      ${item.salePrice?.toFixed(2)} each
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="font-bold text-purple-600">
+                    {/* Quantity Controls */}
+                    <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden" data-testid={`qty-control-${index}`}>
+                      <button
+                        onClick={() => updateQuantity(item.uniqueKey || item.productId, item.quantity - 1)}
+                        className="px-2.5 py-1 text-gray-600 hover:bg-gray-100 transition-colors font-bold"
+                        data-testid={`qty-minus-${index}`}
+                      >
+                        -
+                      </button>
+                      <span className="px-3 py-1 text-sm font-semibold bg-gray-50 min-w-[32px] text-center">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.uniqueKey || item.productId, item.quantity + 1)}
+                        className="px-2.5 py-1 text-gray-600 hover:bg-gray-100 transition-colors font-bold"
+                        data-testid={`qty-plus-${index}`}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <span className="font-bold text-purple-600 min-w-[60px] text-right">
                       ${(item.salePrice * item.quantity).toFixed(2)}
                     </span>
                     <button
                       onClick={() => removeFromCart(item.uniqueKey || item.productId)}
                       className="text-red-500 hover:text-red-700 p-1"
                       title="Remove item"
+                      data-testid={`remove-item-${index}`}
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1435,27 +1424,27 @@ const CheckoutPage = () => {
                 {/* Shipping Timeline Banner */}
                 <div className="mb-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg border border-indigo-200">
                   <h4 className="font-bold text-indigo-800 mb-2 flex items-center gap-2">
-                    📦 Shipping Timeline - Spring 2026
+                    📦 Shipping Timeline
                   </h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex items-start gap-2">
                       <span className="text-emerald-500 font-bold">✓</span>
                       <div>
-                        <span className="font-semibold text-indigo-900">Easter Delivery (Local)</span>
-                        <span className="text-indigo-700"> - Order by April 1st</span>
-                        <p className="text-xs text-indigo-600">MA, CT, SC, GA only. Delivery by April 11th.</p>
+                        <span className="font-semibold text-indigo-900">Digital Access</span>
+                        <span className="text-indigo-700"> — Instant download after purchase</span>
+                        <p className="text-xs text-indigo-600">Pre-orders include complimentary digital access while you wait.</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
                       <span className="text-emerald-500 font-bold">✓</span>
                       <div>
-                        <span className="font-semibold text-indigo-900">Standard Delivery</span>
-                        <span className="text-indigo-700"> - Order by Palm Sunday (April 5th)</span>
-                        <p className="text-xs text-indigo-600">Get FREE iPDF access while you wait! Delivery by Pentecost (May 31st).</p>
+                        <span className="font-semibold text-indigo-900">Physical Books</span>
+                        <span className="text-indigo-700"> — Ships within 2-3 weeks</span>
+                        <p className="text-xs text-indigo-600">US, APO/FPO, Canada. International available — contact us for estimates.</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
-                      <span className="text-blue-500 font-bold">ℹ</span>
+                      <span className="text-blue-500 font-bold">i</span>
                       <div>
                         <span className="font-semibold text-indigo-900">Bulk/Church Orders</span>
                         <p className="text-xs text-indigo-600">Contact us for custom fulfillment: orders@kingdom-soul.com</p>

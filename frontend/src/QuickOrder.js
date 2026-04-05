@@ -148,16 +148,14 @@ const PalmSundayBanner = () => {
           </div>
         )}
 
-        {/* Shipping Deadlines for Easter */}
-        {!expeditedDeadline.expired && (
-          <div className="text-center mt-4">
-            <div className="inline-flex items-center gap-3 bg-white/10 rounded-full px-4 py-2">
-              <span className="text-green-300 font-medium text-sm">Instant digital downloads</span>
-              <span className="w-1 h-1 bg-white/50 rounded-full"></span>
-              <span className="text-purple-200 text-sm">Physical books: Order by Mar 15 for Easter delivery</span>
-            </div>
+        {/* Shipping Info */}
+        <div className="text-center mt-4">
+          <div className="inline-flex items-center gap-3 bg-white/10 rounded-full px-4 py-2">
+            <span className="text-green-300 font-medium text-sm">Instant digital downloads</span>
+            <span className="w-1 h-1 bg-white/50 rounded-full"></span>
+            <span className="text-purple-200 text-sm">Physical books: Ships within 2-3 weeks</span>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
@@ -496,7 +494,7 @@ const QuickOrder = () => {
       id: 'bookclub',
       name: '📚 Book Club Bundles',
       tagline: 'Bulk Orders for Groups & Ministries',
-      description: 'Save $15/set! A set = 1 Instructor + 2 Student books. Paperbacks ship Easter to Resurrection Sunday.',
+      description: 'Save $15/set! A set = 1 Instructor + 2 Student books. Paperbacks ship within 2-3 weeks.',
       available: true,
       editions: ['bundle'],
       formats: ['physical'],
