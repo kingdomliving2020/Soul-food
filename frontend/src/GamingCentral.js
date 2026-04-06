@@ -603,6 +603,70 @@ const GamingCentral = () => {
           ))}
         </div>
 
+        {/* Offline Games Section */}
+        <div className="mt-14" data-testid="offline-games-section">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-black text-white mb-2">Table Talk Games</h2>
+            <p className="text-purple-300 text-sm">Print &amp; play at home, in class, or at your ministry gathering</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* GRinCH Cards */}
+            <Card className="bg-gradient-to-br from-red-900/40 to-red-700/20 border-red-500/30 hover:border-red-400/50 transition-all cursor-pointer"
+              onClick={() => navigate('/instructor-toolbox')}
+              data-testid="offline-grinch"
+            >
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-16 h-16 rounded-xl bg-red-500/30 flex items-center justify-center flex-shrink-0">
+                    <span className="text-3xl font-black text-red-300">G</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-white mb-1">GRinCH Cards</h3>
+                    <p className="text-xs text-red-300 font-semibold mb-2">Grid Iron Challenge</p>
+                    <p className="text-purple-200 text-sm mb-3">
+                      Jeopardy-style card decks organized by character and section. 
+                      Perfect for group nights and classroom review.
+                    </p>
+                    <div className="flex flex-wrap gap-1">
+                      <Badge className="bg-red-500/20 text-red-200 text-xs">4Cs Holiday</Badge>
+                      <Badge className="bg-red-500/20 text-red-200 text-xs">Break*fast</Badge>
+                      <Badge className="bg-red-500/20 text-red-200 text-xs">Printable</Badge>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Passport Trek */}
+            <Card className="bg-gradient-to-br from-emerald-900/40 to-teal-700/20 border-emerald-500/30 hover:border-emerald-400/50 transition-all cursor-pointer"
+              onClick={() => navigate('/instructor-toolbox')}
+              data-testid="offline-passport"
+            >
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-16 h-16 rounded-xl bg-emerald-500/30 flex items-center justify-center flex-shrink-0">
+                    <span className="text-3xl font-black text-emerald-300">P</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold text-white mb-1">Passport Trek</h3>
+                    <p className="text-xs text-emerald-300 font-semibold mb-2">Stamp Collection Tracker</p>
+                    <p className="text-purple-200 text-sm mb-3">
+                      Track progress through biblical journeys. Earn stamps as you complete 
+                      lessons and game rounds.
+                    </p>
+                    <div className="flex flex-wrap gap-1">
+                      <Badge className="bg-emerald-500/20 text-emerald-200 text-xs">Journey Maps</Badge>
+                      <Badge className="bg-emerald-500/20 text-emerald-200 text-xs">Stamp Cards</Badge>
+                      <Badge className="bg-emerald-500/20 text-emerald-200 text-xs">Printable</Badge>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
         {/* Tier Info Cards */}
         <div className="mt-12">
           <h2 className="text-2xl font-bold text-white text-center mb-6">Gaming Pass Tiers</h2>

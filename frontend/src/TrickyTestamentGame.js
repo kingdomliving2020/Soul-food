@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 // Custom Currency Component - Heaven's Bounty / Sofu Stacks
 const BountyDisplay = ({ amount, size = 'md' }) => {
   const sizeClasses = {
@@ -57,27 +59,56 @@ const TrickyTestamentGame = () => {
 
   // Jeopardy board structure: 5 categories x 2 point values each
   const categories = edition === 'youth' 
-    ? ['Creation Stories', 'Famous Miracles', 'Bible Heroes', 'Famous Prayers', 'Animals in the Bible']
-    : ['Pauline Theology', 'Messianic Prophecies', 'Covenants', 'Systematic Theology', 'Spiritual Gifts'];
+    ? ['Women of Faith', 'Patriarchs', 'Courage & Trust', 'Covenant & Identity', 'Who Am I?']
+    : ['Covenant (4Cs)', 'Cross & Redemption', 'Women of Wisdom', 'Faith in Motion', 'Deep Cuts'];
   
   const pointValues = [100, 200];
 
   useEffect(() => {
-    // Fetch questions from backend
     fetchQuestions();
   }, [edition]);
 
   const fetchQuestions = async () => {
     try {
-      // Mock questions for now
+      // Fetch REAL questions from the trivia bank
+      const age = edition === 'youth' ? 'youth' : 'adult';
+      const res = await fetch(`${BACKEND_URL}/api/trivia/questions/browse?game_type=trivia_testament&age_group=${age}&per_page=40`);
+      if (res.ok) {
+        const data = await res.json();
+        const allQ = data.questions || [];
+        
+        if (allQ.length > 0) {
+          // Group by character for categories, take up to 10 questions
+          const shuffled = allQ.sort(() => Math.random() - 0.5).slice(0, 10);
+          const formatted = shuffled.map((q, i) => ({
+            id: i,
+            categoryIndex: Math.floor(i / 2),
+            pointIndex: i % 2,
+            category: q.category_title || q.character || 'Bible Knowledge',
+            question: q.question,
+            options: q.options?.length > 0 ? q.options : [q.correct_answer, 'Not this', 'Try again', 'None of these'].sort(() => Math.random() - 0.5),
+            correct_answer: q.correct_answer,
+            explanation: q.explanation || '',
+            scripture_ref: q.scripture || '',
+            points: q.tier || (i + 1) * 100
+          }));
+          setQuestions(formatted);
+          const ddIndex = Math.floor(Math.random() * 6) + 2;
+          setDailyDoubleIndex(ddIndex);
+          return;
+        }
+      }
+      // Fallback to mock if API fails
       const mockQuestions = generateMockQuestions();
       setQuestions(mockQuestions);
-      
-      // Random Daily Double between questions 3-8
       const ddIndex = Math.floor(Math.random() * 6) + 3;
       setDailyDoubleIndex(ddIndex);
     } catch (error) {
       console.error('Error fetching questions:', error);
+      const mockQuestions = generateMockQuestions();
+      setQuestions(mockQuestions);
+      const ddIndex = Math.floor(Math.random() * 6) + 3;
+      setDailyDoubleIndex(ddIndex);
     }
   };
 
@@ -502,7 +533,7 @@ const TrickyTestamentGame = () => {
                     return (
                       <button
                         key={`q-${catIndex}-${pointIndex}`}
-                        onClick={() => !isAnswered && selectQuestion(question.id)}
+                        onClick={() => !isAnswered && question && selectQuestion(question.id)}
                         disabled={isAnswered}
                         className={`
                           p-4 sm:p-6 lg:p-8 rounded-lg text-2xl sm:text-3xl font-bold transition-all

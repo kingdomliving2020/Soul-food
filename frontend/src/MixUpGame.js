@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 // Custom Currency Component - Heaven's Bounty / Sofu Stacks
 const BountyDisplay = ({ amount, size = 'md' }) => {
   const sizeClasses = {
@@ -72,17 +74,68 @@ const MixUpGame = () => {
   ];
 
   useEffect(() => {
-    // Fetch questions from backend
     fetchQuestions();
   }, [edition]);
 
   const fetchQuestions = async () => {
     try {
-      // Mock questions for now - in production, fetch from backend
-      const mockQuestions = generateMockQuestions();
-      setQuestions(mockQuestions);
+      // Fetch REAL questions from the trivia bank (millionaire style)
+      const age = edition === 'youth' ? 'youth' : 'adult';
+      const res = await fetch(`${BACKEND_URL}/api/trivia/questions/browse?game_type=tricky_trivia&age_group=${age}&per_page=50`);
+      if (res.ok) {
+        const data = await res.json();
+        const allQ = data.questions || [];
+        
+        if (allQ.length >= 10) {
+          // Sort by tier/difficulty for progressive ladder
+          const easy = allQ.filter(q => q.difficulty === 'easy').sort(() => Math.random() - 0.5);
+          const medium = allQ.filter(q => q.difficulty === 'medium').sort(() => Math.random() - 0.5);
+          const hard = allQ.filter(q => q.difficulty === 'hard' || q.difficulty === 'expert').sort(() => Math.random() - 0.5);
+          
+          const selected = [
+            ...easy.slice(0, 5),
+            ...medium.slice(0, 5),
+            ...hard.slice(0, 5)
+          ].slice(0, 15);
+          
+          const formatted = selected.map((q, i) => ({
+            question: q.question,
+            options: q.options?.length > 0 ? q.options : [q.correct_answer, 'Not this', 'Try again', 'None of these'].sort(() => Math.random() - 0.5),
+            correct_answer: q.correct_answer,
+            explanation: q.explanation || '',
+            scripture_ref: q.scripture || '',
+            difficulty: q.difficulty || difficulties[i],
+            character: q.character || ''
+          }));
+          setQuestions(formatted);
+          return;
+        }
+      }
+      // Also try trivia_testament as fallback for more questions
+      const res2 = await fetch(`${BACKEND_URL}/api/trivia/questions/browse?age_group=${edition === 'youth' ? 'youth' : 'adult'}&per_page=50`);
+      if (res2.ok) {
+        const data2 = await res2.json();
+        const allQ2 = (data2.questions || []).filter(q => q.options?.length > 0);
+        if (allQ2.length >= 10) {
+          const shuffled = allQ2.sort(() => Math.random() - 0.5).slice(0, 15);
+          const formatted = shuffled.map((q, i) => ({
+            question: q.question,
+            options: q.options,
+            correct_answer: q.correct_answer,
+            explanation: q.explanation || '',
+            scripture_ref: q.scripture || '',
+            difficulty: q.difficulty || difficulties[i],
+            character: q.character || ''
+          }));
+          setQuestions(formatted);
+          return;
+        }
+      }
+      // Final fallback
+      setQuestions(generateMockQuestions());
     } catch (error) {
       console.error('Error fetching questions:', error);
+      setQuestions(generateMockQuestions());
     }
   };
 
