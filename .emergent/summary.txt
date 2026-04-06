@@ -1,0 +1,163 @@
+<analysis>**original_problem_statement:**
+The user is driving a soft launch of the Soul Food full-stack e-commerce and learning platform. The primary objective is a functional checkout, guest access, email automation for digital deliveries, dynamic Stripe checkout mapping, and resolving any UI/UX issues for launch.
+
+PRODUCT REQUIREMENTS: 
+Platform must support immediate digital fulfillment, proper product mapping, dynamic Stripe checkout pricing (including overrides like  test coupons), guest checkout, and specific launch countdowns (Pentecost). Admin must be able to manage digital download mappings without redeploying the codebase.
+
+**User's preferred language**: English
+(INSTRUCT NEXT AGENT: You MUST respond in English only)
+
+**what currently exists?** 
+A React/FastAPI/MongoDB platform successfully **DEPLOYED TO PRODUCTION** during this session. Stripe is configured with LIVE keys, and Resend is actively sending emails for the verified domain. The product catalog has been fully mapped, and its file references were migrated to MongoDB to prevent hardcoding. The checkout cart supports quantity controls, guest checkout, and dynamic coupon adjustments (including fixed-dollar and total overrides). The app includes an Admin Guide and an Instructor Guide.
+
+**Last working item**:
+- **Last item agent was working**: Investigating two specific missing orders ( and ) that the user reported via a screenshot. The user logged in but these orders still lacked download links. The agent searched the database and Stripe for these IDs but could not find them.
+- **Status**: IN PROGRESS
+- **Agent Testing Done**: N
+- **Which testing method agent to use?**: backend manual testing via python -c / MongoDB queries.
+- **User Testing Done**: N
+
+**All Pending/In progress Issue list**:
+Issue 1: Locate and fulfill missing orders  and  (P0)
+   - Attempted fixes: The agent queried the ,  collections, and the recent Stripe sessions but found zero records matching these IDs.
+   - Next debug checklist: Check if these order IDs correspond to the *Preview* environment rather than *Production*, or ask the user for the exact email address used to purchase them. Once located, trigger the webhook fulfillment or manually create the  in the DB.
+   - Why fix this issue and what will be achieved with the fix?: Ensures customers get the digital products they paid for and maintains user trust post-launch.
+   - Status: IN PROGRESS
+   - Is recurring issue? N
+   - Should Test frontend/backend/both after fix? backend
+   - Blocked on other issue: User clarification on environment/email.
+
+**In progress Task List**:
+None.
+
+**Upcoming and Future Tasks**
+Upcoming Tasks:
+- P1: Redeem Code Flow for guest purchases to link transactions to accounts post-purchase.
+- P1: SMS Option for OTP (Blocked on user providing Twilio credentials).
+- P1: License Management UI (Frontend for instructors to assign digital access).
+- P2: Replace  with  cookies for sensitive auth tokens (Security Refactor noted in Code Review).
+- P2: Gift Certificates Implementation (Deferred intentionally for launch).
+- P2: Subscription/Recurring Billing backend and full UI integration (Deferred intentionally for launch).
+
+Future Tasks:
+- P3: Word Search Game implementation.
+- P3: Video Integration into My Library.
+- P3: Refactor large React components (, , ) into smaller sub-components (Code Quality Refactor).
+
+**Completed work in this session**
+- Tested and verified all 6 contributor coupons.
+- Added catalog endpoints  and .
+- Fixed critical frontend crash on landing page ().
+- Updated shipping messaging across the platform (removed outdated Easter dates, updated to Pentecost countdown).
+- Added  quantity controls to checkout cart.
+- Added navigation buttons to .
+- Fixed the  DOLLARTEST coupon to properly send  through the backend  to Stripe.
+- Removed duplicated naming () in cart items.
+- Fixed My Library bug where download buttons were stuck on Processing....
+- Fixed Rewards points calculating to 0 (now calculates dynamically based on purchase history).
+- **Major Architecture Upgrade**: Migrated  mappings from hardcoded Python dict to MongoDB. Seeded 230 product-to-PDF mappings so admin can update digital delivery connections without deploying code.
+- Retroactively fulfilled missing download links for user  and .
+- Created  and .
+- Applied Code Review security fixes (replaced  with  for crypto logic, removed hardcoded test passwords, fixed  linting errors).
+- **Deployed app to Production.**
+
+**Earlier issues found/mentioned but not fixed**
+- Issue 1: Authentication tokens stored in 
+  - Debug checklist: Move token handling to secure  cookies.
+  - Why to solve this issue and what will be achieved with this?: Remediates XSS vulnerability pointed out during the security code review.
+  - Should Test frontend/backend/both after fix: both
+  - Is recurring issue? N
+
+**Known issue recurrence from previous fork**
+- Issue recurrence in previous fork: Webhook race condition / missing events.
+- Recurrence count: 3
+- Status: RESOLVED (Polling mechanism added, but occasional Stripe webhook silent failures still mean some orders stay pending. Admin manual fulfillment capability is now in place to mitigate).
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+- Frontend: React, Tailwind CSS.
+- Backend: FastAPI, MongoDB.
+- Payment: Stripe Checkout Sessions (Using LIVE keys, dynamic ).
+- Email: Resend API.
+
+**key DB schema**
+-  (NEW): Maps  to actual .
+- : 
+- : 
+- : 
+
+**changes in tech stack**
+- None. However, heavily transitioned product-to-file mapping away from static python dictionaries to MongoDB.
+
+**All files of reference**
+-  (Heavily modified to fetch mappings asynchronously from DB and process ).
+-  (Cart quantity controls, DOLLARTEST coupon overrides).
+-  (Downloads mapping & Rewards calculations).
+-  (Countdowns and availability checks).
+-  &  (Newly created).
+-  (Security fixes applied).
+
+**Areas that need refactoring**
+- , , and  are massive component files that should be broken down into sub-components. 
+- Authentication endpoints should move away from  token passing to  cookies.
+
+**key api endpoints**
+- : Handles full cart processing and total overrides.
+- : Fetches dynamic pricing list.
+- : Generates and retrieves user library and download tokens.
+
+**Critical Info for New Agent**
+- **PRODUCTION DEPLOYMENT**: The app is LIVE. You are working in a PREVIEW environment. If making changes to test live issues, remember the user has to deploy your changes to production to see them.
+- **STRIPE LIVE**: Stripe is running in LIVE mode (). Purchases test real credit cards unless you use the  coupon to reduce the cart to exactly .00.
+- **PRODUCT MAPPING**: The  logic now fetches mappings from MongoDB instead of a hardcoded dictionary. If a product PDF is missing, add it to MongoDB via the backend rather than altering .
+
+**documents and test reports created in this job**
+- 
+- 
+- 
+- 
+- 
+- 
+
+**Last 10 User Messages and any pending HUMAN messages** 
+1. *(Latest)* User uploaded a screenshot showing two unfulfilled orders ( and ) and asked why they weren't fixed even though they logged in. (Status: IN PROGRESS - Agent couldn't find these in the database yet).
+2. User asked if the admin/instructor READMEs were moved during the code cleanup. (Status: RESOLVED)
+3. User provided Code Review findings regarding ,  tokens, hook dependencies, and  usage. (Status: RESOLVED - Critical items fixed).
+4. User asked for a README for instructors. (Status: RESOLVED - INSTRUCTOR_GUIDE.md created).
+5. User asked to fix the process so redeployments aren't needed for content hiccups, and requested an admin README. (Status: RESOLVED - Mapped PDFs to MongoDB, created ADMIN_GUIDE.md).
+6. User reported Processing... stuck on download buttons in My Library and reward points showing 0. (Status: RESOLVED)
+7. User stated they completed a transaction on  and asked to fix it. (Status: RESOLVED - Found 3 missing webhook orders and fulfilled them).
+8. User tested the live site and reported the DOLLARTEST coupon went to a white screen in the live version. (Status: RESOLVED - Fixed backend cart payload to accept ).
+9. User asked if they can go forward with announcing it publicly. (Status: RESOLVED - App was successfully deployed).
+10. User uploaded screenshots showing  naming conflict. (Status: RESOLVED - Cleaned up cart naming logic).
+
+**Project Health Check:**
+- Broken: None.
+- Mocked: Subscriptions, SMS OTP.
+
+**3rd Party Integrations** 
+- Stripe (Payments) — requires User API Key (Configured - LIVE mode)
+- Resend (Emails) — requires User API Key (Configured)
+- Google OAuth (Auth) — Configured
+
+**Testing status**
+- Testing agent used after significant changes: YES (iterations 11 & 12).
+- Troubleshoot agent used after agent stuck in loop: NO.
+- Test files created: None.
+- Known regressions: None.
+
+**Credentials to test flow:**
+Use credentials found in . Coupon  can be used for 100% off testing.
+
+**What agent forgot to execute**
+The agent was actively investigating the two missing orders ( and ) but failed to ask the user to clarify if these screenshots are from the PREVIEW environment or the PRODUCTION environment, or to ask for the exact customer email address for those specific orders.
+
+**Debugging checklist for current issue**
+    Issue: Fulfill missing orders  and 
+    
+    Backend files to check: 
+    - Database query: Check if the orders exist in the PREVIEW database vs PRODUCTION database.
+    - Ask User: Prompt the user for the email used or ask them to clarify which URL they were on when they took the screenshot.
+    - If found: Trigger manual order creation and  generation.</analysis>

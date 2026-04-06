@@ -18,7 +18,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soulfood-go-live.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soft-launch-preview.preview.emergentagent.com')
 
 class TestNewCoupons:
     """Test new launch coupons: WELCOME10, SOFU5, GAMENIGHT"""
