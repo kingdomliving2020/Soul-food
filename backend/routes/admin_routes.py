@@ -253,7 +253,7 @@ async def get_admin_dashboard(admin: AdminUser = Depends(get_current_admin)):
     
     # Revenue (mock for now)
     total_revenue = 0
-    for order in await db.orders.find({"status": {"$in": ["completed", "paid"]}}, {"_id": 0}).to_list(1000):
+    for order in await db.orders.find({"status": {"$in": ["completed", "paid"]}}, {"_id": 0, "total": 1}).to_list(1000):
         total_revenue += order.get("total", 0)
     
     return {
