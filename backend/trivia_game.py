@@ -6,8 +6,16 @@ from datetime import datetime, timezone, timedelta
 import random
 import secrets
 import uuid
+import os
+
+from motor.motor_asyncio import AsyncIOMotorClient
 
 router = APIRouter(prefix="/trivia", tags=["trivia"])
+
+# MongoDB connection for trivia
+MONGO_URL = os.environ.get('MONGO_URL')
+_trivia_client = AsyncIOMotorClient(MONGO_URL)
+_trivia_db = _trivia_client[os.environ.get('DB_NAME', 'soul_food_db')]
 
 # Game Access Tiers
 ACCESS_TIERS = {
@@ -121,101 +129,24 @@ LIFELINES = {
     }
 }
 
-# Question Bank Structure
-QUESTIONS_DB = [
-    # Q1 M1 - Prayer, the First Resort
-    {
-        "id": 1,
-        "quarter": "Q1",
-        "month": "M1",
-        "theme": "Prayer, the First Resort",
-        "lesson": "Esther: Second Is the Best",
-        "category": "Series Structure",
-        "type": "multiple_choice",
-        "difficulty": "easy",
-        "question": "In the Soul Food 'Prayer, the First Resort' quarter, which lesson focuses on Esther's story of being a 'second' queen used by God?",
-        "options": ["Esther: Second Is the Best", "Solomon: The Question That Unlocked a Legacy", "Jesus: Prayer as First Resort", "Paul & Silas: Faith in the Dark"],
-        "correct_answer": "Esther: Second Is the Best",
-        "explanation": "Esther's position as second queen became her divine assignment.",
-        "scripture_hint": "Esther 4:14 - 'For such a time as this'"
-    },
-    {
-        "id": 2,
-        "quarter": "Q1",
-        "month": "M1",
-        "theme": "Prayer, the First Resort",
-        "lesson": "Solomon: The Question That Unlocked a Legacy",
-        "category": "Series Structure",
-        "type": "multiple_choice",
-        "difficulty": "easy",
-        "question": "Which lesson in the 'Prayer, the First Resort' theme centers on Solomon's request for wisdom?",
-        "options": ["Esther: Second Is the Best", "Solomon: The Question That Unlocked a Legacy", "Paul & Silas: Faith in the Dark", "Joseph: The Young Dreamer"],
-        "correct_answer": "Solomon: The Question That Unlocked a Legacy",
-        "explanation": "Solomon's wise request pleased God and unlocked a legacy.",
-        "scripture_hint": "1 Kings 3:9 - 'Give your servant a discerning heart'"
-    },
-    {
-        "id": 81,
-        "quarter": "Q1",
-        "month": "M1",
-        "theme": "Prayer, the First Resort",
-        "lesson": "Esther: Second Is the Best",
-        "category": "Biblical Knowledge",
-        "type": "multiple_choice",
-        "difficulty": "easy",
-        "question": "In the Esther lesson, who challenges her not to stay silent in the palace?",
-        "options": ["Haman", "Mordecai", "King Ahasuerus", "Vashti"],
-        "correct_answer": "Mordecai",
-        "explanation": "Mordecai urged Esther to speak up for her people.",
-        "scripture_hint": "Esther 4:13-14"
-    },
-    {
-        "id": 82,
-        "quarter": "Q1",
-        "month": "M1",
-        "theme": "Prayer, the First Resort",
-        "lesson": "Esther: Second Is the Best",
-        "category": "Biblical Knowledge",
-        "type": "multiple_choice",
-        "difficulty": "medium",
-        "question": "What risk did Esther take when she approached the king uninvited?",
-        "options": ["Losing her crown only", "Being publicly embarrassed", "Facing possible death", "Being sent back to Mordecai's house"],
-        "correct_answer": "Facing possible death",
-        "explanation": "Approaching the king uninvited could result in death unless he extended his scepter.",
-        "scripture_hint": "Esther 4:11"
-    },
-    {
-        "id": 83,
-        "quarter": "Q1",
-        "month": "M1",
-        "theme": "Prayer, the First Resort",
-        "lesson": "Esther: Second Is the Best",
-        "category": "Application",
-        "type": "true_false",
-        "difficulty": "easy",
-        "question": "True or False: In the Soul Food lesson, Esther's position is described as both privilege and assignment.",
-        "options": ["True", "False"],
-        "correct_answer": "True",
-        "explanation": "Her royal position was both a privilege and a divine assignment.",
-        "scripture_hint": "Esther 4:14"
-    },
-    {
-        "id": 84,
-        "quarter": "Q1",
-        "month": "M1",
-        "theme": "Prayer, the First Resort",
-        "lesson": "Esther: Second Is the Best",
-        "category": "Biblical Knowledge",
-        "type": "fill_in",
-        "difficulty": "medium",
-        "question": "Fill in the blank: Before going to the king, Esther called the people to ______ and pray for three days.",
-        "correct_answer": "fast",
-        "explanation": "Esther asked for a three-day fast before her dangerous mission.",
-        "scripture_hint": "Esther 4:16"
-    }
-    # NOTE: I'll create an endpoint to bulk load all 180 questions from a JSON file
-    # This keeps the code cleaner
-]
+# Question Bank now lives in MongoDB (trivia_questions collection)
+# Seeded by seed_qa_bank.py - ~383 questions across 20+ characters
+# Legacy in-memory list kept empty for backwards compatibility
+QUESTIONS_DB = []
+
+
+async def get_questions_from_db(filters=None, limit=None):
+    """Fetch questions from MongoDB with optional filters"""
+    query = filters or {}
+    cursor = _trivia_db.trivia_questions.find(query, {"_id": 0})
+    if limit:
+        cursor = cursor.limit(limit)
+    return await cursor.to_list(length=limit or 1000)
+
+
+async def get_question_by_id(qid):
+    """Fetch a single question by its qid"""
+    return await _trivia_db.trivia_questions.find_one({"qid": qid}, {"_id": 0})
 
 # Pydantic Models
 class GameSession(BaseModel):
@@ -290,7 +221,9 @@ async def start_game_session(
     game_mode: str,
     access_tier: str = "free",
     quarter: Optional[str] = None,
-    theme: Optional[str] = None
+    theme: Optional[str] = None,
+    character: Optional[str] = None,
+    age_group: Optional[str] = None
 ):
     """Start a new game session"""
     # Validate access
@@ -303,33 +236,48 @@ async def start_game_session(
     if not mode_config:
         raise HTTPException(status_code=404, detail="Game mode not found")
     
-    # Select questions based on filters
-    filtered_questions = QUESTIONS_DB.copy()
+    # Build MongoDB query filters
+    query = {}
+    if character:
+        query["character"] = character
+    if age_group:
+        query["age_group"] = age_group
     
-    if quarter:
-        filtered_questions = [q for q in filtered_questions if q["quarter"] == quarter]
-    if theme:
-        filtered_questions = [q for q in filtered_questions if q["theme"] == theme]
+    # Map game modes to game_type
+    game_type_map = {
+        "practice": None,  # any type
+        "quarter_challenge": "trivia_testament",
+        "series_challenge": "trivia_testament",
+        "4cs_special": "trivia_testament",
+        "millionaire_mode": "tricky_trivia",
+    }
+    game_type = game_type_map.get(game_mode)
+    if game_type:
+        query["game_type"] = game_type
+    
+    # Fetch questions from MongoDB
+    all_questions = await get_questions_from_db(query)
+    
+    if not all_questions:
+        raise HTTPException(status_code=404, detail="No questions found for the selected filters")
     
     # Apply difficulty progression if needed
     num_questions = mode_config["questions"]
     
     if mode_config.get("difficulty") == "progressive":
-        # Sort by difficulty: easy, medium, hard
-        easy = [q for q in filtered_questions if q["difficulty"] == "easy"]
-        medium = [q for q in filtered_questions if q["difficulty"] == "medium"]
-        hard = [q for q in filtered_questions if q["difficulty"] == "hard"]
+        easy = [q for q in all_questions if q["difficulty"] == "easy"]
+        medium = [q for q in all_questions if q["difficulty"] == "medium"]
+        hard = [q for q in all_questions if q["difficulty"] == "hard"]
         
         selected = []
         selected += random.sample(easy, min(5, len(easy)))
         selected += random.sample(medium, min(7, len(medium)))
         selected += random.sample(hard, min(3, len(hard)))
     else:
-        selected = random.sample(filtered_questions, min(num_questions, len(filtered_questions)))
+        selected = random.sample(all_questions, min(num_questions, len(all_questions)))
     
-    question_ids = [q["id"] for q in selected]
+    question_ids = [q["qid"] for q in selected]
     
-    # Create session
     session = GameSession(
         user_id=user_id,
         game_mode=game_mode,
@@ -341,13 +289,14 @@ async def start_game_session(
         "session": session.dict(),
         "mode_config": mode_config,
         "lifelines": LIFELINES,
-        "first_question": selected[0] if selected else None
+        "first_question": selected[0] if selected else None,
+        "total_available": len(all_questions)
     }
 
 @router.get("/question/{question_id}")
 async def get_question(question_id: int):
     """Get a specific question"""
-    question = next((q for q in QUESTIONS_DB if q["id"] == question_id), None)
+    question = await get_question_by_id(question_id)
     if not question:
         raise HTTPException(status_code=404, detail="Question not found")
     
@@ -361,8 +310,7 @@ async def get_question(question_id: int):
 @router.post("/answer/submit")
 async def submit_answer(answer: GameAnswer):
     """Submit an answer and get result"""
-    # Find question
-    question = next((q for q in QUESTIONS_DB if q["id"] == answer.question_id), None)
+    question = await get_question_by_id(answer.question_id)
     if not question:
         raise HTTPException(status_code=404, detail="Question not found")
     
@@ -372,7 +320,7 @@ async def submit_answer(answer: GameAnswer):
     # Calculate points based on difficulty and time
     points = 0
     if is_correct:
-        base_points = {"easy": 100, "medium": 250, "hard": 500}
+        base_points = {"easy": 100, "medium": 250, "hard": 500, "expert": 1000}
         points = base_points.get(question["difficulty"], 100)
         
         # Time bonus (faster = more points)
@@ -384,8 +332,8 @@ async def submit_answer(answer: GameAnswer):
     return {
         "correct": is_correct,
         "correct_answer": question["correct_answer"],
-        "explanation": question["explanation"],
-        "scripture_hint": question.get("scripture_hint"),
+        "explanation": question.get("explanation", ""),
+        "scripture": question.get("scripture", ""),
         "points_earned": points,
         "difficulty": question["difficulty"]
     }
@@ -400,39 +348,42 @@ async def use_lifeline(
     if lifeline not in LIFELINES:
         raise HTTPException(status_code=400, detail="Invalid lifeline")
     
-    question = next((q for q in QUESTIONS_DB if q["id"] == question_id), None)
+    question = await get_question_by_id(question_id)
     if not question:
         raise HTTPException(status_code=404, detail="Question not found")
     
     result = {"lifeline": lifeline, "question_id": question_id}
     
     if lifeline == "fifty_fifty":
-        # Remove 2 wrong answers
         correct = question["correct_answer"]
-        wrong_answers = [opt for opt in question["options"] if opt != correct]
-        remaining_wrong = secrets.choice(wrong_answers)
-        result["remaining_options"] = [correct, remaining_wrong]
+        options = question.get("options", [])
+        if options:
+            wrong_answers = [opt for opt in options if opt != correct]
+            if wrong_answers:
+                remaining_wrong = secrets.choice(wrong_answers)
+                result["remaining_options"] = [correct, remaining_wrong]
+            else:
+                result["remaining_options"] = options
         
     elif lifeline == "ask_congregation":
-        # Simulate poll results (weighted toward correct answer)
         correct = question["correct_answer"]
-        options = question["options"]
-        poll = {}
-        for opt in options:
-            if opt == correct:
-                poll[opt] = secrets.randbelow(31) + 40  # 40-70
-            else:
-                poll[opt] = secrets.randbelow(16) + 5   # 5-20
-        # Normalize to 100%
-        total = sum(poll.values())
-        poll = {k: round((v/total)*100) for k, v in poll.items()}
-        result["poll_results"] = poll
+        options = question.get("options", [])
+        if options:
+            poll = {}
+            for opt in options:
+                if opt == correct:
+                    poll[opt] = secrets.randbelow(31) + 40
+                else:
+                    poll[opt] = secrets.randbelow(16) + 5
+            total = sum(poll.values())
+            poll = {k: round((v/total)*100) for k, v in poll.items()}
+            result["poll_results"] = poll
         
     elif lifeline == "scripture_hint":
-        result["hint"] = question.get("scripture_hint", "Trust in the Lord!")
+        result["hint"] = question.get("scripture", "Trust in the Lord!")
         
     elif lifeline == "prayer_pause":
-        result["time_added"] = 30  # seconds
+        result["time_added"] = 30
     
     return result
 
@@ -532,3 +483,121 @@ async def get_user_stats(user_id: str):
     }
     
     return {"stats": mock_stats}
+
+
+# =============================================================================
+# QUESTION BANK BROWSING ENDPOINTS
+# =============================================================================
+
+@router.get("/characters")
+async def get_available_characters():
+    """Get all characters with question counts"""
+    pipeline = [
+        {"$group": {"_id": "$character", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]
+    results = await _trivia_db.trivia_questions.aggregate(pipeline).to_list(100)
+    characters = [{"name": r["_id"], "question_count": r["count"]} for r in results]
+    return {"characters": characters, "total": len(characters)}
+
+
+@router.get("/questions/browse")
+async def browse_questions(
+    character: Optional[str] = None,
+    game_type: Optional[str] = None,
+    age_group: Optional[str] = None,
+    difficulty: Optional[str] = None,
+    page: int = 1,
+    per_page: int = 20
+):
+    """Browse questions with filters"""
+    query = {}
+    if character:
+        query["character"] = character
+    if game_type:
+        query["game_type"] = game_type
+    if age_group:
+        query["age_group"] = age_group
+    if difficulty:
+        query["difficulty"] = difficulty
+    
+    total = await _trivia_db.trivia_questions.count_documents(query)
+    skip = (page - 1) * per_page
+    
+    questions = await _trivia_db.trivia_questions.find(
+        query, {"_id": 0}
+    ).skip(skip).limit(per_page).to_list(per_page)
+    
+    return {
+        "questions": questions,
+        "total": total,
+        "page": page,
+        "per_page": per_page,
+        "pages": (total + per_page - 1) // per_page
+    }
+
+
+@router.get("/word-studies")
+async def get_word_studies(character: Optional[str] = None):
+    """Get Hebrew/Greek word studies, optionally filtered by character"""
+    query = {}
+    if character:
+        query["character"] = character
+    studies = await _trivia_db.word_studies.find(query, {"_id": 0}).to_list(200)
+    return {"word_studies": studies, "total": len(studies)}
+
+
+@router.get("/reference-sources")
+async def get_reference_sources():
+    """Get all approved reference sources for the curriculum"""
+    sources = await _trivia_db.reference_sources.find({}, {"_id": 0}).to_list(50)
+    return {"sources": sources, "total": len(sources)}
+
+
+@router.get("/game-assets")
+async def get_game_assets(asset_type: Optional[str] = None):
+    """Get game assets like maps and images"""
+    query = {}
+    if asset_type:
+        query["asset_type"] = asset_type
+    assets = await _trivia_db.game_assets.find(query, {"_id": 0}).to_list(50)
+    return {"assets": assets, "total": len(assets)}
+
+
+@router.get("/bank/stats")
+async def get_question_bank_stats():
+    """Get overall stats about the question bank"""
+    total = await _trivia_db.trivia_questions.count_documents({})
+    
+    by_character = await _trivia_db.trivia_questions.aggregate([
+        {"$group": {"_id": "$character", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]).to_list(100)
+    
+    by_game_type = await _trivia_db.trivia_questions.aggregate([
+        {"$group": {"_id": "$game_type", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]).to_list(20)
+    
+    by_age = await _trivia_db.trivia_questions.aggregate([
+        {"$group": {"_id": "$age_group", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]).to_list(10)
+    
+    by_difficulty = await _trivia_db.trivia_questions.aggregate([
+        {"$group": {"_id": "$difficulty", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]).to_list(10)
+    
+    word_studies = await _trivia_db.word_studies.count_documents({})
+    references = await _trivia_db.reference_sources.count_documents({})
+    
+    return {
+        "total_questions": total,
+        "by_character": {r["_id"]: r["count"] for r in by_character},
+        "by_game_type": {r["_id"]: r["count"] for r in by_game_type},
+        "by_age_group": {r["_id"]: r["count"] for r in by_age},
+        "by_difficulty": {r["_id"]: r["count"] for r in by_difficulty},
+        "word_studies": word_studies,
+        "reference_sources": references
+    }
