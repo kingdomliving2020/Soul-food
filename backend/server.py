@@ -150,6 +150,12 @@ if content_images_dir.exists():
     app.mount("/api/content/images", StaticFiles(directory=str(content_images_dir)), name="content_images")
     print("✅ Content images static files mounted at /api/content/images")
 
+# Static file serving for offline game PDFs
+content_games_dir = Path("/app/content/downloads/games")
+if content_games_dir.exists():
+    app.mount("/api/content/games", StaticFiles(directory=str(content_games_dir)), name="content_games")
+    print("✅ Content games static files mounted at /api/content/games")
+
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions

@@ -627,29 +627,6 @@ const QuickOrder = () => {
       hidden: true
     },
     // Game Packs - Offline Board Games
-    // Holiday/4Cs Game Cards — AVAILABLE NOW (content is seeded and ready)
-    {
-      id: 'game-cards-4cs-digital',
-      name: 'Holiday 4Cs Game Cards (Digital)',
-      subtitle: '383 Q&A Cards — GRinCH + Trivia + Millionaire formats — Print at home',
-      image: '/covers/holiday-ae-front.jpg',
-      price: 12.99,
-      isGamePack: true,
-      isDigital: true,
-      edition: 'adult',
-      description: 'Complete printable game card set for the Holiday 4Cs of Christianity series. Includes Trivia Testament (Jeopardy), Tricky Trivia (Millionaire), Who Am I, and Deep Cut cards.'
-    },
-    {
-      id: 'game-cards-4cs-youth-digital',
-      name: 'Holiday 4Cs Game Cards — Youth (Digital)',
-      subtitle: '197 Youth Q&A Cards — GRinCH + Trivia formats — Print at home',
-      image: '/covers/holiday-ye-front.jpg',
-      price: 9.99,
-      isGamePack: true,
-      isDigital: true,
-      edition: 'youth',
-      description: 'Youth edition printable game cards for the Holiday 4Cs series.'
-    },
     {
       id: 'game-pack-gridiron-ae',
       name: 'GRinCH Game Pack (Adult)',

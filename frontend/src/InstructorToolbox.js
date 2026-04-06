@@ -250,11 +250,11 @@ const InstructorToolbox = () => {
     },
     {
       id: 'game-packs',
-      title: 'Game Card Packs',
+      title: 'Offline Game Files',
       icon: Image,
-      description: 'Printable GRinCH cards & Passport stamps organized by section',
+      description: 'Printable GRinCH bingo cards, Passport Trek sheets & map reference',
       color: 'bg-cyan-500',
-      badge: bankStats ? `${bankStats.total_questions} Cards` : null
+      badge: '4 Files'
     },
     {
       id: 'certificates',
@@ -291,43 +291,7 @@ const InstructorToolbox = () => {
     { id: 'fn-closing', title: 'Closing Strong', type: 'general', description: 'Recap and takeaway assignments' }
   ];
 
-  // Game card pack categories
-  const gamePackSections = [
-    {
-      id: 'holiday-4cs',
-      name: 'Holiday Edition — 4Cs of Christianity',
-      icon: '4Cs',
-      color: 'from-red-500 to-rose-600',
-      subsections: [
-        { name: 'Covenant (Abraham)', characters: ['Abraham', 'Abraham & Sarah'] },
-        { name: 'Cradle (Nativity)', characters: ['Mary', 'Joseph', 'Jesus'] },
-        { name: 'Cross (Redemption)', characters: ['Rahab', 'Ruth', 'Hosea'] },
-        { name: 'Comforter (Holy Spirit)', characters: ['Esther', 'Samaritan Woman'] }
-      ]
-    },
-    {
-      id: 'breakfast',
-      name: 'Break*fast Series',
-      icon: 'BF',
-      color: 'from-amber-500 to-yellow-600',
-      subsections: [
-        { name: 'M1 — Prayer', characters: ['Hannah', 'Esther'] },
-        { name: 'M2 — Through', characters: ['Abigail', 'Rahab', 'Esther'] },
-        { name: 'M3 — Worship', characters: ['Ruth', 'Naomi'] }
-      ]
-    },
-    {
-      id: 'general',
-      name: 'Full Character Bank',
-      icon: 'ALL',
-      color: 'from-purple-500 to-indigo-600',
-      subsections: [
-        { name: 'Women of Faith', characters: ['Rahab', 'Ruth', 'Naomi', 'Abigail', 'Hannah', 'Esther', 'Samaritan Woman', 'Shunammite Woman'] },
-        { name: 'Patriarchs & Leaders', characters: ['Abraham', 'Abraham & Sarah', 'Jacob', 'Saul', 'Jonathan', 'Saul & Jonathan', 'David', 'David & Jonathan', 'Hosea'] },
-        { name: 'Youth Edition', characters: [] }
-      ]
-    }
-  ];
+  // Offline game files are defined inline in the offlineGameFiles array above
 
   const renderCertificates = () => (
     <div className="space-y-6">
@@ -457,93 +421,110 @@ const InstructorToolbox = () => {
     </div>
   );
 
+  const offlineGameFiles = [
+    {
+      id: 'grinch-game-pk',
+      title: 'GRinCH Game Pack',
+      subtitle: 'Full instructions, question banks, 6 Grid Iron bingo card variants (A-1, A-2, B-1, B-2, C, C-2), stamp rules & trackers',
+      file: 'ie-grinch-bingo-game-pk.pdf',
+      pages: '23 pages',
+      color: 'purple',
+      icon: Gamepad2
+    },
+    {
+      id: 'grinch-card-pk',
+      title: 'GRinCH Bingo Cards',
+      subtitle: 'Printable Grid Iron Cards (A-1, A-2, B-1) + GRinCH Tracker templates',
+      file: 'ie-grinch-bingo-card-pk.pdf',
+      pages: '4 pages',
+      color: 'purple',
+      icon: ClipboardList
+    },
+    {
+      id: 'passport-trek',
+      title: 'Passport Trek Game',
+      subtitle: 'Stamp collection game — instructions, challenge boxes, leader key, tracking sheets',
+      file: 'ie-passport-trek-game.pdf',
+      pages: '10 pages',
+      color: 'blue',
+      icon: GraduationCap
+    },
+    {
+      id: 'map-reference',
+      title: 'Map & Journey Reference Index',
+      subtitle: 'Final reference index for all biblical maps in the Instructor Series',
+      file: 'map-journey-reference-index.docx',
+      pages: 'Reference doc',
+      color: 'teal',
+      icon: Map
+    }
+  ];
+
   const renderGamePacks = () => (
     <div className="space-y-6" data-testid="game-packs-section">
       <div className="bg-cyan-50 rounded-xl p-4 border border-cyan-200">
-        <h4 className="font-bold text-cyan-800 mb-1">Game Card Packs — Offline &amp; Printable</h4>
+        <h4 className="font-bold text-cyan-800 mb-1">Offline Game Materials — Print & Play</h4>
         <p className="text-sm text-cyan-600">
-          Organized by series and section. Use for GRinCH card rounds, Passport Trek stamp challenges, and classroom review.
+          Download and print these materials to run GRinCH bingo rounds, Passport Trek stamp challenges, and classroom review sessions with your group.
         </p>
-        {bankStats && (
-          <div className="flex flex-wrap gap-3 mt-3">
-            <Badge className="bg-purple-100 text-purple-700">{bankStats.total_questions} Total Cards</Badge>
-            <Badge className="bg-green-100 text-green-700">{bankStats.word_studies} Word Studies</Badge>
-            <Badge className="bg-blue-100 text-blue-700">{Object.keys(bankStats.by_character || {}).length} Characters</Badge>
-          </div>
-        )}
+        <div className="flex flex-wrap gap-3 mt-3">
+          <Badge className="bg-purple-100 text-purple-700">GRinCH Bingo</Badge>
+          <Badge className="bg-blue-100 text-blue-700">Passport Trek</Badge>
+          <Badge className="bg-teal-100 text-teal-700">Maps Reference</Badge>
+        </div>
       </div>
 
-      {gamePackSections.map(section => (
-        <Card key={section.id} className="overflow-hidden" data-testid={`pack-${section.id}`}>
-          <CardHeader className={`bg-gradient-to-r ${section.color} text-white py-3 px-4`}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center font-bold text-sm">
-                {section.icon}
-              </div>
-              <div>
-                <CardTitle className="text-white text-base">{section.name}</CardTitle>
-                <p className="text-white/70 text-xs">{section.subsections.length} subcategories</p>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="p-4">
-            <div className="space-y-3">
-              {section.subsections.map((sub, idx) => {
-                const charCount = sub.characters.length > 0 
-                  ? sub.characters.reduce((sum, ch) => sum + (bankStats?.by_character?.[ch] || 0), 0) 
-                  : (sub.name === 'Youth Edition' ? (bankStats?.by_age_group?.youth || 0) : 0);
-                return (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-slate-800 text-sm">{sub.name}</p>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {sub.characters.slice(0, 5).map((ch, i) => (
-                          <Badge key={i} variant="outline" className="text-[10px]">{ch}</Badge>
-                        ))}
-                        {sub.characters.length > 5 && (
-                          <Badge variant="outline" className="text-[10px]">+{sub.characters.length - 5} more</Badge>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                      <Badge className="bg-slate-200 text-slate-700 text-xs">{charCount} cards</Badge>
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        className="text-xs"
-                        onClick={() => {
-                          if (sub.name === 'Youth Edition') {
-                            navigate('/gaming');
-                          } else if (sub.characters.length > 0) {
-                            navigate(`/gaming`);
-                          }
-                          toast.success(`Opening ${sub.name} game pack...`);
-                        }}
-                      >
-                        <Eye className="w-3 h-3 mr-1" />
-                        View
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+      <div className="grid gap-4">
+        {offlineGameFiles.map(item => {
+          const colorMap = {
+            purple: { bg: 'bg-purple-50', border: 'border-purple-200', icon: 'bg-purple-500', title: 'text-purple-800', badge: 'bg-purple-100 text-purple-700' },
+            blue: { bg: 'bg-blue-50', border: 'border-blue-200', icon: 'bg-blue-500', title: 'text-blue-800', badge: 'bg-blue-100 text-blue-700' },
+            teal: { bg: 'bg-teal-50', border: 'border-teal-200', icon: 'bg-teal-500', title: 'text-teal-800', badge: 'bg-teal-100 text-teal-700' }
+          };
+          const c = colorMap[item.color];
+          const IconComp = item.icon;
+          return (
+            <Card key={item.id} className={`${c.border} border-2 hover:shadow-md transition-shadow`} data-testid={`game-file-${item.id}`}>
+              <CardContent className="p-4 flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-xl ${c.icon} flex items-center justify-center flex-shrink-0`}>
+                  <IconComp className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className={`font-bold text-sm sm:text-base ${c.title}`}>{item.title}</h4>
+                  <p className="text-xs sm:text-sm text-slate-600 mt-0.5">{item.subtitle}</p>
+                  <Badge variant="outline" className="mt-1.5 text-[10px]">{item.pages}</Badge>
+                </div>
+                <Button
+                  size="sm"
+                  className={`${c.icon} text-white flex-shrink-0`}
+                  data-testid={`download-${item.id}`}
+                  onClick={() => {
+                    window.open(`${API_URL}/api/content/games/${item.file}`, '_blank');
+                    toast.success(`Downloading ${item.title}...`);
+                  }}
+                >
+                  <Download className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Download</span>
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
 
-      {/* Game type breakdown */}
+      {/* Online question bank stats (if available) */}
       {bankStats && (
-        <Card className="bg-slate-50">
+        <Card className="bg-slate-50 mt-4">
           <CardContent className="p-4">
-            <h4 className="font-semibold text-slate-700 mb-3 text-sm">Cards by Game Type</h4>
+            <h4 className="font-semibold text-slate-700 mb-3 text-sm">Online Question Bank</h4>
+            <p className="text-xs text-slate-500 mb-3">These questions power the online GRinCH and Trivia games in the Gaming Central.</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {Object.entries(bankStats.by_game_type || {}).map(([type, count]) => {
                 const labels = {
-                  'trivia_testament': 'Trivia Testament (Jeopardy)',
-                  'tricky_trivia': 'Tricky Trivia (Millionaire)',
-                  'who_am_i': 'Who Am I? Riddles',
-                  'deep_cut': 'Deep Cut (Expert)'
+                  'trivia_testament': 'Trivia Testament',
+                  'tricky_trivia': 'Tricky Trivia',
+                  'who_am_i': 'Who Am I?',
+                  'deep_cut': 'Deep Cut'
                 };
                 return (
                   <div key={type} className="bg-white p-3 rounded-lg border text-center">
@@ -1229,8 +1210,8 @@ const InstructorToolbox = () => {
                   <p className="text-sm text-slate-500">Maps</p>
                 </div>
                 <div className="text-center p-4 bg-white rounded-lg border">
-                  <p className="text-3xl font-bold text-cyan-600">{bankStats?.total_questions || 0}</p>
-                  <p className="text-sm text-slate-500">Game Cards</p>
+                  <p className="text-3xl font-bold text-cyan-600">4</p>
+                  <p className="text-sm text-slate-500">Offline Game Files</p>
                 </div>
               </div>
             </CardContent>
