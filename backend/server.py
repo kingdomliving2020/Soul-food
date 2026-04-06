@@ -669,3 +669,17 @@ async def initialize_data():
         await initialize_coupons()
     except Exception as e:
         logger.warning(f"Coupon initialization skipped: {e}")
+
+    # Seed trivia question bank if empty
+    try:
+        q_count = await db.trivia_questions.count_documents({})
+        if q_count == 0:
+            logger.info("Seeding trivia question bank...")
+            import subprocess
+            subprocess.run(["python3", "seed_qa_bank.py"], cwd="/app/backend", timeout=30)
+            q_count = await db.trivia_questions.count_documents({})
+            logger.info(f"Trivia bank seeded: {q_count} questions")
+        else:
+            logger.info(f"Trivia bank already populated: {q_count} questions")
+    except Exception as e:
+        logger.warning(f"Trivia seed skipped: {e}")

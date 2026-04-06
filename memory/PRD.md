@@ -22,6 +22,23 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Su
 - [x] Simplified 2FA setup to email-only (removed confusing authenticator app option)
 - [x] Fixed QR code double-prefix display bug in TOTP setup
 
+### Question Bank & Game Content (Apr 6, 2026)
+- [x] Seeded 383 questions from SOFU Master QA Banks I & II into MongoDB
+- [x] Characters: Rahab, Ruth, Naomi, Abigail, Hannah, Esther, Samaritan Woman, Shunammite Woman, Abraham/Sarah, Jacob/Rachel/Leah, Saul/Jonathan, Hosea/Gomer
+- [x] Game types: Trivia Testament (Jeopardy), Tricky Trivia (Millionaire), Who Am I, Deep Cut
+- [x] 197 Youth + 186 Adult questions across all difficulty levels
+- [x] 38 Hebrew/Greek word studies (tikvah, hesed, ga'al, etc.)
+- [x] 12 Reference & Historical Sources from Instructor Edition
+- [x] 6 biblical maps stored with credit footnotes (Joe Anderson / headwatersresources.org CC BY-NC-SA 4.0)
+- [x] Passion Week map + 5 bonus maps: Abram's Journey, Abraham Offers Isaac, Joseph Sold, Brothers to Egypt, Mary & Joseph to Bethlehem
+- [x] Connected TrickyTestamentGame to real question bank (was mock/hardcoded)
+- [x] Connected MixUpGame (Millionaire) to real question bank (was mock/hardcoded)
+- [x] Added "Table Talk Games" offline section to GamingCentral (GRinCH Cards + Passport Trek)
+- [x] Added "Maps & Visual Aids" tab to InstructorToolbox with credit footnotes
+- [x] Added "Game Card Packs" tab to InstructorToolbox organized by section (Holiday 4Cs, Break*fast, Full Bank)
+- [x] Auto-seed on production startup if trivia_questions collection is empty
+- [x] Static file serving for maps at `/api/content/images/`
+
 ### Admin Content Management (Apr 5, 2026) — NO REDEPLOY NEEDED
 - [x] Product-file mappings stored in MongoDB (230 mappings seeded)
 - [x] Admin "Grant Access" — manually drop digital content into any user's library
