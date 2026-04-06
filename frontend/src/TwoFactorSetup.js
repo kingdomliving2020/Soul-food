@@ -230,7 +230,7 @@ const TwoFactorSetup = () => {
                   </p>
                   <div className="flex justify-center mb-4">
                     <img 
-                      src={`data:image/png;base64,${qrCodeData}`} 
+                      src={qrCodeData.startsWith('data:') ? qrCodeData : `data:image/png;base64,${qrCodeData}`} 
                       alt="QR Code for 2FA"
                       className="w-48 h-48 border-4 border-white shadow-lg rounded-lg"
                     />

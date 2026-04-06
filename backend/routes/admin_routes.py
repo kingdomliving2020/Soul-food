@@ -1973,3 +1973,60 @@ async def resend_order_email(
     await log_admin_action("resend_email", admin.id, "order", order_number, {"email": email})
     
     return {"message": f"Email sent to {email}", "result": result}
+
+
+# =============================================================================
+# CONTENT HEALTH CHECK
+# =============================================================================
+
+@router.get("/content-health")
+async def check_content_health():
+    """Check if content/download files exist on this server (no auth required for diagnostics)"""
+    content_dirs = {
+        "/app/content/downloads": [],
+        "/app/content/bonus": [],
+        "/app/content/holiday": [],
+        "/app/backend/lesson_pdfs": [],
+    }
+    
+    results = {}
+    total_files = 0
+    total_size = 0
+    
+    for directory in content_dirs:
+        if os.path.exists(directory):
+            files = []
+            for f in os.listdir(directory):
+                if f.endswith('.pdf'):
+                    full = os.path.join(directory, f)
+                    size = os.path.getsize(full)
+                    files.append({"name": f, "size_bytes": size})
+                    total_size += size
+                    total_files += 1
+            results[directory] = {"exists": True, "pdf_count": len(files), "files": files[:10]}
+        else:
+            results[directory] = {"exists": False, "pdf_count": 0, "files": []}
+    
+    # Check download_links with broken file paths
+    broken_links = []
+    async for link in db.download_links.find({"revoked": False}, {"_id": 0, "file_path": 1, "order_id": 1, "product_name": 1}).limit(100):
+        fp = link.get("file_path", "")
+        if fp and not os.path.exists(fp):
+            # Try resolve
+            from routes.download_routes import resolve_file_path
+            resolved = resolve_file_path(fp)
+            broken_links.append({
+                "order_id": link.get("order_id"),
+                "product_name": link.get("product_name"),
+                "stored_path": fp,
+                "resolved": resolved or "NOT FOUND"
+            })
+    
+    return {
+        "server_time": datetime.now(timezone.utc).isoformat(),
+        "total_pdf_files": total_files,
+        "total_size_mb": round(total_size / (1024 * 1024), 1),
+        "directories": results,
+        "broken_download_links": broken_links[:20],
+        "broken_link_count": len(broken_links)
+    }
