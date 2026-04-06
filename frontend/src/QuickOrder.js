@@ -626,7 +626,30 @@ const QuickOrder = () => {
       link: '/gift-certificates',
       hidden: true
     },
-    // Game Packs - Offline Board Games (Pre-Order)
+    // Game Packs - Offline Board Games
+    // Holiday/4Cs Game Cards — AVAILABLE NOW (content is seeded and ready)
+    {
+      id: 'game-cards-4cs-digital',
+      name: 'Holiday 4Cs Game Cards (Digital)',
+      subtitle: '383 Q&A Cards — GRinCH + Trivia + Millionaire formats — Print at home',
+      image: '/covers/holiday-ae-front.jpg',
+      price: 12.99,
+      isGamePack: true,
+      isDigital: true,
+      edition: 'adult',
+      description: 'Complete printable game card set for the Holiday 4Cs of Christianity series. Includes Trivia Testament (Jeopardy), Tricky Trivia (Millionaire), Who Am I, and Deep Cut cards.'
+    },
+    {
+      id: 'game-cards-4cs-youth-digital',
+      name: 'Holiday 4Cs Game Cards — Youth (Digital)',
+      subtitle: '197 Youth Q&A Cards — GRinCH + Trivia formats — Print at home',
+      image: '/covers/holiday-ye-front.jpg',
+      price: 9.99,
+      isGamePack: true,
+      isDigital: true,
+      edition: 'youth',
+      description: 'Youth edition printable game cards for the Holiday 4Cs series.'
+    },
     {
       id: 'game-pack-gridiron-ae',
       name: 'GRinCH Game Pack (Adult)',
@@ -636,7 +659,8 @@ const QuickOrder = () => {
       isGamePack: true,
       edition: 'adult',
       description: 'Complete offline game kit for adult groups',
-      preOrder: true
+      preOrder: true,
+      note: 'Physical kit ships 2-3 weeks'
     },
     {
       id: 'game-pack-gridiron-ye',
@@ -1864,6 +1888,16 @@ const QuickOrder = () => {
                   {item.preOrder && (
                     <div className="absolute top-2 left-2">
                       <span className="bg-amber-500 text-white text-xs font-bold px-2 py-1 rounded">Pre-Order</span>
+                    </div>
+                  )}
+                  {item.isDigital && !item.preOrder && (
+                    <div className="absolute top-2 left-2">
+                      <span className="bg-green-600 text-white text-xs font-bold px-2 py-1 rounded">Available Now</span>
+                    </div>
+                  )}
+                  {item.isGamePack && !item.isDigital && !item.preOrder && (
+                    <div className="absolute top-2 left-2">
+                      <span className="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">In Stock</span>
                     </div>
                   )}
                   <h4 className="text-sm font-bold text-slate-800 mb-1">{item.name}</h4>
