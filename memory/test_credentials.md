@@ -1,7 +1,10 @@
 # Soul Food - Test Credentials
 
 ## Admin Account
-- `overflowharvest@gmail.com` — Role: admin (full access to admin panel)
+- Email: `overflowharvest@gmail.com`
+- Password: `Admin123!`
+- Role: admin (full access to admin panel)
+- Note: Requires 2FA setup on first login (email-only 2FA)
 
 ## Registration
 Use `/register` to create new test accounts.
