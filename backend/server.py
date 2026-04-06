@@ -143,6 +143,13 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load instructor routes: {e}")
 
+# Static file serving for content images/maps
+from fastapi.staticfiles import StaticFiles
+content_images_dir = Path("/app/content/images")
+if content_images_dir.exists():
+    app.mount("/api/content/images", StaticFiles(directory=str(content_images_dir)), name="content_images")
+    print("✅ Content images static files mounted at /api/content/images")
+
 security = HTTPBearer(auto_error=False)
 
 # Soul Food Series Definitions
