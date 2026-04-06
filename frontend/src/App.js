@@ -23,6 +23,7 @@ import AuthCallback from './AuthCallback';
 import TwoFactorSetup from './TwoFactorSetup';
 import TwoFactorVerify from './TwoFactorVerify';
 import MyLibrary from './MyLibrary';
+import AccountSettings from './AccountSettings';
 import AboutUs from './AboutUs';
 import AdminConsole from './AdminConsole';
 import { PrivacyPolicy, TermsOfService } from './LegalPages';
@@ -1938,6 +1939,7 @@ function App() {
             <Route path="/2fa-setup" element={<TwoFactorSetup />} />
             <Route path="/2fa-verify" element={<TwoFactorVerify />} />
             <Route path="/my-library" element={<MyLibrary />} />
+            <Route path="/account-settings" element={<AccountSettings />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/quick-order" element={<QuickOrder />} />

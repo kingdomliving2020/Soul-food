@@ -11,6 +11,17 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Su
 
 ## What's Implemented
 
+### Download Fix & 2FA Simplification (Apr 6, 2026)
+- [x] Fixed critical hardcoded DB name bug in `download_protection.py` (was `client.soul_food_db`, now uses `DB_NAME` env var)
+- [x] Added `resolve_file_path()` to download endpoint — tries multiple directories for PDF files
+- [x] Added try-catch error handling to download endpoint — no more generic "Internal Server Error"
+- [x] Fixed 2 download links with relative file paths in DB
+- [x] Added `/api/downloads/diagnose/<token>` diagnostic endpoint
+- [x] Added `/api/admin/content-health` endpoint to verify PDF files on server
+- [x] Created Account Settings page (`/account-settings`) with email-based 2FA setup
+- [x] Simplified 2FA setup to email-only (removed confusing authenticator app option)
+- [x] Fixed QR code double-prefix display bug in TOTP setup
+
 ### Admin Content Management (Apr 5, 2026) — NO REDEPLOY NEEDED
 - [x] Product-file mappings stored in MongoDB (230 mappings seeded)
 - [x] Admin "Grant Access" — manually drop digital content into any user's library
