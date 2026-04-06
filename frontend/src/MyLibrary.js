@@ -193,6 +193,10 @@ const MyLibrary = () => {
     localStorage.removeItem('soul_food_token');
     localStorage.removeItem('soul_food_user');
     localStorage.removeItem('soul_food_session');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('soulFoodToken');
+    localStorage.removeItem('soulFoodUser');
     toast.success('Logged out successfully');
     navigate('/');
   };

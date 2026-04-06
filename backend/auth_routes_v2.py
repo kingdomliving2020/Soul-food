@@ -1127,3 +1127,93 @@ async def award_rewards_points(user_id: str, amount_spent: float, order_id: str)
             })
     
     return points_earned
+
+
+# =============================================================================
+# PASSWORD RESET (User-facing)
+# =============================================================================
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
+
+@router.post("/forgot-password")
+async def forgot_password(req: ForgotPasswordRequest, background_tasks: BackgroundTasks, request: Request):
+    """Send password reset email to user"""
+    from security import check_reset_rate_limit, record_reset_request, create_reset_token
+    
+    email = req.email.strip().lower()
+    ip = request.client.host if request.client else "unknown"
+    
+    # Rate limit
+    allowed, msg = await check_reset_rate_limit(email, ip)
+    if not allowed:
+        raise HTTPException(status_code=429, detail=msg)
+    
+    # Find user
+    user = await db.users.find_one({"email": email})
+    
+    # Always return success to prevent email enumeration
+    if not user:
+        return {"message": "If an account exists with that email, a reset link has been sent."}
+    
+    # Record request for rate limiting
+    await record_reset_request(email, ip)
+    
+    # Create reset token
+    raw_token = await create_reset_token(user["id"], email)
+    
+    # Send email
+    try:
+        SITE_URL = os.environ.get('SITE_URL', os.environ.get('FRONTEND_URL', ''))
+        reset_link = f"{SITE_URL}/reset-password?token={raw_token}"
+        
+        from email_service import send_email
+        await send_email(
+            to_email=email,
+            subject="Soul Food - Password Reset",
+            html_content=f"""
+            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
+                <h2 style="color: #7c3aed;">Password Reset Request</h2>
+                <p>Hi {user.get('name', 'there')},</p>
+                <p>We received a request to reset your password. Click the button below to set a new one:</p>
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="{reset_link}" style="background: #7c3aed; color: white; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                        Reset My Password
+                    </a>
+                </div>
+                <p style="color: #666; font-size: 13px;">This link expires in 60 minutes. If you didn't request this, you can ignore this email.</p>
+                <p style="color: #999; font-size: 11px; margin-top: 30px;">Soul Food by Overflow Harvest LLC</p>
+            </div>
+            """
+        )
+    except Exception as e:
+        print(f"[Auth] Failed to send reset email: {e}")
+    
+    return {"message": "If an account exists with that email, a reset link has been sent."}
+
+
+@router.post("/reset-password")
+async def reset_password(req: ResetPasswordRequest):
+    """Reset password using token from email"""
+    from security import verify_reset_token
+    
+    is_valid, user_id, msg = await verify_reset_token(req.token)
+    if not is_valid:
+        raise HTTPException(status_code=400, detail=msg)
+    
+    # Validate new password
+    if len(req.new_password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+    
+    # Hash and update
+    hashed = pwd_context.hash(req.new_password)
+    await db.users.update_one(
+        {"id": user_id},
+        {"$set": {"password": hashed, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return {"message": "Password reset successfully. You can now sign in with your new password."}

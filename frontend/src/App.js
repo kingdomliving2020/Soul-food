@@ -24,6 +24,8 @@ import TwoFactorSetup from './TwoFactorSetup';
 import TwoFactorVerify from './TwoFactorVerify';
 import MyLibrary from './MyLibrary';
 import AccountSettings from './AccountSettings';
+import ForgotPassword from './ForgotPassword';
+import ResetPassword from './ResetPassword';
 import AboutUs from './AboutUs';
 import AdminConsole from './AdminConsole';
 import { PrivacyPolicy, TermsOfService } from './LegalPages';
@@ -129,6 +131,11 @@ const LandingPage = () => {
     localStorage.removeItem('soul_food_token');
     localStorage.removeItem('soul_food_user');
     localStorage.removeItem('soul_food_session');
+    // Clear legacy keys too
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('soulFoodToken');
+    localStorage.removeItem('soulFoodUser');
     setCurrentUser(null);
     toast.success('Logged out successfully');
   };
@@ -1940,6 +1947,8 @@ function App() {
             <Route path="/2fa-verify" element={<TwoFactorVerify />} />
             <Route path="/my-library" element={<MyLibrary />} />
             <Route path="/account-settings" element={<AccountSettings />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/about-us" element={<AboutUs />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/quick-order" element={<QuickOrder />} />

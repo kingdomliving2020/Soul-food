@@ -607,6 +607,20 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
             </button>
           </form>
 
+          {/* Forgot Password - only in login mode */}
+          {mode === 'login' && (
+            <div className="text-right mt-2">
+              <button
+                type="button"
+                onClick={() => navigate('/forgot-password')}
+                className="text-sm text-purple-600 hover:text-purple-700"
+                data-testid="checkout-forgot-password"
+              >
+                Forgot password?
+              </button>
+            </div>
+          )}
+
           {/* Toggle Login/Register */}
           <div className="mt-6 pt-6 border-t text-center">
             {mode === 'login' ? (
@@ -725,9 +739,9 @@ const CheckoutPage = () => {
 
   // Check if user is logged in on mount
   useEffect(() => {
-    // Check multiple possible token keys for compatibility
-    const token = localStorage.getItem('token') || localStorage.getItem('soul_food_token') || localStorage.getItem('soulFoodToken');
-    const savedUser = localStorage.getItem('user') || localStorage.getItem('soul_food_user');
+    // Check current token key only (legacy keys should be cleared on logout)
+    const token = localStorage.getItem('soul_food_token');
+    const savedUser = localStorage.getItem('soul_food_user');
     
     if (token && savedUser) {
       try {
