@@ -19,7 +19,7 @@ import { toast, Toaster } from 'sonner';
 import { 
   BookOpen, Key, Users, Lightbulb, Gamepad2, FileText, 
   Lock, ChevronRight, Download, Eye, ArrowLeft, Search,
-  GraduationCap, ClipboardList, Trophy, BookMarked
+  GraduationCap, ClipboardList, Trophy, BookMarked, Map, Image
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
@@ -33,6 +33,9 @@ const InstructorToolbox = () => {
   const [answerKeys, setAnswerKeys] = useState([]);
   const [facilitationNotes, setFacilitationNotes] = useState([]);
   const [roster, setRoster] = useState([]);
+  const [gameMaps, setGameMaps] = useState([]);
+  const [bankStats, setBankStats] = useState(null);
+  const [selectedMapIdx, setSelectedMapIdx] = useState(null);
   
   // Game filtering state - which lessons have been covered
   const [coveredLessons, setCoveredLessons] = useState(() => {
@@ -174,6 +177,24 @@ const InstructorToolbox = () => {
         const rosterData = await rosterRes.json();
         setRoster(rosterData.members || []);
       }
+
+      // Load game maps and assets
+      try {
+        const mapsRes = await fetch(`${API_URL}/api/trivia/game-assets`);
+        if (mapsRes.ok) {
+          const mapsData = await mapsRes.json();
+          setGameMaps(mapsData.assets || []);
+        }
+      } catch (e) { console.log('Maps load skipped'); }
+
+      // Load question bank stats
+      try {
+        const statsRes = await fetch(`${API_URL}/api/trivia/bank/stats`);
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          setBankStats(statsData);
+        }
+      } catch (e) { console.log('Stats load skipped'); }
     } catch (err) {
       console.error('Failed to load instructor content:', err);
     }
@@ -220,6 +241,22 @@ const InstructorToolbox = () => {
       color: 'bg-rose-500'
     },
     {
+      id: 'maps',
+      title: 'Maps & Visual Aids',
+      icon: Map,
+      description: 'Biblical maps for bonus rounds, daily doubles, and classroom use',
+      color: 'bg-teal-500',
+      badge: gameMaps.length > 0 ? `${gameMaps.length} Maps` : null
+    },
+    {
+      id: 'game-packs',
+      title: 'Game Card Packs',
+      icon: Image,
+      description: 'Printable GRinCH cards & Passport stamps organized by section',
+      color: 'bg-cyan-500',
+      badge: bankStats ? `${bankStats.total_questions} Cards` : null
+    },
+    {
       id: 'certificates',
       title: 'Achievement Awards',
       icon: Trophy,
@@ -253,6 +290,274 @@ const InstructorToolbox = () => {
     { id: 'fn-through', title: 'Through Module Tips', type: 'breakfast-m2', description: 'Month 2 - Perseverance theme notes' },
     { id: 'fn-closing', title: 'Closing Strong', type: 'general', description: 'Recap and takeaway assignments' }
   ];
+
+  // Game card pack categories
+  const gamePackSections = [
+    {
+      id: 'holiday-4cs',
+      name: 'Holiday Edition — 4Cs of Christianity',
+      icon: '4Cs',
+      color: 'from-red-500 to-rose-600',
+      subsections: [
+        { name: 'Covenant (Abraham)', characters: ['Abraham', 'Abraham & Sarah'] },
+        { name: 'Cradle (Nativity)', characters: ['Mary', 'Joseph', 'Jesus'] },
+        { name: 'Cross (Redemption)', characters: ['Rahab', 'Ruth', 'Hosea'] },
+        { name: 'Comforter (Holy Spirit)', characters: ['Esther', 'Samaritan Woman'] }
+      ]
+    },
+    {
+      id: 'breakfast',
+      name: 'Break*fast Series',
+      icon: 'BF',
+      color: 'from-amber-500 to-yellow-600',
+      subsections: [
+        { name: 'M1 — Prayer', characters: ['Hannah', 'Esther'] },
+        { name: 'M2 — Through', characters: ['Abigail', 'Rahab', 'Esther'] },
+        { name: 'M3 — Worship', characters: ['Ruth', 'Naomi'] }
+      ]
+    },
+    {
+      id: 'general',
+      name: 'Full Character Bank',
+      icon: 'ALL',
+      color: 'from-purple-500 to-indigo-600',
+      subsections: [
+        { name: 'Women of Faith', characters: ['Rahab', 'Ruth', 'Naomi', 'Abigail', 'Hannah', 'Esther', 'Samaritan Woman', 'Shunammite Woman'] },
+        { name: 'Patriarchs & Leaders', characters: ['Abraham', 'Abraham & Sarah', 'Jacob', 'Saul', 'Jonathan', 'Saul & Jonathan', 'David', 'David & Jonathan', 'Hosea'] },
+        { name: 'Youth Edition', characters: [] }
+      ]
+    }
+  ];
+
+  const renderCertificates = () => (
+    <div className="space-y-6">
+      <p className="text-slate-600">Recognize your group members' achievements with official certificates and medallions.</p>
+      <div className="grid md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader><CardTitle className="flex items-center gap-2"><FileText className="w-5 h-5 text-orange-500" />Printable Certificates</CardTitle></CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-slate-600">Download and print achievement certificates for your group members.</p>
+            <div className="space-y-2">
+              {['Lesson Completion Certificate', 'Series Completion Certificate', 'Game Champion Certificate'].map(c => (
+                <Button key={c} variant="outline" className="w-full justify-start" onClick={() => toast.info('Certificate generator coming soon!')}>
+                  <Download className="w-4 h-4 mr-2" />{c}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader><CardTitle className="flex items-center gap-2"><Trophy className="w-5 h-5 text-orange-500" />Achievement Medallions</CardTitle></CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-slate-600">Order metal medallions to award outstanding achievement.</p>
+            <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+              <p className="text-sm font-medium text-orange-800">Bulk Discounts Available!</p>
+              <p className="text-xs text-orange-600 mt-1">Teacher Pack (3) - $24.99 | Ministry Pack (10) - $69.99</p>
+            </div>
+            <Button className="w-full bg-orange-500 hover:bg-orange-600" onClick={() => navigate('/quick-order')}>Order Medallions</Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+
+  const renderMaps = () => (
+    <div className="space-y-6" data-testid="maps-section">
+      <div className="bg-teal-50 rounded-xl p-4 border border-teal-200">
+        <h4 className="font-bold text-teal-800 mb-1">Biblical Maps &amp; Visual Aids</h4>
+        <p className="text-sm text-teal-600">Use in bonus rounds, daily doubles, classroom projection, or print for handouts.</p>
+      </div>
+      
+      {selectedMapIdx !== null && gameMaps[selectedMapIdx] ? (
+        <div className="space-y-4">
+          <Button variant="ghost" onClick={() => setSelectedMapIdx(null)} className="text-slate-600">
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to All Maps
+          </Button>
+          <Card className="overflow-hidden">
+            <img 
+              src={`${API_URL}/api/content/images/${gameMaps[selectedMapIdx].file_path.split('/images/')[1]}`} 
+              alt={gameMaps[selectedMapIdx].name}
+              className="w-full max-h-[600px] object-contain bg-slate-100"
+              data-testid="map-full-image"
+            />
+            <CardContent className="p-4 space-y-2">
+              <h3 className="text-lg font-bold text-slate-800">{gameMaps[selectedMapIdx].name}</h3>
+              <p className="text-sm text-slate-600">{gameMaps[selectedMapIdx].description}</p>
+              {gameMaps[selectedMapIdx].scripture_refs && (
+                <div className="flex flex-wrap gap-1">
+                  {gameMaps[selectedMapIdx].scripture_refs.map((ref, i) => (
+                    <Badge key={i} variant="outline" className="text-xs">{ref}</Badge>
+                  ))}
+                </div>
+              )}
+              {gameMaps[selectedMapIdx].characters && (
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {gameMaps[selectedMapIdx].characters.map((ch, i) => (
+                    <Badge key={i} className="bg-teal-100 text-teal-700 text-xs">{ch}</Badge>
+                  ))}
+                </div>
+              )}
+              <p className="text-[10px] text-slate-400 italic border-t pt-2 mt-3">
+                {gameMaps[selectedMapIdx].credit || 'Map credit: Joe Anderson, headwatersresources.org (CC BY-NC-SA 4.0)'}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {gameMaps.map((mapAsset, idx) => (
+            <Card 
+              key={idx} 
+              className="overflow-hidden hover:shadow-lg transition-all cursor-pointer border-2 hover:border-teal-300"
+              onClick={() => setSelectedMapIdx(idx)}
+              data-testid={`map-card-${idx}`}
+            >
+              <div className="aspect-[4/3] bg-slate-100 relative overflow-hidden">
+                <img 
+                  src={`${API_URL}/api/content/images/${mapAsset.file_path.split('/images/')[1]}`}
+                  alt={mapAsset.name}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+                {mapAsset.use_case?.includes('daily_double') && (
+                  <Badge className="absolute top-2 right-2 bg-amber-500 text-white text-[10px]">Daily Double</Badge>
+                )}
+              </div>
+              <CardContent className="p-3">
+                <p className="font-semibold text-slate-800 text-sm leading-tight">{mapAsset.name}</p>
+                {mapAsset.characters && (
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {mapAsset.characters.slice(0, 3).map((ch, i) => (
+                      <Badge key={i} variant="outline" className="text-[10px]">{ch}</Badge>
+                    ))}
+                  </div>
+                )}
+                <p className="text-[9px] text-slate-400 italic mt-2">
+                  {mapAsset.credit || 'Joe Anderson / headwatersresources.org'}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+          {gameMaps.length === 0 && (
+            <div className="col-span-full text-center py-12 text-slate-400">
+              <Map className="w-12 h-12 mx-auto mb-3 opacity-50" />
+              <p>No maps loaded yet.</p>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Credit footnote */}
+      <div className="border-t pt-3 mt-4">
+        <p className="text-[10px] text-slate-400 leading-relaxed">
+          Maps by Joe Anderson, <a href="https://headwatersresources.org" target="_blank" rel="noopener noreferrer" className="underline">headwatersresources.org</a> (CC BY-NC-SA 4.0). 
+          Used under license for educational and ministry purposes. Passion Week map sourced from Overflow Harvest LLC curriculum archives.
+        </p>
+      </div>
+    </div>
+  );
+
+  const renderGamePacks = () => (
+    <div className="space-y-6" data-testid="game-packs-section">
+      <div className="bg-cyan-50 rounded-xl p-4 border border-cyan-200">
+        <h4 className="font-bold text-cyan-800 mb-1">Game Card Packs — Offline &amp; Printable</h4>
+        <p className="text-sm text-cyan-600">
+          Organized by series and section. Use for GRinCH card rounds, Passport Trek stamp challenges, and classroom review.
+        </p>
+        {bankStats && (
+          <div className="flex flex-wrap gap-3 mt-3">
+            <Badge className="bg-purple-100 text-purple-700">{bankStats.total_questions} Total Cards</Badge>
+            <Badge className="bg-green-100 text-green-700">{bankStats.word_studies} Word Studies</Badge>
+            <Badge className="bg-blue-100 text-blue-700">{Object.keys(bankStats.by_character || {}).length} Characters</Badge>
+          </div>
+        )}
+      </div>
+
+      {gamePackSections.map(section => (
+        <Card key={section.id} className="overflow-hidden" data-testid={`pack-${section.id}`}>
+          <CardHeader className={`bg-gradient-to-r ${section.color} text-white py-3 px-4`}>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-white/20 flex items-center justify-center font-bold text-sm">
+                {section.icon}
+              </div>
+              <div>
+                <CardTitle className="text-white text-base">{section.name}</CardTitle>
+                <p className="text-white/70 text-xs">{section.subsections.length} subcategories</p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-4">
+            <div className="space-y-3">
+              {section.subsections.map((sub, idx) => {
+                const charCount = sub.characters.length > 0 
+                  ? sub.characters.reduce((sum, ch) => sum + (bankStats?.by_character?.[ch] || 0), 0) 
+                  : (sub.name === 'Youth Edition' ? (bankStats?.by_age_group?.youth || 0) : 0);
+                return (
+                  <div key={idx} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-slate-800 text-sm">{sub.name}</p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {sub.characters.slice(0, 5).map((ch, i) => (
+                          <Badge key={i} variant="outline" className="text-[10px]">{ch}</Badge>
+                        ))}
+                        {sub.characters.length > 5 && (
+                          <Badge variant="outline" className="text-[10px]">+{sub.characters.length - 5} more</Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0 ml-2">
+                      <Badge className="bg-slate-200 text-slate-700 text-xs">{charCount} cards</Badge>
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        className="text-xs"
+                        onClick={() => {
+                          if (sub.name === 'Youth Edition') {
+                            navigate('/gaming');
+                          } else if (sub.characters.length > 0) {
+                            navigate(`/gaming`);
+                          }
+                          toast.success(`Opening ${sub.name} game pack...`);
+                        }}
+                      >
+                        <Eye className="w-3 h-3 mr-1" />
+                        View
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+
+      {/* Game type breakdown */}
+      {bankStats && (
+        <Card className="bg-slate-50">
+          <CardContent className="p-4">
+            <h4 className="font-semibold text-slate-700 mb-3 text-sm">Cards by Game Type</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {Object.entries(bankStats.by_game_type || {}).map(([type, count]) => {
+                const labels = {
+                  'trivia_testament': 'Trivia Testament (Jeopardy)',
+                  'tricky_trivia': 'Tricky Trivia (Millionaire)',
+                  'who_am_i': 'Who Am I? Riddles',
+                  'deep_cut': 'Deep Cut (Expert)'
+                };
+                return (
+                  <div key={type} className="bg-white p-3 rounded-lg border text-center">
+                    <p className="text-xl font-bold text-purple-600">{count}</p>
+                    <p className="text-[10px] text-slate-500">{labels[type] || type}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
 
   const renderContent = () => {
     switch (activeTab) {
@@ -770,66 +1075,13 @@ const InstructorToolbox = () => {
         );
 
       case 'certificates':
-        return (
-          <div className="space-y-6">
-            <p className="text-slate-600">
-              Recognize your group members' achievements with official certificates and medallions.
-            </p>
+        return renderCertificates();
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-orange-500" />
-                    Printable Certificates
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="text-sm text-slate-600">
-                    Download and print achievement certificates for your group members.
-                  </p>
-                  <div className="space-y-2">
-                    <Button variant="outline" className="w-full justify-start" onClick={() => toast.info('Certificate generator coming soon!')}>
-                      <Download className="w-4 h-4 mr-2" />
-                      Lesson Completion Certificate
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start" onClick={() => toast.info('Certificate generator coming soon!')}>
-                      <Download className="w-4 h-4 mr-2" />
-                      Series Completion Certificate
-                    </Button>
-                    <Button variant="outline" className="w-full justify-start" onClick={() => toast.info('Certificate generator coming soon!')}>
-                      <Download className="w-4 h-4 mr-2" />
-                      Game Champion Certificate
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+      case 'maps':
+        return renderMaps();
 
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-orange-500" />
-                    Achievement Medallions
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <p className="text-sm text-slate-600">
-                    Order metal medallions to award outstanding achievement.
-                  </p>
-                  <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
-                    <p className="text-sm font-medium text-orange-800">Bulk Discounts Available!</p>
-                    <p className="text-xs text-orange-600 mt-1">
-                      Teacher Pack (3) - $24.99 | Ministry Pack (10) - $69.99
-                    </p>
-                  </div>
-                  <Button className="w-full bg-orange-500 hover:bg-orange-600" onClick={() => navigate('/quick-order')}>
-                    Order Medallions
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        );
+      case 'game-packs':
+        return renderGamePacks();
 
       default:
         return (
@@ -973,8 +1225,12 @@ const InstructorToolbox = () => {
                   <p className="text-sm text-slate-500">Group Members</p>
                 </div>
                 <div className="text-center p-4 bg-white rounded-lg border">
-                  <p className="text-3xl font-bold text-purple-600">2</p>
-                  <p className="text-sm text-slate-500">Game Modes</p>
+                  <p className="text-3xl font-bold text-purple-600">{gameMaps.length}</p>
+                  <p className="text-sm text-slate-500">Maps</p>
+                </div>
+                <div className="text-center p-4 bg-white rounded-lg border">
+                  <p className="text-3xl font-bold text-cyan-600">{bankStats?.total_questions || 0}</p>
+                  <p className="text-sm text-slate-500">Game Cards</p>
                 </div>
               </div>
             </CardContent>
