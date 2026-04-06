@@ -22,7 +22,7 @@ load_dotenv()
 # Database connection
 MONGO_URL = os.getenv('MONGO_URL')
 client = AsyncIOMotorClient(MONGO_URL)
-db = client.soul_food_db
+db = client[os.environ.get('DB_NAME', 'soul_food_db')]
 
 # =============================================================================
 # DOWNLOAD PROTECTION CONSTANTS
