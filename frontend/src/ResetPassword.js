@@ -47,8 +47,20 @@ const ResetPassword = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Reset failed');
       
-      setSuccess(true);
-      toast.success('Password reset successfully!');
+      // Auto-login if the server returned a token
+      if (data.access_token) {
+        localStorage.setItem('soul_food_token', data.access_token);
+        localStorage.setItem('soul_food_user', JSON.stringify(data.user));
+        localStorage.setItem('soul_food_session', JSON.stringify(data.session_config));
+        setSuccess(true);
+        toast.success('Password reset! Logging you in...');
+        setTimeout(() => {
+          window.location.href = '/my-library';
+        }, 1500);
+      } else {
+        setSuccess(true);
+        toast.success('Password reset successfully!');
+      }
     } catch (err) {
       toast.error(err.message);
     } finally {

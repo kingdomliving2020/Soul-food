@@ -1208,7 +1208,7 @@ async def forgot_password(req: ForgotPasswordRequest, background_tasks: Backgrou
 
 @router.post("/reset-password")
 async def reset_password(req: ResetPasswordRequest):
-    """Reset password using token from email"""
+    """Reset password using token from email — auto-logs user in after reset"""
     from security import verify_reset_token
     
     is_valid, user_id, msg = await verify_reset_token(req.token)
@@ -1219,11 +1219,47 @@ async def reset_password(req: ResetPasswordRequest):
     if len(req.new_password) < 8:
         raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
     
-    # Hash and update
+    # Hash and update — use password_hash field (what login checks!)
     hashed = pwd_context.hash(req.new_password)
     await db.users.update_one(
         {"id": user_id},
-        {"$set": {"password": hashed, "updated_at": datetime.now(timezone.utc).isoformat()}}
+        {"$set": {
+            "password_hash": hashed,
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "force_password_change": False
+        },
+        "$push": {"password_history": {"$each": [hashed], "$slice": -5}}
+        }
     )
+    
+    # Auto-login: generate token and return user data so frontend can skip re-login
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0, "password_history": 0})
+    if user:
+        role = user.get("role", "member")
+        session_timeout = {"admin": 120, "instructor": 120}.get(role, 90)
+        access_token = create_access_token(
+            data={"sub": user_id, "role": role},
+            expires_delta=timedelta(minutes=session_timeout)
+        )
+        return {
+            "message": "Password reset successfully.",
+            "access_token": access_token,
+            "token_type": "bearer",
+            "user": {
+                "id": user.get("id"),
+                "email": user.get("email"),
+                "username": user.get("username"),
+                "name": user.get("name"),
+                "role": role,
+                "access_level": user.get("access_level", "free"),
+                "rewards_points": user.get("rewards_points", 0),
+                "tfa_enabled": user.get("tfa_enabled", False)
+            },
+            "session_config": {
+                "timeout_mins": session_timeout,
+                "role": role,
+                "message": f"Welcome back, {user.get('name', 'User')}!"
+            }
+        }
     
     return {"message": "Password reset successfully. You can now sign in with your new password."}

@@ -349,8 +349,13 @@ async def verify_reset_token(token: str) -> Tuple[bool, Optional[str], str]:
     if token_doc.get("used"):
         return False, None, "This reset link has already been used"
     
-    # Check if expired
-    if datetime.now(timezone.utc) > token_doc["expires_at"]:
+    # Check if expired — handle both timezone-naive and timezone-aware datetimes
+    expires_at = token_doc["expires_at"]
+    now = datetime.now(timezone.utc)
+    # If expires_at is naive, make it aware (assume UTC)
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if now > expires_at:
         return False, None, "This reset link has expired"
     
     return True, token_doc["user_id"], ""
