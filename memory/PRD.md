@@ -12,44 +12,50 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Su
 ## Critical Architecture Notes
 - **NEVER** hardcode DB name — always use `os.environ.get('DB_NAME')`
 - SITE_URL env var = `https://kingdom-soul.com` (used for ALL email links)
-- FRONTEND_URL = preview URL (used only for CORS/internal purposes, NOT emails)
-- Product-file mappings: MongoDB `product_file_mappings` collection (primary) -> hardcoded PRODUCT_FILES (fallback)
+- FRONTEND_URL = preview URL (used only for CORS/internal, NOT emails)
+- Product-file mappings: MongoDB `product_file_mappings` (primary) → hardcoded PRODUCT_FILES (fallback)
 - Guest checkout is intentional — no account gating
-- Game files served via `/api/content/games/` static mount
+- Auth state: SoulFoodApp.js reads localStorage + polls every 1s via `auth-changed` event
 
 ## What's Implemented
 
-### Critical Bug Fixes (Apr 8, 2026)
-- [x] Fixed password reset email: `send_email()` was called with wrong params (`to_email=` → `to=`, `html_content=` → `html=`)
-- [x] Fixed email URLs: Added `SITE_URL=https://kingdom-soul.com` env var so ALL emails (reset, order, download) point to production, not preview
-- [x] Fixed webhook email: Order confirmation from Stripe webhook now includes download links (was missing `download_links=` parameter)
-- [x] Fixed login response: Added `session_config` field to prevent frontend JSON parse errors
-- [x] Fixed 2FA blocker: Admin/instructor users can now skip 2FA setup via "Continue without 2FA" link
-- [x] Fixed gift cert email URL: Uses SITE_URL instead of FRONTEND_URL
+### Auth & Header Fix (Apr 8, 2026 — Session 2)
+- [x] Header now shows My Library / Admin / Sign Out when logged in
+- [x] Auth state syncs via `auth-changed` custom event + 1s polling interval
+- [x] Password reset writes to `password_hash` (was writing to wrong `password` field — login always failed after reset!)
+- [x] Password reset auto-logs user in (returns token + session_config + user data)
+- [x] Reset frontend auto-redirects to /my-library after success
+- [x] Timezone comparison bug in reset token verification fixed
+- [x] Admin/instructor can skip 2FA via "Continue without 2FA" link
+- [x] Login response now includes `session_config` field
+
+### Email & Delivery Fix (Apr 8, 2026 — Session 2)
+- [x] Added `SITE_URL=https://kingdom-soul.com` env var
+- [x] All email links (reset, order, download) now use SITE_URL → production domain
+- [x] Webhook `send_order_confirmation` now includes `download_links=` parameter (was missing!)
+- [x] `send_email()` parameter names fixed (`to=` not `to_email=`, `html=` not `html_content=`)
+- [x] Gift cert email uses SITE_URL instead of FRONTEND_URL
 
 ### Offline Game Files (Apr 6-8, 2026)
-- [x] Stored 4 user-uploaded game files at `/app/content/downloads/games/`
-- [x] GRinCH Bingo Game Pack (23 pages), GRinCH Bingo Cards (4 pages)
-- [x] Passport Trek Game (10 pages), Map & Journey Reference Index (DOCX)
-- [x] Backend: `/api/content/games/` static file endpoint
-- [x] Frontend: "Offline Game Files" tab in InstructorToolbox with download buttons
-- [x] Removed incorrect "383 Q&A Cards" digital products from QuickOrder.js
+- [x] 4 game files stored at `/app/content/downloads/games/`
+- [x] Static file endpoint at `/api/content/games/`
+- [x] "Offline Game Files" tab in InstructorToolbox with download buttons
+- [x] Removed fake "383 Q&A Cards" products from QuickOrder
 
 ### Earlier Completed Work
-- Fixed critical 500 error on production downloads (hardcoded DB name)
-- Email-only 2FA, Forgot/Reset Password flow
+- Fixed 500 error on downloads (hardcoded DB name)
 - 383 trivia questions seeded, games connected to real DB
-- Maps & Visual Aids with credits, guest checkout leak fix
+- Maps & Visual Aids with credits
+- Guest checkout leak fix
 - 230 product-file mappings, admin fulfillment endpoints
 - Store launch layout, coupons, Pentecost countdown
 
 ## Prioritized Backlog
 
 ### P1
-- Investigate & fulfill missing orders `SF-2026-TWSRN` and `SF-2026-G8AS2` (PRODUCTION DB)
-- Refund test purchase Order `SF-2026-WVEE9` ($43.64)
 - "Redeem Code" flow for guest post-purchase account linking
 - Admin UI frontend for fulfillment management
+- Force password change on first login with temp password (NIST compliance)
 
 ### P2
 - Security: Move auth tokens from localStorage to httpOnly cookies

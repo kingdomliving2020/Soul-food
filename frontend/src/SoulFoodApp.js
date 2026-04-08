@@ -319,9 +319,49 @@ const SoulFoodLanding = () => {
   }, []);
   
   const handleLogin = () => {
-    // Navigate to auth page for login/register
     window.location.href = '/auth';
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('soul_food_token');
+    localStorage.removeItem('soul_food_user');
+    localStorage.removeItem('soul_food_session');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('soulFoodToken');
+    localStorage.removeItem('soulFoodUser');
+    setCurrentUser(null);
+    toast.success('Signed out');
+    window.location.href = '/';
+  };
+
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const u = localStorage.getItem('soul_food_user');
+      return u ? JSON.parse(u) : null;
+    } catch { return null; }
+  });
+
+  useEffect(() => {
+    const syncAuth = () => {
+      try {
+        const u = localStorage.getItem('soul_food_user');
+        const parsed = u ? JSON.parse(u) : null;
+        setCurrentUser(prev => {
+          if ((!prev && !parsed) || (prev && parsed && prev.id === parsed.id)) return prev;
+          return parsed;
+        });
+      } catch { setCurrentUser(null); }
+    };
+    window.addEventListener('storage', syncAuth);
+    window.addEventListener('auth-changed', syncAuth);
+    const interval = setInterval(syncAuth, 1000);
+    return () => {
+      window.removeEventListener('storage', syncAuth);
+      window.removeEventListener('auth-changed', syncAuth);
+      clearInterval(interval);
+    };
+  }, []);
   
   const openProductModal = (seriesData) => {
     setSelectedSeries(seriesData);
@@ -352,8 +392,7 @@ const SoulFoodLanding = () => {
             </div>
             
             {/* Desktop Navigation */}
-            <div className="hidden sm:flex items-center gap-2 sm:gap-5">
-              {/* Quick Order Button - Icon placed INSIDE the button */}
+            <div className="hidden sm:flex items-center gap-2 sm:gap-4">
               <Button
                 onClick={() => window.location.href = '/quick-order'}
                 className="flex items-center gap-2 bg-white hover:bg-slate-50 px-3 py-2 rounded-xl font-semibold text-sm transition-all border-2 border-slate-800 shadow-md hover:shadow-lg"
@@ -370,13 +409,43 @@ const SoulFoodLanding = () => {
               <div className="bg-gradient-to-r from-orange-500 to-amber-600 rounded-full p-1">
                 <ShoppingCart />
               </div>
-              <Button
-                onClick={handleLogin}
-                data-testid="login-button"
-                className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-3 sm:px-7 py-2 sm:py-3 rounded-xl font-semibold text-xs sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
-              >
-                Sign In
-              </Button>
+
+              {currentUser ? (
+                <>
+                  <Button
+                    onClick={() => window.location.href = '/my-library'}
+                    className="bg-white hover:bg-slate-50 text-slate-700 border-2 border-orange-300 px-4 py-2 rounded-xl font-semibold text-sm transition-all"
+                    data-testid="my-library-btn"
+                  >
+                    My Library
+                  </Button>
+                  {(currentUser.role === 'admin' || currentUser.role === 'instructor') && (
+                    <Button
+                      onClick={() => window.location.href = currentUser.role === 'admin' ? '/admin' : '/instructor-toolbox'}
+                      className="bg-purple-100 hover:bg-purple-200 text-purple-800 px-3 py-2 rounded-xl font-semibold text-sm transition-all"
+                      data-testid="admin-btn"
+                    >
+                      {currentUser.role === 'admin' ? 'Admin' : 'Toolbox'}
+                    </Button>
+                  )}
+                  <Button
+                    onClick={handleLogout}
+                    variant="ghost"
+                    className="text-slate-500 hover:text-red-600 text-sm"
+                    data-testid="logout-btn"
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  onClick={handleLogin}
+                  data-testid="login-button"
+                  className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-3 sm:px-7 py-2 sm:py-3 rounded-xl font-semibold text-xs sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
+                >
+                  Sign In
+                </Button>
+              )}
             </div>
 
             {/* Mobile Navigation */}
@@ -417,24 +486,46 @@ const SoulFoodLanding = () => {
             <div className="sm:hidden border-t border-orange-200 py-4 px-3 bg-white/95">
               <nav className="flex flex-col space-y-3">
                 <a href="#series" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                  📚 Explore Series
+                  Explore Series
                 </a>
                 <a href="#series" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                  🤲 Free Sample
+                  Free Sample
                 </a>
                 <a href="/gift-certificates" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors">
-                  🔔 Gift Certificates
+                  Gift Certificates
                 </a>
                 <a href="/quick-order" className="text-slate-700 hover:text-orange-600 font-medium py-2 px-3 rounded-lg hover:bg-orange-50 transition-colors">
-                  🍽️ Quick Order
+                  Quick Order
                 </a>
+                {currentUser && (
+                  <>
+                    <a href="/my-library" className="text-orange-700 hover:text-orange-800 font-medium py-2 px-3 rounded-lg bg-orange-50 hover:bg-orange-100 transition-colors">
+                      My Library
+                    </a>
+                    {(currentUser.role === 'admin' || currentUser.role === 'instructor') && (
+                      <a href={currentUser.role === 'admin' ? '/admin' : '/instructor-toolbox'} className="text-purple-700 hover:text-purple-800 font-medium py-2 px-3 rounded-lg bg-purple-50 hover:bg-purple-100 transition-colors">
+                        {currentUser.role === 'admin' ? 'Admin Console' : 'Instructor Toolbox'}
+                      </a>
+                    )}
+                  </>
+                )}
                 <hr className="border-orange-200" />
-                <Button
-                  onClick={handleLogin}
-                  className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white py-3 rounded-xl font-semibold shadow-lg"
-                >
-                  Sign In
-                </Button>
+                {currentUser ? (
+                  <Button
+                    onClick={handleLogout}
+                    className="w-full bg-slate-200 hover:bg-red-100 text-slate-700 hover:text-red-600 py-3 rounded-xl font-semibold"
+                    data-testid="mobile-logout-btn"
+                  >
+                    Sign Out
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleLogin}
+                    className="w-full bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white py-3 rounded-xl font-semibold shadow-lg"
+                  >
+                    Sign In
+                  </Button>
+                )}
               </nav>
             </div>
           )}

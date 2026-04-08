@@ -113,7 +113,7 @@ const LandingPage = () => {
     setShowLoginModal(true);
   };
   
-  // Check if user is logged in
+  // Check if user is logged in — reactive to localStorage changes
   const [currentUser, setCurrentUser] = useState(() => {
     const user = localStorage.getItem('soul_food_user');
     if (user) {
@@ -126,6 +126,34 @@ const LandingPage = () => {
     }
     return null;
   });
+  
+  // Re-read auth state when user navigates back from login/2FA/reset
+  useEffect(() => {
+    const syncAuth = () => {
+      const user = localStorage.getItem('soul_food_user');
+      if (user) {
+        try {
+          const parsed = JSON.parse(user);
+          setCurrentUser(prev => {
+            if (!prev || prev.id !== parsed.id) return parsed;
+            return prev;
+          });
+        } catch (e) { setCurrentUser(null); }
+      } else {
+        setCurrentUser(null);
+      }
+    };
+    
+    window.addEventListener('storage', syncAuth);
+    window.addEventListener('auth-changed', syncAuth);
+    // Also check periodically for same-tab login (storage events don't fire same-tab)
+    const interval = setInterval(syncAuth, 1000);
+    return () => {
+      window.removeEventListener('storage', syncAuth);
+      window.removeEventListener('auth-changed', syncAuth);
+      clearInterval(interval);
+    };
+  }, []);
   
   const handleLogout = () => {
     localStorage.removeItem('soul_food_token');
@@ -159,14 +187,64 @@ const LandingPage = () => {
                 <p className="text-xs text-slate-600">Kingdom Living Project</p>
               </div>
             </div>
-            <Button
-              onClick={handleLogin}
-              data-testid="login-button"
-              className="bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 text-white px-4 sm:px-6 py-2.5 rounded-xl font-semibold transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              <span className="hidden sm:inline">Sign In with Google</span>
-              <span className="sm:hidden">Sign In</span>
-            </Button>
+            {currentUser ? (
+              <div className="flex items-center gap-2" data-testid="user-menu">
+                <Button
+                  onClick={() => window.location.href = '/quick-order'}
+                  variant="outline"
+                  className="hidden sm:flex text-slate-700 border-slate-300 hover:bg-slate-100"
+                  data-testid="quick-order-btn-auth"
+                >
+                  Quick Order
+                </Button>
+                <ShoppingCart />
+                <Button
+                  onClick={() => window.location.href = '/my-library'}
+                  variant="outline"
+                  className="text-slate-700 border-slate-300 hover:bg-slate-100"
+                  data-testid="my-library-btn"
+                >
+                  My Library
+                </Button>
+                {(currentUser.role === 'admin' || currentUser.role === 'instructor') && (
+                  <Button
+                    onClick={() => window.location.href = currentUser.role === 'admin' ? '/admin' : '/instructor-toolbox'}
+                    variant="outline"
+                    className="text-purple-700 border-purple-300 hover:bg-purple-50"
+                    data-testid="admin-btn"
+                  >
+                    {currentUser.role === 'admin' ? 'Admin' : 'Toolbox'}
+                  </Button>
+                )}
+                <Button
+                  onClick={handleLogout}
+                  variant="ghost"
+                  className="text-slate-500 hover:text-red-600"
+                  data-testid="logout-btn"
+                >
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => window.location.href = '/quick-order'}
+                  variant="outline"
+                  className="hidden sm:flex text-slate-700 border-slate-300 hover:bg-slate-100"
+                  data-testid="quick-order-btn"
+                >
+                  Quick Order
+                </Button>
+                <ShoppingCart />
+                <Button
+                  onClick={handleLogin}
+                  data-testid="login-button"
+                  className="bg-gradient-to-r from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 text-white px-4 sm:px-6 py-2.5 rounded-xl font-semibold transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  Sign In
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </header>

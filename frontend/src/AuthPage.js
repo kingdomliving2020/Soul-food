@@ -112,6 +112,7 @@ const AuthPage = () => {
       localStorage.setItem('soul_food_token', data.access_token);
       localStorage.setItem('soul_food_user', JSON.stringify(data.user));
       localStorage.setItem('soul_food_session', JSON.stringify(data.session_config));
+      window.dispatchEvent(new Event('auth-changed'));
       
       toast.success(data.session_config.message);
       
@@ -170,6 +171,7 @@ const AuthPage = () => {
       localStorage.setItem('soul_food_token', data.access_token);
       localStorage.setItem('soul_food_user', JSON.stringify(data.user));
       localStorage.setItem('soul_food_session', JSON.stringify(data.session_config));
+      window.dispatchEvent(new Event('auth-changed'));
       
       // Check for password expiry warnings
       if (data.password_expired) {
@@ -260,6 +262,7 @@ const AuthPage = () => {
       
       localStorage.setItem('soul_food_token', data.access_token);
       localStorage.setItem('soul_food_user', JSON.stringify(data.user));
+      window.dispatchEvent(new Event('auth-changed'));
       
       toast.success(data.session_config?.message || `Welcome to Soul Food, ${data.user.name}!`);
       

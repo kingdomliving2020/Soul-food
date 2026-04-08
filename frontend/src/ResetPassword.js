@@ -52,6 +52,7 @@ const ResetPassword = () => {
         localStorage.setItem('soul_food_token', data.access_token);
         localStorage.setItem('soul_food_user', JSON.stringify(data.user));
         localStorage.setItem('soul_food_session', JSON.stringify(data.session_config));
+        window.dispatchEvent(new Event('auth-changed'));
         setSuccess(true);
         toast.success('Password reset! Logging you in...');
         setTimeout(() => {
