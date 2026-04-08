@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Check } from "lucide-react";
 import ShoppingCart from './ShoppingCart';
 import { useCart } from './CartContext';
 import ProductSelectionModal from './ProductSelectionModal';
@@ -532,149 +533,101 @@ const SoulFoodLanding = () => {
         </div>
       </header>
 
-      {/* Post-Easter Launch Banner */}
-      <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-900 text-white">
-        {/* Jump-to Navigation Bar */}
-        <div className="border-b border-purple-700/50">
-          <div className="container mx-auto px-4">
-            <nav className="flex items-center justify-center gap-1 sm:gap-4 py-2 overflow-x-auto text-xs sm:text-sm">
-              <a href="#about-us" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🎧 About Us</a>
-              <span className="text-purple-400 hidden sm:inline">|</span>
-              <a href="#series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">📚 Holiday Series</a>
-              <span className="text-purple-400 hidden sm:inline">|</span>
-              <a href="#breakfast-series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🍳 Breakfast</a>
-              <span className="text-purple-400 hidden sm:inline">|</span>
-              <a href="#gaming" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">🎮 Games</a>
-              <span className="text-purple-400 hidden sm:inline">|</span>
-              <a href="#bulk-orders" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">📦 Bulk</a>
-            </nav>
-          </div>
-        </div>
-        
-        {/* Main Promotion - He Is Risen */}
-        <div id="resurrection-promo" className="container mx-auto px-4 py-6 sm:py-8">
-          <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-10">
-            {/* Left - Holiday Cover Image */}
-            <div className="w-48 sm:w-56 lg:w-64 flex-shrink-0">
-              <img 
-                src="/images/holiday-cover-ae.png" 
-                alt="Holiday Series - The 4 C's" 
-                className="w-full rounded-xl shadow-2xl border-4 border-white/20"
-              />
-            </div>
-            
-            {/* Center - Marketing Message */}
-            <div className="flex-1 text-center lg:text-left">
-              <Badge className="mb-3 bg-amber-500 text-white px-4 py-1.5 text-xs sm:text-sm font-bold">
-                ✝️ HE IS RISEN! Soul Food Is LIVE!
-              </Badge>
-              
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 leading-tight">
-                Truth, Served Daily<br className="hidden sm:block" />
-                <span className="text-amber-300">Start your journey with the Holiday Series</span>
-              </h2>
-              
-              <p className="text-purple-200 text-base sm:text-lg mb-4 max-w-xl mx-auto lg:mx-0">
-                "From Covenant to Cross to Comforter—walk the story that changed everything."
-              </p>
-              
-              {/* Shipping Info - Updated */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 max-w-md mx-auto lg:mx-0 border border-purple-400/30">
-                <p className="text-amber-300 font-bold text-sm sm:text-base mb-1">📖 Digital downloads available instantly</p>
-                <p className="text-purple-100 text-xs sm:text-sm">Physical books ship within 2-3 weeks of order</p>
-                <p className="text-purple-200 text-xs mt-1">Pre-orders include complimentary digital access while you wait</p>
-                <p className="text-purple-300 text-xs mt-2 italic">🌍 International: Contact us for delivery estimates</p>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-                <Button
-                  onClick={() => window.location.href = '/quick-order'}
-                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-6 py-3 rounded-xl font-bold shadow-xl"
-                >
-                  Shop Now →
-                </Button>
-                <Button
-                  onClick={() => document.getElementById('series')?.scrollIntoView({ behavior: 'smooth' })}
-                  variant="outline"
-                  className="border-2 border-white/50 text-white hover:bg-white/10 px-6 py-3 rounded-xl font-semibold"
-                >
-                  Learn More
-                </Button>
-              </div>
-            </div>
-            
-            {/* Right - Pentecost Sale Countdown */}
-            <div className="text-center lg:text-right">
-              <p className="text-purple-300 text-sm mb-2 font-medium">Early Bird Sale ends Pentecost</p>
-              <ResurrectionCountdown />
-              <p className="text-purple-400 text-xs mt-2">$3 off pre-orders + 20% off Game Passes</p>
-            </div>
-          </div>
+      {/* Jump-to Navigation Bar */}
+      <div className="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-900 border-b border-purple-700/50">
+        <div className="container mx-auto px-4">
+          <nav className="flex items-center justify-center gap-1 sm:gap-4 py-2 overflow-x-auto text-xs sm:text-sm text-white">
+            <a href="#bundle-offer" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">Bundle Deal</a>
+            <span className="text-purple-400 hidden sm:inline">|</span>
+            <a href="#series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">Holiday Series</a>
+            <span className="text-purple-400 hidden sm:inline">|</span>
+            <a href="#breakfast-series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">Breakfast</a>
+            <span className="text-purple-400 hidden sm:inline">|</span>
+            <a href="#gaming" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">Games</a>
+            <span className="text-purple-400 hidden sm:inline">|</span>
+            <a href="#about-us" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">About</a>
+          </nav>
         </div>
       </div>
 
-      {/* Hero Section with Background Image */}
-      <section className="relative py-16 sm:py-24 px-4 sm:px-6 overflow-hidden">
+      {/* Hero Section — Conversion-Focused Above the Fold */}
+      <section className="relative py-12 sm:py-20 px-4 sm:px-6 overflow-hidden" data-testid="hero-section">
         <div className="absolute inset-0 z-0">
           <div 
-            className="w-full h-full bg-cover bg-center opacity-40"
+            className="w-full h-full bg-cover bg-center opacity-30"
             style={{
               backgroundImage: "url('https://images.unsplash.com/photo-1759127481171-30a27de310ad?w=1200&h=800&fit=crop&crop=center')"
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-900/60 via-indigo-900/50 to-purple-900/60" />
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900" />
         </div>
         
-        <div className="relative z-10 container mx-auto text-center max-w-5xl">
-          {/* Soft Launch Badge */}
-          <Badge className="mb-6 bg-gradient-to-r from-emerald-600 to-teal-700 text-white px-6 py-2 text-sm font-bold shadow-xl">
-            ✝️ HE IS RISEN! SOUL FOOD IS LIVE!
-          </Badge>
-          
-          <h2 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500 bg-clip-text text-transparent drop-shadow-lg">
-              Soul Food
-            </span>
-            <br />
-            <span className="text-white text-3xl sm:text-4xl lg:text-5xl drop-shadow-lg">
-              Spiritual Nourishment for Every Season
-            </span>
-          </h2>
-          
-          <p className="text-lg sm:text-xl text-white/95 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-            Holiday Series is live! Break*fast & Lunch pre-orders now open — save $3 on full workbooks.
-            Game Passes are 20% off, no coupon needed, through Pentecost!
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button
-              onClick={() => document.getElementById('series')?.scrollIntoView({ behavior: 'smooth' })}
-              className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white px-10 py-4 rounded-xl text-lg font-bold shadow-2xl hover:shadow-orange-300 transform hover:scale-105 transition-all"
-            >
-              Explore Series
-            </Button>
-            <Button
-              onClick={() => document.getElementById('series')?.scrollIntoView({ behavior: 'smooth' })}
-              variant="outline"
-              className="w-full sm:w-auto border-2 border-white/80 text-white hover:bg-white/10 px-10 py-4 rounded-xl text-lg font-semibold shadow-lg backdrop-blur-sm"
-            >
-              Try Free Sample
-            </Button>
-          </div>
-
-          {/* Launch Status */}
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <div className="inline-flex items-center space-x-2 bg-white/90 backdrop-blur-sm px-5 py-3 rounded-full shadow-2xl border border-emerald-300">
-              <span className="text-lg">✝️</span>
-              <span className="text-slate-800 font-semibold text-sm sm:text-base">
-                Holiday available now! Pre-orders open for Break*fast & Lunch
-              </span>
+        <div className="relative z-10 container mx-auto max-w-5xl">
+          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-14">
+            {/* Left — Message */}
+            <div className="flex-1 text-center lg:text-left">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-5 leading-tight text-white" data-testid="hero-headline">
+                Bible Study That Sticks —<br />
+                <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
+                  For Groups, Families & Solo Learners
+                </span>
+              </h1>
+              
+              <ul className="space-y-3 mb-6 text-base sm:text-lg text-purple-100 max-w-lg mx-auto lg:mx-0" data-testid="hero-benefits">
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 text-xs font-bold text-white">1</span>
+                  <span>Interactive workbooks with built-in discussion guides</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 text-xs font-bold text-white">2</span>
+                  <span>Online trivia games that reinforce every lesson</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 text-xs font-bold text-white">3</span>
+                  <span>Printable cards, maps & trackers for group sessions</span>
+                </li>
+              </ul>
+              
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-5" data-testid="hero-ctas">
+                <Button
+                  onClick={() => document.getElementById('bundle-offer')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-2xl hover:shadow-orange-400/30 transform hover:scale-105 transition-all"
+                  data-testid="hero-get-bundle-btn"
+                >
+                  Get the Bundle
+                </Button>
+                <Button
+                  onClick={() => window.location.href = '/lesson/free-sample'}
+                  variant="outline"
+                  className="border-2 border-white/70 text-white hover:bg-white/10 px-8 py-4 rounded-xl text-lg font-semibold backdrop-blur-sm"
+                  data-testid="hero-free-lesson-btn"
+                >
+                  Start Free Lesson
+                </Button>
+              </div>
+              
+              <p className="text-purple-300/90 text-sm italic" data-testid="hero-denomination-note">
+                Non-denominational and designed for all Christian backgrounds
+              </p>
+              
+              {/* Sale Countdown */}
+              <div className="mt-5 inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
+                <span className="text-amber-400 text-xs font-semibold">Early Bird Sale ends Pentecost</span>
+                <ResurrectionCountdown />
+              </div>
             </div>
-            <div className="inline-flex items-center space-x-2 bg-purple-100/90 backdrop-blur-sm px-5 py-3 rounded-full shadow-xl border border-purple-300">
-              <span className="text-lg">🎮</span>
-              <span className="text-purple-800 font-semibold text-sm">
-                Game Passes 20% Off — No Coupon Needed!
-              </span>
+            
+            {/* Right — Book Cover + Social Proof */}
+            <div className="flex-shrink-0 text-center">
+              <img 
+                src="/images/holiday-cover-ae.png" 
+                alt="Soul Food Holiday Series" 
+                className="w-44 sm:w-56 lg:w-64 rounded-xl shadow-2xl border-4 border-white/20 mx-auto"
+              />
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                <Badge className="bg-white/15 text-white/90 border border-white/20 text-xs px-3 py-1">Digital Instant Access</Badge>
+                <Badge className="bg-white/15 text-white/90 border border-white/20 text-xs px-3 py-1">Print + Ship</Badge>
+              </div>
             </div>
           </div>
         </div>
@@ -1150,6 +1103,94 @@ const SoulFoodLanding = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
+      </section>
+
+      {/* === BUNDLE OFFER SECTION === */}
+      <section id="bundle-offer" className="py-14 sm:py-20 px-4 sm:px-6 bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 scroll-mt-24" data-testid="bundle-offer-section">
+        <div className="container mx-auto max-w-4xl">
+          <div className="relative bg-white rounded-2xl border-2 border-amber-300 shadow-2xl overflow-hidden">
+            {/* Best Value Badge */}
+            <div className="absolute top-0 right-0 z-10">
+              <div className="bg-gradient-to-l from-red-600 to-orange-600 text-white px-6 py-2 text-sm font-bold rounded-bl-xl shadow-lg" data-testid="best-value-badge">
+                Best Value
+              </div>
+            </div>
+            
+            <div className="p-6 sm:p-10">
+              <div className="flex flex-col lg:flex-row gap-8 items-center">
+                {/* Left — Bundle Details */}
+                <div className="flex-1">
+                  <Badge className="bg-amber-100 text-amber-800 mb-3 text-xs font-semibold">Starter Bundle</Badge>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2" data-testid="bundle-title">
+                    4C's + Break*fast Starter Bundle
+                  </h3>
+                  <p className="text-slate-500 mb-5 text-sm sm:text-base">Everything you need to launch your first two Soul Food study seasons.</p>
+                  
+                  {/* What's Included */}
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3.5 h-3.5 text-purple-700" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-800 text-sm">Holiday 4C's — Full Digital Workbook</p>
+                        <p className="text-xs text-slate-500">Covenant, Cradle, Cross, Comforter — 12 interactive lessons</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3.5 h-3.5 text-purple-700" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-800 text-sm">Break*fast Series — Full Digital Workbook</p>
+                        <p className="text-xs text-slate-500">Morning-themed devotionals — Prayer, Through & Worship modules</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="w-3.5 h-3.5 text-amber-700" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-slate-800 text-sm">Bonus: Online Game Access</p>
+                        <p className="text-xs text-slate-500">Trivia, GRinCH bingo & Jeopardy-style challenges for both series</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Who It's For */}
+                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 mb-5">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Who it's for</p>
+                    <p className="text-sm text-slate-700">Small groups, couples, individual learners, and Sunday school leaders who want a full year of structured study with engaging activities.</p>
+                  </div>
+                </div>
+
+                {/* Right — Price + CTA */}
+                <div className="w-full lg:w-72 flex-shrink-0 text-center lg:text-left">
+                  <div className="bg-gradient-to-br from-purple-50 to-amber-50 rounded-xl p-6 border border-purple-200">
+                    <p className="text-sm text-slate-500 line-through mb-1">$26.98 if bought separately</p>
+                    <div className="flex items-baseline justify-center lg:justify-start gap-1.5 mb-1">
+                      <span className="text-4xl font-bold text-slate-900" data-testid="bundle-price">$21.99</span>
+                      <span className="text-sm text-slate-500">USD</span>
+                    </div>
+                    <Badge className="bg-green-100 text-green-800 text-xs mb-4">Save $4.99</Badge>
+                    
+                    <Button
+                      onClick={() => {
+                        addToCart({ id: 'starter-bundle-4cs-bkft', name: "4C's + Break*fast Starter Bundle", price: 21.99, quantity: 1, isBundle: true });
+                        toast.success('Bundle added to cart!');
+                      }}
+                      className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-4 rounded-xl text-base font-bold shadow-xl hover:shadow-orange-300/40 transform hover:scale-[1.03] transition-all mb-3"
+                      data-testid="bundle-buy-btn"
+                    >
+                      Buy Now — $21.99
+                    </Button>
+                    <p className="text-xs text-slate-400 text-center">Instant digital delivery</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

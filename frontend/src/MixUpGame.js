@@ -570,6 +570,30 @@ const MixUpGame = () => {
                   Back to Home
                 </Button>
               </div>
+              
+              {/* Post-Game Conversion Prompt */}
+              <div className="mt-8 p-6 bg-gradient-to-r from-purple-50 to-amber-50 rounded-xl border border-purple-200" data-testid="post-game-conversion">
+                <p className="text-lg font-semibold text-slate-800 mb-2">Enjoyed this?</p>
+                <p className="text-sm text-slate-600 mb-4">Unlock full lessons and interactive experiences with the complete study workbooks.</p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <Button
+                    onClick={() => navigate('/quick-order')}
+                    className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-bold px-6 py-3"
+                    data-testid="post-game-full-access-btn"
+                  >
+                    Get Full Access
+                  </Button>
+                  <Button
+                    onClick={() => { navigate('/'); setTimeout(() => document.getElementById('bundle-offer')?.scrollIntoView({ behavior: 'smooth' }), 500); }}
+                    variant="outline"
+                    className="border-2 border-amber-500 text-amber-700 hover:bg-amber-50 font-bold px-6 py-3"
+                    data-testid="post-game-view-bundle-btn"
+                  >
+                    View Bundle
+                  </Button>
+                </div>
+              </div>
+              
               <GameDisclaimer />
             </CardContent>
           </Card>
