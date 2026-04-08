@@ -26,7 +26,16 @@ logger = logging.getLogger(__name__)
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY')
 SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'noreply@kingdom-soul.com')
 SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL', 'support@kingdom-soul.com')
-SITE_URL = os.environ.get('FRONTEND_URL', 'https://kingdom-soul.com')
+SITE_URL = os.environ.get('SITE_URL', os.environ.get('FRONTEND_URL', 'https://kingdom-soul.com'))
+
+def get_site_url(request_origin: str = None) -> str:
+    """Get the correct site URL, preferring request origin for production correctness"""
+    if request_origin:
+        if 'kingdom-soul.com' in request_origin:
+            return 'https://kingdom-soul.com'
+        if request_origin.startswith('http'):
+            return request_origin.rstrip('/')
+    return SITE_URL
 
 # Initialize Resend
 if RESEND_API_KEY:

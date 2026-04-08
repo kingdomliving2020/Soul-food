@@ -1005,6 +1005,11 @@ async def login(credentials: UserLogin, request: Request):
             "access_level": user.get("access_level", "free"),
             "rewards_points": user.get("rewards_points", 0),
             "tfa_enabled": tfa_enabled
+        },
+        "session_config": {
+            "timeout_mins": session_timeout,
+            "role": role,
+            "message": f"Session started for {user.get('name', 'User')}"
         }
     }
     
@@ -1166,16 +1171,21 @@ async def forgot_password(req: ForgotPasswordRequest, background_tasks: Backgrou
     # Create reset token
     raw_token = await create_reset_token(user["id"], email)
     
-    # Send email
+    # Send email — derive URL from request origin so production emails point to production
     try:
-        SITE_URL = os.environ.get('SITE_URL', os.environ.get('FRONTEND_URL', ''))
+        # Use SITE_URL env var (production domain), then request origin as fallback
+        origin = request.headers.get('origin', '') or request.headers.get('referer', '')
+        if origin and 'kingdom-soul.com' in origin:
+            SITE_URL = 'https://kingdom-soul.com'
+        else:
+            SITE_URL = os.environ.get('SITE_URL', os.environ.get('FRONTEND_URL', 'https://kingdom-soul.com'))
         reset_link = f"{SITE_URL}/reset-password?token={raw_token}"
         
         from email_service import send_email
         await send_email(
-            to_email=email,
+            to=email,
             subject="Soul Food - Password Reset",
-            html_content=f"""
+            html=f"""
             <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px;">
                 <h2 style="color: #7c3aed;">Password Reset Request</h2>
                 <p>Hi {user.get('name', 'there')},</p>

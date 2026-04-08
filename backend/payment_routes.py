@@ -1531,7 +1531,7 @@ async def get_checkout_status(session_id: str):
                         await db.gift_certificates.insert_one(gift_cert)
                         
                         # Send email to recipient
-                        FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://kingdom-soul.com')
+                        FRONTEND_URL = os.environ.get('SITE_URL', os.environ.get('FRONTEND_URL', 'https://kingdom-soul.com'))
                         recipient_html = f"""
                         <div style="text-align: center; padding: 20px;">
                             <h2 style="color: #1f2937;">🎁 You've Received a Gift!</h2>
@@ -1873,6 +1873,7 @@ async def stripe_webhook(request: Request):
                             order_id=order_number,
                             items=items,
                             total=transaction.get("total_amount", 0),
+                            download_links=[{"token": dl["token"], "product_name": dl["name"]} for dl in download_links_created] if download_links_created else None,
                             customer_name=transaction.get("customer_name"),
                             audio_codes=audio_codes_generated if audio_codes_generated else None
                         )

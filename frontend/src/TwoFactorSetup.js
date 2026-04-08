@@ -154,6 +154,18 @@ const TwoFactorSetup = () => {
                     Skip for now
                   </Button>
                 )}
+                {(user.role === 'instructor' || user.role === 'admin') && (
+                  <p className="text-center text-xs text-slate-400 mt-2">
+                    2FA is recommended for {user.role} accounts.{' '}
+                    <button 
+                      onClick={() => navigate(location.state?.returnTo || '/')}
+                      className="text-purple-500 underline hover:text-purple-700"
+                      data-testid="skip-2fa-link"
+                    >
+                      Continue without 2FA
+                    </button>
+                  </p>
+                )}
               </div>
             )}
 

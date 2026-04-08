@@ -1,0 +1,77 @@
+{
+  "summary": "Iteration 14 - Critical bug fixes verification. All 7 test items passed: Login returns session_config, password reset email sends successfully, SITE_URL is production domain, all 4 game files accessible, order success page works, admin 2FA setup shows 'Continue without 2FA' link, Instructor Toolbox shows all 4 offline game files.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_critical_bugs.py",
+    "/app/test_reports/pytest/pytest_iteration_14.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "auth_routes_v2.py: Lines 996-1014 - login response correctly includes session_config with timeout_mins, role, message",
+    "auth_routes_v2.py: Lines 1174-1206 - password reset uses correct send_email() params (to= not to_email=)",
+    "email_service.py: Lines 29-38 - SITE_URL correctly defaults to https://kingdom-soul.com via get_site_url()",
+    "TwoFactorSetup.js: Lines 157-167 - 'Continue without 2FA' link visible for admin/instructor roles",
+    "InstructorToolbox.js: Lines 424-461 - offlineGameFiles array correctly defines all 4 files",
+    "InstructorToolbox.js: Lines 463-541 - renderGamePacks() renders download cards with correct file URLs"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_critical_bugs.py"
+  ],
+  "success_rate": {
+    "backend": "100% (9/9 pytest tests passed)",
+    "frontend": "100% (all UI tests passed)"
+  },
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123!",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All critical bug fixes verified. Login flow works: credentials -> 2FA setup page -> 'Continue without 2FA' link available for admin. Instructor Toolbox accessible after login with all 4 offline game files displayed.",
+  "features_verified": {
+    "login_session_config": {
+      "status": "WORKING",
+      "details": "POST /api/auth/login returns session_config object with timeout_mins, role, message keys"
+    },
+    "password_reset_email": {
+      "status": "WORKING",
+      "details": "POST /api/auth/forgot-password returns 200 OK, backend logs show 'Email sent successfully: Soul Food - Password Reset'"
+    },
+    "site_url_production": {
+      "status": "WORKING",
+      "details": "SITE_URL env var is 'https://kingdom-soul.com', not preview URL"
+    },
+    "game_files_accessible": {
+      "status": "WORKING",
+      "details": "All 4 files return HTTP 200: ie-grinch-bingo-game-pk.pdf, ie-grinch-bingo-card-pk.pdf, ie-passport-trek-game.pdf, map-journey-reference-index.docx"
+    },
+    "order_success_page": {
+      "status": "WORKING",
+      "details": "/order-success?order=TEST-FAKE-ORDER shows 'No downloads found' message, not redirected to homepage"
+    },
+    "admin_2fa_skip_link": {
+      "status": "WORKING",
+      "details": "After admin login, redirected to /2fa-setup with visible 'Continue without 2FA' link"
+    },
+    "instructor_toolbox_game_files": {
+      "status": "WORKING",
+      "details": "Instructor Toolbox shows 'Offline Game Files' card with 4 Files badge, all 4 files displayed with Download buttons"
+    }
+  },
+  "pytest_results": {
+    "total_tests": 9,
+    "passed": 9,
+    "failed": 0,
+    "test_file": "/app/backend/tests/test_critical_bugs.py",
+    "junit_xml": "/app/test_reports/pytest/pytest_iteration_14.xml"
+  },
+  "mocked_apis": {
+    "none": "All integrations are live (Resend email, MongoDB, Stripe)"
+  }
+}
