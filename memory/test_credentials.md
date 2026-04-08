@@ -4,7 +4,7 @@
 - Email: `overflowharvest@gmail.com`
 - Password: `Admin123!`
 - Role: admin (full access to admin panel)
-- Note: Requires 2FA setup on first login (email-only 2FA)
+- Note: Requires 2FA setup on login, but can be skipped via "Continue without 2FA" link
 
 ## Registration
 Use `/register` to create new test accounts.
@@ -45,3 +45,4 @@ Use `/register` to create new test accounts.
 - Stripe: Live mode, API key in backend/.env
 - Resend: Configured, kingdom-soul.com verified
 - MongoDB: Connection string in backend/.env
+- SITE_URL: https://kingdom-soul.com (used for all email links)
