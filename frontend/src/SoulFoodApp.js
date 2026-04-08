@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
 import ShoppingCart from './ShoppingCart';
+import ExitIntentPopup from './ExitIntentPopup';
 import { useCart } from './CartContext';
 import ProductSelectionModal from './ProductSelectionModal';
 import ChatbotWidget from './ChatbotWidget';
@@ -2423,6 +2424,9 @@ const SoulFoodLanding = () => {
       
       {/* Chatbot Support Widget */}
       <ChatbotWidget />
+      
+      {/* Exit-Intent Popup */}
+      <ExitIntentPopup />
     </div>
   );
 };

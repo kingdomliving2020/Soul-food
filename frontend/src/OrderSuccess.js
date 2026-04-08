@@ -200,7 +200,7 @@ const OrderSuccess = () => {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Success Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8" data-testid="order-success-header">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="w-12 h-12 text-green-600" />
           </div>
@@ -213,6 +213,15 @@ const OrderSuccess = () => {
           {orderId && (
             <p className="text-sm text-gray-500 mt-2">Order ID: {orderId}</p>
           )}
+        </div>
+
+        {/* Access Your Content - Primary CTA */}
+        <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl shadow-lg p-6 mb-6 text-white" data-testid="access-content-section">
+          <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+            <Download className="w-5 h-5" />
+            Access Your Content
+          </h2>
+          <p className="text-green-100 text-sm mb-4">Your digital content is ready. Download now or access anytime from your library.</p>
         </div>
 
         {/* Download Links Section - Primary for Free Orders */}
@@ -343,6 +352,39 @@ const OrderSuccess = () => {
           </div>
         )}
 
+        {/* Create Account to Save Library (for guests) */}
+        {!localStorage.getItem('soul_food_token') && (
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-6 border-2 border-purple-200" data-testid="create-account-prompt">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                <BookOpen className="w-6 h-6 text-purple-600" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-slate-800 text-lg mb-1">Create Account to Save Your Library</h3>
+                <p className="text-sm text-slate-600 mb-4">
+                  Save your purchases, track downloads, earn rewards points, and get instant access to future orders.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => navigate('/auth', { state: { returnTo: '/my-library', mode: 'register' } })}
+                    className="flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors"
+                    data-testid="create-account-btn"
+                  >
+                    <ArrowRight className="w-4 h-4" />
+                    Create Free Account
+                  </button>
+                  <button
+                    onClick={() => navigate('/auth', { state: { returnTo: '/my-library' } })}
+                    className="text-purple-600 hover:text-purple-700 text-sm font-medium"
+                  >
+                    Already have an account? Sign In
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Next Steps */}
         <div className="bg-gradient-to-r from-purple-600 to-orange-500 rounded-xl shadow-lg p-6 text-white">
           <h2 className="text-xl font-bold mb-3">What's Next?</h2>
@@ -360,13 +402,22 @@ const OrderSuccess = () => {
               Try our Scripture Games to reinforce your learning!
             </li>
           </ul>
-          <button
-            onClick={() => navigate('/')}
-            data-testid="return-home-btn"
-            className="bg-white text-purple-600 font-bold py-2 px-6 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            Return to Home
-          </button>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => navigate('/my-library')}
+              data-testid="go-to-library-btn"
+              className="bg-white text-purple-600 font-bold py-2 px-6 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              Go to My Library
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              data-testid="return-home-btn"
+              className="bg-white/20 text-white font-semibold py-2 px-6 rounded-lg hover:bg-white/30 transition-colors"
+            >
+              Return to Home
+            </button>
+          </div>
         </div>
 
         {/* Guest Order Notice */}

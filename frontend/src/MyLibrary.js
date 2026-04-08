@@ -321,18 +321,29 @@ const MyLibrary = () => {
               </CardHeader>
               <CardContent className="p-6">
                 {purchases.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="w-20 h-20 mx-auto rounded-full bg-slate-100 flex items-center justify-center mb-4">
-                      <Book className="w-10 h-10 text-slate-400" />
+                  <div className="text-center py-12" data-testid="library-empty-state">
+                    <div className="w-20 h-20 mx-auto rounded-full bg-purple-50 flex items-center justify-center mb-4">
+                      <Book className="w-10 h-10 text-purple-300" />
                     </div>
-                    <h3 className="text-lg font-semibold text-slate-600 mb-2">No purchases yet</h3>
-                    <p className="text-slate-500 mb-6">Start your spiritual journey with Soul Food today!</p>
-                    <Button
-                      onClick={() => navigate('/quick-order')}
-                      className="bg-gradient-to-r from-purple-600 to-indigo-600"
-                    >
-                      Browse Store
-                    </Button>
+                    <h3 className="text-lg font-semibold text-slate-700 mb-2">You don't have any content yet</h3>
+                    <p className="text-slate-500 mb-6 max-w-sm mx-auto">Browse our study workbooks and start your journey today.</p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <Button
+                        onClick={() => navigate('/quick-order')}
+                        className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold px-6"
+                        data-testid="browse-lessons-btn"
+                      >
+                        Browse Lessons
+                      </Button>
+                      <Button
+                        onClick={() => { navigate('/'); setTimeout(() => document.getElementById('bundle-offer')?.scrollIntoView({ behavior: 'smooth' }), 500); }}
+                        variant="outline"
+                        className="border-2 border-amber-500 text-amber-700 hover:bg-amber-50 font-semibold px-6"
+                        data-testid="get-starter-bundle-btn"
+                      >
+                        Get Starter Bundle
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-4">
