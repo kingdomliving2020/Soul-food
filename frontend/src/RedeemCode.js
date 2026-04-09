@@ -41,7 +41,21 @@ const RedeemCode = () => {
     setOrderInfo(null);
     try {
       const res = await fetch(`${BACKEND_URL}/api/orders/verify-claim?code=${encodeURIComponent(c)}`);
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        // If body was already consumed, use status code to determine error
+        if (!res.ok) {
+          if (res.status === 404) {
+            throw new Error('Order not found. Please check your order number.');
+          } else if (res.status === 400) {
+            throw new Error('This order has not been paid.');
+          }
+          throw new Error('Failed to verify order. Please try again.');
+        }
+        throw new Error('Failed to process response');
+      }
       if (!res.ok) throw new Error(data.detail || 'Order not found');
       setOrderInfo(data);
       if (data.already_claimed) {
@@ -63,22 +77,47 @@ const RedeemCode = () => {
     setClaiming(true);
     setError('');
     try {
+      const controller = new AbortController();
       const res = await fetch(`${BACKEND_URL}/api/orders/claim`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ order_number: code.trim().toUpperCase() })
+        body: JSON.stringify({ order_number: code.trim().toUpperCase() }),
+        signal: controller.signal
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Claim failed');
+      
+      let data;
+      try {
+        data = await res.json();
+      } catch (parseErr) {
+        // If body was already consumed, use status code to determine error
+        if (!res.ok) {
+          if (res.status === 403) {
+            throw new Error('This order was placed with a different email. Please log in with the email used during purchase.');
+          } else if (res.status === 401) {
+            throw new Error('Please log in to claim this order.');
+          } else if (res.status === 404) {
+            throw new Error('Order not found.');
+          } else if (res.status === 409) {
+            throw new Error('This order has already been claimed.');
+          }
+          throw new Error('Failed to claim order. Please try again.');
+        }
+        throw new Error('Failed to process response');
+      }
+      
+      if (!res.ok) {
+        throw new Error(data.detail || data.message || 'Claim failed');
+      }
       
       setClaimed(true);
       toast.success('Order claimed! Your content is in My Library.');
     } catch (err) {
-      setError(err.message);
-      toast.error(err.message);
+      const errorMsg = err.message || 'An error occurred while claiming the order';
+      setError(errorMsg);
+      toast.error(errorMsg);
     } finally {
       setClaiming(false);
     }

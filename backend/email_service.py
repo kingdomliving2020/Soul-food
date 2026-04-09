@@ -222,7 +222,17 @@ def get_order_confirmation_template(
     
     {audio_codes_html}
     
-    <div style="margin-top: 30px; text-align: center;">
+    <div style="margin-top: 30px; padding: 20px; background-color: #faf5ff; border-radius: 8px; border: 2px dashed #8b5cf6; text-align: center;">
+        <h3 style="margin: 0 0 10px 0; color: #6b21a8; font-size: 18px;">Save Your Purchase to Your Account</h3>
+        <p style="margin: 0 0 5px 0; color: #7c3aed; font-size: 14px;">Create a free account and redeem your order to access content anytime from <strong>My Library</strong>.</p>
+        <p style="margin: 0 0 15px 0; color: #6b7280; font-size: 13px;">Your order number: <strong style="font-family: monospace; font-size: 15px; color: #1f2937;">{order_id}</strong></p>
+        <a href="{SITE_URL}/redeem?code={order_id}" 
+           style="display: inline-block; padding: 14px 30px; background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+            Redeem Your Purchase
+        </a>
+    </div>
+
+    <div style="margin-top: 15px; text-align: center;">
         <a href="{SITE_URL}/order-success?order={order_id}" 
            style="display: inline-block; padding: 14px 30px; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
             View Your Order
@@ -275,7 +285,15 @@ def get_download_delivery_template(
     
     {downloads_html}
     
-    <p style="margin: 30px 0 0 0; color: #6b7280; font-size: 14px;">
+    <div style="margin-top: 25px; padding: 15px; background-color: #faf5ff; border-radius: 8px; border: 1px dashed #8b5cf6; text-align: center;">
+        <p style="margin: 0 0 8px 0; color: #6b21a8; font-size: 14px; font-weight: 600;">Want permanent access? Save to your account!</p>
+        <a href="{SITE_URL}/redeem?code={order_id}" 
+           style="color: #7c3aed; font-weight: 600; text-decoration: underline; font-size: 14px;">
+            Redeem order {order_id} &rarr;
+        </a>
+    </div>
+
+    <p style="margin: 20px 0 0 0; color: #6b7280; font-size: 14px;">
         Order ID: <strong>{order_id}</strong>
     </p>
     """
