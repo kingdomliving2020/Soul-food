@@ -2003,6 +2003,7 @@ import GiftCertificate from './GiftCertificate';
 import GiftCertificateSuccess from './GiftCertificateSuccess';
 import RedeemGift from './RedeemGift';
 import OrderSuccess from './OrderSuccess';
+import RedeemCode from './RedeemCode';
 import GamingCentral from './GamingCentral';
 import OrderLookup from './OrderLookup';
 import RefundPolicy from './RefundPolicy';
@@ -2051,6 +2052,7 @@ function App() {
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancel" element={<PaymentCancel />} />
             <Route path="/order-success" element={<OrderSuccess />} />
+            <Route path="/redeem" element={<RedeemCode />} />
             <Route path="/refund-request" element={<RefundRequest />} />
             <Route path="/returns" element={<RefundRequest />} />
             <Route path="/admin/*" element={<AdminConsole />} />

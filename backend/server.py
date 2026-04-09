@@ -95,6 +95,15 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load gaming routes: {e}")
 
+# Import redeem/claim routes
+try:
+    from routes.redeem_routes import router as redeem_router
+    app.include_router(redeem_router)
+    print("✅ Redeem/claim routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load redeem routes: {e}")
+
+
 # Import audio access routes
 try:
     from audio_routes import router as audio_router
