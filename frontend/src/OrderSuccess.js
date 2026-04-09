@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { CheckCircle, Download, FileText, BookOpen, ArrowRight, AlertCircle, Loader2 } from 'lucide-react';
+import { CheckCircle, Download, FileText, BookOpen, ArrowRight, AlertCircle, Loader2, Mail, Gift } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -14,6 +14,52 @@ const OrderSuccess = () => {
 
   const isFreeOrder = searchParams.get('free') === 'true';
   const orderId = searchParams.get('order');
+
+  const [resendEmail, setResendEmail] = useState('');
+  const [resending, setResending] = useState(false);
+  const [resendResult, setResendResult] = useState(null);
+
+  const handleResendAccess = async () => {
+    if (!orderId || !resendEmail.trim()) return;
+    setResending(true);
+    setResendResult(null);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/orders/resend-access`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_number: orderId, email: resendEmail.trim() }),
+      });
+      
+      // Handle response - body may already be consumed by global interceptor
+      let data = {};
+      try {
+        const text = await res.text();
+        data = JSON.parse(text);
+      } catch (parseErr) {
+        // Body already consumed or parse failed - use status code for message
+        if (res.status === 429) {
+          data = { detail: 'Too many requests. Please wait an hour before trying again.' };
+        } else if (res.status === 403) {
+          data = { detail: 'Email does not match the order. Use the email from your receipt.' };
+        } else if (res.status === 404) {
+          data = { detail: 'Order not found. Check your order number.' };
+        } else if (res.ok) {
+          data = { success: true, message: 'Access email sent! Check your inbox.' };
+        } else {
+          data = { detail: 'Request failed. Please try again.' };
+        }
+      }
+      
+      if (!res.ok) {
+        throw new Error(data.detail || 'Failed to resend');
+      }
+      setResendResult({ success: true, message: data.message || 'Access email sent! Check your inbox.' });
+    } catch (err) {
+      setResendResult({ success: false, message: err.message });
+    } finally {
+      setResending(false);
+    }
+  };
 
   useEffect(() => {
     const loadOrderData = async () => {
@@ -381,6 +427,55 @@ const OrderSuccess = () => {
                   </button>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Resend Access Link + Redeem Code */}
+        {orderId && (
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-6" data-testid="resend-access-section">
+            <h2 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
+              <Mail className="w-5 h-5 text-purple-600" />
+              Resend Access Link
+            </h2>
+            <p className="text-sm text-gray-500 mb-4">Didn't get the email? Enter your email to resend download &amp; redeem links.</p>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                value={resendEmail}
+                onChange={e => { setResendEmail(e.target.value); setResendResult(null); }}
+                placeholder="your@email.com"
+                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-300 focus:border-purple-500 outline-none"
+                data-testid="resend-email-input"
+              />
+              <button
+                onClick={handleResendAccess}
+                disabled={resending || !resendEmail.trim()}
+                className="bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2"
+                data-testid="resend-access-btn"
+              >
+                {resending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+                {resending ? 'Sending...' : 'Resend'}
+              </button>
+            </div>
+            {resendResult && (
+              <div className={`mt-3 text-sm px-3 py-2 rounded-lg ${resendResult.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`} data-testid="resend-result">
+                {resendResult.message}
+              </div>
+            )}
+
+            <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
+              <Gift className="w-5 h-5 text-indigo-500 flex-shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm text-gray-700">Have an account? <strong>Redeem this order</strong> to save it to your library permanently.</p>
+              </div>
+              <button
+                onClick={() => navigate(`/redeem?code=${orderId}`)}
+                className="text-indigo-600 hover:text-indigo-800 text-sm font-semibold whitespace-nowrap"
+                data-testid="redeem-from-success-btn"
+              >
+                Redeem Now &rarr;
+              </button>
             </div>
           </div>
         )}

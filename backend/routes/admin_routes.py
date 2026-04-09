@@ -915,88 +915,181 @@ async def update_inventory(
 
 @router.get("/orders")
 async def get_orders_list(
+    search: Optional[str] = None,
     status: Optional[str] = None,
     page: int = 1,
     limit: int = 50,
     admin: AdminUser = Depends(get_current_admin)
 ):
-    """Get orders list"""
-    query = {}
-    if status:
-        query["status"] = status
-    
+    """Get orders list from both orders and payment_transactions, with search"""
     skip = (page - 1) * limit
-    
-    orders = await db.orders.find(query, {"_id": 0}).skip(skip).limit(limit).sort("created_at", -1).to_list(limit)
-    total = await db.orders.count_documents(query)
-    
+
+    # Build base query for payment_transactions (the primary source of paid orders)
+    tx_query = {}
+    if status:
+        tx_query["payment_status"] = status
+
+    if search:
+        search_re = {"$regex": search.strip(), "$options": "i"}
+        tx_query["$or"] = [
+            {"order_number": search_re},
+            {"customer_email": search_re},
+            {"customer_name": search_re},
+        ]
+
+    # Query payment_transactions first (most reliable for Stripe orders)
+    txns = await db.payment_transactions.find(tx_query, {"_id": 0}).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    total = await db.payment_transactions.count_documents(tx_query)
+
+    items = []
+    for tx in txns:
+        items.append({
+            "order_number": tx.get("order_number", ""),
+            "customer_email": tx.get("customer_email", ""),
+            "customer_name": tx.get("customer_name", ""),
+            "total_amount": tx.get("total_amount", 0),
+            "payment_status": tx.get("payment_status", ""),
+            "items": tx.get("items", []),
+            "items_count": len(tx.get("items", [])),
+            "claimed_by_user_id": tx.get("claimed_by_user_id"),
+            "created_at": tx.get("created_at").isoformat() if hasattr(tx.get("created_at"), "isoformat") else str(tx.get("created_at", "")),
+        })
+
     return {
-        "items": orders,
+        "items": items,
         "total": total,
         "page": page,
         "limit": limit,
-        "pages": (total + limit - 1) // limit
+        "pages": max(1, (total + limit - 1) // limit),
     }
 
-@router.get("/orders/{order_id}")
-async def get_order_details(order_id: str, admin: AdminUser = Depends(get_current_admin)):
-    """Get detailed order information"""
-    order = await db.orders.find_one({"id": order_id}, {"_id": 0})
-    if not order:
+
+@router.get("/orders/{order_number}/detail")
+async def get_order_detail(order_number: str, admin: AdminUser = Depends(get_current_admin)):
+    """Get full order detail by order_number (checks both collections)"""
+    order_number = order_number.strip().upper()
+
+    transaction = await db.payment_transactions.find_one(
+        {"order_number": order_number}, {"_id": 0}
+    )
+    order = await db.orders.find_one(
+        {"$or": [{"order_number": order_number}, {"order_id": order_number}]},
+        {"_id": 0},
+    )
+
+    if not transaction and not order:
         raise HTTPException(status_code=404, detail="Order not found")
-    
-    # Get download links for this order
+
+    # Download links keyed by order_number
     download_links = await db.download_links.find(
-        {"order_id": order_id}, {"_id": 0, "token_hash": 0}
+        {"order_id": order_number}, {"_id": 0, "token_hash": 0}
     ).to_list(100)
-    
-    # Get delivery logs
+
+    # Also check if keyed by session_id
+    if not download_links and transaction:
+        sid = transaction.get("session_id", "")
+        if sid:
+            download_links = await db.download_links.find(
+                {"order_id": sid}, {"_id": 0, "token_hash": 0}
+            ).to_list(100)
+
     delivery_logs = await db.delivery_logs.find(
-        {"order_id": order_id}, {"_id": 0}
-    ).sort("timestamp", -1).to_list(100)
-    
+        {"order_id": order_number}, {"_id": 0}
+    ).sort("timestamp", -1).to_list(50)
+
     return {
+        "transaction": transaction,
         "order": order,
         "download_links": download_links,
-        "delivery_logs": delivery_logs
+        "delivery_logs": delivery_logs,
     }
 
-@router.post("/orders/{order_id}/resend-links")
-async def resend_download_links(order_id: str, admin: AdminUser = Depends(get_current_admin)):
-    """Resend download links for an order"""
-    from download_protection import resend_download_links as do_resend
-    
-    order = await db.orders.find_one({"id": order_id}, {"_id": 0})
-    if not order:
+
+@router.post("/orders/{order_number}/resend-email")
+async def admin_resend_order_email(order_number: str, admin: AdminUser = Depends(get_current_admin)):
+    """Resend order confirmation email with download links and redeem link"""
+    from email_service import send_order_confirmation
+    order_number = order_number.strip().upper()
+
+    tx = await db.payment_transactions.find_one({"order_number": order_number}, {"_id": 0})
+    if not tx:
         raise HTTPException(status_code=404, detail="Order not found")
-    
-    user_email = order.get("email", order.get("customer_email"))
-    if not user_email:
-        raise HTTPException(status_code=400, detail="No email associated with order")
-    
-    # Use admin's IP for rate limiting bypass
-    success, links, message = await do_resend(order_id, user_email, "admin_console")
-    
-    # Log delivery attempt
+
+    email = tx.get("customer_email")
+    if not email:
+        raise HTTPException(status_code=400, detail="No email on this order")
+
+    # Gather download links
+    download_links = await db.download_links.find(
+        {"order_id": order_number, "revoked": {"$ne": True}},
+        {"_id": 0, "token_hash": 0},
+    ).to_list(100)
+
+    result = await send_order_confirmation(
+        to_email=email,
+        order_id=order_number,
+        items=tx.get("items", []),
+        total=tx.get("total_amount", 0),
+        download_links=download_links,
+        customer_name=tx.get("customer_name", "Valued Customer"),
+    )
+
     await db.delivery_logs.insert_one({
         "id": secrets.token_hex(8),
-        "order_id": order_id,
-        "type": "resend_links",
-        "recipient": user_email,
-        "status": "success" if success else "failed",
-        "message": message,
-        "links_count": len(links) if success else 0,
+        "order_id": order_number,
+        "type": "admin_resend_email",
+        "recipient": email,
+        "status": "success" if result.get("success") else "failed",
         "triggered_by": admin.id,
-        "timestamp": datetime.now(timezone.utc).isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     })
-    
-    await log_admin_action("resend_download_links", admin.id, "order", order_id)
-    
-    return {
-        "success": success,
-        "message": message,
-        "links": links if success else []
-    }
+    await log_admin_action("resend_order_email", admin.id, "order", order_number)
+
+    if result.get("success"):
+        return {"success": True, "message": f"Email resent to {email}"}
+    raise HTTPException(status_code=500, detail=result.get("error", "Email send failed"))
+
+
+@router.post("/orders/{order_number}/grant-access")
+async def admin_grant_access(order_number: str, admin: AdminUser = Depends(get_current_admin)):
+    """Manually (re)create download links for an order"""
+    from download_protection import create_download_link
+    order_number = order_number.strip().upper()
+
+    tx = await db.payment_transactions.find_one({"order_number": order_number}, {"_id": 0})
+    if not tx:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    email = tx.get("customer_email", "")
+    items = tx.get("items", [])
+
+    if not items:
+        raise HTTPException(status_code=400, detail="No items in this order")
+
+    # Get product -> file mappings
+    created = 0
+    for item in items:
+        product_id = item.get("product_id", item.get("id", ""))
+        if not product_id:
+            continue
+        mapping = await db.product_files.find_one({"product_id": product_id}, {"_id": 0})
+        if not mapping:
+            continue
+        for f in mapping.get("files", []):
+            token, expires = await create_download_link(
+                order_id=order_number,
+                user_id=tx.get("claimed_by_user_id", order_number),
+                user_email=email,
+                product_id=product_id,
+                product_name=item.get("name", product_id),
+                file_path=f.get("path", ""),
+                payment_verified=True,
+            )
+            created += 1
+
+    await log_admin_action("grant_access", admin.id, "order", order_number, {"links_created": created})
+
+    return {"success": True, "message": f"{created} download link(s) created for {order_number}", "links_created": created}
 
 # =============================================================================
 # USER MANAGEMENT

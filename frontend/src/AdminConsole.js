@@ -702,122 +702,262 @@ const UsersManager = () => {
 const OrdersManager = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [selected, setSelected] = useState(null);  // expanded order detail
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState('');
   const { token } = useAdmin();
-  
-  const fetchOrders = useCallback(async () => {
+
+  const fetchOrders = useCallback(async (p = page, q = search) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/admin/orders`, {
+      const params = new URLSearchParams({ page: p, limit: 25 });
+      if (q.trim()) params.set('search', q.trim());
+      const res = await fetch(`${API_URL}/api/admin/orders?${params}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
         const data = await res.json();
         setOrders(data.items || []);
+        setTotalPages(data.pages || 1);
       }
     } catch (err) {
       console.error('Error fetching orders:', err);
     } finally {
       setLoading(false);
     }
-  }, [token]);
-  
-  useEffect(() => {
-    fetchOrders();
-  }, [fetchOrders]);
-  
-  const resendLinks = async (orderId) => {
+  }, [token, page, search]);
+
+  useEffect(() => { fetchOrders(); }, [fetchOrders]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(1);
+    fetchOrders(1, search);
+  };
+
+  const loadDetail = async (orderNumber) => {
+    if (selected?.transaction?.order_number === orderNumber) { setSelected(null); return; }
+    setDetailLoading(true);
+    setSelected(null);
     try {
-      const res = await fetch(`${API_URL}/api/admin/orders/${orderId}/resend-links`, {
-        method: 'POST',
+      const res = await fetch(`${API_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/detail`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
-        toast.success('Download links resent!');
+        const data = await res.json();
+        setSelected(data);
       } else {
-        toast.error('Failed to resend links');
+        toast.error('Could not load order detail');
       }
-    } catch (err) {
-      toast.error('Failed to resend links');
-    }
+    } catch { toast.error('Failed to load detail'); }
+    finally { setDetailLoading(false); }
   };
-  
+
+  const resendEmail = async (orderNumber) => {
+    setActionLoading(`resend-${orderNumber}`);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/resend-email`, {
+        method: 'POST', headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) toast.success(data.message || 'Email sent');
+      else toast.error(data.detail || 'Failed');
+    } catch { toast.error('Failed to resend'); }
+    finally { setActionLoading(''); }
+  };
+
+  const grantAccess = async (orderNumber) => {
+    setActionLoading(`grant-${orderNumber}`);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/grant-access`, {
+        method: 'POST', headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) { toast.success(data.message || 'Access granted'); loadDetail(orderNumber); }
+      else toast.error(data.detail || 'Failed');
+    } catch { toast.error('Failed to grant access'); }
+    finally { setActionLoading(''); }
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-800">Orders</h1>
-        <Button variant="outline" onClick={fetchOrders}>
-          <RefreshCw size={16} className="mr-2" />
-          Refresh
-        </Button>
+    <div className="space-y-4">
+      {/* Header + Search */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold text-slate-800" data-testid="admin-orders-heading">Orders</h1>
+        <form onSubmit={handleSearch} className="flex gap-2 w-full sm:w-auto">
+          <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search email, name, order #..."
+            className="w-full sm:w-72"
+            data-testid="admin-orders-search-input"
+          />
+          <Button type="submit" variant="outline" data-testid="admin-orders-search-btn">
+            <Search size={16} className="mr-1" /> Search
+          </Button>
+          <Button type="button" variant="ghost" onClick={() => { setSearch(''); setPage(1); fetchOrders(1, ''); }}>
+            <RefreshCw size={16} />
+          </Button>
+        </form>
       </div>
-      
-      {/* Orders List */}
+
+      {/* Orders Table */}
       <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
         {loading ? (
-          <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600" />
+          <div className="flex items-center justify-center h-48">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600" />
           </div>
         ) : orders.length > 0 ? (
-          <table className="w-full">
-            <thead className="bg-slate-50 border-b">
-              <tr>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">Order ID</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">Customer</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">Total</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">Status</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">Date</th>
-                <th className="px-4 py-3 text-right text-sm font-semibold text-slate-600">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {orders.map((order) => (
-                <tr key={order.id} className="hover:bg-slate-50">
-                  <td className="px-4 py-3">
-                    <p className="font-mono text-sm text-slate-800">{order.id?.slice(0, 8)}...</p>
-                  </td>
-                  <td className="px-4 py-3">
-                    <p className="text-sm text-slate-800">{order.email || order.customer_email || 'Guest'}</p>
-                  </td>
-                  <td className="px-4 py-3 font-semibold text-slate-800">
-                    ${order.total?.toFixed(2) || '0.00'}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      order.status === 'completed' || order.status === 'paid' 
-                        ? 'bg-green-100 text-green-700' 
-                        : 'bg-yellow-100 text-yellow-700'
-                    }`}>
-                      {order.status || 'pending'}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-slate-500">
-                    {order.created_at ? new Date(order.created_at).toLocaleDateString() : '-'}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-2">
-                      <button className="p-1 text-slate-400 hover:text-blue-600" title="View Details">
-                        <Eye size={16} />
-                      </button>
-                      <button 
-                        onClick={() => resendLinks(order.id)}
-                        className="p-1 text-slate-400 hover:text-orange-600" 
-                        title="Resend Download Links"
-                      >
-                        <Mail size={16} />
-                      </button>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm" data-testid="admin-orders-table">
+              <thead className="bg-slate-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600">Order #</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600">Customer</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600">Total</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600">Status</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600">Date</th>
+                  <th className="px-4 py-3 text-right font-semibold text-slate-600">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {orders.map((order) => {
+                  const on = order.order_number;
+                  const isOpen = selected?.transaction?.order_number === on;
+                  return (
+                    <React.Fragment key={on}>
+                      <tr className={`hover:bg-slate-50 cursor-pointer ${isOpen ? 'bg-purple-50' : ''}`}
+                          onClick={() => loadDetail(on)} data-testid={`order-row-${on}`}>
+                        <td className="px-4 py-3 font-mono text-xs text-slate-800">{on}</td>
+                        <td className="px-4 py-3">
+                          <p className="text-slate-800 truncate max-w-[200px]">{order.customer_email || 'Guest'}</p>
+                          {order.customer_name && <p className="text-xs text-slate-500">{order.customer_name}</p>}
+                        </td>
+                        <td className="px-4 py-3 font-semibold text-slate-800">${(order.total_amount || 0).toFixed(2)}</td>
+                        <td className="px-4 py-3">
+                          <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                            order.payment_status === 'paid' || order.payment_status === 'completed'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-yellow-100 text-yellow-700'
+                          }`}>{order.payment_status || 'pending'}</span>
+                          {order.claimed_by_user_id && (
+                            <span className="ml-1 text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">claimed</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-slate-500">
+                          {order.created_at ? new Date(order.created_at).toLocaleDateString() : '-'}
+                        </td>
+                        <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                          <div className="flex items-center justify-end gap-1">
+                            <button onClick={() => loadDetail(on)} className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-blue-600" title="View Details" data-testid={`view-detail-${on}`}>
+                              <Eye size={15} />
+                            </button>
+                            <button onClick={() => resendEmail(on)} disabled={actionLoading === `resend-${on}`}
+                              className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-orange-600 disabled:opacity-40" title="Resend Email" data-testid={`resend-email-${on}`}>
+                              {actionLoading === `resend-${on}` ? <RefreshCw size={15} className="animate-spin" /> : <Mail size={15} />}
+                            </button>
+                            <button onClick={() => grantAccess(on)} disabled={actionLoading === `grant-${on}`}
+                              className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-green-600 disabled:opacity-40" title="Grant/Regrant Access" data-testid={`grant-access-${on}`}>
+                              {actionLoading === `grant-${on}` ? <RefreshCw size={15} className="animate-spin" /> : <Unlock size={15} />}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+
+                      {/* Expanded Detail Row */}
+                      {isOpen && selected && (
+                        <tr>
+                          <td colSpan={6} className="bg-slate-50 px-6 py-5 border-b-2 border-purple-200">
+                            {detailLoading ? (
+                              <div className="flex justify-center py-4"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600" /></div>
+                            ) : (
+                              <div className="grid md:grid-cols-2 gap-6 text-sm">
+                                {/* Left: Order Info */}
+                                <div>
+                                  <h4 className="font-bold text-slate-700 mb-2">Order Info</h4>
+                                  <dl className="space-y-1 text-slate-600">
+                                    <div className="flex"><dt className="w-28 font-medium text-slate-500">Order:</dt><dd className="font-mono">{selected.transaction?.order_number}</dd></div>
+                                    <div className="flex"><dt className="w-28 font-medium text-slate-500">Email:</dt><dd>{selected.transaction?.customer_email}</dd></div>
+                                    <div className="flex"><dt className="w-28 font-medium text-slate-500">Name:</dt><dd>{selected.transaction?.customer_name || '-'}</dd></div>
+                                    <div className="flex"><dt className="w-28 font-medium text-slate-500">Total:</dt><dd className="font-semibold">${(selected.transaction?.total_amount || 0).toFixed(2)}</dd></div>
+                                    <div className="flex"><dt className="w-28 font-medium text-slate-500">Status:</dt><dd>{selected.transaction?.payment_status}</dd></div>
+                                    {selected.transaction?.claimed_by_user_id && (
+                                      <div className="flex"><dt className="w-28 font-medium text-slate-500">Claimed by:</dt><dd className="text-blue-600">{selected.transaction.claimed_by_user_id}</dd></div>
+                                    )}
+                                  </dl>
+
+                                  <h4 className="font-bold text-slate-700 mt-4 mb-2">Items ({selected.transaction?.items?.length || 0})</h4>
+                                  <ul className="space-y-1 text-slate-600">
+                                    {(selected.transaction?.items || []).map((it, i) => (
+                                      <li key={i} className="flex items-center gap-2">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
+                                        {it.name || it.product_id} {it.quantity > 1 ? `x${it.quantity}` : ''}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+
+                                {/* Right: Download Links & Logs */}
+                                <div>
+                                  <h4 className="font-bold text-slate-700 mb-2">Download Links ({selected.download_links?.length || 0})</h4>
+                                  {selected.download_links?.length > 0 ? (
+                                    <ul className="space-y-1 text-slate-600 max-h-40 overflow-y-auto">
+                                      {selected.download_links.map((dl, i) => (
+                                        <li key={i} className="flex items-center justify-between gap-2 text-xs bg-white p-2 rounded border">
+                                          <span className="truncate">{dl.product_name || dl.product_id}</span>
+                                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${dl.revoked ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
+                                            {dl.revoked ? 'revoked' : 'active'}
+                                          </span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  ) : (
+                                    <p className="text-slate-400 text-xs">No download links found.</p>
+                                  )}
+
+                                  {selected.delivery_logs?.length > 0 && (
+                                    <>
+                                      <h4 className="font-bold text-slate-700 mt-4 mb-2">Delivery Log</h4>
+                                      <ul className="space-y-1 text-xs text-slate-500 max-h-32 overflow-y-auto">
+                                        {selected.delivery_logs.map((log, i) => (
+                                          <li key={i} className="bg-white p-2 rounded border">
+                                            <span className="font-medium text-slate-700">{log.type}</span> — {log.status} — {log.timestamp ? new Date(log.timestamp).toLocaleString() : ''}
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-64 text-slate-500">
-            <ShoppingCart size={48} className="mb-4 text-slate-300" />
-            <p>No orders found</p>
+          <div className="flex flex-col items-center justify-center h-48 text-slate-500">
+            <ShoppingCart size={40} className="mb-3 text-slate-300" />
+            <p>{search ? 'No orders match your search' : 'No orders found'}</p>
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 pt-2">
+          <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => { setPage(p => p-1); fetchOrders(page-1, search); }}>Prev</Button>
+          <span className="text-sm text-slate-500 self-center">Page {page} of {totalPages}</span>
+          <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => { setPage(p => p+1); fetchOrders(page+1, search); }}>Next</Button>
+        </div>
+      )}
     </div>
   );
 };

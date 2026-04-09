@@ -18,7 +18,11 @@ import {
   Loader2,
   ChevronDown,
   ChevronUp,
-  Mail
+  Mail,
+  Unlock,
+  Download,
+  FileText,
+  Eye
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -34,6 +38,14 @@ const AdminOrders = () => {
   const [processingRefund, setProcessingRefund] = useState(null);
   const [refundType, setRefundType] = useState('full');
   const [customAmount, setCustomAmount] = useState('');
+  const [orderDetail, setOrderDetail] = useState(null);
+  const [detailLoading, setDetailLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState('');
+
+  // Get admin token
+  const getToken = () => {
+    try { return localStorage.getItem('soul_food_token') || ''; } catch { return ''; }
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -118,6 +130,76 @@ const AdminOrders = () => {
       custom_amount: refundType === 'custom' ? parseFloat(customAmount) : null,
       reason: 'Admin processed refund'
     }));
+  };
+
+  const handleResendEmail = async (orderNumber) => {
+    setActionLoading(`resend-${orderNumber}`);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/resend-email`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success(data.message || 'Email resent successfully!');
+      } else {
+        toast.error(data.detail || 'Failed to resend email');
+      }
+    } catch {
+      toast.error('Failed to resend email');
+    } finally {
+      setActionLoading('');
+    }
+  };
+
+  const handleGrantAccess = async (orderNumber) => {
+    setActionLoading(`grant-${orderNumber}`);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/grant-access`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success(data.message || 'Access granted!');
+        // Reload detail if expanded
+        if (expandedOrder === orderNumber) loadOrderDetail(orderNumber);
+      } else {
+        toast.error(data.detail || 'Failed to grant access');
+      }
+    } catch {
+      toast.error('Failed to grant access');
+    } finally {
+      setActionLoading('');
+    }
+  };
+
+  const loadOrderDetail = async (orderNumber) => {
+    setDetailLoading(true);
+    setOrderDetail(null);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/detail`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setOrderDetail(data);
+      }
+    } catch {
+      console.error('Failed to load detail');
+    } finally {
+      setDetailLoading(false);
+    }
+  };
+
+  const toggleExpand = (orderNumber) => {
+    if (expandedOrder === orderNumber) {
+      setExpandedOrder(null);
+      setOrderDetail(null);
+    } else {
+      setExpandedOrder(orderNumber);
+      loadOrderDetail(orderNumber);
+    }
   };
 
   const getStatusBadge = (status) => {
@@ -258,7 +340,7 @@ const AdminOrders = () => {
                   <div key={order.order_number} className="py-4">
                     <div 
                       className="flex items-center justify-between cursor-pointer"
-                      onClick={() => setExpandedOrder(expandedOrder === order.order_number ? null : order.order_number)}
+                      onClick={() => toggleExpand(order.order_number)}
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-1">
@@ -288,72 +370,149 @@ const AdminOrders = () => {
                           })}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {expandedOrder === order.order_number ? (
-                          <ChevronUp className="w-5 h-5 text-slate-400" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5 text-slate-400" />
-                        )}
+                      <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                        <button
+                          onClick={() => handleResendEmail(order.order_number)}
+                          disabled={actionLoading === `resend-${order.order_number}`}
+                          className="p-2 rounded-lg hover:bg-orange-50 text-slate-400 hover:text-orange-600 disabled:opacity-40 transition-colors"
+                          title="Resend Access Email"
+                          data-testid={`resend-btn-${order.order_number}`}
+                        >
+                          {actionLoading === `resend-${order.order_number}` ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+                        </button>
+                        <button
+                          onClick={() => handleGrantAccess(order.order_number)}
+                          disabled={actionLoading === `grant-${order.order_number}`}
+                          className="p-2 rounded-lg hover:bg-green-50 text-slate-400 hover:text-green-600 disabled:opacity-40 transition-colors"
+                          title="Grant / Regrant Access"
+                          data-testid={`grant-btn-${order.order_number}`}
+                        >
+                          {actionLoading === `grant-${order.order_number}` ? <Loader2 className="w-4 h-4 animate-spin" /> : <Unlock className="w-4 h-4" />}
+                        </button>
+                        <button onClick={() => toggleExpand(order.order_number)} className="p-2 rounded-lg hover:bg-slate-100 text-slate-400">
+                          {expandedOrder === order.order_number ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        </button>
                       </div>
                     </div>
                     
                     {/* Expanded Details */}
                     {expandedOrder === order.order_number && (
                       <div className="mt-4 pt-4 border-t bg-slate-50 rounded-lg p-4">
-                        <div className="grid sm:grid-cols-2 gap-4 mb-4">
-                          <div>
-                            <h4 className="font-medium text-slate-700 mb-2">Order Details</h4>
-                            <p className="text-sm text-slate-600">Type: {order.order_type}</p>
-                            <p className="text-sm text-slate-600">Source: {order.source}</p>
+                        {detailLoading ? (
+                          <div className="flex items-center justify-center py-4">
+                            <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
                           </div>
-                          
-                          {/* Refund Actions */}
-                          {order.payment_status === 'paid' && order.refund_status !== 'refunded' && (
+                        ) : (
+                          <div className="grid sm:grid-cols-2 gap-4 mb-4">
                             <div>
-                              <h4 className="font-medium text-slate-700 mb-2">Process Refund</h4>
-                              <div className="space-y-2">
-                                <select
-                                  value={refundType}
-                                  onChange={(e) => setRefundType(e.target.value)}
-                                  className="w-full px-2 py-1 text-sm border rounded"
-                                >
-                                  <option value="full">Full Refund (100%)</option>
-                                  <option value="partial_15">Partial - 15% Restocking Fee</option>
-                                  <option value="custom">Custom Amount</option>
-                                </select>
-                                
-                                {refundType === 'custom' && (
-                                  <Input
-                                    type="number"
-                                    placeholder="Enter amount"
-                                    value={customAmount}
-                                    onChange={(e) => setCustomAmount(e.target.value)}
-                                    className="text-sm"
-                                  />
+                              <h4 className="font-medium text-slate-700 mb-2">Order Details</h4>
+                              <div className="space-y-1 text-sm text-slate-600">
+                                <p>Type: {order.order_type || (orderDetail?.transaction?.order_type) || '-'}</p>
+                                <p>Email: {orderDetail?.transaction?.customer_email || order.customer_email}</p>
+                                {orderDetail?.transaction?.customer_name && <p>Name: {orderDetail.transaction.customer_name}</p>}
+                                {orderDetail?.transaction?.claimed_by_user_id && (
+                                  <p className="text-blue-600 font-medium">Claimed by: {orderDetail.transaction.claimed_by_user_id}</p>
                                 )}
-                                
-                                <Button
-                                  size="sm"
-                                  onClick={() => handleProcessRefund(order.order_number)}
-                                  disabled={processingRefund === order.order_number}
-                                  className="w-full bg-red-600 hover:bg-red-700"
-                                >
-                                  {processingRefund === order.order_number ? (
-                                    <>
-                                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                      Processing...
-                                    </>
-                                  ) : (
-                                    <>
-                                      <DollarSign className="w-4 h-4 mr-1" />
-                                      Process Refund
-                                    </>
-                                  )}
-                                </Button>
                               </div>
+
+                              {/* Items */}
+                              {orderDetail?.transaction?.items?.length > 0 && (
+                                <div className="mt-3">
+                                  <h4 className="font-medium text-slate-700 mb-1 text-sm">Items</h4>
+                                  <ul className="space-y-1">
+                                    {orderDetail.transaction.items.map((item, idx) => (
+                                      <li key={idx} className="text-xs text-slate-600 flex items-center gap-1">
+                                        <FileText className="w-3 h-3 text-green-500 flex-shrink-0" />
+                                        {item.name || item.product_id} {item.quantity > 1 ? `x${item.quantity}` : ''}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
                             </div>
-                          )}
-                        </div>
+
+                            <div>
+                              {/* Download Links */}
+                              <h4 className="font-medium text-slate-700 mb-2 flex items-center gap-1">
+                                <Download className="w-4 h-4" />
+                                Download Links ({orderDetail?.download_links?.length || 0})
+                              </h4>
+                              {orderDetail?.download_links?.length > 0 ? (
+                                <ul className="space-y-1 max-h-32 overflow-y-auto">
+                                  {orderDetail.download_links.map((dl, idx) => (
+                                    <li key={idx} className="text-xs bg-white border rounded p-2 flex items-center justify-between gap-2">
+                                      <span className="truncate">{dl.product_name || dl.product_id}</span>
+                                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${dl.revoked ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
+                                        {dl.revoked ? 'revoked' : 'active'}
+                                      </span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              ) : (
+                                <p className="text-xs text-slate-400">No download links found.</p>
+                              )}
+
+                              {/* Delivery Logs */}
+                              {orderDetail?.delivery_logs?.length > 0 && (
+                                <div className="mt-3">
+                                  <h4 className="font-medium text-slate-700 mb-1 text-sm">Delivery Log</h4>
+                                  <ul className="space-y-1 max-h-24 overflow-y-auto">
+                                    {orderDetail.delivery_logs.map((log, idx) => (
+                                      <li key={idx} className="text-xs bg-white border rounded p-1.5">
+                                        <span className="font-medium">{log.type}</span> — {log.status} — {log.timestamp ? new Date(log.timestamp).toLocaleString() : ''}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Refund Actions */}
+                            {order.payment_status === 'paid' && order.refund_status !== 'refunded' && (
+                              <div className="sm:col-span-2 pt-3 border-t">
+                                <h4 className="font-medium text-slate-700 mb-2">Process Refund</h4>
+                                <div className="flex items-center gap-2">
+                                  <select
+                                    value={refundType}
+                                    onChange={(e) => setRefundType(e.target.value)}
+                                    className="px-2 py-1.5 text-sm border rounded flex-shrink-0"
+                                  >
+                                    <option value="full">Full Refund</option>
+                                    <option value="partial_15">15% Restocking Fee</option>
+                                    <option value="custom">Custom Amount</option>
+                                  </select>
+                                  
+                                  {refundType === 'custom' && (
+                                    <Input
+                                      type="number"
+                                      placeholder="Amount"
+                                      value={customAmount}
+                                      onChange={(e) => setCustomAmount(e.target.value)}
+                                      className="text-sm w-28"
+                                    />
+                                  )}
+                                  
+                                  <Button
+                                    size="sm"
+                                    onClick={() => handleProcessRefund(order.order_number)}
+                                    disabled={processingRefund === order.order_number}
+                                    className="bg-red-600 hover:bg-red-700"
+                                    data-testid={`refund-btn-${order.order_number}`}
+                                  >
+                                    {processingRefund === order.order_number ? (
+                                      <Loader2 className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                      <>
+                                        <DollarSign className="w-4 h-4 mr-1" />
+                                        Refund
+                                      </>
+                                    )}
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
                         
                         {/* Refund Request Details */}
                         {order.refund_status === 'requested' && (
