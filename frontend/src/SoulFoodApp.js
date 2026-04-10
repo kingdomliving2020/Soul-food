@@ -273,6 +273,8 @@ const SoulFoodLanding = () => {
   const [previewEdition, setPreviewEdition] = useState('adult');
   const [products, setProducts] = useState({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [bundleEdition, setBundleEdition] = useState('ae');
+  const [bundleInstructorUpgrade, setBundleInstructorUpgrade] = useState(false);
   const { addToCart } = useCart();
   const youtubeRef = useRef(null);
   const playerRef = useRef(null);
@@ -1119,7 +1121,7 @@ const SoulFoodLanding = () => {
             </div>
             
             <div className="p-6 sm:p-10">
-              <div className="flex flex-col lg:flex-row gap-8 items-center">
+              <div className="flex flex-col lg:flex-row gap-8 items-start">
                 {/* Left — Bundle Details */}
                 <div className="flex-1">
                   <Badge className="bg-amber-100 text-amber-800 mb-3 text-xs font-semibold">Starter Bundle</Badge>
@@ -1159,32 +1161,104 @@ const SoulFoodLanding = () => {
                     </div>
                   </div>
 
-                  {/* Who It's For */}
-                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 mb-5">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Who it's for</p>
-                    <p className="text-sm text-slate-700">Small groups, couples, individual learners, and Sunday school leaders who want a full year of structured study with engaging activities.</p>
+                  {/* Edition Selector */}
+                  <div className="mb-5">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Select Edition</p>
+                    <div className="flex gap-3">
+                      <button
+                        onClick={() => setBundleEdition('ae')}
+                        className={`flex-1 px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all ${
+                          bundleEdition === 'ae'
+                            ? 'border-purple-500 bg-purple-50 text-purple-800 shadow-sm'
+                            : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                        }`}
+                        data-testid="bundle-edition-ae"
+                      >
+                        Adult Edition (AE)
+                      </button>
+                      <button
+                        onClick={() => setBundleEdition('ye')}
+                        className={`flex-1 px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all ${
+                          bundleEdition === 'ye'
+                            ? 'border-purple-500 bg-purple-50 text-purple-800 shadow-sm'
+                            : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                        }`}
+                        data-testid="bundle-edition-ye"
+                      >
+                        Youth Edition (YE)
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Instructor Upgrade */}
+                  <label
+                    className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all mb-5 ${
+                      bundleInstructorUpgrade
+                        ? 'border-indigo-400 bg-indigo-50'
+                        : 'border-slate-200 hover:border-slate-300 bg-white'
+                    }`}
+                    data-testid="instructor-upgrade-label"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={bundleInstructorUpgrade}
+                      onChange={(e) => setBundleInstructorUpgrade(e.target.checked)}
+                      className="mt-0.5 w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                      data-testid="instructor-upgrade-checkbox"
+                    />
+                    <div>
+                      <p className="font-semibold text-slate-800 text-sm">
+                        Upgrade to Instructor Bundle
+                        <span className="ml-1.5 text-indigo-600 font-bold">(+$7)</span>
+                      </p>
+                      <p className="text-xs text-slate-500 mt-0.5">This upgrade includes Instructor Edition (IE) content for teaching and group facilitation.</p>
+                    </div>
+                  </label>
+
+                  {/* Order Summary */}
+                  <div className="bg-slate-50 rounded-xl p-4 border border-slate-200" data-testid="bundle-order-summary">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Order Summary</p>
+                    <div className="space-y-1.5 text-sm text-slate-700">
+                      <div className="flex justify-between">
+                        <span>Holiday Bundle – {bundleEdition === 'ae' ? 'Adult Edition (AE)' : 'Youth Edition (YE)'} – ePub</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Break*fast Bundle – {bundleEdition === 'ae' ? 'Adult Edition (AE)' : 'Youth Edition (YE)'} – ePub</span>
+                      </div>
+                      {bundleInstructorUpgrade && (
+                        <div className="flex justify-between text-indigo-700 font-medium pt-1 border-t border-slate-200 mt-1">
+                          <span>Upgraded to Instructor Bundle (Includes IE)</span>
+                          <span>+$7.00</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Right — Price + CTA */}
-                <div className="w-full lg:w-72 flex-shrink-0 text-center lg:text-left">
+                <div className="w-full lg:w-72 flex-shrink-0 text-center lg:text-left lg:sticky lg:top-28">
                   <div className="bg-gradient-to-br from-purple-50 to-amber-50 rounded-xl p-6 border border-purple-200">
-                    <p className="text-sm text-slate-500 line-through mb-1">$26.98 if bought separately</p>
+                    <p className="text-sm text-slate-500 line-through mb-1">{bundleInstructorUpgrade ? '$33.98' : '$26.98'} if bought separately</p>
                     <div className="flex items-baseline justify-center lg:justify-start gap-1.5 mb-1">
-                      <span className="text-4xl font-bold text-slate-900" data-testid="bundle-price">$21.99</span>
+                      <span className="text-4xl font-bold text-slate-900" data-testid="bundle-price">${bundleInstructorUpgrade ? '28.99' : '21.99'}</span>
                       <span className="text-sm text-slate-500">USD</span>
                     </div>
-                    <Badge className="bg-green-100 text-green-800 text-xs mb-4">Save $4.99</Badge>
+                    <Badge className="bg-green-100 text-green-800 text-xs mb-4">{bundleInstructorUpgrade ? 'Save $4.99 + IE included' : 'Save $4.99'}</Badge>
                     
                     <Button
                       onClick={() => {
-                        addToCart({ id: 'starter-bundle-4cs-bkft', name: "4C's + Break*fast Starter Bundle", price: 21.99, quantity: 1, isBundle: true });
+                        const price = bundleInstructorUpgrade ? 28.99 : 21.99;
+                        const edLabel = bundleEdition === 'ae' ? 'Adult' : 'Youth';
+                        const name = bundleInstructorUpgrade
+                          ? `4C's + Break*fast Starter Bundle (${edLabel} + Instructor)`
+                          : `4C's + Break*fast Starter Bundle (${edLabel})`;
+                        addToCart({ id: `starter-bundle-4cs-bkft-${bundleEdition}${bundleInstructorUpgrade ? '-ie' : ''}`, name, price, quantity: 1, isBundle: true });
                         toast.success('Bundle added to cart!');
                       }}
                       className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-4 rounded-xl text-base font-bold shadow-xl hover:shadow-orange-300/40 transform hover:scale-[1.03] transition-all mb-3"
                       data-testid="bundle-buy-btn"
                     >
-                      Buy Now — $21.99
+                      Buy Now — ${bundleInstructorUpgrade ? '28.99' : '21.99'}
                     </Button>
                     <p className="text-xs text-slate-400 text-center">Instant digital delivery</p>
                   </div>
