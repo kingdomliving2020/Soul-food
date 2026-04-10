@@ -1298,6 +1298,20 @@ async def unlock_user_account(user_id: str, admin: AdminUser = Depends(get_curre
     
     return {"message": "Account unlocked successfully"}
 
+
+# =============================================================================
+# SUBMITTED CODES
+# =============================================================================
+
+@router.get("/submitted-codes")
+async def get_submitted_codes(admin: AdminUser = Depends(get_current_admin)):
+    """List all user-submitted redeem codes for admin review"""
+    codes = await db.submitted_codes.find(
+        {}, {"_id": 0}
+    ).sort("submitted_at", -1).to_list(500)
+    return {"items": codes}
+
+
 # =============================================================================
 # AUDIT LOGS
 # =============================================================================

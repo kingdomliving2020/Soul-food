@@ -5,7 +5,7 @@ import {
   Image, BookOpen, Shield, Settings, LogOut, Menu, X,
   ChevronRight, Plus, Edit, Trash2, Eye, Clock, Archive,
   Download, Upload, RefreshCw, Search, Filter, AlertTriangle,
-  Video, History, Lock, Unlock, Mail
+  Video, History, Lock, Unlock, Mail, TicketCheck
 } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
@@ -40,6 +40,7 @@ const navItems = [
   { path: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
   { path: '/admin/users', icon: Users, label: 'Users & Roles' },
   { path: '/admin/logs', icon: Shield, label: 'Audit Logs' },
+  { path: '/admin/codes', icon: TicketCheck, label: 'Submitted Codes' },
 ];
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -1360,6 +1361,92 @@ const InstructorContentManager = () => {
 // AUDIT LOGS
 // =============================================================================
 
+
+// =============================================================================
+// SUBMITTED CODES
+// =============================================================================
+
+const SubmittedCodes = () => {
+  const [codes, setCodes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { token } = useAdmin();
+
+  const fetchCodes = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/submitted-codes`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setCodes(data.items || []);
+      }
+    } catch (err) {
+      console.error('Error fetching codes:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => { fetchCodes(); }, [fetchCodes]);
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-slate-800" data-testid="admin-codes-heading">Submitted Codes</h1>
+        <Button variant="outline" onClick={fetchCodes} data-testid="admin-codes-refresh">
+          <RefreshCw size={16} className="mr-2" /> Refresh
+        </Button>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+        {loading ? (
+          <div className="flex items-center justify-center h-48">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600" />
+          </div>
+        ) : codes.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm" data-testid="admin-codes-table">
+              <thead className="bg-slate-50 border-b">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600">Code</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600">User Email</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600">User Name</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600">Submitted</th>
+                  <th className="px-4 py-3 text-left font-semibold text-slate-600">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {codes.map((c, i) => (
+                  <tr key={i} className="hover:bg-slate-50" data-testid={`code-row-${i}`}>
+                    <td className="px-4 py-3 font-mono text-sm text-slate-800">{c.code}</td>
+                    <td className="px-4 py-3 text-slate-700">{c.user_email}</td>
+                    <td className="px-4 py-3 text-slate-500">{c.user_name || '-'}</td>
+                    <td className="px-4 py-3 text-xs text-slate-500">
+                      {c.submitted_at ? new Date(c.submitted_at).toLocaleString() : '-'}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        c.status === 'processed' ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                      }`}>{c.status || 'pending'}</span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center h-48 text-slate-500">
+            <TicketCheck size={40} className="mb-3 text-slate-300" />
+            <p>No submitted codes yet</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
 const AuditLogs = () => {
   const [logs, setLogs] = useState({ admin_logs: [], security_logs: [] });
   const [loading, setLoading] = useState(true);
@@ -1535,6 +1622,7 @@ const AdminConsole = () => {
                 <Route path="orders/*" element={<OrdersManager />} />
                 <Route path="users/*" element={<UsersManager />} />
                 <Route path="logs/*" element={<AuditLogs />} />
+                <Route path="codes/*" element={<SubmittedCodes />} />
               </Routes>
             </main>
           </div>
