@@ -487,26 +487,152 @@ async def get_user_stats(user_id: str):
 
 
 # =============================================================================
-# ENTITLED GAME QUESTIONS ENDPOINT
+# CONTENT-SPECIFIC ENTITLEMENT SYSTEM
 # =============================================================================
 
-DEMO_QUESTION_CAP = 10  # Free/demo users see max 10 questions per game
+import re
+import random as _rand
+
+DEMO_QUESTION_CAP = 10
+
+# Map lesson_node prefix → series key
+SERIES_MAP = {
+    "Q1": "holiday_4c",
+    "Q2": "breakfast",
+    "Q3": "breakfast",  # Q3 content is future/extended Break*fast
+}
 
 
-async def _check_user_has_purchase(user_id: str, user_email: str) -> bool:
-    """Check if user has any paid order (directly or via redeem claim)."""
+def _classify_product(name: str) -> dict:
+    """Parse a product name/id into series + edition."""
+    nl = name.lower()
+    series = set()
+    edition = None
+
+    if any(k in nl for k in ["holiday", "4c", "covenant", "cradle", "cross", "comforter"]):
+        series.add("holiday_4c")
+    if any(k in nl for k in ["break*fast", "breakfast", "bkft", "nibble", "snack"]):
+        series.add("breakfast")
+    if "bundle" in nl:
+        series.add("holiday_4c")
+        series.add("breakfast")
+    if "game pass" in nl or "game night" in nl or "mix-up" in nl or "grinch" in nl:
+        series.add("holiday_4c")
+        series.add("breakfast")
+
+    if any(k in nl for k in ["adult", "- ae", "(ae)", " ae "]):
+        edition = "adult"
+    elif any(k in nl for k in ["youth", "- ye", "(ye)", " ye "]):
+        edition = "youth"
+
+    return {"series": series, "edition": edition}
+
+
+async def _get_user_entitlements(user_id: str, user_email: str) -> dict:
+    """Determine which content series + editions a user has unlocked."""
     if not user_id and not user_email:
-        return False
+        return {"series": set(), "editions": set(), "has_audio": False, "has_instructor": False}
+
     or_clauses = []
     if user_id:
         or_clauses.append({"claimed_by_user_id": user_id})
     if user_email:
-        or_clauses.append({"customer_email": {"$regex": f"^{user_email}$", "$options": "i"}})
-    found = await _trivia_db.payment_transactions.find_one(
+        or_clauses.append({"customer_email": {"$regex": f"^{re.escape(user_email)}$", "$options": "i"}})
+
+    txs = await _trivia_db.payment_transactions.find(
         {"$or": or_clauses, "payment_status": {"$in": ["paid", "completed"]}},
-        {"_id": 0, "order_number": 1},
-    )
-    return found is not None
+        {"_id": 0, "items": 1},
+    ).to_list(100)
+
+    unlocked_series = set()
+    unlocked_editions = set()
+    has_audio = False
+    has_instructor = False
+
+    for tx in txs:
+        for item in tx.get("items", []):
+            name = item.get("name", "") or item.get("product_id", "")
+            classified = _classify_product(name)
+            unlocked_series.update(classified["series"])
+            if classified["edition"]:
+                unlocked_editions.add(classified["edition"])
+            nl = name.lower()
+            if "full workbook" in nl or "subscription" in nl or "all access" in nl:
+                has_audio = True
+            if "instructor" in nl or "ie " in nl or " ie" in nl:
+                has_instructor = True
+
+    # Also check redeemed submitted_codes with status=processed
+    codes = await _trivia_db.submitted_codes.find(
+        {"user_id": user_id, "status": "processed"},
+        {"_id": 0, "code": 1},
+    ).to_list(50)
+    for code_doc in codes:
+        c = _classify_product(code_doc.get("code", ""))
+        unlocked_series.update(c["series"])
+        if c["edition"]:
+            unlocked_editions.add(c["edition"])
+
+    return {
+        "series": unlocked_series,
+        "editions": unlocked_editions,
+        "has_audio": has_audio,
+        "has_instructor": has_instructor,
+    }
+
+
+def _question_series(q: dict) -> str:
+    """Return the series key for a question based on lesson_node."""
+    node = (q.get("lesson_node") or "").strip()
+    if not node:
+        return "shared"
+    for prefix, series in SERIES_MAP.items():
+        if node.startswith(prefix):
+            return series
+    return "shared"
+
+
+@router.get("/entitlements/me")
+async def get_my_entitlements(request: Request):
+    """Return the caller's unlocked content series and editions."""
+    user_id, user_email, role = None, None, None
+
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        token_str = auth_header.split(" ", 1)[1]
+        try:
+            from jose import jwt
+            payload = jwt.decode(token_str, os.environ.get("JWT_SECRET_KEY"), algorithms=["HS256"])
+            uid = payload.get("sub")
+            if uid:
+                user = await _trivia_db.users.find_one({"id": uid}, {"_id": 0, "id": 1, "email": 1, "role": 1})
+                if user:
+                    user_id = user.get("id")
+                    user_email = user.get("email")
+                    role = user.get("role")
+        except Exception:
+            pass
+
+    if not user_id:
+        return {"series": [], "editions": [], "has_audio": False, "has_instructor": False, "access_level": "demo"}
+
+    if role in ("admin", "instructor"):
+        return {
+            "series": ["holiday_4c", "breakfast"],
+            "editions": ["adult", "youth"],
+            "has_audio": True,
+            "has_instructor": True,
+            "access_level": "full",
+        }
+
+    ent = await _get_user_entitlements(user_id, user_email)
+    return {
+        "series": sorted(ent["series"]),
+        "editions": sorted(ent["editions"]),
+        "has_audio": ent["has_audio"],
+        "has_instructor": ent["has_instructor"],
+        "access_level": "full" if ent["series"] else "demo",
+    }
 
 
 @router.get("/questions/for-game")
@@ -515,36 +641,42 @@ async def get_questions_for_game(
     game_type: Optional[str] = None,
     age_group: Optional[str] = None,
 ):
-    """Return questions gated by purchase entitlement.
-    - Authenticated users with a paid order → full pool (all matching questions).
-    - Everyone else → capped demo set.
+    """Return questions gated by content-specific entitlement.
+    - Free users → demo cap (10 questions from shared pool).
+    - Paid users → full question bank for their unlocked series + shared pool.
+    - Admin/instructor → everything.
     """
-    # Determine access level
+    user_id, user_email, role = None, None, None
+    unlocked_series = set()
     access_level = "demo"
-    user_id = None
-    user_email = None
 
     auth_header = request.headers.get("Authorization", "")
     if auth_header.startswith("Bearer "):
-        token = auth_header.split(" ", 1)[1]
+        token_str = auth_header.split(" ", 1)[1]
         try:
             from jose import jwt
-            payload = jwt.decode(token, os.environ.get("JWT_SECRET_KEY"), algorithms=["HS256"])
+            payload = jwt.decode(token_str, os.environ.get("JWT_SECRET_KEY"), algorithms=["HS256"])
             uid = payload.get("sub")
             if uid:
                 user = await _trivia_db.users.find_one({"id": uid}, {"_id": 0, "id": 1, "email": 1, "role": 1})
                 if user:
                     user_id = user.get("id")
                     user_email = user.get("email")
-                    # Admins / instructors always get full access
-                    if user.get("role") in ("admin", "instructor"):
-                        access_level = "full"
-                    elif await _check_user_has_purchase(user_id, user_email):
-                        access_level = "full"
+                    role = user.get("role")
         except Exception:
-            pass  # invalid token → stay demo
+            pass
 
-    # Build query
+    if role in ("admin", "instructor"):
+        access_level = "full"
+        unlocked_series = {"holiday_4c", "breakfast", "shared"}
+    elif user_id:
+        ent = await _get_user_entitlements(user_id, user_email)
+        unlocked_series = ent["series"]
+        if unlocked_series:
+            unlocked_series.add("shared")  # shared pool available to any purchaser
+            access_level = "full"
+
+    # Build base query
     query = {}
     if game_type:
         query["game_type"] = game_type
@@ -554,18 +686,23 @@ async def get_questions_for_game(
     all_questions = await _trivia_db.trivia_questions.find(query, {"_id": 0}).to_list(1000)
 
     if access_level == "demo":
-        # Return capped, deterministic-ish demo set (first N by qid)
-        all_questions.sort(key=lambda q: q.get("qid", 0))
-        all_questions = all_questions[:DEMO_QUESTION_CAP]
+        # Demo: capped set from shared pool only
+        shared = [q for q in all_questions if _question_series(q) == "shared"]
+        shared.sort(key=lambda q: q.get("qid", 0))
+        filtered = shared[:DEMO_QUESTION_CAP]
+    else:
+        # Full: only questions matching unlocked series
+        filtered = [q for q in all_questions if _question_series(q) in unlocked_series]
 
-    import random as _rand
-    _rand.shuffle(all_questions)
+    _rand.shuffle(filtered)
 
     return {
-        "questions": all_questions,
-        "total": len(all_questions),
+        "questions": filtered,
+        "total": len(filtered),
         "access_level": access_level,
+        "unlocked_series": sorted(unlocked_series) if unlocked_series else [],
     }
+
 
 
 # =============================================================================

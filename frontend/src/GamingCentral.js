@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Play, Pause, AlertTriangle, Zap, Timer, TrendingUp, Shield } from 'lucide-react';
+import { Clock, Play, Pause, AlertTriangle, Zap, Timer, TrendingUp, Shield, Lock, CheckCircle } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -57,6 +57,7 @@ const GamingCentral = () => {
   const [startingSession, setStartingSession] = useState(false);
   const [error, setError] = useState(null);
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  const [entitlements, setEntitlements] = useState(null);
   
   // Get user ID (from localStorage or generate guest ID)
   const getUserId = () => {
@@ -260,6 +261,19 @@ const GamingCentral = () => {
   // Initialize
   useEffect(() => {
     fetchSessionStatus();
+
+    // Fetch entitlements
+    (async () => {
+      try {
+        const token = localStorage.getItem('soul_food_token');
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        const res = await fetch(`${BACKEND_URL}/api/trivia/entitlements/me`, { headers });
+        if (res.ok) {
+          const data = await res.json();
+          setEntitlements(data);
+        }
+      } catch {}
+    })();
     
     // Check for existing session
     const existingSessionId = localStorage.getItem('gamingSessionId');
@@ -551,8 +565,32 @@ const GamingCentral = () => {
               ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/50' 
               : 'bg-orange-500/20 text-orange-300 border border-orange-500/50'
           }`}>
-            {edition === 'youth' ? '🧢✨ Ages 12-20 • Family Friendly' : '👨 Ages 21+ • Deeper Content'}
+            {edition === 'youth' ? 'Ages 12-20 • Family Friendly' : 'Ages 21+ • Deeper Content'}
           </Badge>
+
+          {/* Unlocked Content Summary */}
+          {entitlements && (
+            <div className="mt-4 flex flex-wrap justify-center gap-3" data-testid="unlocked-content-summary">
+              {['holiday_4c', 'breakfast'].map(s => {
+                const unlocked = entitlements.series?.includes(s);
+                const label = s === 'holiday_4c' ? 'Holiday 4C\'s' : 'Break*fast';
+                return (
+                  <div key={s} className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${
+                    unlocked ? 'bg-green-500/20 text-green-300 border border-green-500/40' : 'bg-white/5 text-purple-400 border border-white/10'
+                  }`} data-testid={`content-status-${s}`}>
+                    {unlocked ? <CheckCircle className="w-3.5 h-3.5" /> : <Lock className="w-3.5 h-3.5" />}
+                    {label} {unlocked ? 'Unlocked' : 'Demo'}
+                  </div>
+                );
+              })}
+              {entitlements.has_audio && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium bg-amber-500/20 text-amber-300 border border-amber-500/40" data-testid="audio-entitlement">
+                  <CheckCircle className="w-3.5 h-3.5" />
+                  Lesson Audio
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Games Grid */}
@@ -576,6 +614,14 @@ const GamingCentral = () => {
                       )}
                     </div>
                     <p className="text-purple-200 text-sm mb-3">{game.description}</p>
+                    {/* Content access indicator */}
+                    {entitlements && !game.comingSoon && (
+                      <p className={`text-xs mb-2 ${entitlements.access_level === 'full' ? 'text-green-400' : 'text-purple-400'}`}>
+                        {entitlements.access_level === 'full'
+                          ? `Full question bank — ${entitlements.series?.join(', ').replace('holiday_4c', '4C\'s').replace('breakfast', 'Break*fast')}`
+                          : 'Demo questions — purchase to unlock full bank'}
+                      </p>
+                    )}
                     <div className="flex items-center justify-between">
                       <Badge className={`
                         ${game.difficulty === 'Easy' ? 'bg-green-500/30 text-green-300' : ''}
@@ -608,6 +654,12 @@ const GamingCentral = () => {
           <div className="text-center mb-8">
             <h2 className="text-3xl font-black text-white mb-2">Table Talk Games</h2>
             <p className="text-purple-300 text-sm">Print &amp; play at home, in class, or at your ministry gathering</p>
+            {entitlements && !entitlements.has_instructor && (
+              <p className="text-amber-300/70 text-xs mt-2">
+                <Lock className="w-3 h-3 inline mr-1" />
+                Offline game packs require the Instructor Bundle upgrade
+              </p>
+            )}
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

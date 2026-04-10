@@ -143,14 +143,24 @@ const RedeemCode = () => {
               </div>
               <h2 className="text-xl font-bold text-slate-800 mb-2">Content Claimed!</h2>
               <p className="text-slate-600 mb-5">Your purchases are now available in your library.</p>
-              <Button
-                onClick={() => navigate('/my-library')}
-                className="bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold px-8 py-3"
-                data-testid="go-to-library-after-claim"
-              >
-                <ArrowRight className="w-4 h-4 mr-2" />
-                Go to My Library
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button
+                  onClick={() => navigate('/my-library')}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold px-8 py-3"
+                  data-testid="go-to-library-after-claim"
+                >
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Go to My Library
+                </Button>
+                <Button
+                  onClick={() => navigate('/gaming-central')}
+                  variant="outline"
+                  className="border-purple-300 text-purple-700 hover:bg-purple-50 font-bold px-8 py-3"
+                  data-testid="go-to-games-after-claim"
+                >
+                  Go to Game Center
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
