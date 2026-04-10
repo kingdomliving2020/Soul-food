@@ -23,6 +23,8 @@ const MyLibrary = () => {
   const [redeemingReward, setRedeemingReward] = useState(false);
   const [redeemCode, setRedeemCode] = useState('');
   const [redeemSubmitted, setRedeemSubmitted] = useState(false);
+  const [redeemLoading, setRedeemLoading] = useState(false);
+  const [redeemMessage, setRedeemMessage] = useState('');
   const [resentItems, setResentItems] = useState({});
   
   // Audio library state
@@ -624,24 +626,52 @@ const MyLibrary = () => {
                   <input
                     type="text"
                     value={redeemCode}
-                    onChange={e => { setRedeemCode(e.target.value); setRedeemSubmitted(false); }}
+                    onChange={e => { setRedeemCode(e.target.value); setRedeemSubmitted(false); setRedeemMessage(''); }}
                     placeholder="e.g. SF-2026-XXXXX"
                     className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 outline-none font-mono"
                     data-testid="redeem-code-input"
                   />
                   <Button
-                    onClick={() => { if (redeemCode.trim()) setRedeemSubmitted(true); }}
-                    disabled={!redeemCode.trim()}
+                    onClick={async () => {
+                      if (!redeemCode.trim()) return;
+                      setRedeemLoading(true);
+                      setRedeemMessage('');
+                      try {
+                        const res = await fetch(`${API}/orders/submit-code`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                          body: JSON.stringify({ code: redeemCode.trim() }),
+                        });
+                        let data = {};
+                        try { data = await res.json(); } catch {}
+                        if (res.ok) {
+                          setRedeemSubmitted(true);
+                          setRedeemMessage(data.message || 'Code received. Your content will be unlocked shortly.');
+                          setRedeemCode('');
+                        } else {
+                          setRedeemMessage(data.detail || 'Something went wrong. Please try again.');
+                        }
+                      } catch {
+                        setRedeemMessage('Network error. Please try again.');
+                      } finally {
+                        setRedeemLoading(false);
+                      }
+                    }}
+                    disabled={!redeemCode.trim() || redeemLoading}
                     className="bg-indigo-600 hover:bg-indigo-700 text-white px-4"
                     data-testid="redeem-code-submit-btn"
                   >
-                    Redeem
+                    {redeemLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Redeem'}
                   </Button>
                 </div>
-                {redeemSubmitted && (
-                  <div className="mt-3 px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700 flex items-center gap-2" data-testid="redeem-code-confirmation">
+                {redeemMessage && (
+                  <div className={`mt-3 px-3 py-2 rounded-lg text-sm flex items-center gap-2 ${
+                    redeemSubmitted
+                      ? 'bg-green-50 border border-green-200 text-green-700'
+                      : 'bg-red-50 border border-red-200 text-red-700'
+                  }`} data-testid="redeem-code-confirmation">
                     <TicketCheck className="w-4 h-4 flex-shrink-0" />
-                    Code submitted! We'll link any matching content to your library.
+                    {redeemMessage}
                   </div>
                 )}
               </CardContent>

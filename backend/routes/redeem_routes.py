@@ -234,3 +234,31 @@ async def resend_access_email(req: ResendAccessRequest, request: Request):
     if result.get("success"):
         return {"success": True, "message": "Access email sent! Check your inbox (and spam folder)."}
     raise HTTPException(status_code=500, detail="Failed to send email. Please try again later.")
+
+
+class SubmitCodeRequest(BaseModel):
+    code: str
+
+
+@router.post("/submit-code")
+async def submit_code(req: SubmitCodeRequest, request: Request):
+    """Store a user-submitted redeem code for admin review / offline fulfillment.
+    Accepts any input without strict validation."""
+    user = await get_current_user_optional(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Please log in to submit a code.")
+
+    code = req.code.strip()
+    if not code:
+        raise HTTPException(status_code=400, detail="Code cannot be empty.")
+
+    await db.submitted_codes.insert_one({
+        "code": code,
+        "user_id": user.get("id"),
+        "user_email": user.get("email"),
+        "user_name": user.get("name", ""),
+        "status": "pending",
+        "submitted_at": datetime.now(timezone.utc).isoformat(),
+    })
+
+    return {"success": True, "message": "Code received. Your content will be unlocked shortly."}
