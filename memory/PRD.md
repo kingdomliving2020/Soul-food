@@ -17,39 +17,40 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 
 ## What's Implemented
 
-### Admin UI MVP + Resend Access Link (Apr 9, 2026)
-- [x] Admin Orders page: search by email/name/order#, paginated list from payment_transactions
-- [x] Admin Order Detail: expand row to see items, download links (active/revoked), delivery logs, claimed status
-- [x] Admin Resend Email: one-click resend order confirmation emails with download + redeem links
-- [x] Admin Grant Access: manually create/recreate download links for any order
-- [x] Admin Refund: full/partial/custom refund processing (existing)
-- [x] Public Resend Access: POST /api/orders/resend-access — rate-limited (3/hour), validates email match
-- [x] Order Success page: "Resend Access Link" section with email input + "Redeem Now" link
-- [x] Tested: 19/19 backend, all frontend flows verified (iteration 18)
+### Content-Specific Game Entitlements (Apr 10, 2026)
+- [x] Backend: /api/trivia/entitlements/me — returns user's unlocked series, editions, audio, instructor flags
+- [x] Backend: /api/trivia/questions/for-game — content-gated: demo=10 shared questions, paid=full pool for unlocked series
+- [x] Series mapping: Q1 lesson_node → holiday_4c, Q2/Q3 → breakfast, empty → shared
+- [x] Product classification: parses purchase names for series (holiday/4c/breakfast/bundle) + edition (adult/youth)
+- [x] Audio access tracked separately (has_audio flag, not tied to trivia)
+- [x] Instructor access tracked separately (has_instructor flag)
+- [x] Game Center: shows unlock badges per series + Lesson Audio badge
+- [x] Game cards: "Full question bank — 4C's, Break*fast" vs "Demo questions — purchase to unlock"
+- [x] Offline games section: shows instructor-only lock message
+- [x] Redeem success: "Go to Game Center" button added alongside "Go to My Library"
+- [x] Tested: 10/10 backend, all frontend verified (iteration 20)
+
+### Bundle IE Upgrade Tier (Apr 10, 2026)
+- [x] Edition selector: AE/YE with instructor upgrade checkbox (+$7)
+- [x] Game access by tier: Standard=1hr Online Game Pass, Instructor=3hr+Offline Pack
+- [x] Order summary shows content-specific line items
+
+### Admin UI + Resend Access (Apr 9, 2026)
+- [x] Admin Orders: search, detail, resend email, grant access
+- [x] Admin Submitted Codes: list view
+- [x] Public resend-access: rate-limited (3/hr)
 
 ### Redeem Code Flow (Apr 9, 2026)
-- [x] Backend: verify-claim + claim endpoints
-- [x] Frontend: /redeem page with auto-verify from URL param
-- [x] Email templates include "Redeem Your Purchase" section
-- [x] Tested: 12/12 tests passed (iteration 17)
-
-### Purchase Flow & Exit-Intent (Apr 8, 2026)
-- [x] Guest checkout, post-purchase page, My Library empty state, exit-intent popup
-
-### Conversion Layer (Apr 8, 2026)
-- [x] Homepage hero, bundle section, post-game conversion prompts
-
-### Auth & Email Fixes (Apr 8, 2026)
-- [x] Password reset, header state sync, SITE_URL for emails, webhook download links
+- [x] Backend verify-claim + claim, frontend /redeem page, email templates
 
 ### Earlier Work
-- Offline game files (4 PDFs), 383 trivia questions, maps
-- 230 product-file mappings, admin fulfillment endpoints
-- Store launch, coupons, Pentecost countdown
+- Purchase Flow, Conversion Layer, Auth Fixes, Games, Store Launch
 
 ## Prioritized Backlog
 
 ### P2 (ON HOLD per user — paused for deployment)
+- Wire Resend Download Link to backend
+- Full redeem code validation logic
 - Force password change on first login (NIST)
 - Security: httpOnly cookies
 - SMS OTP, Word Search Game, Video Integration
