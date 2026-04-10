@@ -8,7 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { 
   Book, Download, Gift, Shield, User, LogOut, 
   Star, ChevronRight, Loader2, Award, Settings,
-  Music, Play, Pause, Headphones
+  Music, Play, Pause, Headphones, TicketCheck
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -21,6 +21,8 @@ const MyLibrary = () => {
   const [purchases, setPurchases] = useState([]);
   const [rewards, setRewards] = useState({ points: 0, available_rewards: [] });
   const [redeemingReward, setRedeemingReward] = useState(false);
+  const [redeemCode, setRedeemCode] = useState('');
+  const [redeemSubmitted, setRedeemSubmitted] = useState(false);
   
   // Audio library state
   const [audioAccess, setAudioAccess] = useState(null);
@@ -564,6 +566,43 @@ const MyLibrary = () => {
           
           {/* Right Column - Rewards */}
           <div className="space-y-6">
+            {/* Redeem Code Card */}
+            <Card className="shadow-lg border-2 border-indigo-200" data-testid="redeem-code-card">
+              <CardHeader className="border-b bg-gradient-to-r from-indigo-50 to-purple-50 pb-3">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <TicketCheck className="w-5 h-5 text-indigo-600" />
+                  Redeem a Code
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-5">
+                <p className="text-sm text-slate-500 mb-3">Enter your order number or gift code to add content to your library.</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={redeemCode}
+                    onChange={e => { setRedeemCode(e.target.value); setRedeemSubmitted(false); }}
+                    placeholder="e.g. SF-2026-XXXXX"
+                    className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-300 focus:border-indigo-500 outline-none font-mono"
+                    data-testid="redeem-code-input"
+                  />
+                  <Button
+                    onClick={() => { if (redeemCode.trim()) setRedeemSubmitted(true); }}
+                    disabled={!redeemCode.trim()}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4"
+                    data-testid="redeem-code-submit-btn"
+                  >
+                    Redeem
+                  </Button>
+                </div>
+                {redeemSubmitted && (
+                  <div className="mt-3 px-3 py-2 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700 flex items-center gap-2" data-testid="redeem-code-confirmation">
+                    <TicketCheck className="w-4 h-4 flex-shrink-0" />
+                    Code submitted! We'll link any matching content to your library.
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             {/* Rewards Points Card */}
             <Card className="shadow-lg border-2 border-amber-200">
               <CardHeader className="border-b bg-gradient-to-r from-amber-50 to-orange-50">
