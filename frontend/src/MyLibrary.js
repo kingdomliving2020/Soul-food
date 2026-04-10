@@ -8,7 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { 
   Book, Download, Gift, Shield, User, LogOut, 
   Star, ChevronRight, Loader2, Award, Settings,
-  Music, Play, Pause, Headphones, TicketCheck, RotateCcw
+  Music, Play, Pause, Headphones, TicketCheck, RotateCcw, Lock, Clock
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -377,6 +377,16 @@ const MyLibrary = () => {
                         return '/soul-food-logo.png';
                       };
                       
+                      const status = purchase.download_url ? 'available' : (purchase.order_id ? 'processing' : 'locked');
+
+                      const statusConfig = {
+                        available:  { label: 'Available',  bg: 'bg-green-100', text: 'text-green-700', icon: Download },
+                        processing: { label: 'Processing', bg: 'bg-slate-100', text: 'text-slate-500',  icon: Clock },
+                        locked:     { label: 'Locked',     bg: 'bg-red-100',   text: 'text-red-600',   icon: Lock },
+                      };
+                      const st = statusConfig[status];
+                      const StIcon = st.icon;
+
                       return (
                         <div
                           key={idx}
@@ -389,7 +399,13 @@ const MyLibrary = () => {
                               className="w-16 h-20 object-contain rounded-lg border border-slate-200 bg-white shadow-sm"
                             />
                             <div>
-                              <h4 className="font-semibold text-slate-800">{purchase.product_name}</h4>
+                              <div className="flex items-center gap-2 mb-0.5">
+                                <h4 className="font-semibold text-slate-800">{purchase.product_name}</h4>
+                                <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${st.bg} ${st.text}`} data-testid={`status-badge-${idx}`}>
+                                  <StIcon className="w-3 h-3" />
+                                  {st.label}
+                                </span>
+                              </div>
                               <p className="text-sm text-slate-500">
                                 Purchased: {new Date(purchase.purchased_at).toLocaleDateString()}
                               </p>
@@ -397,7 +413,7 @@ const MyLibrary = () => {
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-2 flex-shrink-0">
-                            {purchase.download_url ? (
+                            {status === 'available' ? (
                               <>
                                 <Button
                                   onClick={() => window.open(purchase.download_url, '_blank')}
@@ -416,15 +432,26 @@ const MyLibrary = () => {
                                   {resentItems[idx] ? 'Link resent!' : 'Resend Download Link'}
                                 </button>
                               </>
+                            ) : status === 'processing' ? (
+                              <>
+                                <Button variant="outline" disabled className="border-slate-300 text-slate-400" data-testid={`download-btn-disabled-${idx}`}>
+                                  <Clock className="w-4 h-4 mr-2" />
+                                  Download PDF
+                                </Button>
+                                <button
+                                  onClick={() => setResentItems(prev => ({ ...prev, [idx]: true }))}
+                                  className="text-xs text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors"
+                                  data-testid={`resend-link-btn-${idx}`}
+                                >
+                                  <RotateCcw className="w-3 h-3" />
+                                  {resentItems[idx] ? 'Link resent!' : 'Link expired \u2013 click to resend'}
+                                </button>
+                              </>
                             ) : (
-                              <button
-                                onClick={() => setResentItems(prev => ({ ...prev, [idx]: true }))}
-                                className="flex items-center gap-2 px-4 py-2 border border-amber-300 rounded-lg bg-amber-50 text-amber-700 text-sm font-medium hover:bg-amber-100 transition-colors"
-                                data-testid={`expired-resend-btn-${idx}`}
-                              >
-                                <RotateCcw className="w-4 h-4" />
-                                {resentItems[idx] ? 'Link resent!' : 'Link expired \u2013 click to resend'}
-                              </button>
+                              <Button variant="outline" disabled className="border-red-200 text-red-400" data-testid={`download-btn-locked-${idx}`}>
+                                <Lock className="w-4 h-4 mr-2" />
+                                Locked
+                              </Button>
                             )}
                             {resentItems[idx] && (
                               <span className="text-xs text-green-600" data-testid={`resend-confirmation-${idx}`}>
