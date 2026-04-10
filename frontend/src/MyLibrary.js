@@ -8,7 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { 
   Book, Download, Gift, Shield, User, LogOut, 
   Star, ChevronRight, Loader2, Award, Settings,
-  Music, Play, Pause, Headphones, TicketCheck
+  Music, Play, Pause, Headphones, TicketCheck, RotateCcw
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -23,6 +23,7 @@ const MyLibrary = () => {
   const [redeemingReward, setRedeemingReward] = useState(false);
   const [redeemCode, setRedeemCode] = useState('');
   const [redeemSubmitted, setRedeemSubmitted] = useState(false);
+  const [resentItems, setResentItems] = useState({});
   
   // Audio library state
   const [audioAccess, setAudioAccess] = useState(null);
@@ -395,24 +396,40 @@ const MyLibrary = () => {
                               <p className="text-xs text-slate-400">Order: {purchase.order_id}</p>
                             </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex flex-col items-end gap-2 flex-shrink-0">
                             {purchase.download_url ? (
-                              <Button
-                                onClick={() => window.open(purchase.download_url, '_blank')}
-                                className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white"
-                              >
-                                <Download className="w-4 h-4 mr-2" />
-                                Download PDF
-                              </Button>
+                              <>
+                                <Button
+                                  onClick={() => window.open(purchase.download_url, '_blank')}
+                                  className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white"
+                                  data-testid={`download-btn-${idx}`}
+                                >
+                                  <Download className="w-4 h-4 mr-2" />
+                                  Download PDF
+                                </Button>
+                                <button
+                                  onClick={() => setResentItems(prev => ({ ...prev, [idx]: true }))}
+                                  className="text-xs text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors"
+                                  data-testid={`resend-link-btn-${idx}`}
+                                >
+                                  <RotateCcw className="w-3 h-3" />
+                                  {resentItems[idx] ? 'Link resent!' : 'Resend Download Link'}
+                                </button>
+                              </>
                             ) : (
-                              <Button
-                                variant="outline"
-                                disabled
-                                className="border-slate-300 text-slate-400"
+                              <button
+                                onClick={() => setResentItems(prev => ({ ...prev, [idx]: true }))}
+                                className="flex items-center gap-2 px-4 py-2 border border-amber-300 rounded-lg bg-amber-50 text-amber-700 text-sm font-medium hover:bg-amber-100 transition-colors"
+                                data-testid={`expired-resend-btn-${idx}`}
                               >
-                                <Download className="w-4 h-4 mr-2" />
-                                Processing...
-                              </Button>
+                                <RotateCcw className="w-4 h-4" />
+                                {resentItems[idx] ? 'Link resent!' : 'Link expired \u2013 click to resend'}
+                              </button>
+                            )}
+                            {resentItems[idx] && (
+                              <span className="text-xs text-green-600" data-testid={`resend-confirmation-${idx}`}>
+                                Check your email for a new link.
+                              </span>
                             )}
                           </div>
                         </div>
