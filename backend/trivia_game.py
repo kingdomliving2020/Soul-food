@@ -1,5 +1,5 @@
 # Soul Food: Trivia Mix-up Game System
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timezone, timedelta
@@ -483,6 +483,89 @@ async def get_user_stats(user_id: str):
     }
     
     return {"stats": mock_stats}
+
+
+
+# =============================================================================
+# ENTITLED GAME QUESTIONS ENDPOINT
+# =============================================================================
+
+DEMO_QUESTION_CAP = 10  # Free/demo users see max 10 questions per game
+
+
+async def _check_user_has_purchase(user_id: str, user_email: str) -> bool:
+    """Check if user has any paid order (directly or via redeem claim)."""
+    if not user_id and not user_email:
+        return False
+    or_clauses = []
+    if user_id:
+        or_clauses.append({"claimed_by_user_id": user_id})
+    if user_email:
+        or_clauses.append({"customer_email": {"$regex": f"^{user_email}$", "$options": "i"}})
+    found = await _trivia_db.payment_transactions.find_one(
+        {"$or": or_clauses, "payment_status": {"$in": ["paid", "completed"]}},
+        {"_id": 0, "order_number": 1},
+    )
+    return found is not None
+
+
+@router.get("/questions/for-game")
+async def get_questions_for_game(
+    request: Request,
+    game_type: Optional[str] = None,
+    age_group: Optional[str] = None,
+):
+    """Return questions gated by purchase entitlement.
+    - Authenticated users with a paid order → full pool (all matching questions).
+    - Everyone else → capped demo set.
+    """
+    # Determine access level
+    access_level = "demo"
+    user_id = None
+    user_email = None
+
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        token = auth_header.split(" ", 1)[1]
+        try:
+            from jose import jwt
+            payload = jwt.decode(token, os.environ.get("JWT_SECRET_KEY"), algorithms=["HS256"])
+            uid = payload.get("sub")
+            if uid:
+                user = await _trivia_db.users.find_one({"id": uid}, {"_id": 0, "id": 1, "email": 1, "role": 1})
+                if user:
+                    user_id = user.get("id")
+                    user_email = user.get("email")
+                    # Admins / instructors always get full access
+                    if user.get("role") in ("admin", "instructor"):
+                        access_level = "full"
+                    elif await _check_user_has_purchase(user_id, user_email):
+                        access_level = "full"
+        except Exception:
+            pass  # invalid token → stay demo
+
+    # Build query
+    query = {}
+    if game_type:
+        query["game_type"] = game_type
+    if age_group:
+        query["age_group"] = age_group
+
+    all_questions = await _trivia_db.trivia_questions.find(query, {"_id": 0}).to_list(1000)
+
+    if access_level == "demo":
+        # Return capped, deterministic-ish demo set (first N by qid)
+        all_questions.sort(key=lambda q: q.get("qid", 0))
+        all_questions = all_questions[:DEMO_QUESTION_CAP]
+
+    import random as _rand
+    _rand.shuffle(all_questions)
+
+    return {
+        "questions": all_questions,
+        "total": len(all_questions),
+        "access_level": access_level,
+    }
 
 
 # =============================================================================

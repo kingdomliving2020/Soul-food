@@ -70,15 +70,21 @@ const TrickyTestamentGame = () => {
 
   const fetchQuestions = async () => {
     try {
-      // Fetch REAL questions from the trivia bank
       const age = edition === 'youth' ? 'youth' : 'adult';
-      const res = await fetch(`${BACKEND_URL}/api/trivia/questions/browse?game_type=trivia_testament&age_group=${age}&per_page=40`);
+      const token = localStorage.getItem('soul_food_token');
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+
+      // Use entitled endpoint — returns full pool for purchasers, demo set for free users
+      const res = await fetch(
+        `${BACKEND_URL}/api/trivia/questions/for-game?game_type=trivia_testament&age_group=${age}`,
+        { headers }
+      );
       if (res.ok) {
         const data = await res.json();
         const allQ = data.questions || [];
-        
+
         if (allQ.length > 0) {
-          // Group by character for categories, take up to 10 questions
+          // Pick 10 random questions for the Jeopardy board
           const shuffled = allQ.sort(() => Math.random() - 0.5).slice(0, 10);
           const formatted = shuffled.map((q, i) => ({
             id: i,
