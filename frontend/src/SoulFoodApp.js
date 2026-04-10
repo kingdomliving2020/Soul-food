@@ -1155,10 +1155,32 @@ const SoulFoodLanding = () => {
                         <Check className="w-3.5 h-3.5 text-amber-700" />
                       </div>
                       <div>
-                        <p className="font-semibold text-slate-800 text-sm">Bonus: Online Game Access</p>
-                        <p className="text-xs text-slate-500">Trivia, GRinCH bingo & Jeopardy-style challenges for both series</p>
+                        <p className="font-semibold text-slate-800 text-sm">1-Hour Online Game Pass</p>
+                        <p className="text-xs text-slate-500">Jeopardy and Millionaire-styled games for both series</p>
                       </div>
                     </div>
+                    {bundleInstructorUpgrade && (
+                      <>
+                        <div className="flex items-start gap-3">
+                          <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3.5 h-3.5 text-indigo-700" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-indigo-800 text-sm">Upgraded to 3-Hour Online Game Pass</p>
+                            <p className="text-xs text-slate-500">Extended session time for group and classroom play</p>
+                          </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                          <div className="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Check className="w-3.5 h-3.5 text-indigo-700" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-indigo-800 text-sm">Offline Game Pack</p>
+                            <p className="text-xs text-slate-500">Printable questions & answers for group facilitation</p>
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
 
                   {/* Edition Selector */}
@@ -1211,7 +1233,7 @@ const SoulFoodLanding = () => {
                         Upgrade to Instructor Bundle
                         <span className="ml-1.5 text-indigo-600 font-bold">(+$7)</span>
                       </p>
-                      <p className="text-xs text-slate-500 mt-0.5">This upgrade includes Instructor Edition (IE) content for teaching and group facilitation.</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Includes IE content, 3-hour online game pass, and offline game pack for teaching and group facilitation.</p>
                     </div>
                   </label>
 
@@ -1225,11 +1247,21 @@ const SoulFoodLanding = () => {
                       <div className="flex justify-between">
                         <span>Break*fast Bundle – {bundleEdition === 'ae' ? 'Adult Edition (AE)' : 'Youth Edition (YE)'} – ePub</span>
                       </div>
+                      <div className="flex justify-between text-slate-500 text-xs pt-1 border-t border-slate-200 mt-1">
+                        <span>{bundleInstructorUpgrade ? '3-Hour Online Game Pass' : '1-Hour Online Game Pass'}</span>
+                        <span className="text-green-600 font-medium">Included</span>
+                      </div>
                       {bundleInstructorUpgrade && (
-                        <div className="flex justify-between text-indigo-700 font-medium pt-1 border-t border-slate-200 mt-1">
-                          <span>Upgraded to Instructor Bundle (Includes IE)</span>
-                          <span>+$7.00</span>
-                        </div>
+                        <>
+                          <div className="flex justify-between text-xs text-slate-500">
+                            <span>Offline Game Pack (Q&A for group facilitation)</span>
+                            <span className="text-green-600 font-medium">Included</span>
+                          </div>
+                          <div className="flex justify-between text-indigo-700 font-medium text-sm pt-1 border-t border-slate-200 mt-1">
+                            <span>Upgraded to Instructor Bundle (Includes IE)</span>
+                            <span>+$7.00</span>
+                          </div>
+                        </>
                       )}
                     </div>
                   </div>
