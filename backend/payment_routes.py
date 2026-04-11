@@ -293,8 +293,146 @@ PRODUCT_FILES = {
     "workbooks-breakfast-ye-digital-youth-epub": "breakfast-ye-full.pdf",
 }
 
+import re as _re
+
+def _strip_display_noise(text: str) -> str:
+    """Strip discount labels, pre-order tags, and formatting from display names."""
+    t = text.strip()
+    # Remove discount parentheticals: (99% off), (15% off), (20% Off), ($3 Off)
+    t = _re.sub(r'\(\d+%\s*off\)', '', t, flags=_re.IGNORECASE)
+    t = _re.sub(r'\(\$\d+(\.\d+)?\s*off[^)]*\)', '', t, flags=_re.IGNORECASE)
+    # Remove pre-order tags
+    t = _re.sub(r'\[PRE-?ORDER\]', '', t, flags=_re.IGNORECASE)
+    # Remove ship notes in parens: (Ships May-Jun 2026)
+    t = _re.sub(r'\(Ships[^)]+\)', '', t, flags=_re.IGNORECASE)
+    # Remove "— $3 Off (Pre-Order)" or "- $3 Off" style suffixes (both em-dash and regular dash)
+    t = _re.sub(r'[\u2014\u2013—–-]\s*\$\d+(\.\d+)?\s*Off[^)]*(\(Pre-?Order\))?', '', t, flags=_re.IGNORECASE)
+    # Remove standalone (Pre-Order) tags
+    t = _re.sub(r'\(Pre-?Order\)', '', t, flags=_re.IGNORECASE)
+    return t.strip().strip('-').strip()
+
+
+def resolve_display_name_to_product_id(display_name: str) -> Optional[str]:
+    """Resolve a human-readable display name (from Stripe/QuickOrder) to an internal product ID.
+    
+    Handles patterns like:
+      'Holiday Series - The Covenant - ADULT (99% off)' -> 'holiday_ae'
+      'Full Workbooks - Holiday Digital (Adult) (15% off)' -> 'holiday_ae'
+      'Full Workbooks - Break*fast AE Digital - ADULT' -> 'breakfast_ae_digital'
+      'Break*fast Series - Jesus: Prayer the First Resort' -> nibble product
+      'Game Night Lite (30-Day)' -> 'game_pass_30' (no file, but valid product)
+    """
+    if not display_name:
+        return None
+
+    clean = _strip_display_noise(display_name).lower()
+
+    # Detect series
+    is_holiday = any(k in clean for k in ['holiday', '4c', 'covenant', 'cradle', 'cross', 'comforter'])
+    is_breakfast = any(k in clean for k in ['break*fast', 'breakfast', 'bkft'])
+    is_lunch = 'lunch' in clean
+
+    # Detect edition
+    edition = None
+    if any(k in clean for k in [' ie ', ' ie,', '-ie-', 'instructor']):
+        edition = 'ie'
+    elif any(k in clean for k in [' ye ', ' ye,', '-ye-', 'youth']):
+        edition = 'ye'
+    elif any(k in clean for k in [' ae ', ' ae,', '-ae-', 'adult']):
+        edition = 'ae'
+
+    # Detect format
+    is_paperback = any(k in clean for k in ['paperback', 'print', 'wbk', 'physical'])
+
+    # Detect product type
+    is_full = any(k in clean for k in ['full workbook', 'full series', 'full digital', 'full '])
+    is_nibble = any(k in clean for k in ['nibble', 'single lesson'])
+    is_snack = any(k in clean for k in ['snack pack', 'snack '])
+    is_game = any(k in clean for k in ['game pass', 'game night', 'mix-up', 'gaming', 'grinch'])
+    is_subscription = 'subscription' in clean or 'all access' in clean
+    is_gift = 'gift' in clean or 'certificate' in clean
+    is_bundle = 'bundle' in clean or 'starter' in clean
+
+    # Games / subscriptions / gifts / merch — no PDF download, return product key for entitlement
+    if is_game:
+        if '90' in clean:
+            return 'game_pass_90'
+        return 'game_pass_30'
+    if is_subscription or is_gift or is_bundle:
+        return None  # These don't map to individual files
+
+    # Holiday nibbles (individual lessons)
+    if is_holiday and is_nibble:
+        ed = edition or 'ae'
+        if 'covenant' in clean:
+            return 'holiday-nibble-ae-covenant-digital' if ed == 'ae' else 'holiday-nibble-ye-covenant-digital'
+        if 'cradle' in clean:
+            return 'holiday-nibble-ae-cradle-digital' if ed == 'ae' else 'holiday-nibble-ye-cradle-digital'
+        if 'cross' in clean:
+            return 'holiday-nibble-ae-cross-digital' if ed == 'ae' else 'holiday-nibble-ye-cross-digital'
+        if 'comforter' in clean:
+            return 'holiday-nibble-ae-comforter-digital' if ed == 'ae' else 'holiday-nibble-ye-comforter-digital'
+        # Generic holiday nibble
+        return f'holiday_{ed}'
+
+    # Holiday specific lessons referenced by name
+    if is_holiday and not is_nibble:
+        for lesson_name, suffix in [('covenant', 'covenant'), ('cradle', 'cradle'), ('cross', 'cross'), ('comforter', 'comforter')]:
+            if lesson_name in clean:
+                ed = edition or 'ae'
+                return f'holiday-nibble-ae-{suffix}-digital' if ed == 'ae' else f'holiday-nibble-ye-{suffix}-digital'
+
+    # Holiday full workbook
+    if is_holiday and (is_full or (not is_nibble and not is_snack)):
+        ed = edition or 'ae'
+        return f'holiday_{ed}'
+
+    # Breakfast nibbles (individual lessons by character name)
+    breakfast_lesson_map = {
+        'esther': ('prayer-1', 1), 'solomon': ('prayer-2', 1), 'jesus': ('prayer-3', 1),
+        'paul': ('prayer-4', 1), 'silas': ('prayer-4', 1),
+        'joseph': ('through-1', 2), 'dreamer': ('through-1', 2),
+        'hannah': ('through-2', 2), 'abram': ('through-3', 2),
+        'victory': ('through-4', 2),
+        'rahab': ('faith-1', 3), 'abigail': ('faith-2', 3),
+        'centurion': ('faith-3', 3), 'arimathea': ('faith-4', 3),
+    }
+    if is_breakfast:
+        for char_name, (lesson_key, month) in breakfast_lesson_map.items():
+            if char_name in clean:
+                ed = edition or 'ae'
+                age = 'adult' if ed in ('ae', 'ie') else 'youth'
+                return f'breakfast-nibble-{lesson_key}-{age}-interactive'
+
+    # Breakfast snack packs
+    if is_breakfast and is_snack:
+        ed = edition or 'ae'
+        month = '1'
+        if 'month 2' in clean or 'through' in clean or 'm2' in clean:
+            month = '2'
+        elif 'month 3' in clean or 'faith' in clean or 'm3' in clean:
+            month = '3'
+        age = 'adult' if ed in ('ae', 'ie') else 'youth'
+        return f'breakfast-snack-month-{month}-{age}-interactive'
+
+    # Breakfast full workbook
+    if is_breakfast and (is_full or (not is_nibble and not is_snack)):
+        ed = edition or 'ae'
+        if is_paperback:
+            return f'breakfast-{ed}-paperback'
+        return f'breakfast_{ed}_digital'
+
+    # Lunch (pre-order, paperback only)
+    if is_lunch:
+        ed = edition or 'ae'
+        return f'lunch-{ed}-paperback'
+
+    return None
+
+
 def normalize_product_id(product_id: str) -> str:
-    """Normalize product ID to match PRODUCT_FILES keys"""
+    """Normalize product ID to match PRODUCT_FILES keys.
+    Handles internal IDs, cart-generated IDs, AND human-readable display names."""
     if not product_id:
         return product_id
     
@@ -305,63 +443,138 @@ def normalize_product_id(product_id: str) -> str:
     # Try common transformations
     normalized = product_id.lower().strip()
     
-    # Check if normalized version exists
     if normalized in PRODUCT_FILES:
         return normalized
     
-    # Try replacing dashes with underscores
+    # Replace dashes with underscores
     underscore_version = normalized.replace('-', '_')
     if underscore_version in PRODUCT_FILES:
         return underscore_version
     
-    # Smart extraction: cart IDs are often like "workbooks-holiday-ae-digital-adult-digital"
-    # or "breakfast-snack-month-1-adult-interactive"
-    # Try progressively shorter prefixes
+    # Strip discount/display noise first, then retry
+    cleaned = _strip_display_noise(product_id).lower().strip()
+    if cleaned in PRODUCT_FILES:
+        return cleaned
+    cleaned_us = cleaned.replace('-', '_')
+    if cleaned_us in PRODUCT_FILES:
+        return cleaned_us
+
+    # Try progressively shorter prefixes (for cart-generated IDs)
     parts = normalized.split('-')
     for end in range(len(parts), 1, -1):
         candidate = '-'.join(parts[:end])
         if candidate in PRODUCT_FILES:
             return candidate
-        # Also try underscore version
         candidate_us = '_'.join(parts[:end])
         if candidate_us in PRODUCT_FILES:
             return candidate_us
     
-    # Try extracting known series + edition patterns
-    series_map = {
-        'holiday': {'ae': 'holiday_ae', 'ye': 'holiday_ye', 'ie': 'holiday_ie', 'adult': 'holiday_ae', 'youth': 'holiday_ye', 'instructor': 'holiday_ie'},
-        'breakfast': {'ae': 'breakfast_ae_digital', 'ye': 'breakfast_ye_digital', 'ie': 'breakfast_ie_digital', 'adult': 'breakfast_ae_digital', 'youth': 'breakfast_ye_digital', 'instructor': 'breakfast_ie_digital'},
-    }
-    
-    # Try with epub/ebook -> interactive/digital substitution
-    for old_fmt, new_fmt in [('epub', 'interactive'), ('epub', 'digital'), ('ebook', 'interactive'), ('ebook', 'digital')]:
-        swapped = normalized.replace(f'-{old_fmt}', f'-{new_fmt}')
-        if swapped in PRODUCT_FILES:
-            return swapped
-    
-    for series_key, editions in series_map.items():
-        if series_key in normalized:
-            for ed_key, file_key in editions.items():
-                if ed_key in normalized:
-                    if file_key in PRODUCT_FILES:
-                        return file_key
-    
-    # Try extracting just the package portion (skip section prefix)
-    # e.g., "workbooks-holiday-ae-digital-adult-digital" -> "holiday-ae-digital"
+    # Section-prefix stripping (workbooks-, instructor-, etc.)
     known_sections = ['workbooks', 'instructor', 'bookclub']
     for section in known_sections:
         if normalized.startswith(section + '-'):
             remainder = normalized[len(section) + 1:]
             if remainder in PRODUCT_FILES:
                 return remainder
-            # Try trimming trailing edition-format
             remainder_parts = remainder.split('-')
             for end in range(len(remainder_parts), 1, -1):
                 sub = '-'.join(remainder_parts[:end])
                 if sub in PRODUCT_FILES:
                     return sub
+
+    # Display-name resolution (must run BEFORE the series_map substring check,
+    # which can false-positive on substrings like "series" containing "ie")
+    resolved = resolve_display_name_to_product_id(product_id)
+    if resolved and resolved in PRODUCT_FILES:
+        return resolved
+
+    # Series + edition extraction — ONLY for structured IDs, not display names.
+    # Skip this if the input looks like a display name (contains spaces)
+    if ' ' not in normalized:
+        series_map = {
+            'holiday': {'ae': 'holiday_ae', 'ye': 'holiday_ye', 'ie': 'holiday_ie', 'adult': 'holiday_ae', 'youth': 'holiday_ye', 'instructor': 'holiday_ie'},
+            'breakfast': {'ae': 'breakfast_ae_digital', 'ye': 'breakfast_ye_digital', 'ie': 'breakfast_ie_digital', 'adult': 'breakfast_ae_digital', 'youth': 'breakfast_ye_digital', 'instructor': 'breakfast_ie_digital'},
+        }
+        
+        for old_fmt, new_fmt in [('epub', 'interactive'), ('epub', 'digital'), ('ebook', 'interactive'), ('ebook', 'digital')]:
+            swapped = normalized.replace(f'-{old_fmt}', f'-{new_fmt}')
+            if swapped in PRODUCT_FILES:
+                return swapped
+        
+        for series_key, editions in series_map.items():
+            if series_key in normalized:
+                for ed_key, file_key in editions.items():
+                    if ed_key in normalized:
+                        if file_key in PRODUCT_FILES:
+                            return file_key
     
     return product_id  # Return original if no match found
+
+
+# --- Bundle definitions: bundle ID -> list of individual product IDs ---
+BUNDLE_EXPANSIONS = {
+    'starter-bundle-4cs-bkft-ae': ['holiday_ae', 'breakfast_ae_digital'],
+    'starter-bundle-4cs-bkft-ye': ['holiday_ye', 'breakfast_ye_digital'],
+    'starter-bundle-4cs-bkft-ae-ie': ['holiday_ae', 'breakfast_ae_digital', 'holiday_ie', 'breakfast_ie_digital'],
+    'starter-bundle-4cs-bkft-ye-ie': ['holiday_ye', 'breakfast_ye_digital', 'holiday_ie', 'breakfast_ie_digital'],
+    'holiday-table-bundle': ['holiday_ae'],
+    'full-table-experience': ['holiday_ae'],
+}
+
+
+def resolve_item_to_file_entries(item: dict) -> list:
+    """Given a cart/transaction item, return a list of (product_id, file_key) tuples
+    that should get download links. Handles bundles, display names, and internal IDs.
+    
+    Returns: list of dicts with {product_id, name, file_key}
+    """
+    raw_id = (item.get("normalized_product_id") or item.get("product_id") 
+              or item.get("id") or item.get("uniqueKey", ""))
+    item_name = item.get("name", raw_id)
+    
+    # 1. Try direct normalize (handles internal IDs and cart-generated IDs)
+    resolved = normalize_product_id(raw_id)
+    
+    # 2. If raw_id didn't resolve, try the display name  
+    if resolved not in PRODUCT_FILES and resolved == raw_id:
+        name_resolved = resolve_display_name_to_product_id(item_name)
+        if name_resolved and name_resolved in PRODUCT_FILES:
+            resolved = name_resolved
+    
+    # 3. Check if it's a bundle — expand to individual items
+    bundle_key = raw_id.lower().strip()
+    if bundle_key in BUNDLE_EXPANSIONS:
+        entries = []
+        for sub_id in BUNDLE_EXPANSIONS[bundle_key]:
+            if sub_id in PRODUCT_FILES:
+                entries.append({
+                    "product_id": sub_id,
+                    "name": f"{item_name} ({sub_id})",
+                    "file_key": sub_id
+                })
+        if entries:
+            return entries
+    
+    # Also check if the resolved ID is a bundle
+    if resolved.lower() in BUNDLE_EXPANSIONS:
+        entries = []
+        for sub_id in BUNDLE_EXPANSIONS[resolved.lower()]:
+            if sub_id in PRODUCT_FILES:
+                entries.append({
+                    "product_id": sub_id,
+                    "name": f"{item_name} ({sub_id})",
+                    "file_key": sub_id
+                })
+        if entries:
+            return entries
+    
+    # 4. Single product
+    if resolved in PRODUCT_FILES:
+        return [{"product_id": resolved, "name": item_name, "file_key": resolved}]
+    
+    # 5. No resolution — log and return empty (game passes, subscriptions, etc.)
+    print(f"[Fulfillment] Could not resolve to file: raw_id={raw_id}, name={item_name}, resolved={resolved}")
+    return []
 
 def get_pdf_path(product_id: str) -> Optional[str]:
     """Get the full path to a product's PDF file (hardcoded fallback)"""
@@ -1531,100 +1744,106 @@ async def get_checkout_status(session_id: str):
             if product_id and not items:
                 items = [{"product_id": product_id, "name": PRODUCTS.get(product_id, {}).get("name", product_id)}]
             
-            download_links_created = []
-            for item in items:
-                item_product_id = item.get("normalized_product_id") or item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
-                item_name = item.get("name", item_product_id)
-                
-                # Check if this is a gift certificate item
-                if item_product_id.startswith('gift_certificate_') or item.get("isGiftCertificate"):
-                    # Process gift certificate
-                    try:
-                        metadata = item.get("metadata", {})
-                        from routes.gift_certificate_routes import generate_certificate_code, CERTIFICATE_TYPES
-                        from email_service import send_email, get_base_template, SUPPORT_EMAIL
-                        
-                        cert_type = metadata.get("certificateType", "book")
-                        cert_config = CERTIFICATE_TYPES.get(cert_type, {"name": "Gift Certificate"})
-                        cert_code = generate_certificate_code()
-                        
-                        # Ensure code is unique
-                        while await db.gift_certificates.find_one({"code": cert_code}):
+                download_links_created = []
+                for item in items:
+                    raw_id = item.get("normalized_product_id") or item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
+                    item_name = item.get("name", raw_id)
+                    
+                    # Check if this is a gift certificate item
+                    if raw_id.startswith('gift_certificate_') or item.get("isGiftCertificate"):
+                        # Process gift certificate
+                        try:
+                            metadata = item.get("metadata", {})
+                            from routes.gift_certificate_routes import generate_certificate_code, CERTIFICATE_TYPES
+                            from email_service import send_email, get_base_template, SUPPORT_EMAIL
+                            
+                            cert_type = metadata.get("certificateType", "book")
+                            cert_config = CERTIFICATE_TYPES.get(cert_type, {"name": "Gift Certificate"})
                             cert_code = generate_certificate_code()
-                        
-                        # Create the gift certificate
-                        gift_cert = {
-                            "code": cert_code,
-                            "order_id": order_number,
-                            "certificate_type": cert_type,
-                            "certificate_name": cert_config.get("name", "Gift Certificate"),
-                            "amount": metadata.get("amount", item.get("salePrice", 0)),
-                            "balance": metadata.get("amount", item.get("salePrice", 0)),
-                            "recipient_name": metadata.get("recipientName", ""),
-                            "recipient_email": metadata.get("recipientEmail", ""),
-                            "sender_name": metadata.get("senderName", ""),
-                            "sender_email": metadata.get("senderEmail", ""),
-                            "message": metadata.get("message", ""),
-                            "status": "active",
-                            "expires_at": datetime.utcnow() + timedelta(days=365),
-                            "created_at": datetime.utcnow()
-                        }
-                        
-                        await db.gift_certificates.insert_one(gift_cert)
-                        
-                        # Send email to recipient
-                        FRONTEND_URL = os.environ.get('SITE_URL', os.environ.get('FRONTEND_URL', 'https://kingdom-soul.com'))
-                        recipient_html = f"""
-                        <div style="text-align: center; padding: 20px;">
-                            <h2 style="color: #1f2937;">🎁 You've Received a Gift!</h2>
-                            <p>From: <strong>{gift_cert['sender_name']}</strong></p>
-                            <div style="background: linear-gradient(135deg, #fed7aa 0%, #fef3c7 100%); padding: 30px; border-radius: 12px; margin: 20px 0;">
-                                <h3 style="color: #ea580c;">{cert_config.get('name', 'Gift Certificate')}</h3>
-                                <p style="font-size: 36px; font-weight: bold; color: #c2410c;">${gift_cert['amount']:.2f}</p>
+                            
+                            # Ensure code is unique
+                            while await db.gift_certificates.find_one({"code": cert_code}):
+                                cert_code = generate_certificate_code()
+                            
+                            # Create the gift certificate
+                            gift_cert = {
+                                "code": cert_code,
+                                "order_id": order_number,
+                                "certificate_type": cert_type,
+                                "certificate_name": cert_config.get("name", "Gift Certificate"),
+                                "amount": metadata.get("amount", item.get("salePrice", 0)),
+                                "balance": metadata.get("amount", item.get("salePrice", 0)),
+                                "recipient_name": metadata.get("recipientName", ""),
+                                "recipient_email": metadata.get("recipientEmail", ""),
+                                "sender_name": metadata.get("senderName", ""),
+                                "sender_email": metadata.get("senderEmail", ""),
+                                "message": metadata.get("message", ""),
+                                "status": "active",
+                                "expires_at": datetime.utcnow() + timedelta(days=365),
+                                "created_at": datetime.utcnow()
+                            }
+                            
+                            await db.gift_certificates.insert_one(gift_cert)
+                            
+                            # Send email to recipient
+                            FRONTEND_URL = os.environ.get('SITE_URL', os.environ.get('FRONTEND_URL', 'https://kingdom-soul.com'))
+                            recipient_html = f"""
+                            <div style="text-align: center; padding: 20px;">
+                                <h2 style="color: #1f2937;">🎁 You've Received a Gift!</h2>
+                                <p>From: <strong>{gift_cert['sender_name']}</strong></p>
+                                <div style="background: linear-gradient(135deg, #fed7aa 0%, #fef3c7 100%); padding: 30px; border-radius: 12px; margin: 20px 0;">
+                                    <h3 style="color: #ea580c;">{cert_config.get('name', 'Gift Certificate')}</h3>
+                                    <p style="font-size: 36px; font-weight: bold; color: #c2410c;">${gift_cert['amount']:.2f}</p>
+                                </div>
+                                {f'<p style="font-style: italic;">"{gift_cert["message"]}"</p>' if gift_cert.get('message') else ''}
+                                <p style="font-size: 24px; font-weight: bold; letter-spacing: 2px;">{cert_code}</p>
+                                <p>Redeem at <a href="{FRONTEND_URL}/redeem-gift">{FRONTEND_URL}/redeem-gift</a></p>
                             </div>
-                            {f'<p style="font-style: italic;">"{gift_cert["message"]}"</p>' if gift_cert.get('message') else ''}
-                            <p style="font-size: 24px; font-weight: bold; letter-spacing: 2px;">{cert_code}</p>
-                            <p>Redeem at <a href="{FRONTEND_URL}/redeem-gift">{FRONTEND_URL}/redeem-gift</a></p>
-                        </div>
-                        """
-                        
-                        email_html = get_base_template(recipient_html, f"🎁 {gift_cert['sender_name']} sent you a Soul Food gift!")
-                        
-                        await send_email(
-                            to=gift_cert["recipient_email"],
-                            subject=f"🎁 {gift_cert['sender_name']} sent you a ${gift_cert['amount']:.2f} Soul Food Gift Certificate!",
-                            html=email_html
-                        )
-                        
-                        print(f"[Status Check] Gift certificate created and sent: {cert_code}")
-                    except Exception as gc_error:
-                        print(f"[Status Check] Error creating gift certificate: {gc_error}")
-                    continue
-                
-                normalized_id = normalize_product_id(item_product_id)
-                pdf_path = await get_pdf_path_async(normalized_id) or await get_pdf_path_async(item_product_id)
-                
-                if pdf_path:
-                    try:
-                        token, expires_at = await create_download_link(
-                            order_id=order_number,
-                            user_id=user_id,
-                            user_email=customer_email or "no-email@placeholder.com",
-                            product_id=normalized_id,
-                            product_name=item_name,
-                            file_path=pdf_path,
-                            payment_verified=True
-                        )
-                        download_links_created.append({
-                            "product_id": normalized_id,
-                            "name": item_name,
-                            "token": token
-                        })
-                        print(f"[Status Check] Download link created for {item_name} ({normalized_id})")
-                    except Exception as dl_error:
-                        print(f"[Status Check] Error creating download link for {item_name}: {dl_error}")
-                else:
-                    print(f"[Status Check] No PDF found for {item_name} ({normalized_id})")
+                            """
+                            
+                            email_html = get_base_template(recipient_html, f"🎁 {gift_cert['sender_name']} sent you a Soul Food gift!")
+                            
+                            await send_email(
+                                to=gift_cert["recipient_email"],
+                                subject=f"🎁 {gift_cert['sender_name']} sent you a ${gift_cert['amount']:.2f} Soul Food Gift Certificate!",
+                                html=email_html
+                            )
+                            
+                            print(f"[Webhook] Gift certificate created and sent: {cert_code}")
+                        except Exception as gc_error:
+                            print(f"[Webhook] Error creating gift certificate: {gc_error}")
+                        continue
+                    
+                    # Resolve item to file entries (handles display names, bundles, normalization)
+                    file_entries = resolve_item_to_file_entries(item)
+                    
+                    if not file_entries:
+                        print(f"[Webhook] No downloadable file for: {item_name} (raw_id={raw_id})")
+                        continue
+                    
+                    for entry in file_entries:
+                        pdf_path = await get_pdf_path_async(entry["file_key"]) or await get_pdf_path_async(entry["product_id"])
+                        if pdf_path:
+                            try:
+                                token, expires_at = await create_download_link(
+                                    order_id=order_number,
+                                    user_id=user_id,
+                                    user_email=customer_email or "no-email@placeholder.com",
+                                    product_id=entry["file_key"],
+                                    product_name=entry["name"],
+                                    file_path=pdf_path,
+                                    payment_verified=True
+                                )
+                                download_links_created.append({
+                                    "product_id": entry["file_key"],
+                                    "name": entry["name"],
+                                    "token": token
+                                })
+                                print(f"[Webhook] Download link created for {entry['name']} ({entry['file_key']})")
+                            except Exception as dl_error:
+                                print(f"[Webhook] Error creating download link for {entry['name']}: {dl_error}")
+                        else:
+                            print(f"[Webhook] No PDF found for {entry['name']} (key={entry['file_key']})")
             
             # Store download links info
             if download_links_created:
@@ -1798,34 +2017,39 @@ async def stripe_webhook(request: Request):
                 
                 download_links_created = []
                 for item in items:
-                    # Prefer pre-normalized ID (set at checkout), fall back to raw + normalize
-                    item_product_id = item.get("normalized_product_id") or item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
-                    item_name = item.get("name", item_product_id)
+                    raw_id = item.get("normalized_product_id") or item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
+                    item_name = item.get("name", raw_id)
                     
-                    normalized_id = normalize_product_id(item_product_id)
-                    pdf_path = await get_pdf_path_async(normalized_id) or await get_pdf_path_async(item_product_id)
+                    # Resolve item to file entries (handles display names, bundles, normalization)
+                    file_entries = resolve_item_to_file_entries(item)
                     
-                    if pdf_path:
-                        try:
-                            token, expires_at = await create_download_link(
-                                order_id=order_number,
-                                user_id=user_id,
-                                user_email=customer_email or "no-email@placeholder.com",
-                                product_id=normalized_id,
-                                product_name=item_name,
-                                file_path=pdf_path,
-                                payment_verified=True
-                            )
-                            download_links_created.append({
-                                "product_id": normalized_id,
-                                "name": item_name,
-                                "token": token
-                            })
-                            print(f"[Webhook] Download link created for {item_name} ({normalized_id})")
-                        except Exception as dl_error:
-                            print(f"[Webhook] Error creating download link for {item_name}: {dl_error}")
-                    else:
-                        print(f"[Webhook] No PDF found for {item_name} ({normalized_id})")
+                    if not file_entries:
+                        print(f"[Webhook] No downloadable file for: {item_name} (raw_id={raw_id})")
+                        continue
+                    
+                    for entry in file_entries:
+                        pdf_path = await get_pdf_path_async(entry["file_key"]) or await get_pdf_path_async(entry["product_id"])
+                        if pdf_path:
+                            try:
+                                token, expires_at = await create_download_link(
+                                    order_id=order_number,
+                                    user_id=user_id,
+                                    user_email=customer_email or "no-email@placeholder.com",
+                                    product_id=entry["file_key"],
+                                    product_name=entry["name"],
+                                    file_path=pdf_path,
+                                    payment_verified=True
+                                )
+                                download_links_created.append({
+                                    "product_id": entry["file_key"],
+                                    "name": entry["name"],
+                                    "token": token
+                                })
+                                print(f"[Webhook] Download link created for {entry['name']} ({entry['file_key']})")
+                            except Exception as dl_error:
+                                print(f"[Webhook] Error creating download link for {entry['name']}: {dl_error}")
+                        else:
+                            print(f"[Webhook] No PDF found for {entry['name']} (key={entry['file_key']})")
                 
                 # Store download links with the order
                 if download_links_created:
@@ -2032,42 +2256,52 @@ async def admin_generate_downloads(order_number: str, request: Request):
     download_links_created = []
     
     for item in items:
-        item_product_id = item.get("product_id", "")
-        item_name = item.get("name", item_product_id)
+        # Resolve item to file entries (handles display names, bundles, normalization)
+        file_entries = resolve_item_to_file_entries(item)
         
-        normalized_id = normalize_product_id(item_product_id)
-        pdf_path = await get_pdf_path_async(normalized_id) or await get_pdf_path_async(item_product_id)
-        
-        if pdf_path:
-            try:
-                token, expires_at = await create_download_link(
-                    order_id=order_number,
-                    user_id=order_number,
-                    user_email=customer_email,
-                    product_id=normalized_id,
-                    product_name=item_name,
-                    file_path=pdf_path,
-                    payment_verified=True
-                )
-                download_links_created.append({
-                    "product_id": normalized_id,
-                    "name": item_name,
-                    "token": token,
-                    "pdf_path": pdf_path
-                })
-                print(f"[Admin] Download link created for {item_name} ({normalized_id})")
-            except Exception as dl_error:
-                download_links_created.append({
-                    "product_id": normalized_id,
-                    "name": item_name,
-                    "error": str(dl_error)
-                })
-        else:
+        if not file_entries:
+            raw_id = item.get("product_id") or item.get("id", "")
+            item_name = item.get("name", raw_id)
             download_links_created.append({
-                "product_id": item_product_id,
+                "product_id": raw_id,
                 "name": item_name,
-                "error": f"No PDF found for product ID: {normalized_id}"
+                "error": f"Could not resolve to downloadable file: {raw_id}"
             })
+            continue
+        
+        for entry in file_entries:
+            pdf_path = await get_pdf_path_async(entry["file_key"]) or await get_pdf_path_async(entry["product_id"])
+            
+            if pdf_path:
+                try:
+                    token, expires_at = await create_download_link(
+                        order_id=order_number,
+                        user_id=order_number,
+                        user_email=customer_email,
+                        product_id=entry["file_key"],
+                        product_name=entry["name"],
+                        file_path=pdf_path,
+                        payment_verified=True
+                    )
+                    download_links_created.append({
+                        "product_id": entry["file_key"],
+                        "name": entry["name"],
+                        "token": token,
+                        "pdf_path": pdf_path
+                    })
+                    print(f"[Admin] Download link created for {entry['name']} ({entry['file_key']})")
+                except Exception as dl_error:
+                    download_links_created.append({
+                        "product_id": entry["file_key"],
+                        "name": entry["name"],
+                        "error": str(dl_error)
+                    })
+            else:
+                download_links_created.append({
+                    "product_id": entry["file_key"],
+                    "name": entry["name"],
+                    "error": f"No PDF found for product key: {entry['file_key']}"
+                })
     
     return {
         "order_number": order_number,

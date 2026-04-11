@@ -1,0 +1,85 @@
+{
+  "summary": "Post-purchase fulfillment fix verified. All 32 tests passed. Key functions tested: normalize_product_id(), resolve_display_name_to_product_id(), resolve_item_to_file_entries(), and BUNDLE_EXPANSIONS. The fix correctly resolves display names like 'Holiday Series - The Covenant - ADULT (99% off)' to valid PRODUCT_FILES keys.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_fulfillment_fix.py",
+    "/app/test_reports/pytest/pytest_fulfillment_fix.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "payment_routes.py lines 296-312: _strip_display_noise() correctly strips discount labels (99% off), pre-order tags, ship notes, and em-dash suffixes",
+    "payment_routes.py lines 315-430: resolve_display_name_to_product_id() handles Holiday/Breakfast series, nibbles, snack packs, game passes, and subscriptions",
+    "payment_routes.py lines 433-511: normalize_product_id() tries multiple resolution strategies: direct lookup, lowercase, underscore conversion, prefix stripping, display name resolution",
+    "payment_routes.py lines 514-522: BUNDLE_EXPANSIONS correctly maps starter-bundle-4cs-bkft-ae to ['holiday_ae', 'breakfast_ae_digital']",
+    "payment_routes.py lines 525-577: resolve_item_to_file_entries() is the main fulfillment resolver - handles normalized_product_id field, display names, bundles, and returns empty list for game passes/subscriptions"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_fulfillment_fix.py"
+  ],
+  "success_rate": {
+    "backend": "100% (32/32 pytest tests passed)",
+    "frontend": "N/A (backend-only test)"
+  },
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123!",
+  "seed_data_creation": "None - used existing product catalog and direct function imports",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Fulfillment fix fully tested. Key verified behaviors: (1) Display names with discounts like 'Holiday Series - The Covenant - ADULT (99% off)' resolve to valid PRODUCT_FILES keys. (2) Internal IDs like holiday_ae, breakfast_ae_digital work directly. (3) Bundle starter-bundle-4cs-bkft-ae expands to holiday_ae AND breakfast_ae_digital. (4) Game passes and subscriptions correctly return empty list (no downloadable file). (5) POST /api/downloads/resend-links endpoint responds correctly (429 when no links found, not 500). (6) POST /api/payments/checkout/cart accepts items with display names.",
+  "features_verified": {
+    "normalize_product_id_display_names": {
+      "status": "PASS",
+      "details": "Resolves 'Holiday Series - The Covenant - ADULT (99% off)' to valid PRODUCT_FILES key"
+    },
+    "normalize_product_id_holiday_digital_adult": {
+      "status": "PASS",
+      "details": "Resolves 'Full Workbooks - Holiday Digital (Adult) (15% off)' to holiday_ae"
+    },
+    "normalize_product_id_breakfast_ae_digital": {
+      "status": "PASS",
+      "details": "Resolves 'Full Workbooks - Break*fast AE Digital - ADULT' to breakfast_ae_digital"
+    },
+    "normalize_product_id_breakfast_paperback_youth": {
+      "status": "PASS",
+      "details": "Resolves 'Full Workbooks - Break*fast Paperback (Youth)' to breakfast_ye variant"
+    },
+    "normalize_product_id_internal_ids": {
+      "status": "PASS",
+      "details": "Internal IDs holiday_ae, breakfast_ae_digital, breakfast-snack-month-1-adult-interactive resolve correctly"
+    },
+    "bundle_expansion_starter_bundle": {
+      "status": "PASS",
+      "details": "starter-bundle-4cs-bkft-ae expands to holiday_ae AND breakfast_ae_digital (2 entries)"
+    },
+    "game_passes_return_empty_list": {
+      "status": "PASS",
+      "details": "game_pass_30 and game_pass_90 return empty list from resolve_item_to_file_entries (expected - no downloadable file)"
+    },
+    "subscriptions_return_empty_list": {
+      "status": "PASS",
+      "details": "subscription_ae_monthly returns empty list (expected - no downloadable file)"
+    },
+    "resend_links_endpoint_not_500": {
+      "status": "PASS",
+      "details": "POST /api/downloads/resend-links returns 429 (rate limit/no links) not 500 error"
+    },
+    "checkout_cart_stores_items": {
+      "status": "PASS",
+      "details": "POST /api/payments/checkout/cart accepts items with display names and creates Stripe session"
+    },
+    "backend_starts_without_errors": {
+      "status": "PASS",
+      "details": "Backend responds to /api/ with Soul Food API message"
+    }
+  },
+  "mocked_apis": {
+    "none": "Stripe is live mode - real sessions created (not completed). Direct function imports used for unit tests."
+  }
+}
