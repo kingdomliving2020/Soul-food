@@ -31,6 +31,12 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Toast notifications for success/failure
 - [x] Tested: 8/8 features, 100% (iteration 23)
 
+### Storefront Cart/Checkout Navigation Fix (Apr 11, 2026)
+- [x] Bug 1 fixed: ProductSelectionModal was passing string IDs to addToCart that didn't exist in PRODUCTS lookup — now passes item objects
+- [x] Bug 2 fixed: ShoppingCart dual-instance mousedown race condition killed Checkout navigation — removed redundant document handler
+- [x] Full flow verified: Front page → Add to Cart → Modal → Cart auto-opens → Checkout → Sign In/Guest
+- [x] Tested: 13/13 features, 100% (iteration 24)
+
 ### Full 5x5 Jeopardy Board + Content Entitlements (Apr 11, 2026)
 - [x] Tricky Testaments: true 5x5 grid (categories across top, 100-500 vertically) for paid users
 - [x] Demo users: 5x2 board (100-200 only), demo badge, purchase prompts at game over
