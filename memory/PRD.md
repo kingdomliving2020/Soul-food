@@ -25,6 +25,12 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Dead code removed: unused `handleAnswer`, `selectedAnswer`, fallback option generation
 - [x] Tested: 13/13 features, 100% (iteration 22)
 
+### Resend Download Link Wiring — P1 Complete (Apr 11, 2026)
+- [x] My Library "Resend Download Link" buttons wired to POST /api/downloads/resend-links
+- [x] Loading spinner during request, "Link resent!" after success, button disabled after
+- [x] Toast notifications for success/failure
+- [x] Tested: 8/8 features, 100% (iteration 23)
+
 ### Full 5x5 Jeopardy Board + Content Entitlements (Apr 11, 2026)
 - [x] Tricky Testaments: true 5x5 grid (categories across top, 100-500 vertically) for paid users
 - [x] Demo users: 5x2 board (100-200 only), demo badge, purchase prompts at game over
@@ -57,8 +63,7 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 
 ## Prioritized Backlog (ON HOLD per user)
-- Wire Resend Download Link to backend
-- Full redeem code validation logic
+- Full redeem code validation logic (P2 — deferred, using manual capture workflow)
 - Force password change on first login (NIST)
 - Security: httpOnly cookies
 - SMS OTP, Word Search Game, Video Integration
