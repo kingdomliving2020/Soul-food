@@ -46,7 +46,6 @@ const TrickyTestamentGame = () => {
   const edition = searchParams.get('edition') || 'adult'; // youth or adult
   
   const [score, setScore] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [showResult, setShowResult] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [questions, setQuestions] = useState([]);
@@ -133,7 +132,6 @@ const TrickyTestamentGame = () => {
                 pointIndex: row,
                 category: categories[catIndex],
                 question: q.question,
-                options: q.options?.length > 0 ? q.options : [q.correct_answer, 'Not this', 'Try again', 'None of these'].sort(() => Math.random() - 0.5),
                 correct_answer: q.correct_answer,
                 explanation: q.explanation || '',
                 scripture_ref: q.scripture || '',
@@ -156,7 +154,6 @@ const TrickyTestamentGame = () => {
                   pointIndex: row,
                   category: categories[catIndex],
                   question: q.question,
-                  options: q.options?.length > 0 ? q.options : [q.correct_answer, 'Not this', 'Try again', 'None of these'].sort(() => Math.random() - 0.5),
                   correct_answer: q.correct_answer,
                   explanation: q.explanation || '',
                   scripture_ref: q.scripture || '',
@@ -430,7 +427,6 @@ const TrickyTestamentGame = () => {
   const returnToBoard = () => {
     setAnsweredQuestions([...answeredQuestions, selectedQuestion.id]);
     setSelectedQuestion(null);
-    setSelectedAnswer(null);
     setShowResult(false);
     setShowBoard(true);
     setWager(0);
@@ -443,7 +439,6 @@ const TrickyTestamentGame = () => {
 
   const restartGame = () => {
     setScore(0);
-    setSelectedAnswer(null);
     setShowResult(false);
     setGameOver(false);
     setAnsweredQuestions([]);
