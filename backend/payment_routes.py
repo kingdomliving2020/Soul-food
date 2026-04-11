@@ -1268,9 +1268,28 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         raise HTTPException(status_code=400, detail="Cart is empty")
     
     # ============================================================
-    # ACCOUNT GATING TEMPORARILY DISABLED FOR LAUNCH
-    # All users can checkout any items - account linking handled post-purchase
+    # EXTRACT LOGGED-IN USER FROM JWT (account linking)
     # ============================================================
+    logged_in_user_id = None
+    logged_in_user_email = None
+    auth_header = http_request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        token_str = auth_header.split(" ", 1)[1]
+        try:
+            SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
+            payload = jwt.decode(token_str, SECRET_KEY, algorithms=["HS256"])
+            uid = payload.get("sub")
+            if uid:
+                user = await db.users.find_one({"id": uid}, {"_id": 0, "id": 1, "email": 1})
+                if user:
+                    logged_in_user_id = user.get("id")
+                    logged_in_user_email = user.get("email")
+                    print(f"[Checkout] Authenticated user: {logged_in_user_id} ({logged_in_user_email})")
+        except (JWTError, Exception) as e:
+            print(f"[Checkout] JWT decode failed (guest checkout): {e}")
+    
+    # Resolve the customer email: prefer form input, fall back to logged-in user
+    resolved_email = request.customer_email or logged_in_user_email
     
     # Get Stripe API key
     api_key = os.getenv('STRIPE_SECRET_KEY')
@@ -1369,22 +1388,30 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         )
     
     try:
-        # Create Stripe Checkout Session directly
-        session = stripe.checkout.Session.create(
-            payment_method_types=['card'],
-            line_items=line_items,
-            mode='payment',
-            success_url=success_url,
-            cancel_url=cancel_url,
-            metadata={
+        # Build Stripe session kwargs
+        session_kwargs = {
+            'payment_method_types': ['card'],
+            'line_items': line_items,
+            'mode': 'payment',
+            'success_url': success_url,
+            'cancel_url': cancel_url,
+            'metadata': {
                 'source': 'soul_food_cart',
-                'items': ', '.join(item_names)[:500],  # Stripe metadata limit
+                'items': ', '.join(item_names)[:500],
                 'coupon': request.coupon_code or '',
                 'discount': str(request.discount_percent),
                 'is_gift': 'true' if request.is_gift else 'false',
-                'order_notes': (request.order_notes or '')[:500]  # Stripe limit
+                'order_notes': (request.order_notes or '')[:500],
+                'user_id': logged_in_user_id or '',
+                'customer_email': resolved_email or '',
             }
-        )
+        }
+        # Pre-fill buyer email on the Stripe payment page
+        if resolved_email:
+            session_kwargs['customer_email'] = resolved_email
+
+        # Create Stripe Checkout Session
+        session = stripe.checkout.Session.create(**session_kwargs)
         
         # Generate friendly order number: SF-2026-XXXXX
         import secrets
@@ -1398,11 +1425,23 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         # Actual charged amount (accounts for override)
         actual_amount = request.override_total if request.override_total is not None else total_amount
         
-        # Store pending transaction with order number
+        # Normalize product IDs in stored items for reliable fulfillment
+        stored_items = []
+        for item in request.items:
+            raw_id = item.get('product_id') or item.get('id') or item.get('uniqueKey', '')
+            stored_items.append({
+                "product_id": raw_id,
+                "normalized_product_id": normalize_product_id(raw_id),
+                "name": item.get('name', 'Soul Food Product'),
+                "quantity": item.get('quantity', 1),
+                "salePrice": item.get('salePrice', item.get('price', 0)),
+            })
+        
+        # Store pending transaction with order number + account linking
         transaction = {
             "session_id": session.id,
             "order_number": order_number,
-            "items": request.items,
+            "items": stored_items,
             "total_amount": actual_amount,
             "original_subtotal": sum(item.get('salePrice', item.get('price', 0)) * item.get('quantity', 1) for item in request.items),
             "currency": "usd",
@@ -1414,8 +1453,10 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
             "override_total": request.override_total,
             "is_gift": request.is_gift,
             "order_notes": request.order_notes,
-            "customer_email": request.customer_email,
+            "customer_email": resolved_email,
             "customer_name": request.customer_name,
+            "user_id": logged_in_user_id,
+            "claimed_by_user_id": logged_in_user_id,
             "shipping_address": request.shipping_address,
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
@@ -1464,7 +1505,8 @@ async def get_checkout_status(session_id: str):
             
             # Get customer email and order info
             customer_email = transaction.get("customer_email", "")
-            user_id = transaction.get("user_id", session_id)
+            # Use stored user_id, never fall back to session_id
+            user_id = transaction.get("user_id") or transaction.get("claimed_by_user_id") or ""
             order_number = transaction.get("order_number", session_id)
             
             await db.payment_transactions.update_one(
@@ -1491,7 +1533,7 @@ async def get_checkout_status(session_id: str):
             
             download_links_created = []
             for item in items:
-                item_product_id = item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
+                item_product_id = item.get("normalized_product_id") or item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
                 item_name = item.get("name", item_product_id)
                 
                 # Check if this is a gift certificate item
@@ -1734,10 +1776,17 @@ async def stripe_webhook(request: Request):
                     }
                 )
                 
-                # Get customer email from transaction
+                # Get customer email and user identity for fulfillment
                 customer_email = transaction.get("customer_email") or webhook_response.metadata.get("customer_email", "")
-                user_id = webhook_response.metadata.get("user_id", "") or session_id
+                # User ID resolution: transaction record (set at checkout) > Stripe metadata > empty string
+                # NEVER fall back to session_id — it is not a user identity
+                user_id = transaction.get("user_id") or transaction.get("claimed_by_user_id") or webhook_response.metadata.get("user_id", "") or ""
                 order_number = transaction.get("order_number", session_id)
+                
+                if user_id:
+                    print(f"[Webhook] Fulfilling for authenticated user: {user_id}")
+                else:
+                    print(f"[Webhook] Guest purchase — no user_id, email: {customer_email}")
                 
                 # Create download links for ALL items in the cart
                 items = transaction.get("items", [])
@@ -1749,7 +1798,8 @@ async def stripe_webhook(request: Request):
                 
                 download_links_created = []
                 for item in items:
-                    item_product_id = item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
+                    # Prefer pre-normalized ID (set at checkout), fall back to raw + normalize
+                    item_product_id = item.get("normalized_product_id") or item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
                     item_name = item.get("name", item_product_id)
                     
                     normalized_id = normalize_product_id(item_product_id)
