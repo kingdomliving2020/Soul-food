@@ -44,6 +44,12 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Webhook mapping: fulfillment uses stored user_id from transaction record, never falls back to session_id
 - [x] Tested: 13/13 backend tests passed (iteration 25)
 
+### Production Polling Fix + Code Quality (Apr 11, 2026)
+- [x] CartContext: stabilized clearCart/removeFromCart/updateQuantity with useCallback to prevent re-render cascades
+- [x] PaymentSuccess: added completedRef guard to stop polling after payment confirmed — fixes 60+ download-links calls
+- [x] Test files: hardcoded credentials replaced with os.environ.get() (7 files)
+- [x] Console cleanup: all console.log/warn removed from 20 production frontend files
+
 ### Full 5x5 Jeopardy Board + Content Entitlements (Apr 11, 2026)
 - [x] Tricky Testaments: true 5x5 grid (categories across top, 100-500 vertically) for paid users
 - [x] Demo users: 5x2 board (100-200 only), demo badge, purchase prompts at game over

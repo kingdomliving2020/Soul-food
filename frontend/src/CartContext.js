@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const CartContext = createContext();
 
@@ -173,23 +173,24 @@ export const CartProvider = ({ children }) => {
     setTimeout(() => setIsCartOpen(true), 50);
   };
 
-  const removeFromCart = (keyToMatch) => {
+  const removeFromCart = useCallback((keyToMatch) => {
     setCartItems(prevItems => prevItems.filter(item => {
       const itemKey = item.uniqueKey || item.productId || item.id;
       return itemKey !== keyToMatch;
     }));
-  };
+  }, []);
 
-  const updateQuantity = (keyToMatch, newQuantity) => {
-    
+  const updateQuantity = useCallback((keyToMatch, newQuantity) => {
     if (newQuantity <= 0) {
-      removeFromCart(keyToMatch);
+      setCartItems(prevItems => prevItems.filter(item => {
+        const itemKey = item.uniqueKey || item.productId || item.id;
+        return itemKey !== keyToMatch;
+      }));
       return;
     }
     
     setCartItems(prevItems => {
       const updated = prevItems.map(item => {
-        // Match by uniqueKey, productId, or id
         const itemKey = item.uniqueKey || item.productId || item.id;
         if (itemKey === keyToMatch) {
           return { ...item, quantity: newQuantity };
@@ -198,11 +199,11 @@ export const CartProvider = ({ children }) => {
       });
       return updated;
     });
-  };
+  }, []);
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCartItems([]);
-  };
+  }, []);
 
   const getCartTotal = () => {
     return cartItems.reduce((total, item) => {

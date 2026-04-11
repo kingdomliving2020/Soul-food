@@ -20,9 +20,14 @@ const PaymentSuccess = () => {
   const maxAttempts = 15;
   const attemptsRef = useRef(0);
   const timerRef = useRef(null);
+  const completedRef = useRef(false);
 
   const checkPaymentStatus = useCallback(async () => {
+    // Guard: never re-poll once payment is confirmed or timed out
+    if (completedRef.current) return;
+
     if (attemptsRef.current >= maxAttempts) {
+      completedRef.current = true;
       setStatus('timeout');
       setError('Payment verification is taking longer than expected. Your payment was likely successful — please check your email for confirmation or visit My Library.');
       return;
@@ -32,7 +37,6 @@ const PaymentSuccess = () => {
       const response = await fetch(`${BACKEND_URL}/api/payments/checkout/status/${sessionId}`);
       
       if (!response.ok) {
-        // Don't fail on 404/500 — the webhook may still be processing
         attemptsRef.current += 1;
         setAttempts(attemptsRef.current);
         timerRef.current = setTimeout(checkPaymentStatus, 2500);
@@ -43,10 +47,11 @@ const PaymentSuccess = () => {
       setPaymentData(data);
 
       if (data.payment_status === 'paid') {
+        completedRef.current = true;
         setStatus('success');
         clearCart();
         
-        // Fetch download links with a small delay to let webhook finish
+        // Fetch download links once with limited retries
         const orderId = data.transaction?.order_number || sessionId;
         const fetchDownloads = async (retries = 3) => {
           try {
@@ -60,27 +65,26 @@ const PaymentSuccess = () => {
               }
             }
           } catch (dlErr) {
-            console.error('Error fetching download links:', dlErr);
             if (retries > 0) setTimeout(() => fetchDownloads(retries - 1), 3000);
           }
         };
         setTimeout(() => fetchDownloads(), 1000);
       } else if (data.status === 'expired') {
+        completedRef.current = true;
         setStatus('failed');
         setError('Payment session expired');
       } else {
-        // Still pending — retry
         attemptsRef.current += 1;
         setAttempts(attemptsRef.current);
         timerRef.current = setTimeout(checkPaymentStatus, 2000);
       }
     } catch (err) {
-      // Network error — retry instead of immediately failing
       attemptsRef.current += 1;
       setAttempts(attemptsRef.current);
       if (attemptsRef.current < maxAttempts) {
         timerRef.current = setTimeout(checkPaymentStatus, 3000);
       } else {
+        completedRef.current = true;
         setStatus('timeout');
         setError('Could not verify payment. Your purchase may still be processing — check your email or visit My Library.');
       }
@@ -93,6 +97,7 @@ const PaymentSuccess = () => {
       setError('No payment session found');
       return;
     }
+    completedRef.current = false;
     attemptsRef.current = 0;
     checkPaymentStatus();
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
