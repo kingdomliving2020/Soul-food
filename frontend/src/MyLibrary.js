@@ -26,6 +26,7 @@ const MyLibrary = () => {
   const [redeemLoading, setRedeemLoading] = useState(false);
   const [redeemMessage, setRedeemMessage] = useState('');
   const [resentItems, setResentItems] = useState({});
+  const [resendingItems, setResendingItems] = useState({});
   
   // Audio library state
   const [audioAccess, setAudioAccess] = useState(null);
@@ -204,6 +205,29 @@ const MyLibrary = () => {
     localStorage.removeItem('soulFoodUser');
     toast.success('Logged out successfully');
     navigate('/');
+  };
+
+  const handleResendLink = async (idx, orderId) => {
+    if (resendingItems[idx]) return;
+    setResendingItems(prev => ({ ...prev, [idx]: true }));
+    try {
+      const res = await fetch(`${API}/downloads/resend-links`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ order_id: orderId, email: user?.email }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setResentItems(prev => ({ ...prev, [idx]: true }));
+        toast.success(data.message || 'Download link sent to your email!');
+      } else {
+        toast.error(data.detail || 'Failed to resend link. Please try again later.');
+      }
+    } catch {
+      toast.error('Network error. Please try again.');
+    } finally {
+      setResendingItems(prev => ({ ...prev, [idx]: false }));
+    }
   };
 
   if (loading) {
@@ -426,11 +450,12 @@ const MyLibrary = () => {
                                   Download PDF
                                 </Button>
                                 <button
-                                  onClick={() => setResentItems(prev => ({ ...prev, [idx]: true }))}
-                                  className="text-xs text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors"
+                                  onClick={() => handleResendLink(idx, purchase.order_id)}
+                                  disabled={resendingItems[idx] || resentItems[idx]}
+                                  className="text-xs text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors disabled:opacity-50"
                                   data-testid={`resend-link-btn-${idx}`}
                                 >
-                                  <RotateCcw className="w-3 h-3" />
+                                  {resendingItems[idx] ? <Loader2 className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
                                   {resentItems[idx] ? 'Link resent!' : 'Resend Download Link'}
                                 </button>
                               </>
@@ -441,11 +466,12 @@ const MyLibrary = () => {
                                   Download PDF
                                 </Button>
                                 <button
-                                  onClick={() => setResentItems(prev => ({ ...prev, [idx]: true }))}
-                                  className="text-xs text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors"
+                                  onClick={() => handleResendLink(idx, purchase.order_id)}
+                                  disabled={resendingItems[idx] || resentItems[idx]}
+                                  className="text-xs text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors disabled:opacity-50"
                                   data-testid={`resend-link-btn-${idx}`}
                                 >
-                                  <RotateCcw className="w-3 h-3" />
+                                  {resendingItems[idx] ? <Loader2 className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
                                   {resentItems[idx] ? 'Link resent!' : 'Link expired \u2013 click to resend'}
                                 </button>
                               </>
