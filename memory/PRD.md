@@ -18,6 +18,13 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 
 ## What's Implemented
 
+### Question Structure Refinement — P0 Complete (Apr 11, 2026)
+- [x] Tricky Testaments: recall-only self-scoring (Reveal Answer → Got it!/Missed it!) — NO multiple choice
+- [x] Trivia Mix-Up: MCQ-only with generated distractors for questions lacking options
+- [x] Backend: `trivia_testament` strips options, `tricky_trivia` ensures MCQ options exist
+- [x] Dead code removed: unused `handleAnswer`, `selectedAnswer`, fallback option generation
+- [x] Tested: 13/13 features, 100% (iteration 22)
+
 ### Full 5x5 Jeopardy Board + Content Entitlements (Apr 11, 2026)
 - [x] Tricky Testaments: true 5x5 grid (categories across top, 100-500 vertically) for paid users
 - [x] Demo users: 5x2 board (100-200 only), demo badge, purchase prompts at game over
