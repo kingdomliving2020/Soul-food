@@ -1,6 +1,5 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { useCart } from './CartContext';
-import { useNavigate } from 'react-router-dom';
 import { ShoppingCart as CartIcon, Trash2, X } from 'lucide-react';
 
 const ShoppingCart = () => {
@@ -14,31 +13,13 @@ const ShoppingCart = () => {
     getCartCount
   } = useCart();
   
-  const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const cartCount = getCartCount();
   const total = getCartTotal();
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsCartOpen(false);
-      }
-    };
-
-    if (isCartOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isCartOpen, setIsCartOpen]);
-
   const handleCheckout = () => {
     setIsCartOpen(false);
-    navigate('/checkout');
+    window.location.href = '/checkout';
   };
 
   return (

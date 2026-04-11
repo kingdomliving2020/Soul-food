@@ -2517,12 +2517,15 @@ const SoulFoodLanding = () => {
         seriesData={selectedSeries}
         products={products}
         onAddToCart={(item) => {
-          addToCart(item.product_id, item.quantity, {
+          addToCart({
+            id: item.product_id,
+            name: item.product_name,
+            price: item.unit_price,
+            quantity: item.quantity,
             series: item.series,
             seriesName: item.series_name,
             edition: item.edition,
             medium: item.medium,
-            unit_price: item.unit_price
           });
           toast.success(`Added ${item.product_name} to cart!`);
         }}
