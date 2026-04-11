@@ -721,27 +721,60 @@ const GamingCentral = () => {
 
         {/* Tier Info Cards */}
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-white text-center mb-6">Gaming Pass Tiers</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              { name: 'Free/Beta', time: '30 min/day', idle: '10 min', color: 'gray' },
-              { name: '30-Day Pass', time: '4 hrs/day', idle: '20 min', color: 'blue', price: '$7.99' },
-              { name: '90-Day Pass', time: '5 hrs/day', idle: '30 min', color: 'purple', price: '$24.99' },
-              { name: 'Ministry', time: '6 hrs/day', idle: '40 min', color: 'amber', price: '$24.99/mo' },
-            ].map((tier) => (
-              <Card key={tier.name} className={`bg-${tier.color}-500/10 border-${tier.color}-500/30`}>
+          <h2 className="text-2xl font-bold text-white text-center mb-6">Your Game Access</h2>
+          {entitlements ? (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+              <Card className={`border ${entitlements.access_level === 'full' ? 'bg-green-500/10 border-green-500/30' : 'bg-gray-500/10 border-gray-500/30'}`}>
                 <CardContent className="p-4 text-center">
-                  <Shield className={`w-8 h-8 mx-auto mb-2 text-${tier.color}-400`} />
-                  <h3 className="text-white font-bold">{tier.name}</h3>
-                  <p className="text-purple-300 text-sm">{tier.time}</p>
-                  <p className="text-purple-400 text-xs">Idle: {tier.idle}</p>
-                  {tier.price && (
-                    <Badge className="mt-2 bg-green-500/20 text-green-300">{tier.price}</Badge>
-                  )}
+                  <Shield className={`w-8 h-8 mx-auto mb-2 ${entitlements.access_level === 'full' ? 'text-green-400' : 'text-gray-400'}`} />
+                  <h3 className="text-white font-bold">Question Bank</h3>
+                  <p className={`text-sm ${entitlements.access_level === 'full' ? 'text-green-300' : 'text-gray-400'}`}>
+                    {entitlements.access_level === 'full' ? 'Full pool unlocked' : 'Demo (10 questions)'}
+                  </p>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+              <Card className={`border ${entitlements.has_instructor ? 'bg-indigo-500/10 border-indigo-500/30' : 'bg-gray-500/10 border-gray-500/30'}`}>
+                <CardContent className="p-4 text-center">
+                  <Shield className={`w-8 h-8 mx-auto mb-2 ${entitlements.has_instructor ? 'text-indigo-400' : 'text-gray-400'}`} />
+                  <h3 className="text-white font-bold">Game Duration</h3>
+                  <p className={`text-sm ${entitlements.has_instructor ? 'text-indigo-300' : 'text-purple-300'}`}>
+                    {entitlements.has_instructor ? '3-Hour Pass (Instructor)' : entitlements.access_level === 'full' ? '1-Hour Pass' : '30 min/day (Free)'}
+                  </p>
+                </CardContent>
+              </Card>
+              <Card className={`border ${entitlements.has_audio ? 'bg-amber-500/10 border-amber-500/30' : 'bg-gray-500/10 border-gray-500/30'}`}>
+                <CardContent className="p-4 text-center">
+                  <Shield className={`w-8 h-8 mx-auto mb-2 ${entitlements.has_audio ? 'text-amber-400' : 'text-gray-400'}`} />
+                  <h3 className="text-white font-bold">Lesson Audio</h3>
+                  <p className={`text-sm ${entitlements.has_audio ? 'text-amber-300' : 'text-gray-400'}`}>
+                    {entitlements.has_audio ? 'Included with purchase' : 'Not included'}
+                  </p>
+                  <p className="text-xs text-purple-400 mt-1">Separate from game access</p>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                { name: 'Free/Beta', time: '30 min/day', idle: '10 min', color: 'gray' },
+                { name: '1-Hour Pass', time: '1 hr/session', idle: '20 min', color: 'blue', price: 'With purchase' },
+                { name: '3-Hour Pass', time: '3 hrs/session', idle: '30 min', color: 'purple', price: 'Instructor Bundle' },
+                { name: 'Ministry', time: '6 hrs/day', idle: '40 min', color: 'amber', price: '$24.99/mo' },
+              ].map((tier) => (
+                <Card key={tier.name} className={`bg-${tier.color}-500/10 border-${tier.color}-500/30`}>
+                  <CardContent className="p-4 text-center">
+                    <Shield className={`w-8 h-8 mx-auto mb-2 text-${tier.color}-400`} />
+                    <h3 className="text-white font-bold">{tier.name}</h3>
+                    <p className="text-purple-300 text-sm">{tier.time}</p>
+                    <p className="text-purple-400 text-xs">Idle: {tier.idle}</p>
+                    {tier.price && (
+                      <Badge className="mt-2 bg-green-500/20 text-green-300">{tier.price}</Badge>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* CTA Section */}

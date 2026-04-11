@@ -57,12 +57,18 @@ const TrickyTestamentGame = () => {
   const [dailyDoubleIndex, setDailyDoubleIndex] = useState(null);
   const [wager, setWager] = useState(0);
 
-  // Jeopardy board structure: 5 categories x 2 point values each
+  // Board configuration — adjusted by access level
+  const [accessLevel, setAccessLevel] = useState('demo');
+  const [unlockedSeries, setUnlockedSeries] = useState([]);
+
+  const FULL_POINT_VALUES = [100, 200, 300, 400, 500];
+  const DEMO_POINT_VALUES = [100, 200];
+  const pointValues = accessLevel === 'full' ? FULL_POINT_VALUES : DEMO_POINT_VALUES;
+  const boardSize = pointValues.length * 5; // 5 categories * rows
+
   const categories = edition === 'youth' 
     ? ['Women of Faith', 'Patriarchs', 'Courage & Trust', 'Covenant & Identity', 'Who Am I?']
     : ['Covenant (4Cs)', 'Cross & Redemption', 'Women of Wisdom', 'Faith in Motion', 'Deep Cuts'];
-  
-  const pointValues = [100, 200];
 
   useEffect(() => {
     fetchQuestions();
@@ -74,7 +80,6 @@ const TrickyTestamentGame = () => {
       const token = localStorage.getItem('soul_food_token');
       const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
 
-      // Use entitled endpoint — returns full pool for purchasers, demo set for free users
       const res = await fetch(
         `${BACKEND_URL}/api/trivia/questions/for-game?game_type=trivia_testament&age_group=${age}`,
         { headers }
@@ -82,35 +87,100 @@ const TrickyTestamentGame = () => {
       if (res.ok) {
         const data = await res.json();
         const allQ = data.questions || [];
+        const level = data.access_level || 'demo';
+        setAccessLevel(level);
+        setUnlockedSeries(data.unlocked_series || []);
+
+        const rows = level === 'full' ? 5 : 2;
+        const needed = rows * 5; // 5 categories
 
         if (allQ.length > 0) {
-          // Pick 10 random questions for the Jeopardy board
-          const shuffled = allQ.sort(() => Math.random() - 0.5).slice(0, 10);
-          const formatted = shuffled.map((q, i) => ({
-            id: i,
-            categoryIndex: Math.floor(i / 2),
-            pointIndex: i % 2,
-            category: q.category_title || q.character || 'Bible Knowledge',
-            question: q.question,
-            options: q.options?.length > 0 ? q.options : [q.correct_answer, 'Not this', 'Try again', 'None of these'].sort(() => Math.random() - 0.5),
-            correct_answer: q.correct_answer,
-            explanation: q.explanation || '',
-            scripture_ref: q.scripture || '',
-            points: q.tier || (i + 1) * 100
-          }));
+          // Group questions by character/category for proper columns
+          const byCategory = {};
+          allQ.forEach(q => {
+            const cat = q.category_title || q.character || 'Bible Knowledge';
+            if (!byCategory[cat]) byCategory[cat] = [];
+            byCategory[cat].push(q);
+          });
+
+          // Pick top 5 categories with most questions, shuffle within each
+          const sortedCats = Object.entries(byCategory)
+            .sort((a, b) => b[1].length - a[1].length)
+            .slice(0, 5);
+
+          const formatted = [];
+          let id = 0;
+          const pvs = level === 'full' ? FULL_POINT_VALUES : DEMO_POINT_VALUES;
+
+          sortedCats.forEach(([, catQs], catIndex) => {
+            // Sort by difficulty for escalating point values
+            const sorted = [...catQs].sort((a, b) => {
+              const order = { easy: 0, medium: 1, hard: 2, expert: 3 };
+              return (order[a.difficulty] || 1) - (order[b.difficulty] || 1);
+            });
+            // Shuffle within same difficulty for variety
+            const shuffled = sorted.sort((a, b) => {
+              if (a.difficulty === b.difficulty) return Math.random() - 0.5;
+              const order = { easy: 0, medium: 1, hard: 2, expert: 3 };
+              return (order[a.difficulty] || 1) - (order[b.difficulty] || 1);
+            });
+
+            for (let row = 0; row < rows; row++) {
+              const q = shuffled[row % shuffled.length]; // wrap if not enough
+              formatted.push({
+                id: id++,
+                categoryIndex: catIndex,
+                pointIndex: row,
+                category: categories[catIndex],
+                question: q.question,
+                options: q.options?.length > 0 ? q.options : [q.correct_answer, 'Not this', 'Try again', 'None of these'].sort(() => Math.random() - 0.5),
+                correct_answer: q.correct_answer,
+                explanation: q.explanation || '',
+                scripture_ref: q.scripture || '',
+                points: pvs[row],
+              });
+            }
+          });
+
+          // If we have fewer than 5 categories from DB, fill remaining with overflow questions
+          if (sortedCats.length < 5) {
+            const remaining = allQ.sort(() => Math.random() - 0.5);
+            let qi = 0;
+            for (let catIndex = sortedCats.length; catIndex < 5; catIndex++) {
+              for (let row = 0; row < rows; row++) {
+                const q = remaining[qi % remaining.length];
+                qi++;
+                formatted.push({
+                  id: id++,
+                  categoryIndex: catIndex,
+                  pointIndex: row,
+                  category: categories[catIndex],
+                  question: q.question,
+                  options: q.options?.length > 0 ? q.options : [q.correct_answer, 'Not this', 'Try again', 'None of these'].sort(() => Math.random() - 0.5),
+                  correct_answer: q.correct_answer,
+                  explanation: q.explanation || '',
+                  scripture_ref: q.scripture || '',
+                  points: pvs[row],
+                });
+              }
+            }
+          }
+
           setQuestions(formatted);
-          const ddIndex = Math.floor(Math.random() * 6) + 2;
+          const ddIndex = Math.floor(Math.random() * Math.max(formatted.length - 3, 1)) + 2;
           setDailyDoubleIndex(ddIndex);
           return;
         }
       }
-      // Fallback to mock if API fails
+      // Fallback to mock
+      setAccessLevel('demo');
       const mockQuestions = generateMockQuestions();
       setQuestions(mockQuestions);
       const ddIndex = Math.floor(Math.random() * 6) + 3;
       setDailyDoubleIndex(ddIndex);
     } catch (error) {
       console.error('Error fetching questions:', error);
+      setAccessLevel('demo');
       const mockQuestions = generateMockQuestions();
       setQuestions(mockQuestions);
       const ddIndex = Math.floor(Math.random() * 6) + 3;
@@ -366,7 +436,7 @@ const TrickyTestamentGame = () => {
     setWager(0);
     
     // Check if all questions answered
-    if (answeredQuestions.length + 1 === questions.length) {
+    if (answeredQuestions.length + 1 >= questions.length) {
       setGameOver(true);
     }
   };
@@ -407,7 +477,7 @@ const TrickyTestamentGame = () => {
               </div>
               <p className="text-xl text-slate-600 mb-2">Heaven's Bounty Earned!</p>
               <p className="text-lg sm:text-xl lg:text-2xl text-slate-700 mb-6 sm:mb-8">
-                You completed all 10 Jeopardy-style questions!
+                You completed all {questions.length} Jeopardy-style questions!
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                 <Button
@@ -424,7 +494,8 @@ const TrickyTestamentGame = () => {
                 </Button>
               </div>
               
-              {/* Post-Game Conversion Prompt */}
+              {/* Post-Game Conversion Prompt — only for demo users */}
+              {accessLevel === 'demo' && (
               <div className="mt-6 sm:mt-8 p-5 sm:p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-200" data-testid="post-game-conversion">
                 <p className="text-base sm:text-lg font-semibold text-slate-800 mb-2">Enjoyed this?</p>
                 <p className="text-sm text-slate-600 mb-4">Unlock full lessons and interactive experiences with the complete study workbooks.</p>
@@ -446,6 +517,7 @@ const TrickyTestamentGame = () => {
                   </Button>
                 </div>
               </div>
+              )}
               
               <GameDisclaimer />
             </CardContent>
@@ -523,13 +595,27 @@ const TrickyTestamentGame = () => {
               >
                 ← Back to Home
               </button>
-              <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 sm:px-6 py-2 text-base sm:text-lg">
-                {edition === 'youth' ? '🎮 Youth Edition' : '📚 Adult Edition'}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 sm:px-6 py-2 text-base sm:text-lg">
+                  {edition === 'youth' ? 'Youth Edition' : 'Adult Edition'}
+                </Badge>
+                <Badge data-testid="access-level-badge" className={`px-3 py-2 text-sm font-semibold ${
+                  accessLevel === 'full'
+                    ? 'bg-green-500/30 text-green-300 border border-green-500/50'
+                    : 'bg-amber-500/30 text-amber-300 border border-amber-500/50'
+                }`}>
+                  {accessLevel === 'full' ? 'Full Board' : 'Demo Board'}
+                </Badge>
+              </div>
             </div>
             <div className="text-center">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">Tricky Testaments</h1>
               <p className="text-sm sm:text-base text-purple-300">Pick a category and earn Stacks!</p>
+              {accessLevel === 'demo' && (
+                <p className="text-xs text-amber-300/70 mt-1">
+                  Demo mode — 2 rows shown. Purchase to unlock the full 5-row board.
+                </p>
+              )}
             </div>
           </div>
 
@@ -538,46 +624,49 @@ const TrickyTestamentGame = () => {
             <div className="inline-flex flex-col items-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl">
               <div className="text-xs sm:text-sm text-blue-100">Heaven's Bounty</div>
               <BountyDisplay amount={score} size="lg" />
-              <div className="text-xs sm:text-sm text-blue-100 mt-1">{answeredQuestions.length}/10 Answered</div>
+              <div className="text-xs sm:text-sm text-blue-100 mt-1">{answeredQuestions.length}/{questions.length} Answered</div>
             </div>
           </div>
 
-          {/* Jeopardy Board */}
-          <div className="bg-blue-950 p-3 sm:p-4 lg:p-6 rounded-xl shadow-2xl border-2 sm:border-4 border-yellow-400">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2 sm:gap-3">
-              {/* For each category, create a column with header + questions */}
+          {/* Jeopardy Board — true grid layout */}
+          <div className="bg-blue-950 p-3 sm:p-4 lg:p-6 rounded-xl shadow-2xl border-2 sm:border-4 border-yellow-400" data-testid="jeopardy-board">
+            {/* Grid: categories as columns, point values as rows */}
+            <div className="grid grid-cols-5 gap-2 sm:gap-3">
+              {/* Category Headers (row 1) */}
               {categories.map((category, catIndex) => (
-                <div key={`col-${catIndex}`} className="flex flex-col gap-2 sm:gap-3">
-                  {/* Category Header */}
-                  <div className="bg-blue-800 text-white p-3 sm:p-4 rounded-lg text-center font-bold text-sm sm:text-base lg:text-lg border-2 border-blue-600 min-h-[80px] sm:min-h-[100px] flex items-center justify-center">
-                    {category}
-                  </div>
-                  
-                  {/* Question Tiles for this category */}
-                  {pointValues.map((points, pointIndex) => {
-                    const question = questions.find(
-                      q => q.categoryIndex === catIndex && q.pointIndex === pointIndex
-                    );
-                    const isAnswered = answeredQuestions.includes(question?.id);
-
-                    return (
-                      <button
-                        key={`q-${catIndex}-${pointIndex}`}
-                        onClick={() => !isAnswered && question && selectQuestion(question.id)}
-                        disabled={isAnswered}
-                        className={`
-                          p-4 sm:p-6 lg:p-8 rounded-lg text-2xl sm:text-3xl font-bold transition-all
-                          ${isAnswered 
-                            ? 'bg-blue-950 text-blue-900 cursor-not-allowed border-2 border-blue-900' 
-                            : 'bg-blue-600 text-yellow-400 hover:bg-blue-500 hover:scale-105 cursor-pointer border-2 border-yellow-500 shadow-lg'
-                          }
-                        `}
-                      >
-                        {isAnswered ? '✓' : points}
-                      </button>
-                    );
-                  })}
+                <div key={`hdr-${catIndex}`} className="bg-blue-800 text-white p-2 sm:p-3 rounded-lg text-center font-bold text-xs sm:text-sm lg:text-base border-2 border-blue-600 min-h-[60px] sm:min-h-[70px] flex items-center justify-center" data-testid={`category-header-${catIndex}`}>
+                  {category}
                 </div>
+              ))}
+
+              {/* Question tiles — row by row */}
+              {pointValues.map((points, rowIndex) => (
+                categories.map((_, catIndex) => {
+                  const question = questions.find(
+                    q => q.categoryIndex === catIndex && q.pointIndex === rowIndex
+                  );
+                  const isAnswered = answeredQuestions.includes(question?.id);
+
+                  return (
+                    <button
+                      key={`q-${catIndex}-${rowIndex}`}
+                      onClick={() => !isAnswered && question && selectQuestion(question.id)}
+                      disabled={isAnswered || !question}
+                      className={`
+                        p-3 sm:p-4 lg:p-6 rounded-lg text-xl sm:text-2xl lg:text-3xl font-bold transition-all
+                        ${isAnswered 
+                          ? 'bg-blue-950 text-blue-900 cursor-not-allowed border-2 border-blue-900' 
+                          : question
+                            ? 'bg-blue-600 text-yellow-400 hover:bg-blue-500 hover:scale-105 cursor-pointer border-2 border-yellow-500 shadow-lg'
+                            : 'bg-blue-900 text-blue-800 border-2 border-blue-800 cursor-not-allowed'
+                        }
+                      `}
+                      data-testid={`tile-${catIndex}-${rowIndex}`}
+                    >
+                      {isAnswered ? '✓' : points}
+                    </button>
+                  );
+                })
               ))}
             </div>
           </div>
