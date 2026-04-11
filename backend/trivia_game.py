@@ -592,6 +592,23 @@ def _question_series(q: dict) -> str:
     return "shared"
 
 
+def _generate_distractors(correct: str, pool: list) -> list:
+    """Generate plausible MCQ options for a question that lacks them."""
+    # Collect unique correct_answers from other questions as distractors
+    candidates = list({q.get("correct_answer", "") for q in pool if q.get("correct_answer", "") != correct and q.get("correct_answer")})
+    _rand.shuffle(candidates)
+    distractors = candidates[:3]
+    # If not enough distractors, add generic ones
+    fallbacks = ["None of these", "Not mentioned in Scripture", "All of the above"]
+    while len(distractors) < 3:
+        fb = fallbacks.pop(0) if fallbacks else f"Option {len(distractors) + 1}"
+        if fb != correct:
+            distractors.append(fb)
+    options = distractors + [correct]
+    _rand.shuffle(options)
+    return options
+
+
 @router.get("/entitlements/me")
 async def get_my_entitlements(request: Request):
     """Return the caller's unlocked content series and editions."""
@@ -695,6 +712,31 @@ async def get_questions_for_game(
         filtered = [q for q in all_questions if _question_series(q) in unlocked_series]
 
     _rand.shuffle(filtered)
+
+    # Game-type-specific quality filtering
+    if game_type == "trivia_testament":
+        # Jeopardy: recall-based. Prefer questions without options. Strip options from all.
+        # Prioritize questions that are recall-based (no options or open-ended answers)
+        recall = [q for q in filtered if not q.get("options")]
+        mcq = [q for q in filtered if q.get("options")]
+        # Use recall first, then supplement with MCQ (stripped)
+        ordered = recall + mcq
+        # Strip options — Jeopardy is prompt + reveal, not MCQ
+        for q in ordered:
+            q.pop("options", None)
+        filtered = ordered
+
+    elif game_type == "tricky_trivia":
+        # Millionaire: MCQ only. Must have 3+ options.
+        mcq_only = [q for q in filtered if q.get("options") and len(q["options"]) >= 3]
+        # Supplement: for questions without options, generate plausible distractors
+        no_opts = [q for q in filtered if not q.get("options") or len(q.get("options", [])) < 3]
+        for q in no_opts:
+            # Create basic distractors from the correct answer
+            ans = q.get("correct_answer", "")
+            q["options"] = _generate_distractors(ans, filtered)
+        filtered = mcq_only + no_opts
+        _rand.shuffle(filtered)
 
     return {
         "questions": filtered,

@@ -1,163 +1,142 @@
 <analysis>**original_problem_statement:**
-The user is driving a soft launch of the Soul Food full-stack e-commerce and learning platform. The primary objective is a functional checkout, guest access, email automation for digital deliveries, dynamic Stripe checkout mapping, and resolving any UI/UX issues for launch.
-
-PRODUCT REQUIREMENTS: 
-Platform must support immediate digital fulfillment, proper product mapping, dynamic Stripe checkout pricing (including overrides like  test coupons), guest checkout, and specific launch countdowns (Pentecost). Admin must be able to manage digital download mappings without redeploying the codebase.
+The user is soft-launching the Soul Food full-stack e-commerce and learning platform. Current core objectives revolve around optimizing the UX/UI conversion layers, securing account access, streamlining guest checkout flows, and building a Redeem Code flow to link guest purchases to permanent user accounts.
 
 **User's preferred language**: English
 (INSTRUCT NEXT AGENT: You MUST respond in English only)
 
 **what currently exists?** 
-A React/FastAPI/MongoDB platform successfully **DEPLOYED TO PRODUCTION** during this session. Stripe is configured with LIVE keys, and Resend is actively sending emails for the verified domain. The product catalog has been fully mapped, and its file references were migrated to MongoDB to prevent hardcoding. The checkout cart supports quantity controls, guest checkout, and dynamic coupon adjustments (including fixed-dollar and total overrides). The app includes an Admin Guide and an Instructor Guide.
+A full-stack React/FastAPI/MongoDB app with Stripe and Resend integrations. The app successfully serves offline game files and has a live Conversion Layer. The app now features a fully functional Redeem Code flow linking guest purchases, an Admin Orders UI MVP with manual access controls, a functional My Library with offline capture for code redemption, and a content-specific Game Entitlement system determining user access to trivia game variations based on their specific product purchases.
 
 **Last working item**:
-- **Last item agent was working**: Investigating two specific missing orders ( and ) that the user reported via a screenshot. The user logged in but these orders still lacked download links. The agent searched the database and Stripe for these IDs but could not find them.
+- **Last item agent was working**: Refining the question structure and assignment between the two games. Ensuring *Tricky Testaments* (Jeopardy-style) uses prompt-based recall questions with self-scoring (Got it!/Missed it) and removing multiple-choice answers, while *Trivia Mix-Up* (Millionaire-style) exclusively uses multiple-choice questions. The agent updated  to filter options and just finished modifying  to implement the self-scoring UI.
 - **Status**: IN PROGRESS
 - **Agent Testing Done**: N
-- **Which testing method agent to use?**: backend manual testing via python -c / MongoDB queries.
+- **Which testing method agent to use?**: testing_agent_v3_fork (Core gameplay logic was modified, so E2E test is required to ensure both games function properly).
 - **User Testing Done**: N
 
 **All Pending/In progress Issue list**:
-Issue 1: Locate and fulfill missing orders  and  (P0)
-   - Attempted fixes: The agent queried the ,  collections, and the recent Stripe sessions but found zero records matching these IDs.
-   - Next debug checklist: Check if these order IDs correspond to the *Preview* environment rather than *Production*, or ask the user for the exact email address used to purchase them. Once located, trigger the webhook fulfillment or manually create the  in the DB.
-   - Why fix this issue and what will be achieved with the fix?: Ensures customers get the digital products they paid for and maintains user trust post-launch.
-   - Status: IN PROGRESS
-   - Is recurring issue? N
-   - Should Test frontend/backend/both after fix? backend
-   - Blocked on other issue: User clarification on environment/email.
+Issue 1: Complete Question Structure Refinement (Tricky Testaments self-scoring vs Trivia Mix-Up MCQ) (P0)
+  - Attempted fixes: The agent has modified  to strip options for recall games and generate distractors for MCQ games. They have also replaced the question view in  to remove MCQ display and add Reveal Answer with self-scoring buttons.
+  - Next debug checklist: 
+    1. Lint  and .
+    2. Take a screenshot of the new Tricky Testaments self-scoring UI to ensure it looks correct.
+    3. Run  to verify both  and  end-to-end logic.
+  - Why fix this issue and what will be achieved with the fix?: Ensures each game type delivers its intended experience (Tricky Testaments = recall/knowledge, Mix-Up = strategy/MCQ) and prevents easy guessing.
+  - Status: IN PROGRESS
+  - Is recurring issue? N
+  - Should Test frontend/backend/both after fix? both
+  - Blocked on other issue: None
+
+Issue 2: Wire Resend Download Link buttons in My Library to backend (P1)
+  - Attempted fixes: The UI was implemented in  to show Resend Download Link / Link expired, but the backend call to  is not yet hooked up to these specific buttons.
+  - Next debug checklist: Connect the  function in  to the appropriate backend endpoint.
+  - Status: NOT STARTED
+
+Issue 3: Implement full code validation logic for Redeem Code flow (P2)
+  - Attempted fixes: Currently, the system just captures the code manually into  for admin review via .
+  - Next debug checklist: When requested by the user, build out the actual validation, automation, and entitlement granting logic for offline code redemptions.
+  - Status: NOT STARTED
 
 **In progress Task List**:
-None.
+None (All active work tracked as Issues above).
 
 **Upcoming and Future Tasks**
-Upcoming Tasks:
-- P1: Redeem Code Flow for guest purchases to link transactions to accounts post-purchase.
-- P1: SMS Option for OTP (Blocked on user providing Twilio credentials).
-- P1: License Management UI (Frontend for instructors to assign digital access).
-- P2: Replace  with  cookies for sensitive auth tokens (Security Refactor noted in Code Review).
-- P2: Gift Certificates Implementation (Deferred intentionally for launch).
-- P2: Subscription/Recurring Billing backend and full UI integration (Deferred intentionally for launch).
-
-Future Tasks:
-- P3: Word Search Game implementation.
-- P3: Video Integration into My Library.
-- P3: Refactor large React components (, , ) into smaller sub-components (Code Quality Refactor).
+Future Tasks (Explicitly put on HOLD by user - Do not implement until requested):
+- Password Reset on First Login (force change for temp credentials to meet NIST compliance).
+- Security Upgrade: Move auth tokens from localStorage to  cookies.
+- SMS OTP (UI/logic prep, blocked on credentials).
+- Gift Certificates.
+- Subscription/Recurring Billing backend and full UI.
+- Word Search Game.
+- Video Integration into My Library.
 
 **Completed work in this session**
-- Tested and verified all 6 contributor coupons.
-- Added catalog endpoints  and .
-- Fixed critical frontend crash on landing page ().
-- Updated shipping messaging across the platform (removed outdated Easter dates, updated to Pentecost countdown).
-- Added  quantity controls to checkout cart.
-- Added navigation buttons to .
-- Fixed the  DOLLARTEST coupon to properly send  through the backend  to Stripe.
-- Removed duplicated naming () in cart items.
-- Fixed My Library bug where download buttons were stuck on Processing....
-- Fixed Rewards points calculating to 0 (now calculates dynamically based on purchase history).
-- **Major Architecture Upgrade**: Migrated  mappings from hardcoded Python dict to MongoDB. Seeded 230 product-to-PDF mappings so admin can update digital delivery connections without deploying code.
-- Retroactively fulfilled missing download links for user  and .
-- Created  and .
-- Applied Code Review security fixes (replaced  with  for crypto logic, removed hardcoded test passwords, fixed  linting errors).
-- **Deployed app to Production.**
+- Completed Redeem Code Flow (P1): Updated  with redeem links, tested  edge cases. (DONE)
+- Admin UI MVP + Resend Redeem Link (P2): Built  with search, expanded details, manual access granting, and added a public rate-limited resend endpoint. (DONE)
+- Bundle Purchase Flow Updates: Re-positioned Instructor Edition (IE) as an upgrade checkbox (+) on  and updated product descriptions to clearly denote game access durations. (DONE)
+- Redeem Code Offline Capture: Added UI to  for manual code submission, added , and created a simple Submitted Codes view in . (DONE)
+- Content-Specific Game Entitlements: Updated  to check specific user purchases (4C, Break*fast, editions) and grant the exact question bank, rather than a generic pool. Updated  to show specific unlocks. (DONE)
+- Tricky Testaments Board Upgrade: Transformed the game UI into a clean 5x5 Jeopardy grid layout mapping 100-500 point values across 5 categories. (DONE)
 
 **Earlier issues found/mentioned but not fixed**
-- Issue 1: Authentication tokens stored in 
-  - Debug checklist: Move token handling to secure  cookies.
-  - Why to solve this issue and what will be achieved with this?: Remediates XSS vulnerability pointed out during the security code review.
-  - Should Test frontend/backend/both after fix: both
-  - Is recurring issue? N
+None.
 
 **Known issue recurrence from previous fork**
-- Issue recurrence in previous fork: Webhook race condition / missing events.
-- Recurrence count: 3
-- Status: RESOLVED (Polling mechanism added, but occasional Stripe webhook silent failures still mean some orders stay pending. Admin manual fulfillment capability is now in place to mitigate).
+- Recurrence count: 0
+- Status: RESOLVED
 
 **Code Architecture**
-
+-  (Handles trivia question fetching, option stripping, and content-specific entitlements)
+-  (Jeopardy-style board, self-scoring UI)
+-  (Shows user unlocks and game pass durations)
+-  (Offline code redemption capture UI, Resend download links UI)
+-  (Admin list, search, access control)
+-  (Claim code logic and public resend-access)
 
 **Key Technical Concepts**
-- Frontend: React, Tailwind CSS.
-- Backend: FastAPI, MongoDB.
-- Payment: Stripe Checkout Sessions (Using LIVE keys, dynamic ).
-- Email: Resend API.
+React, FastAPI, MongoDB, Resend (Emails), Stripe (Payments), dynamic game entitlement logic based on Stripe purchase history.
 
 **key DB schema**
--  (NEW): Maps  to actual .
 - : 
 - : 
-- : 
+- :  (New for offline fulfillment)
 
 **changes in tech stack**
-- None. However, heavily transitioned product-to-file mapping away from static python dictionaries to MongoDB.
+- None
 
-**All files of reference**
--  (Heavily modified to fetch mappings asynchronously from DB and process ).
--  (Cart quantity controls, DOLLARTEST coupon overrides).
--  (Downloads mapping & Rewards calculations).
--  (Countdowns and availability checks).
--  &  (Newly created).
--  (Security fixes applied).
+**All files of reference** 
+-  (Currently modifying for self-scoring)
+-  (Updated with strict MCQ vs recall logic)
+-  (MCQ Millionaire style game)
+-  (Updated for content locks)
 
 **Areas that need refactoring**
-- , , and  are massive component files that should be broken down into sub-components. 
-- Authentication endpoints should move away from  token passing to  cookies.
+-  is quite massive with complex inline components for the bundle section.
 
 **key api endpoints**
-- : Handles full cart processing and total overrides.
-- : Fetches dynamic pricing list.
-- : Generates and retrieves user library and download tokens.
+-  (Returns dynamic questions based on product entitlements and game_type)
+-  (Captures offline redeem codes)
+-  (Admin view for submitted codes)
+-  (Public rate-limited access resend)
 
 **Critical Info for New Agent**
-- **PRODUCTION DEPLOYMENT**: The app is LIVE. You are working in a PREVIEW environment. If making changes to test live issues, remember the user has to deploy your changes to production to see them.
-- **STRIPE LIVE**: Stripe is running in LIVE mode (). Purchases test real credit cards unless you use the  coupon to reduce the cart to exactly .00.
-- **PRODUCT MAPPING**: The  logic now fetches mappings from MongoDB instead of a hardcoded dictionary. If a product PDF is missing, add it to MongoDB via the backend rather than altering .
+- **Production vs Preview Warning**: The user has deployed the app to production (). You are operating in the PREVIEW environment. If the user reports issues, always verify if they are seeing it in preview or production. You can only make code changes in the preview environment, which the user will then deploy later.
+- **Entitlement System**: Game access is no longer a simple boolean. It checks the  collection for specific product keys (e.g., , , , ) and dynamically merges the corresponding trivia question pools.
+- **Game Type Rules**: *Tricky Testaments* MUST be prompt/recall only (no options provided to user). *Trivia Mix-Up* MUST be multiple choice only.
 
 **documents and test reports created in this job**
-- 
-- 
-- 
-- 
-- 
-- 
+-  (Updated)
+-  through 
 
 **Last 10 User Messages and any pending HUMAN messages** 
-1. *(Latest)* User uploaded a screenshot showing two unfulfilled orders ( and ) and asked why they weren't fixed even though they logged in. (Status: IN PROGRESS - Agent couldn't find these in the database yet).
-2. User asked if the admin/instructor READMEs were moved during the code cleanup. (Status: RESOLVED)
-3. User provided Code Review findings regarding ,  tokens, hook dependencies, and  usage. (Status: RESOLVED - Critical items fixed).
-4. User asked for a README for instructors. (Status: RESOLVED - INSTRUCTOR_GUIDE.md created).
-5. User asked to fix the process so redeployments aren't needed for content hiccups, and requested an admin README. (Status: RESOLVED - Mapped PDFs to MongoDB, created ADMIN_GUIDE.md).
-6. User reported Processing... stuck on download buttons in My Library and reward points showing 0. (Status: RESOLVED)
-7. User stated they completed a transaction on  and asked to fix it. (Status: RESOLVED - Found 3 missing webhook orders and fulfilled them).
-8. User tested the live site and reported the DOLLARTEST coupon went to a white screen in the live version. (Status: RESOLVED - Fixed backend cart payload to accept ).
-9. User asked if they can go forward with announcing it publicly. (Status: RESOLVED - App was successfully deployed).
-10. User uploaded screenshots showing  naming conflict. (Status: RESOLVED - Cleaned up cart naming logic).
+*(Sequential summary of the last user feature requests)*
+1. Fix game content access after purchase/redeem so full questions are available instead of demo limit. (RESOLVED)
+2. Ensure entitlement is content-specific (4C, Break*fast, etc.) and not a generic pool. Ensure Game Center reflects unlocks. (RESOLVED)
+3. Update Game Center and Tricky Testaments post-purchase experience: Make Tricky Testaments a full 5x5 Jeopardy board. Show exact duration/content access in Game Central. (RESOLVED)
+4. (User) Refine question structure: Tricky Testaments should be recall only (no multiple choice, reveal answer + self score). Trivia Mix-Up should be multiple choice only. (IN PROGRESS - Agent is implementing self-scoring UI).
 
 **Project Health Check:**
-- Broken: None.
-- Mocked: Subscriptions, SMS OTP.
+- Broken: None
+- Mocked: Subscriptions, SMS OTP, Full Redeem Code verification logic (currently manual capture).
 
 **3rd Party Integrations** 
-- Stripe (Payments) — requires User API Key (Configured - LIVE mode)
-- Resend (Emails) — requires User API Key (Configured)
-- Google OAuth (Auth) — Configured
+- Stripe (Payments) — requires User API Key
+- Resend (Emails) — requires User API Key
 
 **Testing status**
-- Testing agent used after significant changes: YES (iterations 11 & 12).
-- Troubleshoot agent used after agent stuck in loop: NO.
-- Test files created: None.
-- Known regressions: None.
+- Testing agent used after significant changes: YES (Heavily used after every major feature).
+- Troubleshoot agent used after agent stuck in loop: NO
+- Test files created: Yes (Handled by testing subagent)
+- Known regressions: None
 
 **Credentials to test flow:**
-Use credentials found in . Coupon  can be used for 100% off testing.
+Use credentials found in . 
 
 **What agent forgot to execute**
-The agent was actively investigating the two missing orders ( and ) but failed to ask the user to clarify if these screenshots are from the PREVIEW environment or the PRODUCTION environment, or to ask for the exact customer email address for those specific orders.
+The agent was in the middle of converting  to a self-scoring format. They ran  but haven't yet linted the file, taken a UI screenshot, or ran the testing agent to verify the new game flow works perfectly.
 
 **Debugging checklist for current issue**
-    Issue: Fulfill missing orders  and 
-    
-    Backend files to check: 
-    - Database query: Check if the orders exist in the PREVIEW database vs PRODUCTION database.
-    - Ask User: Prompt the user for the email used or ask them to clarify which URL they were on when they took the screenshot.
-    - If found: Trigger manual order creation and  generation.</analysis>
+Issue: Finish Question Structure Refinement (Tricky Testaments self-scoring)
+- **Frontend files to check**: . Ensure the new Got it! and Missed it self-scoring state behaves correctly, adjusts the user's score, marks the question as answered, and transitions back to the board. 
+- **Backend files to check**: . Ensure the  key is successfully stripped from the payload when  so the frontend doesn't accidentally render multiple-choice buttons.
+- **Next steps**: Lint, test UI visually with , then invoke  for final verification.</analysis>

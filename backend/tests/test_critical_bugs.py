@@ -17,7 +17,7 @@ from pathlib import Path
 # Load environment
 load_dotenv(Path('/app/backend/.env'))
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-food-checkout.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-food-preview.preview.emergentagent.com').rstrip('/')
 
 # Test credentials from test_credentials.md
 ADMIN_EMAIL = "overflowharvest@gmail.com"

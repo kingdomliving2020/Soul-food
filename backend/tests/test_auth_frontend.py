@@ -8,7 +8,7 @@ import requests
 import os
 import time
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-food-checkout.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-food-preview.preview.emergentagent.com')
 TEST_PASSWORD = os.environ.get('TEST_PASSWORD', 'TestPass123!')
 
 class TestBetaLogin:
