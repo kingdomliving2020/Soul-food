@@ -37,6 +37,13 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Full flow verified: Front page → Add to Cart → Modal → Cart auto-opens → Checkout → Sign In/Guest
 - [x] Tested: 13/13 features, 100% (iteration 24)
 
+### Checkout & Fulfillment Pipeline Fixes (Apr 11, 2026)
+- [x] Stripe email binding: customer_email passed to stripe.checkout.Session.create() — pre-fills buyer email on payment page
+- [x] Product identity: items stored with both raw product_id and normalized_product_id for reliable PRODUCT_FILES lookup
+- [x] Account linking: JWT user_id extracted from Authorization header, stored as user_id + claimed_by_user_id in transaction
+- [x] Webhook mapping: fulfillment uses stored user_id from transaction record, never falls back to session_id
+- [x] Tested: 13/13 backend tests passed (iteration 25)
+
 ### Full 5x5 Jeopardy Board + Content Entitlements (Apr 11, 2026)
 - [x] Tricky Testaments: true 5x5 grid (categories across top, 100-500 vertically) for paid users
 - [x] Demo users: 5x2 board (100-200 only), demo badge, purchase prompts at game over
