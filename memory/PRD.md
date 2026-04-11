@@ -50,6 +50,15 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Test files: hardcoded credentials replaced with os.environ.get() (7 files)
 - [x] Console cleanup: all console.log/warn removed from 20 production frontend files
 
+### Post-Purchase Fulfillment Fix (Apr 11, 2026)
+- [x] Root cause: product IDs stored as Stripe display names (e.g., "Holiday Series - The Covenant - ADULT (99% off)") — normalizer couldn't resolve them
+- [x] Added resolve_display_name_to_product_id(): strips discount text, parses series/edition/format from human-readable names
+- [x] Added resolve_item_to_file_entries(): unified resolver for all fulfillment paths — handles display names, internal IDs, and bundle expansion
+- [x] Added BUNDLE_EXPANSIONS: starter bundles expand to individual product entitlements (holiday_ae + breakfast_ae_digital)
+- [x] Fixed series_map false positive: "series" containing "ie" substring no longer matches instructor edition
+- [x] Updated all 3 fulfillment paths (webhook, status-check, admin manual) to use resolve_item_to_file_entries()
+- [x] Tested: 32/32 backend tests passed (iteration 26)
+
 ### Full 5x5 Jeopardy Board + Content Entitlements (Apr 11, 2026)
 - [x] Tricky Testaments: true 5x5 grid (categories across top, 100-500 vertically) for paid users
 - [x] Demo users: 5x2 board (100-200 only), demo badge, purchase prompts at game over
