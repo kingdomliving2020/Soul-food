@@ -298,7 +298,7 @@ const SoulFoodLanding = () => {
     window.onYouTubeIframeAPIReady = () => {
       playerRef.current = new window.YT.Player('youtube-player', {
         events: {
-          'onReady': () => console.log('YouTube player ready')
+          'onReady': () => {}
         }
       });
     };

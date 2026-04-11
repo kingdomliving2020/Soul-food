@@ -33,7 +33,6 @@ const PaymentSuccess = () => {
       
       if (!response.ok) {
         // Don't fail on 404/500 — the webhook may still be processing
-        console.log(`[PaymentSuccess] Status check attempt ${attemptsRef.current + 1}: HTTP ${response.status}, retrying...`);
         attemptsRef.current += 1;
         setAttempts(attemptsRef.current);
         timerRef.current = setTimeout(checkPaymentStatus, 2500);
@@ -77,7 +76,6 @@ const PaymentSuccess = () => {
       }
     } catch (err) {
       // Network error — retry instead of immediately failing
-      console.log(`[PaymentSuccess] Network error on attempt ${attemptsRef.current + 1}:`, err.message);
       attemptsRef.current += 1;
       setAttempts(attemptsRef.current);
       if (attemptsRef.current < maxAttempts) {

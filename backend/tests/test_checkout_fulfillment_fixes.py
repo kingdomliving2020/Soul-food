@@ -23,8 +23,8 @@ if not BASE_URL:
     BASE_URL = "https://soul-food-preview.preview.emergentagent.com"
 
 # Test credentials from test_credentials.md
-ADMIN_EMAIL = "overflowharvest@gmail.com"
-ADMIN_PASSWORD = "Admin123!"
+ADMIN_EMAIL = os.environ.get("TEST_ADMIN_EMAIL", "overflowharvest@gmail.com")
+ADMIN_PASSWORD = os.environ.get("TEST_ADMIN_PASSWORD", "Admin123!")
 
 # Valid product IDs for testing
 TEST_PRODUCTS = [

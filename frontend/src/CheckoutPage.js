@@ -922,10 +922,8 @@ const CheckoutPage = () => {
       
       // Add auth token if user is logged in (check all possible token keys)
       const token = localStorage.getItem('token') || localStorage.getItem('soulFoodToken') || localStorage.getItem('soul_food_token');
-      console.log('[Checkout] Token found:', token ? 'YES' : 'NO');
       if (token) {
         headers['Authorization'] = `Bearer ${token}`;
-        console.log('[Checkout] Authorization header added');
       }
 
       const response = await fetch(`${BACKEND_URL}/api/payments/checkout/cart`, {
@@ -958,7 +956,6 @@ const CheckoutPage = () => {
         data = await response.json();
       } catch (jsonError) {
         // Body might already be read by an interceptor
-        console.warn('Response body already read, checking response status');
         if (!response.ok) {
           throw new Error('Checkout failed. Please try again.');
         }

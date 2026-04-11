@@ -185,7 +185,7 @@ const InstructorToolbox = () => {
           const mapsData = await mapsRes.json();
           setGameMaps(mapsData.assets || []);
         }
-      } catch (e) { console.log('Maps load skipped'); }
+      } catch (e) { /* maps load skipped */ }
 
       // Load question bank stats
       try {
@@ -194,7 +194,7 @@ const InstructorToolbox = () => {
           const statsData = await statsRes.json();
           setBankStats(statsData);
         }
-      } catch (e) { console.log('Stats load skipped'); }
+      } catch (e) { /* stats load skipped */ }
     } catch (err) {
       console.error('Failed to load instructor content:', err);
     }

@@ -962,7 +962,6 @@ const QuickOrder = () => {
                                   <button
                                     onClick={() => {
                                       const key = item.uniqueKey || item.productId || item.id;
-                                      console.log('[Cart] Decreasing quantity for:', key);
                                       updateQuantity(key, item.quantity - 1);
                                     }}
                                     className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center text-gray-700 font-bold"
@@ -973,7 +972,6 @@ const QuickOrder = () => {
                                   <button
                                     onClick={() => {
                                       const key = item.uniqueKey || item.productId || item.id;
-                                      console.log('[Cart] Increasing quantity for:', key);
                                       updateQuantity(key, item.quantity + 1);
                                     }}
                                     className="w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded flex items-center justify-center text-gray-700 font-bold"

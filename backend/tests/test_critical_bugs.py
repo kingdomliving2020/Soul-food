@@ -20,8 +20,8 @@ load_dotenv(Path('/app/backend/.env'))
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-food-preview.preview.emergentagent.com').rstrip('/')
 
 # Test credentials from test_credentials.md
-ADMIN_EMAIL = "overflowharvest@gmail.com"
-ADMIN_PASSWORD = "Admin123!"
+ADMIN_EMAIL = os.environ.get("TEST_ADMIN_EMAIL", "overflowharvest@gmail.com")
+ADMIN_PASSWORD = os.environ.get("TEST_ADMIN_PASSWORD", "Admin123!")
 
 
 class TestLoginSessionConfig:

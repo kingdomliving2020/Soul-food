@@ -77,7 +77,6 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => {
     try {
       const savedCart = localStorage.getItem('soulFoodCart');
-      console.log('[Cart] Initial load from localStorage:', savedCart ? 'found' : 'empty');
       
       if (savedCart) {
         const parsed = JSON.parse(savedCart);
@@ -85,7 +84,6 @@ export const CartProvider = ({ children }) => {
           const validItems = parsed.filter(item => 
             item && (item.productId || item.id) && (item.salePrice !== undefined || item.price !== undefined)
           );
-          console.log('[Cart] Initialized with', validItems.length, 'items');
           return validItems;
         }
       }
@@ -101,7 +99,6 @@ export const CartProvider = ({ children }) => {
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    console.log('[Cart] Saving to localStorage:', cartItems.length, 'items');
     localStorage.setItem('soulFoodCart', JSON.stringify(cartItems));
   }, [cartItems]);
 
@@ -177,7 +174,6 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeFromCart = (keyToMatch) => {
-    console.log('[Cart] removeFromCart called:', keyToMatch);
     setCartItems(prevItems => prevItems.filter(item => {
       const itemKey = item.uniqueKey || item.productId || item.id;
       return itemKey !== keyToMatch;
@@ -185,7 +181,6 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateQuantity = (keyToMatch, newQuantity) => {
-    console.log('[Cart] updateQuantity called:', { keyToMatch, newQuantity });
     
     if (newQuantity <= 0) {
       removeFromCart(keyToMatch);
@@ -197,7 +192,6 @@ export const CartProvider = ({ children }) => {
         // Match by uniqueKey, productId, or id
         const itemKey = item.uniqueKey || item.productId || item.id;
         if (itemKey === keyToMatch) {
-          console.log('[Cart] Found item to update:', item.name, 'new qty:', newQuantity);
           return { ...item, quantity: newQuantity };
         }
         return item;

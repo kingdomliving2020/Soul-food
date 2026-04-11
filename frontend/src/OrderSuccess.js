@@ -94,7 +94,6 @@ const OrderSuccess = () => {
               orderType: data.order_type
             }));
           } else {
-            console.warn('Could not fetch order details');
           }
         } catch (err) {
           console.error('Error fetching order:', err);
@@ -154,14 +153,12 @@ const OrderSuccess = () => {
       const editionCode = edition === 'adult' ? 'ae' : edition === 'youth' ? 'ye' : 'ie';
       const nibbleId = `${series}-${editionCode}-${lessonId}`;
       
-      console.log('Downloading nibble:', nibbleId);
       
       // Call the PDF download endpoint
       const response = await fetch(`${BACKEND_URL}/api/interactive-lessons/download/nibble/${nibbleId}`);
       
       if (!response.ok) {
         // Try alternative download method - series download
-        console.log('Nibble download failed, trying series download');
         const seriesResponse = await fetch(`${BACKEND_URL}/api/interactive-lessons/download/series/${series}`);
         if (!seriesResponse.ok) {
           throw new Error('Failed to download');
