@@ -174,6 +174,28 @@ const AdminOrders = () => {
     }
   };
 
+  const handleRefulfill = async (orderNumber) => {
+    setActionLoading(`refulfill-${orderNumber}`);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/payments/admin/refulfill/${encodeURIComponent(orderNumber)}`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`Fulfilled: ${data.downloads_created} download link(s) created`);
+        if (expandedOrder === orderNumber) loadOrderDetail(orderNumber);
+        fetchOrders();
+      } else {
+        toast.error(data.detail || 'Re-fulfill failed');
+      }
+    } catch {
+      toast.error('Re-fulfill request failed');
+    } finally {
+      setActionLoading('');
+    }
+  };
+
   const loadOrderDetail = async (orderNumber) => {
     setDetailLoading(true);
     setOrderDetail(null);
@@ -371,6 +393,15 @@ const AdminOrders = () => {
                         </p>
                       </div>
                       <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                        <button
+                          onClick={() => handleRefulfill(order.order_number)}
+                          disabled={actionLoading === `refulfill-${order.order_number}` || order.payment_status !== 'paid'}
+                          className="p-2 rounded-lg hover:bg-blue-50 text-slate-400 hover:text-blue-600 disabled:opacity-40 transition-colors"
+                          title="Re-run Fulfillment"
+                          data-testid={`refulfill-btn-${order.order_number}`}
+                        >
+                          {actionLoading === `refulfill-${order.order_number}` ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                        </button>
                         <button
                           onClick={() => handleResendEmail(order.order_number)}
                           disabled={actionLoading === `resend-${order.order_number}`}

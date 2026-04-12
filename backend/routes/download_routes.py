@@ -204,6 +204,12 @@ async def resend_download_link(data: ResendLinkRequest, request: Request):
     )
     
     if not success:
+        # Distinguish between "no links exist" (fulfillment never ran) vs rate limit
+        if "No download links found" in message:
+            raise HTTPException(
+                status_code=404, 
+                detail="No download links exist for this order yet. The order may still be processing. An admin can trigger re-fulfillment from the Admin dashboard."
+            )
         raise HTTPException(status_code=429, detail=message)
     
     # Don't return actual tokens in response (send via email instead)
