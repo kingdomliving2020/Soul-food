@@ -1852,6 +1852,9 @@ async def get_checkout_status(session_id: str):
                     {"$set": {"download_links_generated": True, "downloads_count": len(download_links_created)}}
                 )
             
+            # Grant audio access for Holiday/4C series purchases
+            await _grant_audio_access_for_items(items, customer_email)
+            
             # Send order confirmation email  
             if customer_email:
                 try:
@@ -2058,7 +2061,8 @@ async def stripe_webhook(request: Request):
                         {"$set": {"download_links_generated": True, "downloads_count": len(download_links_created)}}
                     )
                 
-                # Send order confirmation email
+                # Grant audio access for Holiday/4C series purchases
+                await _grant_audio_access_for_items(items, customer_email)
                 if customer_email:
                     try:
                         from email_service import send_order_confirmation
@@ -2573,3 +2577,293 @@ async def get_my_purchases(request: Request):
             })
     
     return {"purchases": purchases}
+
+
+# =============================================================================
+# AUDIO ACCESS GRANTING (shared helper for all fulfillment paths)
+# =============================================================================
+
+HOLIDAY_AUDIO_LESSONS = ["covenant", "cradle", "cross", "comforter"]
+
+async def _grant_audio_access_for_items(items: list, customer_email: str):
+    """Grant audio access for Holiday/4C series purchases.
+    Called by both webhook and status-check fulfillment paths."""
+    if not customer_email:
+        return
+    
+    grant_holiday_audio = False
+    specific_lessons = []
+    
+    for item in items:
+        file_entries = resolve_item_to_file_entries(item)
+        for entry in file_entries:
+            key = entry.get("file_key", "").lower()
+            # Full holiday workbook → all 4C audio
+            if key in ("holiday_ae", "holiday_ye", "holiday_ie"):
+                grant_holiday_audio = True
+            # Holiday nibble (individual lesson) → specific audio
+            elif "holiday" in key and "nibble" in key:
+                for lesson in HOLIDAY_AUDIO_LESSONS:
+                    if lesson in key:
+                        specific_lessons.append(lesson)
+            # Holiday table bundle → all 4C audio
+            elif "holiday" in key and ("table" in key or "bundle" in key):
+                grant_holiday_audio = True
+        
+        # Also check raw item name for holiday keywords
+        name = (item.get("name") or "").lower()
+        if "holiday" in name or "4c" in name or "covenant" in name or "cradle" in name or "cross" in name or "comforter" in name:
+            if "full" in name or "workbook" in name or "bundle" in name:
+                grant_holiday_audio = True
+            for lesson in HOLIDAY_AUDIO_LESSONS:
+                if lesson in name:
+                    specific_lessons.append(lesson)
+    
+    if not grant_holiday_audio and not specific_lessons:
+        return
+    
+    lessons_to_grant = HOLIDAY_AUDIO_LESSONS if grant_holiday_audio else list(set(specific_lessons))
+    
+    await db.audio_access.update_one(
+        {"email": customer_email.lower()},
+        {
+            "$addToSet": {
+                "series_access": "holiday",
+                "lessons_access": {"$each": lessons_to_grant}
+            },
+            "$set": {"updated_at": datetime.utcnow().isoformat()},
+            "$setOnInsert": {
+                "email": customer_email.lower(),
+                "created_at": datetime.utcnow().isoformat()
+            }
+        },
+        upsert=True
+    )
+    print(f"[Fulfillment] Audio access granted for {customer_email}: holiday/{lessons_to_grant}")
+
+
+# =============================================================================
+# ADMIN: RE-FULFILL STUCK ORDERS
+# =============================================================================
+
+@router.post("/admin/refulfill/{order_number}")
+async def admin_refulfill_order(order_number: str, request: Request):
+    """Re-run fulfillment for a stuck order. Creates download links + audio access.
+    Useful for orders that were paid but fulfillment failed (wrong product IDs, etc.)."""
+    from download_protection import create_download_link
+    
+    # Auth check
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    try:
+        from jose import jwt
+        SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
+        payload = jwt.decode(auth_header.split(" ", 1)[1], SECRET_KEY, algorithms=["HS256"])
+        uid = payload.get("sub")
+        user = await db.users.find_one({"id": uid}, {"_id": 0, "role": 1})
+        if not user or user.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Admin access required")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    # Find the transaction
+    txn = await db.payment_transactions.find_one(
+        {"order_number": order_number},
+        {"_id": 0}
+    )
+    if not txn:
+        raise HTTPException(status_code=404, detail=f"Order {order_number} not found")
+    
+    if txn.get("payment_status") != "paid":
+        raise HTTPException(status_code=400, detail=f"Order is not paid (status: {txn.get('payment_status')})")
+    
+    items = txn.get("items", [])
+    customer_email = txn.get("customer_email", "")
+    user_id = txn.get("user_id") or txn.get("claimed_by_user_id") or ""
+    
+    # Revoke old download links for this order
+    await db.download_links.update_many(
+        {"order_id": order_number},
+        {"$set": {"revoked": True, "revoked_at": datetime.utcnow().isoformat()}}
+    )
+    
+    # Re-create download links using the improved resolver
+    download_links_created = []
+    for item in items:
+        file_entries = resolve_item_to_file_entries(item)
+        for entry in file_entries:
+            pdf_path = await get_pdf_path_async(entry["file_key"]) or await get_pdf_path_async(entry["product_id"])
+            if pdf_path:
+                try:
+                    token, expires_at = await create_download_link(
+                        order_id=order_number,
+                        user_id=user_id or order_number,
+                        user_email=customer_email or "no-email@placeholder.com",
+                        product_id=entry["file_key"],
+                        product_name=entry["name"],
+                        file_path=pdf_path,
+                        payment_verified=True
+                    )
+                    download_links_created.append({
+                        "product_id": entry["file_key"],
+                        "name": entry["name"],
+                        "token": token
+                    })
+                except Exception as e:
+                    download_links_created.append({
+                        "product_id": entry["file_key"],
+                        "name": entry["name"],
+                        "error": str(e)
+                    })
+    
+    # Update transaction
+    await db.payment_transactions.update_one(
+        {"order_number": order_number},
+        {"$set": {
+            "download_links_generated": True,
+            "downloads_count": len([d for d in download_links_created if "token" in d]),
+            "refulfilled_at": datetime.utcnow().isoformat()
+        }}
+    )
+    
+    # Grant audio access
+    await _grant_audio_access_for_items(items, customer_email)
+    
+    return {
+        "order_number": order_number,
+        "customer_email": customer_email,
+        "items_processed": len(items),
+        "downloads_created": len([d for d in download_links_created if "token" in d]),
+        "downloads_failed": len([d for d in download_links_created if "error" in d]),
+        "links": download_links_created
+    }
+
+
+# =============================================================================
+# ADMIN: ACCOUNT CLEANUP / MERGE
+# =============================================================================
+
+@router.get("/admin/accounts/lookup/{email}")
+async def admin_lookup_accounts(email: str, request: Request):
+    """Find all accounts and purchase history for an email. 
+    Shows duplicates and helps decide what to merge/remove."""
+    # Auth check
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    try:
+        from jose import jwt
+        SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
+        payload = jwt.decode(auth_header.split(" ", 1)[1], SECRET_KEY, algorithms=["HS256"])
+        uid = payload.get("sub")
+        user = await db.users.find_one({"id": uid}, {"_id": 0, "role": 1})
+        if not user or user.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Admin access required")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    email_lower = email.lower()
+    
+    # Find all user accounts
+    accounts = await db.users.find(
+        {"$or": [{"email": email_lower}, {"email": email}]},
+        {"_id": 0, "password_hash": 0, "totp_secret": 0}
+    ).to_list(20)
+    
+    # Find all transactions
+    transactions = await db.payment_transactions.find(
+        {"customer_email": {"$in": [email_lower, email]}},
+        {"_id": 0, "order_number": 1, "payment_status": 1, "total_amount": 1, "items": 1, 
+         "user_id": 1, "created_at": 1, "download_links_generated": 1}
+    ).to_list(50)
+    
+    # Find download links
+    links = await db.download_links.find(
+        {"user_email": {"$in": [email_lower, email]}},
+        {"_id": 0, "order_id": 1, "product_id": 1, "revoked": 1}
+    ).to_list(100)
+    
+    # Audio access
+    audio = await db.audio_access.find_one({"email": email_lower}, {"_id": 0})
+    
+    return {
+        "email": email,
+        "accounts": accounts,
+        "account_count": len(accounts),
+        "has_duplicates": len(accounts) > 1,
+        "transactions": [{
+            "order_number": t.get("order_number"),
+            "status": t.get("payment_status"),
+            "amount": t.get("total_amount"),
+            "user_id": t.get("user_id"),
+            "dl_generated": t.get("download_links_generated"),
+            "item_count": len(t.get("items", []))
+        } for t in transactions],
+        "download_links_count": len(links),
+        "active_links": len([lnk for lnk in links if not lnk.get("revoked")]),
+        "audio_access": audio
+    }
+
+
+@router.post("/admin/accounts/merge")
+async def admin_merge_accounts(request: Request):
+    """Merge duplicate accounts for the same email.
+    Keeps the account with the highest role (admin > instructor > member).
+    Transfers all purchase history to the kept account."""
+    # Auth check
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    
+    try:
+        from jose import jwt
+        SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
+        payload = jwt.decode(auth_header.split(" ", 1)[1], SECRET_KEY, algorithms=["HS256"])
+        uid = payload.get("sub")
+        user = await db.users.find_one({"id": uid}, {"_id": 0, "role": 1})
+        if not user or user.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Admin access required")
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    
+    body = await request.json()
+    email = body.get("email", "").lower()
+    if not email:
+        raise HTTPException(status_code=400, detail="Email required")
+    
+    # Find all accounts
+    accounts = await db.users.find({"email": email}, {"_id": 0}).to_list(20)
+    if len(accounts) <= 1:
+        return {"message": f"No duplicates found for {email}", "accounts": len(accounts)}
+    
+    # Pick the keeper: highest role, then earliest created
+    role_priority = {"admin": 3, "instructor": 2, "member": 1}
+    accounts.sort(key=lambda a: (-role_priority.get(a.get("role", "member"), 0), a.get("created_at", "")))
+    keeper = accounts[0]
+    to_remove = accounts[1:]
+    
+    keeper_id = keeper.get("id")
+    remove_ids = [a.get("id") for a in to_remove]
+    
+    # Transfer purchase history: update user_id references
+    for old_id in remove_ids:
+        await db.payment_transactions.update_many(
+            {"user_id": old_id},
+            {"$set": {"user_id": keeper_id, "merged_from": old_id}}
+        )
+        await db.download_links.update_many(
+            {"user_id": old_id},
+            {"$set": {"user_id": keeper_id}}
+        )
+    
+    # Remove duplicate accounts
+    await db.users.delete_many({"id": {"$in": remove_ids}})
+    
+    return {
+        "message": f"Merged {len(to_remove)} duplicate(s) into {keeper_id}",
+        "kept_account": {"id": keeper_id, "role": keeper.get("role"), "name": keeper.get("name")},
+        "removed_accounts": [{"id": a.get("id"), "role": a.get("role")} for a in to_remove]
+    }
