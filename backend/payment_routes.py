@@ -594,6 +594,16 @@ def get_pdf_path(product_id: str) -> Optional[str]:
     return None
 
 
+def get_expected_pdf_path(product_id: str) -> Optional[str]:
+    """Get the expected PDF path from PRODUCT_FILES mapping — does NOT check os.path.exists.
+    Use this for download link creation where the file may not be on local disk (production K8s)."""
+    normalized_id = normalize_product_id(product_id)
+    filename = PRODUCT_FILES.get(normalized_id)
+    if not filename:
+        return None
+    return os.path.join(PDF_DIR, filename)
+
+
 async def get_pdf_path_async(product_id: str) -> Optional[str]:
     """Get PDF path — checks MongoDB product_file_mappings first, then hardcoded fallback.
     Use this in async contexts (webhooks, fulfillment) for no-redeploy mapping support."""
@@ -609,8 +619,17 @@ async def get_pdf_path_async(product_id: str) -> Optional[str]:
         if os.path.exists(path):
             return path
     
-    # 2. Fall back to hardcoded PRODUCT_FILES
-    return get_pdf_path(product_id)
+    # 2. Fall back to hardcoded PRODUCT_FILES (check disk)
+    disk_path = get_pdf_path(product_id)
+    if disk_path:
+        return disk_path
+    
+    # 3. Last resort: return expected path even if file not on disk
+    # (production K8s may serve files from object storage)
+    expected = get_expected_pdf_path(product_id)
+    if expected:
+        print(f"[PDF Path] File not on disk but mapping exists — using expected path: {expected}")
+    return expected
 
 # Product catalog with list and sale prices
 # Cost = wholesale/production cost, List Price = MSRP, Sale Price = current selling price
@@ -1749,6 +1768,8 @@ async def get_checkout_status(session_id: str):
                 raw_id = item.get("normalized_product_id") or item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
                 item_name = item.get("name", raw_id)
                 
+                print(f"[StatusCheck] Item: raw_id={raw_id}, name={item_name[:60]}")
+                
                 # Check if this is a gift certificate item
                 if raw_id.startswith('gift_certificate_') or item.get("isGiftCertificate"):
                     # Process gift certificate
@@ -1817,12 +1838,15 @@ async def get_checkout_status(session_id: str):
                 # Resolve item to file entries (handles display names, bundles, normalization)
                 file_entries = resolve_item_to_file_entries(item)
                 
+                print(f"[StatusCheck] Resolved to {len(file_entries)} file entries: {[e['file_key'] for e in file_entries]}")
+                
                 if not file_entries:
                     print(f"[StatusCheck] No downloadable file for: {item_name} (raw_id={raw_id})")
                     continue
                 
                 for entry in file_entries:
                     pdf_path = await get_pdf_path_async(entry["file_key"]) or await get_pdf_path_async(entry["product_id"])
+                    print(f"[StatusCheck] file_key={entry['file_key']} -> pdf_path={pdf_path}")
                     if pdf_path:
                         try:
                             token, expires_at = await create_download_link(
@@ -1839,18 +1863,29 @@ async def get_checkout_status(session_id: str):
                                 "name": entry["name"],
                                 "token": token
                             })
-                            print(f"[StatusCheck] Download link created for {entry['name']} ({entry['file_key']})")
+                            print(f"[StatusCheck] SUCCESS: Download link for {entry['name']} ({entry['file_key']})")
                         except Exception as dl_error:
-                            print(f"[StatusCheck] Error creating download link for {entry['name']}: {dl_error}")
+                            print(f"[StatusCheck] ERROR: Creating download link for {entry['name']}: {dl_error}")
+                            import traceback
+                            traceback.print_exc()
                     else:
-                        print(f"[StatusCheck] No PDF found for {entry['name']} (key={entry['file_key']})")
+                        print(f"[StatusCheck] FAIL: No PDF path for {entry['name']} (key={entry['file_key']})")
             
-            # Store download links info
+            print(f"[StatusCheck] Fulfillment complete: {len(download_links_created)} download links created")
+            
+            # Update order status to fulfilled
+            update_fields = {
+                "download_links_generated": len(download_links_created) > 0,
+                "downloads_count": len(download_links_created),
+                "fulfillment_completed_at": datetime.utcnow().isoformat()
+            }
             if download_links_created:
-                await db.payment_transactions.update_one(
-                    {"session_id": session_id},
-                    {"$set": {"download_links_generated": True, "downloads_count": len(download_links_created)}}
-                )
+                update_fields["status"] = "fulfilled"
+            
+            await db.payment_transactions.update_one(
+                {"session_id": session_id},
+                {"$set": update_fields}
+            )
             
             # Grant audio access for Holiday/4C series purchases
             await _grant_audio_access_for_items(items, customer_email)
@@ -2018,13 +2053,19 @@ async def stripe_webhook(request: Request):
                 if product_id and not items:
                     items = [{"product_id": product_id, "name": PRODUCTS.get(product_id, {}).get("name", product_id)}]
                 
+                print(f"[Webhook] Processing {len(items)} item(s) for fulfillment")
+                
                 download_links_created = []
                 for item in items:
                     raw_id = item.get("normalized_product_id") or item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
                     item_name = item.get("name", raw_id)
                     
+                    print(f"[Webhook] Item: raw_id={raw_id}, name={item_name[:60]}")
+                    
                     # Resolve item to file entries (handles display names, bundles, normalization)
                     file_entries = resolve_item_to_file_entries(item)
+                    
+                    print(f"[Webhook] Resolved to {len(file_entries)} file entries: {[e['file_key'] for e in file_entries]}")
                     
                     if not file_entries:
                         print(f"[Webhook] No downloadable file for: {item_name} (raw_id={raw_id})")
@@ -2032,6 +2073,7 @@ async def stripe_webhook(request: Request):
                     
                     for entry in file_entries:
                         pdf_path = await get_pdf_path_async(entry["file_key"]) or await get_pdf_path_async(entry["product_id"])
+                        print(f"[Webhook] file_key={entry['file_key']} -> pdf_path={pdf_path}")
                         if pdf_path:
                             try:
                                 token, expires_at = await create_download_link(
@@ -2048,18 +2090,29 @@ async def stripe_webhook(request: Request):
                                     "name": entry["name"],
                                     "token": token
                                 })
-                                print(f"[Webhook] Download link created for {entry['name']} ({entry['file_key']})")
+                                print(f"[Webhook] SUCCESS: Download link created for {entry['name']} ({entry['file_key']})")
                             except Exception as dl_error:
-                                print(f"[Webhook] Error creating download link for {entry['name']}: {dl_error}")
+                                print(f"[Webhook] ERROR: Creating download link for {entry['name']}: {dl_error}")
+                                import traceback
+                                traceback.print_exc()
                         else:
-                            print(f"[Webhook] No PDF found for {entry['name']} (key={entry['file_key']})")
+                            print(f"[Webhook] FAIL: No PDF path for {entry['name']} (key={entry['file_key']})")
                 
-                # Store download links with the order
+                print(f"[Webhook] Fulfillment complete: {len(download_links_created)} download links created")
+                
+                # Update order status to fulfilled
+                update_fields = {
+                    "download_links_generated": len(download_links_created) > 0,
+                    "downloads_count": len(download_links_created),
+                    "fulfillment_completed_at": datetime.utcnow().isoformat()
+                }
                 if download_links_created:
-                    await db.payment_transactions.update_one(
-                        {"session_id": session_id},
-                        {"$set": {"download_links_generated": True, "downloads_count": len(download_links_created)}}
-                    )
+                    update_fields["status"] = "fulfilled"
+                
+                await db.payment_transactions.update_one(
+                    {"session_id": session_id},
+                    {"$set": update_fields}
+                )
                 
                 # Grant audio access for Holiday/4C series purchases
                 await _grant_audio_access_for_items(items, customer_email)
@@ -2719,13 +2772,18 @@ async def admin_refulfill_order(order_number: str, request: Request):
                     })
     
     # Update transaction
+    successful_count = len([d for d in download_links_created if "token" in d])
+    update_fields = {
+        "download_links_generated": successful_count > 0,
+        "downloads_count": successful_count,
+        "refulfilled_at": datetime.utcnow().isoformat()
+    }
+    if successful_count > 0:
+        update_fields["status"] = "fulfilled"
+    
     await db.payment_transactions.update_one(
         {"order_number": order_number},
-        {"$set": {
-            "download_links_generated": True,
-            "downloads_count": len([d for d in download_links_created if "token" in d]),
-            "refulfilled_at": datetime.utcnow().isoformat()
-        }}
+        {"$set": update_fields}
     )
     
     # Grant audio access
