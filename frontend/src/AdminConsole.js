@@ -515,6 +515,10 @@ const UsersManager = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
+  const [showInvite, setShowInvite] = useState(false);
+  const [inviteData, setInviteData] = useState({ email: '', name: '', role: 'member', password: '' });
+  const [inviteLoading, setInviteLoading] = useState(false);
+  const [editingRole, setEditingRole] = useState(null);
   const { token } = useAdmin();
   
   const fetchUsers = useCallback(async () => {
@@ -532,7 +536,7 @@ const UsersManager = () => {
         setUsers(data.items || []);
       }
     } catch (err) {
-      console.error('Error fetching users:', err);
+      toast.error('Failed to load users');
     } finally {
       setLoading(false);
     }
@@ -552,6 +556,8 @@ const UsersManager = () => {
       if (res.ok) {
         toast.success(`Account ${action}ed`);
         fetchUsers();
+      } else {
+        toast.error('Failed to update account');
       }
     } catch (err) {
       toast.error('Failed to update account');
@@ -567,9 +573,57 @@ const UsersManager = () => {
       if (res.ok) {
         const data = await res.json();
         toast.success(`Password reset! Temp: ${data.temporary_password}`);
+      } else {
+        toast.error('Failed to reset password');
       }
     } catch (err) {
       toast.error('Failed to reset password');
+    }
+  };
+
+  const handleInvite = async (e) => {
+    e.preventDefault();
+    if (!inviteData.email) { toast.error('Email is required'); return; }
+    setInviteLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/users`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(inviteData)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`User created! ${data.temporary_password ? `Temp password: ${data.temporary_password}` : ''}`);
+        setShowInvite(false);
+        setInviteData({ email: '', name: '', role: 'member', password: '' });
+        fetchUsers();
+      } else {
+        toast.error(data.detail || 'Failed to create user');
+      }
+    } catch (err) {
+      toast.error('Failed to create user');
+    } finally {
+      setInviteLoading(false);
+    }
+  };
+
+  const handleRoleChange = async (userId, newRole) => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/users/${userId}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: newRole })
+      });
+      if (res.ok) {
+        toast.success(`Role updated to ${newRole}`);
+        setEditingRole(null);
+        fetchUsers();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.detail || 'Failed to update role');
+      }
+    } catch (err) {
+      toast.error('Failed to update role');
     }
   };
   
@@ -578,17 +632,82 @@ const UsersManager = () => {
     instructor: 'bg-blue-100 text-blue-700',
     student: 'bg-green-100 text-green-700',
     adult: 'bg-purple-100 text-purple-700',
+    member: 'bg-slate-100 text-slate-700',
   };
+  
+  const availableRoles = ['admin', 'instructor', 'member', 'adult', 'student'];
   
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-800">Users & Roles</h1>
-        <Button className="bg-orange-600 hover:bg-orange-700">
+        <Button
+          className="bg-orange-600 hover:bg-orange-700"
+          onClick={() => setShowInvite(true)}
+          data-testid="invite-user-btn"
+        >
           <Plus size={18} className="mr-2" />
           Invite User
         </Button>
       </div>
+
+      {/* Invite User Modal */}
+      {showInvite && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowInvite(false)}>
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6" onClick={e => e.stopPropagation()} data-testid="invite-modal">
+            <h2 className="text-lg font-bold text-slate-800 mb-4">Invite New User</h2>
+            <form onSubmit={handleInvite} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Email *</label>
+                <Input
+                  type="email"
+                  required
+                  value={inviteData.email}
+                  onChange={e => setInviteData(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="user@example.com"
+                  data-testid="invite-email"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                <Input
+                  value={inviteData.name}
+                  onChange={e => setInviteData(prev => ({ ...prev, name: e.target.value }))}
+                  placeholder="John Doe"
+                  data-testid="invite-name"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Role</label>
+                <select
+                  value={inviteData.role}
+                  onChange={e => setInviteData(prev => ({ ...prev, role: e.target.value }))}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+                  data-testid="invite-role"
+                >
+                  {availableRoles.map(r => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Password (leave blank for auto-generated)</label>
+                <Input
+                  type="password"
+                  value={inviteData.password}
+                  onChange={e => setInviteData(prev => ({ ...prev, password: e.target.value }))}
+                  placeholder="Auto-generated if empty"
+                  data-testid="invite-password"
+                />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <Button type="button" variant="outline" onClick={() => setShowInvite(false)} className="flex-1">Cancel</Button>
+                <Button type="submit" disabled={inviteLoading} className="flex-1 bg-orange-600 hover:bg-orange-700" data-testid="invite-submit">
+                  {inviteLoading ? 'Creating...' : 'Create User'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       
       {/* Filters */}
       <div className="bg-white rounded-xl shadow-sm border p-4">
@@ -601,6 +720,7 @@ const UsersManager = () => {
             <option value="">All Roles</option>
             <option value="admin">Admin</option>
             <option value="instructor">Instructor</option>
+            <option value="member">Member</option>
             <option value="student">Student</option>
             <option value="adult">Adult</option>
           </select>
@@ -646,9 +766,27 @@ const UsersManager = () => {
                     <p className="text-xs text-slate-500">{user.email}</p>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-1 rounded-full ${roleColors[user.role] || 'bg-slate-100 text-slate-700'}`}>
-                      {user.role || 'user'}
-                    </span>
+                    {editingRole === user.id ? (
+                      <select
+                        defaultValue={user.role || 'member'}
+                        onChange={e => handleRoleChange(user.id, e.target.value)}
+                        onBlur={() => setEditingRole(null)}
+                        autoFocus
+                        className="text-xs px-2 py-1 border border-blue-300 rounded-lg bg-blue-50 focus:ring-2 focus:ring-blue-200 outline-none"
+                        data-testid={`role-select-${user.id}`}
+                      >
+                        {availableRoles.map(r => <option key={r} value={r}>{r.charAt(0).toUpperCase() + r.slice(1)}</option>)}
+                      </select>
+                    ) : (
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full cursor-pointer hover:ring-2 hover:ring-blue-200 transition-all ${roleColors[user.role] || 'bg-slate-100 text-slate-700'}`}
+                        onClick={() => setEditingRole(user.id)}
+                        title="Click to change role"
+                        data-testid={`role-badge-${user.id}`}
+                      >
+                        {user.role || 'member'}
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     {user.disabled ? (
@@ -662,7 +800,12 @@ const UsersManager = () => {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="p-1 text-slate-400 hover:text-blue-600" title="Edit">
+                      <button
+                        onClick={() => setEditingRole(user.id)}
+                        className="p-1 text-slate-400 hover:text-blue-600"
+                        title="Change Role"
+                        data-testid={`edit-btn-${user.id}`}
+                      >
                         <Edit size={16} />
                       </button>
                       <button 
