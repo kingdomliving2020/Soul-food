@@ -553,14 +553,17 @@ const UsersManager = () => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
       if (res.ok) {
-        toast.success(`Account ${action}ed`);
+        toast.success(data.message || `Account ${action}ed`);
         fetchUsers();
       } else {
-        toast.error('Failed to update account');
+        toast.error(`${action} failed (${res.status}): ${data.detail || JSON.stringify(data)}`);
       }
     } catch (err) {
-      toast.error('Failed to update account');
+      toast.error(`Network error: ${err.message}`);
     }
   };
   
@@ -570,14 +573,16 @@ const UsersManager = () => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
       if (res.ok) {
-        const data = await res.json();
-        toast.success(`Password reset! Temp: ${data.temporary_password}`);
+        toast.success(`Password reset! Temp: ${data.temporary_password || '(check email)'}`);
       } else {
-        toast.error('Failed to reset password');
+        toast.error(`Reset failed (${res.status}): ${data.detail || JSON.stringify(data)}`);
       }
     } catch (err) {
-      toast.error('Failed to reset password');
+      toast.error(`Network error: ${err.message}`);
     }
   };
 
@@ -589,19 +594,26 @@ const UsersManager = () => {
       const res = await fetch(`${API_URL}/api/admin/users`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify(inviteData)
+        body: JSON.stringify({
+          email: inviteData.email,
+          name: inviteData.name,
+          role: inviteData.role,
+          ...(inviteData.password ? { password: inviteData.password } : {})
+        })
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
       if (res.ok) {
         toast.success(`User created! ${data.temporary_password ? `Temp password: ${data.temporary_password}` : ''}`);
         setShowInvite(false);
         setInviteData({ email: '', name: '', role: 'member', password: '' });
         fetchUsers();
       } else {
-        toast.error(data.detail || 'Failed to create user');
+        toast.error(`Create failed (${res.status}): ${data.detail || data.message || JSON.stringify(data)}`);
       }
     } catch (err) {
-      toast.error('Failed to create user');
+      toast.error(`Network error: ${err.message}`);
     } finally {
       setInviteLoading(false);
     }
@@ -614,16 +626,18 @@ const UsersManager = () => {
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole })
       });
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
       if (res.ok) {
         toast.success(`Role updated to ${newRole}`);
         setEditingRole(null);
         fetchUsers();
       } else {
-        const data = await res.json().catch(() => ({}));
-        toast.error(data.detail || 'Failed to update role');
+        toast.error(`Role update failed (${res.status}): ${data.detail || data.message || JSON.stringify(data)}`);
       }
     } catch (err) {
-      toast.error('Failed to update role');
+      toast.error(`Network error: ${err.message}`);
     }
   };
   

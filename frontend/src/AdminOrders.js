@@ -139,14 +139,16 @@ const AdminOrders = () => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${getToken()}` }
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
       if (res.ok && data.success) {
         toast.success(data.message || 'Email resent successfully!');
       } else {
-        toast.error(data.detail || 'Failed to resend email');
+        toast.error(`Resend failed (${res.status}): ${data.detail || JSON.stringify(data)}`);
       }
-    } catch {
-      toast.error('Failed to resend email');
+    } catch (err) {
+      toast.error(`Network error: ${err.message}`);
     } finally {
       setActionLoading('');
     }
@@ -159,16 +161,17 @@ const AdminOrders = () => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${getToken()}` }
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
       if (res.ok && data.success) {
         toast.success(data.message || 'Access granted!');
-        // Reload detail if expanded
         if (expandedOrder === orderNumber) loadOrderDetail(orderNumber);
       } else {
-        toast.error(data.detail || 'Failed to grant access');
+        toast.error(`Grant failed (${res.status}): ${data.detail || JSON.stringify(data)}`);
       }
-    } catch {
-      toast.error('Failed to grant access');
+    } catch (err) {
+      toast.error(`Network error: ${err.message}`);
     } finally {
       setActionLoading('');
     }
@@ -181,16 +184,18 @@ const AdminOrders = () => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${getToken()}` }
       });
-      const data = await res.json();
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
       if (res.ok) {
-        toast.success(`Fulfilled: ${data.downloads_created} download link(s) created`);
+        toast.success(`Fulfilled: ${data.downloads_created || 0} download link(s) created`);
         if (expandedOrder === orderNumber) loadOrderDetail(orderNumber);
         fetchOrders();
       } else {
-        toast.error(data.detail || 'Re-fulfill failed');
+        toast.error(`Re-fulfill failed (${res.status}): ${data.detail || JSON.stringify(data)}`);
       }
-    } catch {
-      toast.error('Re-fulfill request failed');
+    } catch (err) {
+      toast.error(`Network error: ${err.message}`);
     } finally {
       setActionLoading('');
     }
