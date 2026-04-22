@@ -1196,7 +1196,7 @@ const CheckoutPage = () => {
             
             <div className="space-y-4">
               {cartItems.map((item, index) => (
-                <div key={index} className="flex items-center justify-between border-b pb-4">
+                <div key={item.uniqueKey || item.productId || item.id || `cart-${index}`} className="flex items-center justify-between border-b pb-4">
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900">{item.name}</h3>
                     <p className="text-sm text-gray-500">

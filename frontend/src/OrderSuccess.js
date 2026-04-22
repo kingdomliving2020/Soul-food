@@ -279,7 +279,7 @@ const OrderSuccess = () => {
             </p>
             
             {orderData.downloadLinks.map((link, index) => (
-              <div key={index} className="border-b last:border-b-0 py-4">
+              <div key={link.token || link.product_id || `dl-${index}`} className="border-b last:border-b-0 py-4">
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <h3 className="font-semibold text-gray-900">{link.product_name}</h3>
@@ -336,7 +336,7 @@ const OrderSuccess = () => {
               const lesson = lessonMatch ? lessonMatch[0] : 'Lesson';
               
               return (
-                <div key={index} className="border-b last:border-b-0 py-4">
+                <div key={item.product_id || item.id || `item-${index}`} className="border-b last:border-b-0 py-4">
                   <div className="flex justify-between items-start mb-3">
                     <div>
                       <h3 className="font-semibold text-gray-900">{item.name || `${series} Series - ${lesson}`}</h3>

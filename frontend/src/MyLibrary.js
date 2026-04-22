@@ -414,7 +414,7 @@ const MyLibrary = () => {
 
                       return (
                         <div
-                          key={idx}
+                          key={purchase.product_id || purchase.order_id || `purchase-${idx}`}
                           className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-all"
                         >
                           <div className="flex items-center gap-4">
@@ -736,7 +736,7 @@ const MyLibrary = () => {
                     <p className="text-sm font-medium text-slate-700">Available Rewards:</p>
                     {rewards.available_rewards.map((reward, idx) => (
                       <div
-                        key={idx}
+                        key={reward.id || reward.name || `reward-${idx}`}
                         className="flex items-center justify-between p-3 border border-amber-200 rounded-lg bg-amber-50/50"
                       >
                         <div>
