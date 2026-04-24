@@ -257,7 +257,7 @@ const Dashboard = () => {
           {stats?.recent_orders?.length > 0 ? (
             <div className="space-y-3">
               {stats.recent_orders.map((order, i) => (
-                <div key={i} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                <div key={order.order_number || order.session_id || `order-${i}`} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
                   <div>
                     <p className="text-sm font-medium text-slate-800">{order.email || 'Guest'}</p>
                     <p className="text-xs text-slate-500">{new Date(order.created_at).toLocaleDateString()}</p>
@@ -278,7 +278,7 @@ const Dashboard = () => {
           {stats?.recent_users?.length > 0 ? (
             <div className="space-y-3">
               {stats.recent_users.map((user, i) => (
-                <div key={i} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
+                <div key={user.id || user.email || `ruser-${i}`} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
                   <div>
                     <p className="text-sm font-medium text-slate-800">{user.name || user.email}</p>
                     <p className="text-xs text-slate-500">{user.email}</p>
@@ -1050,7 +1050,7 @@ const OrdersManager = () => {
                                   <h4 className="font-bold text-slate-700 mt-4 mb-2">Items ({selected.transaction?.items?.length || 0})</h4>
                                   <ul className="space-y-1 text-slate-600">
                                     {(selected.transaction?.items || []).map((it, i) => (
-                                      <li key={i} className="flex items-center gap-2">
+                                      <li key={it.product_id || `item-${i}`} className="flex items-center gap-2">
                                         <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0" />
                                         {it.name || it.product_id} {it.quantity > 1 ? `x${it.quantity}` : ''}
                                       </li>
@@ -1064,7 +1064,7 @@ const OrdersManager = () => {
                                   {selected.download_links?.length > 0 ? (
                                     <ul className="space-y-1 text-slate-600 max-h-40 overflow-y-auto">
                                       {selected.download_links.map((dl, i) => (
-                                        <li key={i} className="flex items-center justify-between gap-2 text-xs bg-white p-2 rounded border">
+                                        <li key={dl.token || dl.product_id || `dl-${i}`} className="flex items-center justify-between gap-2 text-xs bg-white p-2 rounded border">
                                           <span className="truncate">{dl.product_name || dl.product_id}</span>
                                           <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${dl.revoked ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
                                             {dl.revoked ? 'revoked' : 'active'}
@@ -1081,7 +1081,7 @@ const OrdersManager = () => {
                                       <h4 className="font-bold text-slate-700 mt-4 mb-2">Delivery Log</h4>
                                       <ul className="space-y-1 text-xs text-slate-500 max-h-32 overflow-y-auto">
                                         {selected.delivery_logs.map((log, i) => (
-                                          <li key={i} className="bg-white p-2 rounded border">
+                                          <li key={log.id || `log-${i}`} className="bg-white p-2 rounded border">
                                             <span className="font-medium text-slate-700">{log.type}</span> — {log.status} — {log.timestamp ? new Date(log.timestamp).toLocaleString() : ''}
                                           </li>
                                         ))}
@@ -1575,7 +1575,7 @@ const SubmittedCodes = () => {
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {codes.map((c, i) => (
-                  <tr key={i} className="hover:bg-slate-50" data-testid={`code-row-${i}`}>
+                  <tr key={c.code || `code-${i}`} className="hover:bg-slate-50" data-testid={`code-row-${i}`}>
                     <td className="px-4 py-3 font-mono text-sm text-slate-800">{c.code}</td>
                     <td className="px-4 py-3 text-slate-700">{c.user_email}</td>
                     <td className="px-4 py-3 text-slate-500">{c.user_name || '-'}</td>

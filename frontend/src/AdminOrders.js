@@ -457,7 +457,7 @@ const AdminOrders = () => {
                                   <h4 className="font-medium text-slate-700 mb-1 text-sm">Items</h4>
                                   <ul className="space-y-1">
                                     {orderDetail.transaction.items.map((item, idx) => (
-                                      <li key={idx} className="text-xs text-slate-600 flex items-center gap-1">
+                                      <li key={item.product_id || item.id || `item-${idx}`} className="text-xs text-slate-600 flex items-center gap-1">
                                         <FileText className="w-3 h-3 text-green-500 flex-shrink-0" />
                                         {item.name || item.product_id} {item.quantity > 1 ? `x${item.quantity}` : ''}
                                       </li>
@@ -476,7 +476,7 @@ const AdminOrders = () => {
                               {orderDetail?.download_links?.length > 0 ? (
                                 <ul className="space-y-1 max-h-32 overflow-y-auto">
                                   {orderDetail.download_links.map((dl, idx) => (
-                                    <li key={idx} className="text-xs bg-white border rounded p-2 flex items-center justify-between gap-2">
+                                    <li key={dl.token || dl.product_id || `dl-${idx}`} className="text-xs bg-white border rounded p-2 flex items-center justify-between gap-2">
                                       <span className="truncate">{dl.product_name || dl.product_id}</span>
                                       <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${dl.revoked ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
                                         {dl.revoked ? 'revoked' : 'active'}
@@ -494,7 +494,7 @@ const AdminOrders = () => {
                                   <h4 className="font-medium text-slate-700 mb-1 text-sm">Delivery Log</h4>
                                   <ul className="space-y-1 max-h-24 overflow-y-auto">
                                     {orderDetail.delivery_logs.map((log, idx) => (
-                                      <li key={idx} className="text-xs bg-white border rounded p-1.5">
+                                      <li key={log.id || `log-${log.type}-${idx}`} className="text-xs bg-white border rounded p-1.5">
                                         <span className="font-medium">{log.type}</span> — {log.status} — {log.timestamp ? new Date(log.timestamp).toLocaleString() : ''}
                                       </li>
                                     ))}

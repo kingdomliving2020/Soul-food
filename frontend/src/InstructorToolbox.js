@@ -350,14 +350,14 @@ const InstructorToolbox = () => {
               {gameMaps[selectedMapIdx].scripture_refs && (
                 <div className="flex flex-wrap gap-1">
                   {gameMaps[selectedMapIdx].scripture_refs.map((ref, i) => (
-                    <Badge key={i} variant="outline" className="text-xs">{ref}</Badge>
+                    <Badge key={`ref-${ref}`} variant="outline" className="text-xs">{ref}</Badge>
                   ))}
                 </div>
               )}
               {gameMaps[selectedMapIdx].characters && (
                 <div className="flex flex-wrap gap-1 mt-1">
                   {gameMaps[selectedMapIdx].characters.map((ch, i) => (
-                    <Badge key={i} className="bg-teal-100 text-teal-700 text-xs">{ch}</Badge>
+                    <Badge key={`ch-${ch}`} className="bg-teal-100 text-teal-700 text-xs">{ch}</Badge>
                   ))}
                 </div>
               )}
@@ -371,7 +371,7 @@ const InstructorToolbox = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {gameMaps.map((mapAsset, idx) => (
             <Card 
-              key={idx} 
+              key={mapAsset.id || mapAsset.title || `gmap-${idx}`} 
               className="overflow-hidden hover:shadow-lg transition-all cursor-pointer border-2 hover:border-teal-300"
               onClick={() => setSelectedMapIdx(idx)}
               data-testid={`map-card-${idx}`}
@@ -392,7 +392,7 @@ const InstructorToolbox = () => {
                 {mapAsset.characters && (
                   <div className="flex flex-wrap gap-1 mt-1">
                     {mapAsset.characters.slice(0, 3).map((ch, i) => (
-                      <Badge key={i} variant="outline" className="text-[10px]">{ch}</Badge>
+                      <Badge key={`mc-${ch}`} variant="outline" className="text-[10px]">{ch}</Badge>
                     ))}
                   </div>
                 )}
@@ -1043,7 +1043,7 @@ const InstructorToolbox = () => {
                 { title: 'Scripture Memory Verses', type: 'PDF', icon: BookMarked },
                 { title: 'Group Activity Handouts', type: 'PDF', icon: Users }
               ].map((resource, idx) => (
-                <Card key={idx} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => toast.info('Resource download coming soon!')}>
+                <Card key={resource.title} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => toast.info('Resource download coming soon!')}>
                   <CardContent className="p-4 text-center">
                     <resource.icon className="w-8 h-8 mx-auto text-rose-500 mb-3" />
                     <p className="font-semibold text-slate-800 text-sm">{resource.title}</p>

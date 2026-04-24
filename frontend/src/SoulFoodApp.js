@@ -255,7 +255,7 @@ const ResurrectionCountdown = () => {
         { value: timeLeft.minutes, label: 'Min' },
         { value: timeLeft.seconds, label: 'Sec' }
       ].map((item, idx) => (
-        <div key={idx} className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 min-w-[50px] sm:min-w-[60px] border border-purple-400/30">
+        <div key={item.label} className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 min-w-[50px] sm:min-w-[60px] border border-purple-400/30">
           <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-amber-300">{String(item.value).padStart(2, '0')}</div>
           <div className="text-[10px] sm:text-xs text-purple-300 uppercase tracking-wide">{item.label}</div>
         </div>

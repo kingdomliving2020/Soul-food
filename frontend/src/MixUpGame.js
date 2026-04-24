@@ -636,7 +636,7 @@ const MixUpGame = () => {
         <div className="grid grid-cols-5 gap-1 mb-4">
           {bountyLadder.map((amount, index) => (
             <div
-              key={index}
+              key={`bounty-${amount}`}
               className={`text-center py-1 rounded text-xs sm:text-sm flex items-center justify-center gap-1 ${
                 index === currentQuestion
                   ? 'bg-amber-500 text-white font-bold'
@@ -692,7 +692,7 @@ const MixUpGame = () => {
 
                 return (
                   <button
-                    key={index}
+                    key={`opt-${option}`}
                     onClick={() => handleAnswer(option)}
                     disabled={isEliminated || showResult}
                     className={buttonClass}
