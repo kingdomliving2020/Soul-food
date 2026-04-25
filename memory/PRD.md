@@ -87,6 +87,17 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Public resend-access: rate-limited
 - [x] My Library: status labels, resend link UI, redeem code input
 
+### Guest Checkout 404 Diagnosis (Feb 2026)
+- [x] Root cause: Emergent static-preview shim was returning 404 when preview pod was paused — NOT a real route mismatch
+- [x] Verified `/api/payments/checkout/cart` registered correctly: `payment_router` has `prefix="/api/payments"`, route is `@router.post("/checkout/cart")`, `server.py` includes via `app.include_router(payment_router)`
+- [x] Validated active preview backend with 4 curl scenarios (all returned 200 + Stripe URL):
+  - Single PDF (Snack Pack AE M1): order_number SF-2026-2E5VK
+  - Starter Bundle (Holiday Table Bundle)
+  - Multiple cart items (mixed AE/YE + bundle)
+  - Guest checkout (no auth header, full customer info)
+- [x] Frontend-to-backend flow confirmed by user reaching Stripe payment step in active preview
+- [x] Production likely stale — recommend redeploy of kingdom-soul.com
+
 ### Earlier Work
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 
