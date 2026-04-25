@@ -796,24 +796,26 @@ const CheckoutPage = () => {
         }),
       });
 
-      const data = await response.json();
+      const text = await response.text();
+      let data;
+      try { data = JSON.parse(text); } catch { data = { valid: false, message: text || `Server error (${response.status})` }; }
 
       if (data.valid) {
         setCouponApplied({
           code: couponCode.toUpperCase(),
           discount_percent: data.discount_percent,
           discount_dollars: data.discount_dollars || 0,
-          override_total: data.override_total,  // For $1 test coupon
+          override_total: data.override_total,
           is_gift_certificate: data.is_gift_certificate || false,
           message: data.message
         });
         setCouponError('');
       } else {
-        setCouponError(data.message || 'Invalid coupon code');
+        setCouponError(data.message || data.detail || `Invalid coupon (${response.status})`);
         setCouponApplied(null);
       }
     } catch (error) {
-      setCouponError('Error validating coupon. Please try again.');
+      setCouponError(`Could not validate coupon: ${error.message || 'Check your connection'}`);
     } finally {
       setCouponLoading(false);
     }
@@ -887,14 +889,9 @@ const CheckoutPage = () => {
         });
 
         if (orderResponse.ok) {
-          // Handle case where body may already be consumed by interceptor
+          const orderText = await orderResponse.text();
           let orderData;
-          if (orderResponse.bodyUsed) {
-            // Generate order ID locally if response was consumed
-            orderData = { order_id: `FREE-${Date.now().toString(36).toUpperCase()}`, download_links: [] };
-          } else {
-            orderData = await orderResponse.json();
-          }
+          try { orderData = JSON.parse(orderText); } catch { orderData = { order_id: `FREE-${Date.now().toString(36).toUpperCase()}`, download_links: [] }; }
           
           // Store order info including download links and redirect to success/download page
           sessionStorage.setItem('orderComplete', JSON.stringify({
@@ -907,13 +904,10 @@ const CheckoutPage = () => {
           clearCart();
           navigate('/order-success?free=true&order=' + orderData.order_id);
         } else {
-          // Handle error response with bodyUsed check
-          if (!orderResponse.bodyUsed) {
-            const errorData = await orderResponse.json().catch(() => ({}));
-            throw new Error(errorData.detail || 'Failed to process free order');
-          } else {
-            throw new Error('Failed to process free order. Please try again.');
-          }
+          const errText = await orderResponse.text();
+          let errorData;
+          try { errorData = JSON.parse(errText); } catch { errorData = { detail: errText || `Error (${orderResponse.status})` }; }
+          throw new Error(errorData.detail || 'Failed to process free order');
         }
         return;
       }
@@ -954,18 +948,10 @@ const CheckoutPage = () => {
         }),
       });
 
-      // Handle response - check if body was already consumed
+      // Handle response
       let data;
-      try {
-        data = await response.json();
-      } catch (jsonError) {
-        // Body might already be read by an interceptor
-        if (!response.ok) {
-          throw new Error('Checkout failed. Please try again.');
-        }
-        // If response was OK but body consumed, something went wrong
-        throw new Error('Unexpected error during checkout. Please try again.');
-      }
+      const responseText = await response.text();
+      try { data = JSON.parse(responseText); } catch { data = { detail: responseText || `Server error (${response.status})` }; }
 
       // Check for account required error (401)
       if (!response.ok && data.detail?.error === 'account_required') {
