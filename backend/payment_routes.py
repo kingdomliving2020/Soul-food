@@ -518,7 +518,11 @@ BUNDLE_EXPANSIONS = {
     'starter-bundle-4cs-bkft-ae-ie': ['holiday_ae', 'breakfast_ae_digital', 'holiday_ie', 'breakfast_ie_digital'],
     'starter-bundle-4cs-bkft-ye-ie': ['holiday_ye', 'breakfast_ye_digital', 'holiday_ie', 'breakfast_ie_digital'],
     'holiday-table-bundle': ['holiday_ae'],
+    'holiday-table-bundle-ae': ['holiday_ae', 'breakfast-snack-month-1-adult-interactive'],
+    'holiday-table-bundle-ye': ['holiday_ye', 'breakfast-snack-month-1-youth-interactive'],
     'full-table-experience': ['holiday_ae'],
+    'full-table-experience-ae': ['holiday_ae', 'breakfast-snack-month-1-adult-interactive'],
+    'full-table-experience-ye': ['holiday_ye', 'breakfast-snack-month-1-youth-interactive'],
 }
 
 

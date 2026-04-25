@@ -242,6 +242,7 @@ const BackCoverModal = ({ isOpen, onClose, frontCover, backCover, productName })
 const QuickOrder = () => {
   const { addToCart, cartItems, removeFromCart, updateQuantity, getCartTotal, getCartCount, isCartOpen, setIsCartOpen } = useCart();
   const [previewModal, setPreviewModal] = useState({ isOpen: false, frontCover: '', backCover: '', productName: '' });
+  const [quickBundleEdition, setQuickBundleEdition] = useState(null);
   
   // Cover images mapping by edition and format
   const coverImages = {
@@ -1049,16 +1050,39 @@ const QuickOrder = () => {
                   <span className="text-sm text-slate-400 line-through">$23.98</span>
                   <span className="text-2xl font-bold text-purple-600">$19.99</span>
                 </div>
-                <p className="text-xs text-slate-500 mb-4">Instant digital access to both!</p>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Select Edition <span className="text-red-500">*</span></p>
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={() => setQuickBundleEdition('ae')}
+                    className={`flex-1 px-3 py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
+                      quickBundleEdition === 'ae' ? 'border-purple-500 bg-purple-50 text-purple-800 ring-2 ring-purple-200' : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                    }`}
+                    data-testid="quick-bundle-edition-ae"
+                  >Adult (AE)</button>
+                  <button
+                    onClick={() => setQuickBundleEdition('ye')}
+                    className={`flex-1 px-3 py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
+                      quickBundleEdition === 'ye' ? 'border-purple-500 bg-purple-50 text-purple-800 ring-2 ring-purple-200' : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                    }`}
+                    data-testid="quick-bundle-edition-ye"
+                  >Youth (YE)</button>
+                </div>
+                {!quickBundleEdition && <p className="text-xs text-amber-600 mb-3" data-testid="quick-bundle-hint">Please select Adult or Youth Edition</p>}
                 <Button
                   onClick={() => {
-                    addToCart({ id: 'holiday-table-bundle', name: 'Holiday Table Bundle (ePub + SP)', price: 19.99, quantity: 1, isBundle: true });
+                    if (!quickBundleEdition) {
+                      toast.error('Please select Adult Edition or Youth Edition before adding this bundle.');
+                      return;
+                    }
+                    const edLabel = quickBundleEdition === 'ae' ? 'Adult' : 'Youth';
+                    addToCart({ id: `holiday-table-bundle-${quickBundleEdition}`, name: `Holiday Table Bundle (${edLabel}) (ePub + SP)`, price: 19.99, quantity: 1, isBundle: true, edition: quickBundleEdition });
                     toast.success('Holiday Table Bundle added!');
                   }}
-                  className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
+                  disabled={!quickBundleEdition}
+                  className={`w-full ${quickBundleEdition ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700' : 'bg-slate-300 text-slate-500 cursor-not-allowed'}`}
                   data-testid="add-holiday-bundle-btn"
                 >
-                  Add to Cart — $19.99
+                  {quickBundleEdition ? 'Add to Cart — $19.99' : 'Select Edition to Continue'}
                 </Button>
               </CardContent>
             </Card>
@@ -1076,16 +1100,39 @@ const QuickOrder = () => {
                   <span className="text-sm text-slate-400 line-through">$43.97</span>
                   <span className="text-2xl font-bold text-amber-600">$34.99</span>
                 </div>
-                <p className="text-xs text-slate-500 mb-4">Complete Soul Food experience with games!</p>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">Select Edition <span className="text-red-500">*</span></p>
+                <div className="flex gap-2 mb-3">
+                  <button
+                    onClick={() => setQuickBundleEdition('ae')}
+                    className={`flex-1 px-3 py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
+                      quickBundleEdition === 'ae' ? 'border-amber-500 bg-amber-50 text-amber-800 ring-2 ring-amber-200' : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                    }`}
+                    data-testid="full-table-edition-ae"
+                  >Adult (AE)</button>
+                  <button
+                    onClick={() => setQuickBundleEdition('ye')}
+                    className={`flex-1 px-3 py-2 rounded-lg border-2 text-xs font-semibold transition-all ${
+                      quickBundleEdition === 'ye' ? 'border-amber-500 bg-amber-50 text-amber-800 ring-2 ring-amber-200' : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                    }`}
+                    data-testid="full-table-edition-ye"
+                  >Youth (YE)</button>
+                </div>
+                {!quickBundleEdition && <p className="text-xs text-amber-600 mb-3">Please select Adult or Youth Edition</p>}
                 <Button
                   onClick={() => {
-                    addToCart({ id: 'full-table-experience', name: 'Full Table Experience (ePub + SP + Game Pass)', price: 34.99, quantity: 1, isBundle: true });
+                    if (!quickBundleEdition) {
+                      toast.error('Please select Adult Edition or Youth Edition before adding this bundle.');
+                      return;
+                    }
+                    const edLabel = quickBundleEdition === 'ae' ? 'Adult' : 'Youth';
+                    addToCart({ id: `full-table-experience-${quickBundleEdition}`, name: `Full Table Experience (${edLabel}) (ePub + SP + Game Pass)`, price: 34.99, quantity: 1, isBundle: true, edition: quickBundleEdition });
                     toast.success('Full Table Experience added!');
                   }}
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                  disabled={!quickBundleEdition}
+                  className={`w-full ${quickBundleEdition ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600' : 'bg-slate-300 text-slate-500 cursor-not-allowed'}`}
                   data-testid="add-full-table-btn"
                 >
-                  Add to Cart — $34.99
+                  {quickBundleEdition ? 'Add to Cart — $34.99' : 'Select Edition to Continue'}
                 </Button>
               </CardContent>
             </Card>
