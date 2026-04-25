@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
+import { safeJson } from './lib/safeFetch';
 import {
   ArrowLeft,
   Search,
@@ -139,13 +140,11 @@ const AdminOrders = () => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${getToken()}` }
       });
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
-      if (res.ok && data.success) {
+      const { ok, data } = await safeJson(res);
+      if (ok && data.success) {
         toast.success(data.message || 'Email resent successfully!');
       } else {
-        toast.error(`Resend failed (${res.status}): ${data.detail || JSON.stringify(data)}`);
+        toast.error(`Resend failed: ${data.detail || JSON.stringify(data)}`);
       }
     } catch (err) {
       toast.error(`Network error: ${err.message}`);
@@ -161,14 +160,12 @@ const AdminOrders = () => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${getToken()}` }
       });
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
-      if (res.ok && data.success) {
+      const { ok, data } = await safeJson(res);
+      if (ok && data.success) {
         toast.success(data.message || 'Access granted!');
         if (expandedOrder === orderNumber) loadOrderDetail(orderNumber);
       } else {
-        toast.error(`Grant failed (${res.status}): ${data.detail || JSON.stringify(data)}`);
+        toast.error(`Grant failed: ${data.detail || JSON.stringify(data)}`);
       }
     } catch (err) {
       toast.error(`Network error: ${err.message}`);
@@ -184,15 +181,13 @@ const AdminOrders = () => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${getToken()}` }
       });
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
-      if (res.ok) {
+      const { ok, data } = await safeJson(res);
+      if (ok) {
         toast.success(`Fulfilled: ${data.downloads_created || 0} download link(s) created`);
         if (expandedOrder === orderNumber) loadOrderDetail(orderNumber);
         fetchOrders();
       } else {
-        toast.error(`Re-fulfill failed (${res.status}): ${data.detail || JSON.stringify(data)}`);
+        toast.error(`Re-fulfill failed: ${data.detail || JSON.stringify(data)}`);
       }
     } catch (err) {
       toast.error(`Network error: ${err.message}`);

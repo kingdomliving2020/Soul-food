@@ -10,6 +10,7 @@ import {
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
 import { Toaster, toast } from 'sonner';
+import { safeJson } from './lib/safeFetch';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -553,10 +554,8 @@ const UsersManager = () => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
-      if (res.ok) {
+      const { ok, data } = await safeJson(res);
+      if (ok) {
         toast.success(data.message || `Account ${action}ed`);
         fetchUsers();
       } else {
@@ -573,13 +572,11 @@ const UsersManager = () => {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
-      if (res.ok) {
+      const { ok, data } = await safeJson(res);
+      if (ok) {
         toast.success(`Password reset! Temp: ${data.temporary_password || '(check email)'}`);
       } else {
-        toast.error(`Reset failed (${res.status}): ${data.detail || JSON.stringify(data)}`);
+        toast.error(`Reset failed: ${data.detail || JSON.stringify(data)}`);
       }
     } catch (err) {
       toast.error(`Network error: ${err.message}`);
@@ -601,16 +598,14 @@ const UsersManager = () => {
           ...(inviteData.password ? { password: inviteData.password } : {})
         })
       });
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
-      if (res.ok) {
+      const { ok, status, data } = await safeJson(res);
+      if (ok) {
         toast.success(`User created! ${data.temporary_password ? `Temp password: ${data.temporary_password}` : ''}`);
         setShowInvite(false);
         setInviteData({ email: '', name: '', role: 'member', password: '' });
         fetchUsers();
       } else {
-        toast.error(`Create failed (${res.status}): ${data.detail || data.message || JSON.stringify(data)}`);
+        toast.error(`Create failed (${status}): ${data.detail || data.message || JSON.stringify(data)}`);
       }
     } catch (err) {
       toast.error(`Network error: ${err.message}`);
@@ -626,15 +621,13 @@ const UsersManager = () => {
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole })
       });
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
-      if (res.ok) {
+      const { ok, data } = await safeJson(res);
+      if (ok) {
         toast.success(`Role updated to ${newRole}`);
         setEditingRole(null);
         fetchUsers();
       } else {
-        toast.error(`Role update failed (${res.status}): ${data.detail || data.message || JSON.stringify(data)}`);
+        toast.error(`Role update failed: ${data.detail || data.message || JSON.stringify(data)}`);
       }
     } catch (err) {
       toast.error(`Network error: ${err.message}`);

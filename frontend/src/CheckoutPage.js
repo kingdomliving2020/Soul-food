@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useCart, PRODUCTS } from './CartContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { CreditCard, ShoppingBag, Trash2, Mail, User, LogIn, UserPlus, ArrowRight, ShieldCheck, X, MapPin, Loader2, Gift, Package, Send, AlertCircle } from 'lucide-react';
+import { safeJson } from './lib/safeFetch';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -796,9 +797,7 @@ const CheckoutPage = () => {
         }),
       });
 
-      const text = await response.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = { valid: false, message: text || `Server error (${response.status})` }; }
+      const { ok, data } = await safeJson(response);
 
       if (data.valid) {
         setCouponApplied({
@@ -889,9 +888,8 @@ const CheckoutPage = () => {
         });
 
         if (orderResponse.ok) {
-          const orderText = await orderResponse.text();
-          let orderData;
-          try { orderData = JSON.parse(orderText); } catch { orderData = { order_id: `FREE-${Date.now().toString(36).toUpperCase()}`, download_links: [] }; }
+          const { data: orderData } = await safeJson(orderResponse);
+          if (!orderData.order_id) orderData.order_id = `FREE-${Date.now().toString(36).toUpperCase()}`;
           
           // Store order info including download links and redirect to success/download page
           sessionStorage.setItem('orderComplete', JSON.stringify({
@@ -904,9 +902,7 @@ const CheckoutPage = () => {
           clearCart();
           navigate('/order-success?free=true&order=' + orderData.order_id);
         } else {
-          const errText = await orderResponse.text();
-          let errorData;
-          try { errorData = JSON.parse(errText); } catch { errorData = { detail: errText || `Error (${orderResponse.status})` }; }
+          const { data: errorData } = await safeJson(orderResponse);
           throw new Error(errorData.detail || 'Failed to process free order');
         }
         return;
@@ -949,9 +945,7 @@ const CheckoutPage = () => {
       });
 
       // Handle response
-      let data;
-      const responseText = await response.text();
-      try { data = JSON.parse(responseText); } catch { data = { detail: responseText || `Server error (${response.status})` }; }
+      const { data } = await safeJson(response);
 
       // Check for account required error (401)
       if (!response.ok && data.detail?.error === 'account_required') {

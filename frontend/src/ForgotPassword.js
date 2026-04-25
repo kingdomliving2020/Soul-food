@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { safeJson } from './lib/safeFetch';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
@@ -31,12 +32,10 @@ const ForgotPassword = () => {
         body: JSON.stringify({ email: email.trim() })
       });
       
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
+      const { ok, data } = await safeJson(res);
       
-      if (!res.ok) {
-        toast.error(data.detail || `Reset request failed (${res.status})`);
+      if (!ok) {
+        toast.error(data.detail || `Reset request failed`);
         return;
       }
       

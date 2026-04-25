@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
+import { safeJson } from './lib/safeFetch';
 import { Lock, ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -44,12 +45,10 @@ const ResetPassword = () => {
         body: JSON.stringify({ token, new_password: password })
       });
       
-      const text = await res.text();
-      let data;
-      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
+      const { ok, data } = await safeJson(res);
       
-      if (!res.ok) {
-        toast.error(data.detail || `Reset failed (${res.status})`);
+      if (!ok) {
+        toast.error(data.detail || `Reset failed`);
         return;
       }
       
