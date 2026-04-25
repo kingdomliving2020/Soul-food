@@ -98,6 +98,13 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Frontend-to-backend flow confirmed by user reaching Stripe payment step in active preview
 - [x] Production likely stale — recommend redeploy of kingdom-soul.com
 
+### Production /api/api/ Double-Prefix 404 — FIXED (Apr 25, 2026)
+- [x] Root cause identified: production deployment env var `REACT_APP_BACKEND_URL` was set to `https://kingdom-soul.com/api` (with trailing `/api`). Frontend code already adds `/api/...` to every call, producing `https://kingdom-soul.com/api/api/...` → 404 on every endpoint (checkout, auth, signup).
+- [x] Confirmed by extracting production JS bundle: `Mo = "https://kingdom-soul.com/api"` and `fetch("".concat(Mo, "/api/payments/checkout/cart"))`
+- [x] Defensive fix in `/app/frontend/src/index.js`: global `window.fetch` wrapper that collapses any `/api/api/` → `/api/` transparently. Works for plain string URLs and Request objects.
+- [x] Verified in preview via Playwright eval: `fetch('/api/api/payments/catalog')` → finalUrl is `/api/payments/catalog`, status 200, real catalog returned.
+- [x] Once production is redeployed with this code, all 31 files that read `REACT_APP_BACKEND_URL` are protected — even if env var is left misconfigured. Recommended: also fix the env var to `https://kingdom-soul.com` (no trailing /api).
+
 ### Earlier Work
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 
