@@ -31,14 +31,9 @@ const ForgotPassword = () => {
         body: JSON.stringify({ email: email.trim() })
       });
       
-      // Clone before reading to handle Safari "body disturbed" issue
+      const text = await res.text();
       let data;
-      try {
-        data = await res.clone().json();
-      } catch {
-        try { const t = await res.text(); data = { detail: t || `Error ${res.status}` }; }
-        catch { data = { detail: `Server error (${res.status})` }; }
-      }
+      try { data = JSON.parse(text); } catch { data = { detail: text || `Server error (${res.status})` }; }
       
       if (!res.ok) {
         toast.error(data.detail || `Reset request failed (${res.status})`);
