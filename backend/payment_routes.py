@@ -1671,6 +1671,8 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
                 "name": item.get('name', 'Soul Food Product'),
                 "quantity": item.get('quantity', 1),
                 "salePrice": item.get('salePrice', item.get('price', 0)),
+                "edition": item.get('edition'),
+                "isBundle": item.get('isBundle', False),
             })
         
         # Store pending transaction with order number + account linking

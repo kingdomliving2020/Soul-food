@@ -212,7 +212,42 @@ async def resend_download_link(data: ResendLinkRequest, request: Request):
             )
         raise HTTPException(status_code=429, detail=message)
     
-    # Don't return actual tokens in response (send via email instead)
+    # Don't return actual tokens in public response — send via email
+    try:
+        from email_service import send_email, get_base_template
+        SITE_URL = os.environ.get('SITE_URL', 'https://kingdom-soul.com')
+        
+        links_html = ""
+        for link in new_links:
+            download_url = f"{SITE_URL}/api/downloads/file/{link['token']}"
+            links_html += f"""
+            <div style="background: #f9fafb; padding: 12px 16px; border-radius: 8px; margin: 8px 0; border-left: 4px solid #ea580c;">
+                <p style="margin: 0 0 4px 0; font-weight: 600; color: #1f2937;">{link.get('product_name', link['product_id'])}</p>
+                <a href="{download_url}" style="color: #ea580c; text-decoration: none; font-size: 14px;">Download Now</a>
+                <p style="margin: 4px 0 0 0; font-size: 12px; color: #6b7280;">Expires: {link['expires_at'][:10]} | {MAX_DOWNLOADS_PER_ORDER} downloads allowed</p>
+            </div>
+            """
+        
+        email_html = get_base_template(f"""
+            <div style="padding: 20px;">
+                <h2 style="color: #1f2937; margin-bottom: 8px;">Your Download Links</h2>
+                <p style="color: #6b7280;">Order: {data.order_id}</p>
+                {links_html}
+                <p style="margin-top: 20px; font-size: 13px; color: #9ca3af;">
+                    Links expire in {DOWNLOAD_LINK_EXPIRY_HOURS} hours. If you need new links, visit My Library or contact support.
+                </p>
+            </div>
+        """, "Your Soul Food Download Links")
+        
+        await send_email(
+            to=data.email,
+            subject=f"Soul Food — Your Download Links ({data.order_id})",
+            html=email_html
+        )
+        print(f"[Resend] Email sent to {data.email} with {len(new_links)} download links")
+    except Exception as email_err:
+        print(f"[Resend] Email send failed: {email_err}")
+    
     return {
         "success": True,
         "message": message,
