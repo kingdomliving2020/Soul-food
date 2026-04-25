@@ -273,7 +273,7 @@ const SoulFoodLanding = () => {
   const [previewEdition, setPreviewEdition] = useState('adult');
   const [products, setProducts] = useState({});
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [bundleEdition, setBundleEdition] = useState('ae');
+  const [bundleEdition, setBundleEdition] = useState(null);
   const [bundleInstructorUpgrade, setBundleInstructorUpgrade] = useState(false);
   const { addToCart } = useCart();
   const youtubeRef = useRef(null);
@@ -1185,13 +1185,15 @@ const SoulFoodLanding = () => {
 
                   {/* Edition Selector */}
                   <div className="mb-5">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Select Edition</p>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
+                      Select Edition <span className="text-red-500">*</span>
+                    </p>
                     <div className="flex gap-3">
                       <button
                         onClick={() => setBundleEdition('ae')}
                         className={`flex-1 px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all ${
                           bundleEdition === 'ae'
-                            ? 'border-purple-500 bg-purple-50 text-purple-800 shadow-sm'
+                            ? 'border-purple-500 bg-purple-50 text-purple-800 shadow-sm ring-2 ring-purple-200'
                             : 'border-slate-200 text-slate-600 hover:border-slate-300'
                         }`}
                         data-testid="bundle-edition-ae"
@@ -1202,7 +1204,7 @@ const SoulFoodLanding = () => {
                         onClick={() => setBundleEdition('ye')}
                         className={`flex-1 px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all ${
                           bundleEdition === 'ye'
-                            ? 'border-purple-500 bg-purple-50 text-purple-800 shadow-sm'
+                            ? 'border-purple-500 bg-purple-50 text-purple-800 shadow-sm ring-2 ring-purple-200'
                             : 'border-slate-200 text-slate-600 hover:border-slate-300'
                         }`}
                         data-testid="bundle-edition-ye"
@@ -1210,6 +1212,12 @@ const SoulFoodLanding = () => {
                         Youth Edition (YE)
                       </button>
                     </div>
+                    {!bundleEdition && (
+                      <p className="text-xs text-amber-600 mt-2 flex items-center gap-1" data-testid="bundle-edition-hint">
+                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-amber-500" />
+                        Please select Adult Edition or Youth Edition above
+                      </p>
+                    )}
                   </div>
 
                   {/* Instructor Upgrade */}
@@ -1242,10 +1250,10 @@ const SoulFoodLanding = () => {
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Order Summary</p>
                     <div className="space-y-1.5 text-sm text-slate-700">
                       <div className="flex justify-between">
-                        <span>Holiday Bundle – {bundleEdition === 'ae' ? 'Adult Edition (AE)' : 'Youth Edition (YE)'} – ePub</span>
+                        <span>Holiday Bundle – {bundleEdition ? (bundleEdition === 'ae' ? 'Adult Edition (AE)' : 'Youth Edition (YE)') : <span className="text-amber-600 italic">Select edition above</span>} – ePub</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Break*fast Bundle – {bundleEdition === 'ae' ? 'Adult Edition (AE)' : 'Youth Edition (YE)'} – ePub</span>
+                        <span>Break*fast Bundle – {bundleEdition ? (bundleEdition === 'ae' ? 'Adult Edition (AE)' : 'Youth Edition (YE)') : <span className="text-amber-600 italic">Select edition above</span>} – ePub</span>
                       </div>
                       <div className="flex justify-between text-slate-500 text-xs pt-1 border-t border-slate-200 mt-1">
                         <span>{bundleInstructorUpgrade ? '3-Hour Online Game Pass' : '1-Hour Online Game Pass'}</span>
@@ -1279,20 +1287,42 @@ const SoulFoodLanding = () => {
                     
                     <Button
                       onClick={() => {
+                        if (!bundleEdition) {
+                          toast.error('Please select Adult Edition or Youth Edition before adding this bundle.');
+                          return;
+                        }
                         const price = bundleInstructorUpgrade ? 28.99 : 21.99;
                         const edLabel = bundleEdition === 'ae' ? 'Adult' : 'Youth';
                         const name = bundleInstructorUpgrade
                           ? `4C's + Break*fast Starter Bundle (${edLabel} + Instructor)`
                           : `4C's + Break*fast Starter Bundle (${edLabel})`;
-                        addToCart({ id: `starter-bundle-4cs-bkft-${bundleEdition}${bundleInstructorUpgrade ? '-ie' : ''}`, name, price, quantity: 1, isBundle: true });
+                        addToCart({
+                          id: `starter-bundle-4cs-bkft-${bundleEdition}${bundleInstructorUpgrade ? '-ie' : ''}`,
+                          name,
+                          price,
+                          quantity: 1,
+                          isBundle: true,
+                          edition: bundleEdition,
+                          editionLabel: edLabel,
+                        });
                         toast.success('Bundle added to cart!');
                       }}
-                      className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-4 rounded-xl text-base font-bold shadow-xl hover:shadow-orange-300/40 transform hover:scale-[1.03] transition-all mb-3"
+                      disabled={!bundleEdition}
+                      className={`w-full py-4 rounded-xl text-base font-bold shadow-xl transition-all mb-3 ${
+                        bundleEdition
+                          ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white hover:shadow-orange-300/40 transform hover:scale-[1.03]'
+                          : 'bg-slate-300 text-slate-500 cursor-not-allowed shadow-none'
+                      }`}
                       data-testid="bundle-buy-btn"
                     >
-                      Buy Now — ${bundleInstructorUpgrade ? '28.99' : '21.99'}
+                      {bundleEdition ? `Buy Now — $${bundleInstructorUpgrade ? '28.99' : '21.99'}` : 'Select Edition to Continue'}
                     </Button>
-                    <p className="text-xs text-slate-400 text-center">Instant digital delivery</p>
+                    {!bundleEdition && (
+                      <p className="text-xs text-red-500 text-center font-medium" data-testid="bundle-no-edition-error">
+                        Please select Adult Edition or Youth Edition before adding this bundle.
+                      </p>
+                    )}
+                    {bundleEdition && <p className="text-xs text-slate-400 text-center">Instant digital delivery</p>}
                   </div>
                 </div>
               </div>

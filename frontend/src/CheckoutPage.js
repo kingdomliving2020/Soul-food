@@ -872,7 +872,9 @@ const CheckoutPage = () => {
               product_id: item.productId || item.uniqueKey || item.id,
               name: item.name,
               quantity: item.quantity,
-              price: item.salePrice
+              price: item.salePrice,
+              edition: item.metadata?.edition || null,
+              isBundle: item.metadata?.isBundle || item.isBundle || false,
             })),
             coupon_code: couponApplied.code,
             discount_percent: couponApplied.discount_percent || 100,
@@ -934,7 +936,9 @@ const CheckoutPage = () => {
             product_id: item.productId || item.uniqueKey || item.id,
             name: item.name,
             quantity: item.quantity,
-            salePrice: item.salePrice
+            salePrice: item.salePrice,
+            edition: item.metadata?.edition || null,
+            isBundle: item.metadata?.isBundle || item.isBundle || false,
           })),
           origin_url: window.location.origin,
           coupon_code: couponApplied?.code || null,
