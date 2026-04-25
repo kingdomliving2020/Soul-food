@@ -44,8 +44,19 @@ const ResetPassword = () => {
         body: JSON.stringify({ token, new_password: password })
       });
       
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || 'Reset failed');
+      // Clone before reading to handle Safari "body disturbed" issue
+      let data;
+      try {
+        data = await res.clone().json();
+      } catch {
+        try { const t = await res.text(); data = { detail: t || `Error ${res.status}` }; }
+        catch { data = { detail: `Server error (${res.status})` }; }
+      }
+      
+      if (!res.ok) {
+        toast.error(data.detail || `Reset failed (${res.status})`);
+        return;
+      }
       
       // Auto-login if the server returned a token
       if (data.access_token) {
@@ -63,7 +74,7 @@ const ResetPassword = () => {
         toast.success('Password reset successfully!');
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.error(`Network error: ${err.message || 'Could not connect to server'}`);
     } finally {
       setLoading(false);
     }
