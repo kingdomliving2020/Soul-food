@@ -20,7 +20,7 @@ from datetime import datetime
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 if not BASE_URL:
-    BASE_URL = "https://soul-food-preview.preview.emergentagent.com"
+    BASE_URL = "https://soul-purchase-pipe.preview.emergentagent.com"
 
 # Test credentials from test_credentials.md
 ADMIN_EMAIL = os.environ.get("TEST_ADMIN_EMAIL", "overflowharvest@gmail.com")
@@ -68,7 +68,7 @@ class TestCheckoutEmailBinding:
                     "quantity": 1
                 }
             ],
-            "origin_url": "https://soul-food-preview.preview.emergentagent.com",
+            "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com",
             "customer_email": test_email
         }
         
@@ -106,7 +106,7 @@ class TestCheckoutEmailBinding:
                     "quantity": 1
                 }
             ],
-            "origin_url": "https://soul-food-preview.preview.emergentagent.com",
+            "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com",
             "customer_email": test_email
         }
         
@@ -145,7 +145,7 @@ class TestAccountLinkingAtCheckout:
                     "quantity": 1
                 }
             ],
-            "origin_url": "https://soul-food-preview.preview.emergentagent.com"
+            "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com"
             # No customer_email - should use logged-in user's email
         }
         
@@ -182,7 +182,7 @@ class TestAccountLinkingAtCheckout:
                     "quantity": 1
                 }
             ],
-            "origin_url": "https://soul-food-preview.preview.emergentagent.com"
+            "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com"
             # No customer_email provided - should fall back to logged-in user's email
         }
         
@@ -217,7 +217,7 @@ class TestGuestCheckout:
                     "quantity": 1
                 }
             ],
-            "origin_url": "https://soul-food-preview.preview.emergentagent.com",
+            "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com",
             "customer_email": test_email
         }
         
@@ -250,7 +250,7 @@ class TestGuestCheckout:
                     "quantity": 1
                 }
             ],
-            "origin_url": "https://soul-food-preview.preview.emergentagent.com"
+            "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com"
             # No customer_email, no auth token
         }
         
@@ -291,7 +291,7 @@ class TestProductIdNormalization:
                     "quantity": 1
                 }
             ],
-            "origin_url": "https://soul-food-preview.preview.emergentagent.com",
+            "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com",
             "customer_email": "test_normalize@example.com"
         }
         
@@ -350,7 +350,7 @@ class TestMultiItemCheckout:
                     "quantity": 2
                 }
             ],
-            "origin_url": "https://soul-food-preview.preview.emergentagent.com",
+            "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com",
             "customer_email": "multi_item_test@example.com"
         }
         
@@ -387,7 +387,7 @@ class TestCouponDiscounts:
                     "quantity": 1
                 }
             ],
-            "origin_url": "https://soul-food-preview.preview.emergentagent.com",
+            "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com",
             "customer_email": "discount_test@example.com",
             "coupon_code": "WELCOME10",
             "discount_percent": 10
@@ -423,7 +423,7 @@ class TestCheckoutStatusEndpoint:
                     "quantity": 1
                 }
             ],
-            "origin_url": "https://soul-food-preview.preview.emergentagent.com",
+            "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com",
             "customer_email": "status_test@example.com"
         }
         
@@ -461,7 +461,7 @@ class TestEmptyCartValidation:
         """POST /api/payments/checkout/cart with empty items returns 400"""
         payload = {
             "items": [],
-            "origin_url": "https://soul-food-preview.preview.emergentagent.com",
+            "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com",
             "customer_email": "empty_cart@example.com"
         }
         

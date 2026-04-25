@@ -10,7 +10,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-food-preview.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-purchase-pipe.preview.emergentagent.com')
 
 class TestGameQuestionStructure:
     """Test that backend correctly filters questions by game_type"""

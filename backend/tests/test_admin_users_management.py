@@ -15,7 +15,7 @@ import requests
 import os
 import secrets
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-food-preview.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-purchase-pipe.preview.emergentagent.com')
 
 # Test credentials from test_credentials.md
 ADMIN_EMAIL = os.environ.get("TEST_ADMIN_EMAIL", "overflowharvest@gmail.com")

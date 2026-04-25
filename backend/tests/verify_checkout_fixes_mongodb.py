@@ -14,7 +14,7 @@ from datetime import datetime
 from pymongo import MongoClient
 
 # Configuration
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-food-preview.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://soul-purchase-pipe.preview.emergentagent.com').rstrip('/')
 MONGO_URL = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 DB_NAME = os.environ.get('DB_NAME', 'soul_food_db')
 
@@ -53,7 +53,7 @@ def test_guest_checkout_transaction_fields():
                 "quantity": 1
             }
         ],
-        "origin_url": "https://soul-food-preview.preview.emergentagent.com",
+        "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com",
         "customer_email": test_email
     }
     
@@ -143,7 +143,7 @@ def test_authenticated_checkout_transaction_fields():
                 "quantity": 1
             }
         ],
-        "origin_url": "https://soul-food-preview.preview.emergentagent.com"
+        "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com"
         # No customer_email - should use logged-in user's email
     }
     
@@ -231,7 +231,7 @@ def test_stripe_session_has_customer_email():
                 "quantity": 1
             }
         ],
-        "origin_url": "https://soul-food-preview.preview.emergentagent.com",
+        "origin_url": "https://soul-purchase-pipe.preview.emergentagent.com",
         "customer_email": test_email
     }
     
