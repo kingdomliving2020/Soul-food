@@ -837,6 +837,19 @@ async def create_product(item: ProductItem, admin: AdminUser = Depends(get_curre
     
     return {"id": product_id, "message": "Product created successfully"}
 
+
+@router.post("/products/seed-from-catalog")
+async def seed_products_from_catalog_endpoint(admin: AdminUser = Depends(get_current_admin)):
+    """One-time / idempotent: seed db.products from the canonical PRODUCTS
+    catalog defined in payment_routes.py. Upserts by SKU, never deletes,
+    and does not touch any other collection. Safe to re-run."""
+    from scripts.seed_admin_products import seed_products_from_catalog
+    summary = await seed_products_from_catalog(db)
+    await log_admin_action(
+        "seed_products_from_catalog", admin.id, "products", "catalog", summary
+    )
+    return {"message": "Catalog seeded into db.products", **summary}
+
 @router.put("/products/{product_id}")
 async def update_product(
     product_id: str,
