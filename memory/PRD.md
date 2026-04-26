@@ -140,6 +140,14 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Lint clean (Python ruff + JS ESLint)
 - [ ] **Phase 2 deferred** (per user): user redemption surface in My Library + entitlement-grant logic per delivery_type. Demo-coupon mechanics (preview-only IE, 5h/25h presenter caps, 90-min session cap) noted for alignment.
 
+### MVP Soft-Launch Hardening (Apr 26, 2026)
+- [x] **Codes & Redemptions visibility** — confirmed `/api/admin/codes-redemptions/batches` returns ALL batches to any admin (no scoping). Added `imported_by_admin_email` to imported docs and surfaced as `imported_by` column in batch list. UI now shows "All admins see every batch — visibility is global." note.
+- [x] **IE Toolbox honesty** — every toast-only action in InstructorToolbox now disabled with "Preview only" banner: Answer Keys (View/PDF buttons), Facilitation Notes (read-only cards), Group Roster (Add Member disabled), Teaching Resources (read-only), Achievement Certificates (3 buttons disabled). Order Medallions remains live (navigates to /quick-order).
+- [x] **IE asset routing** — Verified all asset URLs resolve 200 in preview: `/api/content/games/*.pdf|.docx`, `/api/content/images/maps/*.jpg`, `/api/trivia/game-assets`, `/api/trivia/bank/stats`. Game Setup "Start GRinCH/Passport Trek" buttons no longer redirect to wrong page (`/gaming`); now route to `game-packs` tab so users get the correct print materials. Renamed GRinCH → Grid Iron Challenge consistently in toolbox UI.
+- [x] **Tricky Testaments single-player cleanup** — Daily Double wager screen replaced 4 free-form-ish buttons (100, 200, Half, All-In) with exactly 3 required options: All / Half / $1 (data-testids: `wager-all-btn`, `wager-half-btn`, `wager-one-btn`, container `daily-double-wager-options`). Game state remains single `score` value (no multiplayer logic).
+- [x] **UI polish — game thumbnails** — Grid Iron Challenge AE/YE and Passport Trek AE/YE thumbnails (`/covers/game-gridiron-{ae,ye}.png`, `/covers/game-passport-{ae,ye}.png`) now render in InstructorToolbox `offlineGameFiles` cards and Game Setup tile cards. Trivia Mix-up & Tricky Testaments retained existing storefront logos.
+- [x] Health Check: 7/7 backend pytest pass (batches w/ imported_by, 4 game files, map image, game assets). Frontend live-verified: 8 toolbox tiles, Answer Keys preview banner + all View/PDF buttons disabled. iteration_30.json clean.
+
 ### Earlier Work
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 
