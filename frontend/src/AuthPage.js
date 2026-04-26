@@ -279,7 +279,10 @@ const AuthPage = () => {
   };
 
   const handleGoogleLogin = () => {
-    const redirectUrl = `${window.location.origin}${returnTo}`;
+    const redirectUrl = window.location.origin;
+    if (returnTo) {
+      localStorage.setItem('auth_return_to', returnTo);
+    }
     window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
 
