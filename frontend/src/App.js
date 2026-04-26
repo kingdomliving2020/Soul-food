@@ -2011,6 +2011,7 @@ import AdminOrders from './AdminOrders';
 import InstructorToolbox from './InstructorToolbox';
 import MultimediaPage from './MultimediaPage';
 import RefundRequest from './RefundRequest';
+import MillionairePresenter from './MillionairePresenter';
 
 function App() {
   return (
@@ -2048,6 +2049,7 @@ function App() {
             <Route path="/gaming-central" element={<GamingCentral />} />
             <Route path="/game/mixup" element={<MixUpGame />} />
             <Route path="/game/tricky-testament" element={<TrickyTestamentGame />} />
+            <Route path="/game/millionaire-presenter" element={<MillionairePresenter />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/payment-cancel" element={<PaymentCancel />} />

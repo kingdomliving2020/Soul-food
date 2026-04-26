@@ -349,6 +349,15 @@ const GamingCentral = () => {
         available: true
       },
       {
+        id: 'millionaire-presenter',
+        name: 'Millionaire — Presenter Mode',
+        description: 'Instructor-led elimination round. Multiple teams. Last team standing wins.',
+        icon: '🏆',
+        difficulty: 'Instructor',
+        route: '/game/millionaire-presenter',
+        available: true
+      },
+      {
         id: 'word-search',
         name: 'Word Search',
         description: 'Find theological terms and Bible names in the puzzle!',
