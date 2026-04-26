@@ -586,7 +586,12 @@ async def verify_2fa(verify: TwoFactorVerify, request: Request):
         user = await db.users.find_one({"id": user_id}, {"_id": 0, "hashed_password": 0, "totp_secret": 0})
         if user:
             # Generate fresh access token
-            access_token = create_access_token(data={"sub": user_id, "email": user.get("email", "")})
+            access_token = create_access_token(data={
+                "sub": user_id,
+                "email": user.get("email", ""),
+                "role": user.get("role", "member"),
+                "access_level": user.get("access_level", "free"),
+            })
             return {
                 "verified": True, 
                 "method": "email", 
@@ -618,7 +623,12 @@ async def verify_2fa(verify: TwoFactorVerify, request: Request):
             # Get updated user data and generate new token
             user = await db.users.find_one({"id": user_id}, {"_id": 0, "hashed_password": 0, "totp_secret": 0})
             if user:
-                access_token = create_access_token(data={"sub": user_id, "email": user.get("email", "")})
+                access_token = create_access_token(data={
+                    "sub": user_id,
+                    "email": user.get("email", ""),
+                    "role": user.get("role", "member"),
+                    "access_level": user.get("access_level", "free"),
+                })
                 return {
                     "verified": True, 
                     "method": "totp", 
