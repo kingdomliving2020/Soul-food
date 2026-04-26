@@ -70,7 +70,7 @@ COMMON_PASSWORDS = {
 }
 
 # Roles requiring 2FA
-ROLES_REQUIRING_2FA = ['instructor', 'instructor_tester', 'admin', 'owner']
+ROLES_REQUIRING_2FA = ['admin', 'owner']  # Instructors are exempt — Admin-only 2FA per MVP soft-launch
 
 # Beta users for testing
 BETA_USERS = {

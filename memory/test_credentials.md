@@ -6,6 +6,12 @@
 - Role: admin (full access to admin panel)
 - Note: Requires 2FA setup on login, but can be skipped via "Continue without 2FA" link
 
+## Instructor Test Account (no 2FA — Apr 26, 2026)
+- Email: `test_instructor_a54bf3e1@example.com`
+- Password: `Inst123!`
+- Role: instructor
+- Note: 2FA is now Admin-only. Instructors log in with no 2FA friction.
+
 ## Registration
 Use `/register` to create new test accounts.
 

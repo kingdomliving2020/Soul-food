@@ -159,6 +159,12 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Test report iteration_31.json: 9/9 backend pytest pass + full frontend Playwright pass.
 - [ ] Phase 2 (user-facing redemption flow) STILL BLOCKED per user (4a).
 
+### Auth — Instructor 2FA Removed (Apr 26, 2026)
+- [x] `ROLES_REQUIRING_2FA` in `/app/backend/auth_routes_v2.py` reduced from `['instructor','instructor_tester','admin','owner']` → `['admin','owner']`. Instructors and instructor_tester roles no longer trigger `requires_2fa_setup` / `requires_2fa_verification` flags at login (Google OAuth + password flows). Admin/owner 2FA enforcement unchanged.
+- [x] Verified: instructor login returns clean access_token with no 2FA flags; admin login still emits `requires_2fa_setup: True`.
+- [x] No DB-side cleanup needed: 0 instructor users had `tfa_enabled=True` at the time of the change. The runtime gate `requires_2fa(role)` makes legacy `tfa_enabled` flags inert for instructors.
+- [x] Test credentials updated in `/app/memory/test_credentials.md` with non-2FA instructor account.
+
 ### Earlier Work
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 
