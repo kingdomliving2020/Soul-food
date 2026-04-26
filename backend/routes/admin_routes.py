@@ -236,33 +236,56 @@ async def log_admin_action(
 @router.get("/dashboard")
 async def get_admin_dashboard(admin: AdminUser = Depends(get_current_admin)):
     """Get admin dashboard summary"""
-    
-    # Get counts
+
+    # Counts (orders + revenue come from payment_transactions — the actual Stripe source of truth)
     total_users = await db.users.count_documents({})
     total_lessons = await db.lessons.count_documents({})
-    total_orders = await db.orders.count_documents({})
+    total_orders = await db.payment_transactions.count_documents({})
     total_products = await db.products.count_documents({})
-    
-    # Recent activity
-    recent_orders = await db.orders.find({}, {"_id": 0}).sort("created_at", -1).limit(5).to_list(5)
+
+    # Recent activity (last 5 paid orders, normalized to the shape the frontend expects)
+    recent_txns = await db.payment_transactions.find(
+        {}, {"_id": 0}
+    ).sort("created_at", -1).limit(5).to_list(5)
+    recent_orders = []
+    for tx in recent_txns:
+        created = tx.get("created_at")
+        recent_orders.append({
+            "order_number": tx.get("order_number", ""),
+            "customer_email": tx.get("customer_email", ""),
+            "customer_name": tx.get("customer_name", ""),
+            "total": tx.get("total_amount", 0),
+            "total_amount": tx.get("total_amount", 0),
+            "status": tx.get("payment_status", ""),
+            "payment_status": tx.get("payment_status", ""),
+            "items_count": len(tx.get("items", [])),
+            "created_at": created.isoformat() if hasattr(created, "isoformat") else str(created or ""),
+        })
     recent_users = await db.users.find({}, {"_id": 0, "password_hash": 0}).sort("created_at", -1).limit(5).to_list(5)
-    
+
     # Content stats
     published_lessons = await db.lessons.count_documents({"status": "published"})
     draft_lessons = await db.lessons.count_documents({"status": "draft"})
-    
-    # Revenue (mock for now)
-    total_revenue = 0
-    for order in await db.orders.find({"status": {"$in": ["completed", "paid"]}}, {"_id": 0, "total": 1}).to_list(1000):
-        total_revenue += order.get("total", 0)
-    
+
+    # Revenue: sum total_amount on PAID payment_transactions only
+    revenue_cursor = db.payment_transactions.find(
+        {"payment_status": "paid"},
+        {"_id": 0, "total_amount": 1},
+    )
+    total_revenue = 0.0
+    async for tx in revenue_cursor:
+        try:
+            total_revenue += float(tx.get("total_amount", 0) or 0)
+        except (TypeError, ValueError):
+            continue
+
     return {
         "summary": {
             "total_users": total_users,
             "total_lessons": total_lessons,
             "total_orders": total_orders,
             "total_products": total_products,
-            "total_revenue": total_revenue,
+            "total_revenue": round(total_revenue, 2),
             "published_lessons": published_lessons,
             "draft_lessons": draft_lessons
         },
