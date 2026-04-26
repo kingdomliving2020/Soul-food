@@ -29,11 +29,17 @@ const MARK_PENDING = 'pending';
 const MARK_CORRECT = 'correct';
 const MARK_INCORRECT = 'incorrect';
 
+// Team caps — default 4, optional 5 via toggle. No UI rework, just enforces the limit.
+const MIN_TEAMS = 2;
+const MAX_TEAMS_DEFAULT = 4;
+const MAX_TEAMS_EXTENDED = 5;
+
 const MillionairePresenter = () => {
   const navigate = useNavigate();
   const [phase, setPhase] = useState(PHASE_SETUP);
   const [teams, setTeams] = useState([]);
   const [newTeamName, setNewTeamName] = useState('');
+  const [allowFifthTeam, setAllowFifthTeam] = useState(false);
   const [questions, setQuestions] = useState([]);
   const [questionsLoading, setQuestionsLoading] = useState(false);
   const [questionsError, setQuestionsError] = useState('');
@@ -41,10 +47,14 @@ const MillionairePresenter = () => {
   const [marks, setMarks] = useState({}); // {teamId: 'pending'|'correct'|'incorrect'}
   const [revealed, setRevealed] = useState(false);
 
+  const maxTeams = allowFifthTeam ? MAX_TEAMS_EXTENDED : MAX_TEAMS_DEFAULT;
+  const atTeamCap = teams.length >= maxTeams;
+
   // ---------- Setup ----------
   const addTeam = () => {
     const name = newTeamName.trim();
     if (!name) return;
+    if (atTeamCap) return;
     if (teams.some(t => t.name.toLowerCase() === name.toLowerCase())) return;
     setTeams(prev => [
       ...prev,
@@ -165,17 +175,40 @@ const MillionairePresenter = () => {
                   value={newTeamName}
                   onChange={(e) => setNewTeamName(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && addTeam()}
-                  placeholder="Team name (e.g. Lions of Judah)"
-                  className="bg-slate-900/60 border-slate-700 text-white placeholder:text-slate-500"
+                  placeholder={atTeamCap ? `Max ${maxTeams} teams reached` : "Team name (e.g. Lions of Judah)"}
+                  disabled={atTeamCap}
+                  className="bg-slate-900/60 border-slate-700 text-white placeholder:text-slate-500 disabled:opacity-50"
                   data-testid="team-name-input"
                 />
                 <Button
                   onClick={addTeam}
-                  className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold"
+                  disabled={atTeamCap}
+                  className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold disabled:opacity-50"
                   data-testid="add-team-btn"
                 >
                   <Plus className="w-4 h-4 mr-1" /> Add
                 </Button>
+              </div>
+
+              <div className="flex items-center justify-between text-xs text-slate-400">
+                <span data-testid="team-count">{teams.length} / {maxTeams} teams</span>
+                <label className="flex items-center gap-2 cursor-pointer select-none" data-testid="allow-fifth-team-toggle-label">
+                  <input
+                    type="checkbox"
+                    checked={allowFifthTeam}
+                    onChange={(e) => {
+                      const next = e.target.checked;
+                      setAllowFifthTeam(next);
+                      if (!next && teams.length > MAX_TEAMS_DEFAULT) {
+                        // Trim from the end if user disables the 5th-team option
+                        setTeams(prev => prev.slice(0, MAX_TEAMS_DEFAULT));
+                      }
+                    }}
+                    className="accent-amber-500"
+                    data-testid="allow-fifth-team-toggle"
+                  />
+                  <span>Allow up to 5 teams</span>
+                </label>
               </div>
 
               <div className="space-y-2" data-testid="team-list">
