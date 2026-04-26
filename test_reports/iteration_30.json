@@ -1,0 +1,37 @@
+{
+  "summary": "Iteration 30 — MVP soft-launch scope verified. Backend: 7/7 pytest pass (admin batches w/ imported_by, 4 IE game-asset PDFs/docx, map image, trivia game-assets). Frontend: login OK, Instructor Toolbox renders 8 tiles, Answer Keys live-verified (preview banner + 12 View + 12 PDF buttons all disabled). Other Toolbox sub-views and Admin Codes & Redemptions component verified via static code review (all required data-testids and copy strings present). TrickyTestamentGame wager screen has exactly the 3 required options (wager-all-btn, wager-half-btn, wager-one-btn) under data-testid='daily-double-wager-options'; no legacy 'Wager 100/200 Stacks' buttons remain.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration_30.py",
+    "/app/test_reports/pytest/iter30.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "InstructorToolbox.js:298 certificates-preview-banner present; line 309 cert buttons set disabled; line 325 order-medallions-btn navigates to /quick-order (only enabled action) — matches spec.",
+    "InstructorToolbox.js:565/631/667/1074 — preview banners for answer-keys, facilitation, roster, resources tabs all present.",
+    "InstructorToolbox.js:674 roster-add-member-btn set disabled with title='Not yet wired'.",
+    "InstructorToolbox.js:495-517 offline game-file cards render with thumb-* data-testids and download-* buttons; confirmed 4 entries (grinch-game-pk, grinch-card-pk, passport-trek, map-journey-reference-index).",
+    "InstructorToolbox.js:841 grinch-game-card and 876 passport-game-card present; 991/1058 grinch-open-pack-btn and passport-open-pack-btn switch activeTab='game-packs'.",
+    "TrickyTestamentGame.js:545-567 daily-double-wager-options container holds exactly 3 buttons (wager-all-btn, wager-half-btn, wager-one-btn). No 100/200 Stacks remnants.",
+    "AdminCodesRedemptions.js:275 contains exact copy 'All admins see every batch — visibility is global.'; line 324 'Imported by' column header; line 348 renders b.imported_by per row.",
+    "code_admin_routes.py:143/149 inserts imported_by_admin_email on new imports; line 196 aggregates first imported_by; line 224 surfaces 'imported_by' on response. Live API returns 136 batches (>=120) with imported_by key on every row (legacy rows null — expected since no new imports performed in this preview env)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration_30.py"
+  ],
+  "success_rate": {
+    "backend": "100% (7/7 pytest passed)",
+    "frontend": "Live: Answer Keys tab fully verified; 7 remaining sub-views verified by static code review (data-testids and copy match spec)"
+  },
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123! (login uses identifier key; token in access_token)",
+  "seed_data_creation": "None — tests are read-only against live preview env.",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Backend test file /app/backend/tests/test_iteration_30.py covers MVP scope: /api/admin/codes-redemptions/batches (responds with {'batches':[...], 'total_batches': N} - 136 batches in preview), /api/content/games/{ie-grinch-bingo-game-pk.pdf, ie-grinch-bingo-card-pk.pdf, ie-passport-trek-game.pdf, map-journey-reference-index.docx} all 200, /api/content/images/maps/abram-journey-promised-land.jpg 200, /api/trivia/game-assets returns {'assets':[...]} list. Frontend live navigation between Toolbox sub-views via 'Open' link is selector-ambiguous (multiple 'Open' match first card); use data-testid='toolbox-tile-{name}' if available or click h3 title directly. Auth in tests via API login + localStorage keys: soul_food_token, soul_food_user, soul_food_session.",
+  "rca of the issue": "N/A — no defects found. Note: legacy batches (imported before this build) have imported_by=null; new admin-driven imports will populate imported_by_admin_email per code_admin_routes.py:143-149."
+}

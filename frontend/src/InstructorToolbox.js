@@ -230,7 +230,7 @@ const InstructorToolbox = () => {
       id: 'games',
       title: 'Game Setup',
       icon: Gamepad2,
-      description: 'How to run GRinCH and Passport Trek with your group',
+      description: 'How to run Grid Iron Challenge and Passport Trek with your group',
       color: 'bg-purple-500'
     },
     {
@@ -252,7 +252,7 @@ const InstructorToolbox = () => {
       id: 'game-packs',
       title: 'Offline Game Files',
       icon: Image,
-      description: 'Printable GRinCH bingo cards, Passport Trek sheets & map reference',
+      description: 'Printable Grid Iron bingo cards, Passport Trek sheets & map reference',
       color: 'bg-cyan-500',
       badge: '4 Files'
     },
@@ -295,6 +295,9 @@ const InstructorToolbox = () => {
 
   const renderCertificates = () => (
     <div className="space-y-6">
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800" data-testid="certificates-preview-banner">
+        <strong>Preview only.</strong> Printable certificate generator is not yet wired. Medallion ordering is fully live.
+      </div>
       <p className="text-slate-600">Recognize your group members' achievements with official certificates and medallions.</p>
       <div className="grid md:grid-cols-2 gap-6">
         <Card>
@@ -303,8 +306,9 @@ const InstructorToolbox = () => {
             <p className="text-sm text-slate-600">Download and print achievement certificates for your group members.</p>
             <div className="space-y-2">
               {['Lesson Completion Certificate', 'Series Completion Certificate', 'Game Champion Certificate'].map(c => (
-                <Button key={c} variant="outline" className="w-full justify-start" onClick={() => toast.info('Certificate generator coming soon!')}>
-                  <Download className="w-4 h-4 mr-2" />{c}
+                <Button key={c} variant="outline" className="w-full justify-between" disabled title="Not yet wired" data-testid={`cert-${c.replace(/\s+/g, '-').toLowerCase()}`}>
+                  <span className="flex items-center"><Download className="w-4 h-4 mr-2" />{c}</span>
+                  <Badge variant="outline" className="text-[10px] text-slate-500">Preview</Badge>
                 </Button>
               ))}
             </div>
@@ -318,7 +322,7 @@ const InstructorToolbox = () => {
               <p className="text-sm font-medium text-orange-800">Bulk Discounts Available!</p>
               <p className="text-xs text-orange-600 mt-1">Teacher Pack (3) - $24.99 | Ministry Pack (10) - $69.99</p>
             </div>
-            <Button className="w-full bg-orange-500 hover:bg-orange-600" onClick={() => navigate('/quick-order')}>Order Medallions</Button>
+            <Button className="w-full bg-orange-500 hover:bg-orange-600" onClick={() => navigate('/quick-order')} data-testid="order-medallions-btn">Order Medallions</Button>
           </CardContent>
         </Card>
       </div>
@@ -424,21 +428,23 @@ const InstructorToolbox = () => {
   const offlineGameFiles = [
     {
       id: 'grinch-game-pk',
-      title: 'GRinCH Game Pack',
+      title: 'Grid Iron Challenge — Game Pack',
       subtitle: 'Full instructions, question banks, 6 Grid Iron bingo card variants (A-1, A-2, B-1, B-2, C, C-2), stamp rules & trackers',
       file: 'ie-grinch-bingo-game-pk.pdf',
       pages: '23 pages',
       color: 'purple',
-      icon: Gamepad2
+      icon: Gamepad2,
+      thumb: '/covers/game-gridiron-ae.png'
     },
     {
       id: 'grinch-card-pk',
-      title: 'GRinCH Bingo Cards',
-      subtitle: 'Printable Grid Iron Cards (A-1, A-2, B-1) + GRinCH Tracker templates',
+      title: 'Grid Iron Challenge — Bingo Cards',
+      subtitle: 'Printable Grid Iron Cards (A-1, A-2, B-1) + tracker templates',
       file: 'ie-grinch-bingo-card-pk.pdf',
       pages: '4 pages',
       color: 'purple',
-      icon: ClipboardList
+      icon: ClipboardList,
+      thumb: '/covers/game-gridiron-ye.png'
     },
     {
       id: 'passport-trek',
@@ -447,7 +453,8 @@ const InstructorToolbox = () => {
       file: 'ie-passport-trek-game.pdf',
       pages: '10 pages',
       color: 'blue',
-      icon: GraduationCap
+      icon: GraduationCap,
+      thumb: '/covers/game-passport-ae.png'
     },
     {
       id: 'map-reference',
@@ -456,7 +463,8 @@ const InstructorToolbox = () => {
       file: 'map-journey-reference-index.docx',
       pages: 'Reference doc',
       color: 'teal',
-      icon: Map
+      icon: Map,
+      thumb: null
     }
   ];
 
@@ -465,10 +473,10 @@ const InstructorToolbox = () => {
       <div className="bg-cyan-50 rounded-xl p-4 border border-cyan-200">
         <h4 className="font-bold text-cyan-800 mb-1">Offline Game Materials — Print & Play</h4>
         <p className="text-sm text-cyan-600">
-          Download and print these materials to run GRinCH bingo rounds, Passport Trek stamp challenges, and classroom review sessions with your group.
+          Download and print these materials to run Grid Iron Challenge bingo rounds, Passport Trek stamp challenges, and classroom review sessions with your group.
         </p>
         <div className="flex flex-wrap gap-3 mt-3">
-          <Badge className="bg-purple-100 text-purple-700">GRinCH Bingo</Badge>
+          <Badge className="bg-purple-100 text-purple-700">Grid Iron Bingo</Badge>
           <Badge className="bg-blue-100 text-blue-700">Passport Trek</Badge>
           <Badge className="bg-teal-100 text-teal-700">Maps Reference</Badge>
         </div>
@@ -486,9 +494,18 @@ const InstructorToolbox = () => {
           return (
             <Card key={item.id} className={`${c.border} border-2 hover:shadow-md transition-shadow`} data-testid={`game-file-${item.id}`}>
               <CardContent className="p-4 flex items-center gap-4">
-                <div className={`w-12 h-12 rounded-xl ${c.icon} flex items-center justify-center flex-shrink-0`}>
-                  <IconComp className="w-6 h-6 text-white" />
-                </div>
+                {item.thumb ? (
+                  <img
+                    src={item.thumb}
+                    alt={`${item.title} thumbnail`}
+                    className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover flex-shrink-0 border border-slate-200 bg-white"
+                    data-testid={`thumb-${item.id}`}
+                  />
+                ) : (
+                  <div className={`w-12 h-12 rounded-xl ${c.icon} flex items-center justify-center flex-shrink-0`}>
+                    <IconComp className="w-6 h-6 text-white" />
+                  </div>
+                )}
                 <div className="flex-1 min-w-0">
                   <h4 className={`font-bold text-sm sm:text-base ${c.title}`}>{item.title}</h4>
                   <p className="text-xs sm:text-sm text-slate-600 mt-0.5">{item.subtitle}</p>
@@ -517,7 +534,7 @@ const InstructorToolbox = () => {
         <Card className="bg-slate-50 mt-4">
           <CardContent className="p-4">
             <h4 className="font-semibold text-slate-700 mb-3 text-sm">Online Question Bank</h4>
-            <p className="text-xs text-slate-500 mb-3">These questions power the online GRinCH and Trivia games in the Gaming Central.</p>
+            <p className="text-xs text-slate-500 mb-3">These questions power the online Tricky Testaments and Trivia Mix-up games in Gaming Central.</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {Object.entries(bankStats.by_game_type || {}).map(([type, count]) => {
                 const labels = {
@@ -545,6 +562,9 @@ const InstructorToolbox = () => {
       case 'answer-keys':
         return (
           <div className="space-y-4">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800" data-testid="answer-keys-preview-banner">
+              <strong>Preview only.</strong> Answer-key PDFs are not wired in this build. Buttons are disabled until uploads are linked.
+            </div>
             <div className="flex items-center gap-4 mb-6">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -564,7 +584,7 @@ const InstructorToolbox = () => {
                   key.series.toLowerCase().includes(searchQuery.toLowerCase())
                 )
                 .map(key => (
-                <Card key={key.id} className="hover:shadow-md transition-shadow">
+                <Card key={key.id} className="opacity-75">
                   <CardContent className="p-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
@@ -576,18 +596,23 @@ const InstructorToolbox = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button 
-                        size="sm" 
+                      <Badge variant="outline" className="text-xs text-slate-500">Preview</Badge>
+                      <Button
+                        size="sm"
                         variant="outline"
-                        onClick={() => toast.info('Opening answer key preview...')}
+                        disabled
+                        title="Not yet wired"
+                        data-testid={`answer-key-view-${key.id}`}
                       >
                         <Eye className="w-4 h-4 mr-1" />
                         View
                       </Button>
-                      <Button 
+                      <Button
                         size="sm"
                         className="bg-emerald-600 hover:bg-emerald-700"
-                        onClick={() => toast.success('Downloading answer key PDF...')}
+                        disabled
+                        title="Not yet wired"
+                        data-testid={`answer-key-pdf-${key.id}`}
                       >
                         <Download className="w-4 h-4 mr-1" />
                         PDF
@@ -603,20 +628,26 @@ const InstructorToolbox = () => {
       case 'facilitation':
         return (
           <div className="space-y-4">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800" data-testid="facilitation-preview-banner">
+              <strong>Preview only.</strong> Facilitation notes are not yet uploaded — cards are read-only.
+            </div>
             <p className="text-slate-600 mb-6">
               Practical guides to help you lead engaging and meaningful study sessions.
             </p>
             
             <div className="grid md:grid-cols-2 gap-4">
               {sampleFacilitationNotes.map(note => (
-                <Card key={note.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => toast.info(`Opening: ${note.title}`)}>
+                <Card key={note.id} className="opacity-75 cursor-not-allowed">
                   <CardContent className="p-4">
                     <div className="flex items-start gap-3">
                       <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center flex-shrink-0">
                         <Lightbulb className="w-5 h-5 text-amber-600" />
                       </div>
-                      <div>
-                        <p className="font-semibold text-slate-800">{note.title}</p>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="font-semibold text-slate-800">{note.title}</p>
+                          <Badge variant="outline" className="text-[10px] text-slate-500">Preview</Badge>
+                        </div>
                         <p className="text-sm text-slate-500 mt-1">{note.description}</p>
                         <Badge variant="outline" className="mt-2 text-xs">
                           {note.type === 'general' ? 'All Lessons' : note.type}
@@ -633,11 +664,14 @@ const InstructorToolbox = () => {
       case 'roster':
         return (
           <div className="space-y-4">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800" data-testid="roster-preview-banner">
+              <strong>Preview only.</strong> Member management is read-only in this build.
+            </div>
             <div className="flex items-center justify-between mb-6">
               <p className="text-slate-600">
                 Track your study group members and their progress.
               </p>
-              <Button onClick={() => toast.info('Add member form coming soon!')}>
+              <Button disabled title="Not yet wired" data-testid="roster-add-member-btn">
                 <Users className="w-4 h-4 mr-2" />
                 Add Member
               </Button>
@@ -649,9 +683,9 @@ const InstructorToolbox = () => {
                   <Users className="w-12 h-12 mx-auto text-slate-300 mb-4" />
                   <h3 className="font-semibold text-slate-700 mb-2">No Members Yet</h3>
                   <p className="text-slate-500 mb-4">
-                    Add your study group members to track their progress and engagement.
+                    Member sync is not yet connected. This panel will populate once roster ingestion is wired.
                   </p>
-                  <Button onClick={() => toast.info('Add member feature coming soon!')}>
+                  <Button disabled title="Not yet wired">
                     Add Your First Member
                   </Button>
                 </CardContent>
@@ -804,15 +838,18 @@ const InstructorToolbox = () => {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                     {/* GRinCH Card */}
-                    <Card className="border-2 border-purple-200 hover:border-purple-400 transition-colors cursor-pointer active:scale-[0.98]" onClick={() => setGameMode('grinch')}>
+                    <Card className="border-2 border-purple-200 hover:border-purple-400 transition-colors cursor-pointer active:scale-[0.98] overflow-hidden" onClick={() => setGameMode('grinch')} data-testid="grinch-game-card">
+                      <div className="h-28 sm:h-32 bg-purple-100 flex items-center justify-center overflow-hidden">
+                        <img src="/covers/game-gridiron-ae.png" alt="Grid Iron Challenge" className="h-full w-auto object-contain" />
+                      </div>
                       <CardHeader className="bg-purple-50 p-3 sm:p-6">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-purple-500 flex items-center justify-center flex-shrink-0">
                             <Gamepad2 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                           </div>
                           <div>
-                            <CardTitle className="text-purple-800 text-base sm:text-lg">GRinCH</CardTitle>
-                            <CardDescription className="text-xs sm:text-sm">Grid Iron Challenge</CardDescription>
+                            <CardTitle className="text-purple-800 text-base sm:text-lg">Grid Iron Challenge</CardTitle>
+                            <CardDescription className="text-xs sm:text-sm">GRinCH — Print &amp; Play</CardDescription>
                           </div>
                         </div>
                       </CardHeader>
@@ -836,7 +873,10 @@ const InstructorToolbox = () => {
                     </Card>
 
                     {/* Passport Trek Card */}
-                    <Card className="border-2 border-blue-200 hover:border-blue-400 transition-colors cursor-pointer active:scale-[0.98]" onClick={() => setGameMode('passport')}>
+                    <Card className="border-2 border-blue-200 hover:border-blue-400 transition-colors cursor-pointer active:scale-[0.98] overflow-hidden" onClick={() => setGameMode('passport')} data-testid="passport-game-card">
+                      <div className="h-28 sm:h-32 bg-blue-100 flex items-center justify-center overflow-hidden">
+                        <img src="/covers/game-passport-ae.png" alt="Passport Trek" className="h-full w-auto object-contain" />
+                      </div>
                       <CardHeader className="bg-blue-50 p-3 sm:p-6">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-500 flex items-center justify-center flex-shrink-0">
@@ -844,7 +884,7 @@ const InstructorToolbox = () => {
                           </div>
                           <div>
                             <CardTitle className="text-blue-800 text-base sm:text-lg">Passport Trek</CardTitle>
-                            <CardDescription className="text-xs sm:text-sm">Stamp Collection Journey</CardDescription>
+                            <CardDescription className="text-xs sm:text-sm">Stamp Collection — Print &amp; Play</CardDescription>
                           </div>
                         </div>
                       </CardHeader>
@@ -897,8 +937,8 @@ const InstructorToolbox = () => {
                           <Gamepad2 className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-xl sm:text-2xl font-bold text-purple-800">GRinCH Setup</h3>
-                          <p className="text-purple-600 text-sm sm:text-base">Grid Iron Challenge - Team Trivia</p>
+                          <h3 className="text-xl sm:text-2xl font-bold text-purple-800">Grid Iron Challenge Setup</h3>
+                          <p className="text-purple-600 text-sm sm:text-base">Offline team trivia — print, run, score</p>
                         </div>
                       </div>
 
@@ -945,13 +985,13 @@ const InstructorToolbox = () => {
                             toast.error('Please select at least one covered lesson first');
                             return;
                           }
-                          toast.success('Launching GRinCH game...');
-                          // TODO: Navigate to actual game with filtered questions
-                          navigate('/gaming');
+                          setActiveTab('game-packs');
+                          toast.success('Opening printable Grid Iron Challenge materials…');
                         }}
+                        data-testid="grinch-open-pack-btn"
                       >
                         <Gamepad2 className="w-5 h-5 mr-2" />
-                        Start GRinCH Game
+                        Open Print Materials
                       </Button>
                     </div>
                   </div>
@@ -1012,12 +1052,13 @@ const InstructorToolbox = () => {
                             toast.error('Please select at least one covered lesson first');
                             return;
                           }
-                          toast.success('Launching Passport Trek...');
-                          navigate('/gaming');
+                          setActiveTab('game-packs');
+                          toast.success('Opening printable Passport Trek materials…');
                         }}
+                        data-testid="passport-open-pack-btn"
                       >
                         <GraduationCap className="w-5 h-5 mr-2" />
-                        Start Passport Trek
+                        Open Print Materials
                       </Button>
                     </div>
                   </div>
@@ -1030,6 +1071,9 @@ const InstructorToolbox = () => {
       case 'resources':
         return (
           <div className="space-y-4">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800" data-testid="resources-preview-banner">
+              <strong>Preview only.</strong> Teaching resource downloads are not yet wired — cards are read-only.
+            </div>
             <p className="text-slate-600 text-sm sm:text-base mb-4 sm:mb-6">
               Downloadable materials to enhance your teaching sessions.
             </p>
@@ -1043,11 +1087,12 @@ const InstructorToolbox = () => {
                 { title: 'Scripture Memory Verses', type: 'PDF', icon: BookMarked },
                 { title: 'Group Activity Handouts', type: 'PDF', icon: Users }
               ].map((resource, idx) => (
-                <Card key={resource.title} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => toast.info('Resource download coming soon!')}>
+                <Card key={resource.title} className="opacity-75 cursor-not-allowed">
                   <CardContent className="p-4 text-center">
                     <resource.icon className="w-8 h-8 mx-auto text-rose-500 mb-3" />
                     <p className="font-semibold text-slate-800 text-sm">{resource.title}</p>
                     <Badge variant="outline" className="mt-2 text-xs">{resource.type}</Badge>
+                    <Badge variant="outline" className="mt-1 ml-1 text-[10px] text-slate-500">Preview</Badge>
                   </CardContent>
                 </Card>
               ))}

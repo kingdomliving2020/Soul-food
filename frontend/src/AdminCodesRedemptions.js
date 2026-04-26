@@ -272,7 +272,7 @@ const AdminCodesRedemptions = () => {
             </Button>
           </CardTitle>
           <p className="text-sm text-slate-500">
-            System of record for batch redemption codes. Marketing/demo coupons are tracked separately.
+            System of record for batch redemption codes. <span className="font-medium text-slate-700">All admins see every batch — visibility is global.</span> Marketing/demo coupons are tracked separately.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -321,6 +321,7 @@ const AdminCodesRedemptions = () => {
                   <th className="py-2">Total</th>
                   <th className="py-2">Redeemed</th>
                   <th className="py-2">Remaining</th>
+                  <th className="py-2">Imported by</th>
                   <th className="py-2 text-right"></th>
                 </tr>
               </thead>
@@ -343,6 +344,9 @@ const AdminCodesRedemptions = () => {
                     <td className="py-2 font-medium">{b.total}</td>
                     <td className="py-2 text-blue-700">{b.redeemed}</td>
                     <td className="py-2 text-green-700 font-medium">{b.remaining}</td>
+                    <td className="py-2 text-xs text-slate-500" title={b.imported_from || ''}>
+                      {b.imported_by || '—'}
+                    </td>
                     <td className="py-2 text-right text-slate-400">
                       <ChevronRight className="w-4 h-4 inline" />
                     </td>

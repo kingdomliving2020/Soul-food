@@ -140,11 +140,13 @@ async def import_csv(
     skipped = 0
     invalid = 0
 
+    importer_email = getattr(admin, "email", None) or getattr(admin, "id", None)
     for row in reader:
         doc = _row_to_doc(row, schema, file.filename or "uploaded.csv", now)
         if not doc:
             invalid += 1
             continue
+        doc["imported_by_admin_email"] = importer_email
         existing = await db.redemption_codes.find_one({"code": doc["code"]}, {"_id": 0, "code": 1})
         if existing:
             skipped += 1
@@ -191,6 +193,7 @@ async def list_batches(admin: AdminUser = Depends(get_current_admin)):
                 },
                 "imported_from": {"$first": "$imported_from_filename"},
                 "imported_at": {"$first": "$imported_at"},
+                "imported_by": {"$first": "$imported_by_admin_email"},
                 "total_hours": {"$first": "$total_hours"},
                 "duration_days": {"$first": "$duration_days"},
                 "pacing": {"$first": "$pacing"},
@@ -218,6 +221,7 @@ async def list_batches(admin: AdminUser = Depends(get_current_admin)):
             "duration_days": r.get("duration_days"),
             "pacing": r.get("pacing"),
             "imported_from": r.get("imported_from"),
+            "imported_by": r.get("imported_by"),
             "imported_at": r.get("imported_at").isoformat() if hasattr(r.get("imported_at"), "isoformat") else r.get("imported_at"),
         })
     return {"batches": rows, "total_batches": len(rows)}

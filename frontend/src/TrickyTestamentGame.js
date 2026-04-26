@@ -524,7 +524,8 @@ const TrickyTestamentGame = () => {
 
   // Daily Double modal
   if (dailyDoubleRevealed && !showResult && wager === 0) {
-    const maxWager = Math.max(score, 500);
+    const allInWager = Math.max(score, 100);
+    const halfWager = Math.max(Math.floor(score / 2), 50);
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 p-4 sm:p-6 lg:p-8 flex items-center justify-center">
         <Card className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 sm:border-4 border-yellow-400 max-w-2xl w-full mx-4">
@@ -539,33 +540,29 @@ const TrickyTestamentGame = () => {
               <BountyDisplay amount={score} size="lg" />
             </div>
             <p className="text-sm sm:text-base lg:text-lg text-slate-600 mb-4 sm:mb-6">
-              How many Stacks do you want to wager?
+              Pick your wager — single player only.
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4" data-testid="daily-double-wager-options">
               <Button
-                onClick={() => handleDailyDoubleWager(100)}
-                className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 sm:py-4 text-base sm:text-lg"
-              >
-                Wager 100 Stacks
-              </Button>
-              <Button
-                onClick={() => handleDailyDoubleWager(200)}
-                className="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 sm:py-4 text-base sm:text-lg"
-              >
-                Wager 200 Stacks
-              </Button>
-              <Button
-                onClick={() => handleDailyDoubleWager(Math.floor(score / 2))}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 sm:py-4 text-base sm:text-lg"
-                disabled={score === 0}
-              >
-                Wager Half ({Math.floor(score / 2)} Stacks)
-              </Button>
-              <Button
-                onClick={() => handleDailyDoubleWager(maxWager)}
+                onClick={() => handleDailyDoubleWager(allInWager)}
                 className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 sm:py-4 text-base sm:text-lg"
+                data-testid="wager-all-btn"
               >
-                All In! ({maxWager} Stacks)
+                All In ({allInWager.toLocaleString()})
+              </Button>
+              <Button
+                onClick={() => handleDailyDoubleWager(halfWager)}
+                className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 sm:py-4 text-base sm:text-lg"
+                data-testid="wager-half-btn"
+              >
+                Half ({halfWager.toLocaleString()})
+              </Button>
+              <Button
+                onClick={() => handleDailyDoubleWager(1)}
+                className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 sm:py-4 text-base sm:text-lg"
+                data-testid="wager-one-btn"
+              >
+                $1 (Safe)
               </Button>
             </div>
             <GameDisclaimer />
