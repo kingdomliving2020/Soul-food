@@ -2043,7 +2043,7 @@ const SoulFoodLanding = () => {
                 <div className="text-3xl font-bold text-orange-600 mb-2">
                   $14.99<span className="text-lg text-slate-600">/mo</span>
                 </div>
-                <Badge className="bg-emerald-500 text-white text-xs px-3 py-1 mb-2">All quarterly releases included</Badge>
+                <Badge className="bg-emerald-500 text-white text-xs px-3 py-1 mb-2">All released quarterly content included.</Badge>
                 <p className="text-sm text-slate-600">eBook: $68.99 (current content only)</p>
               </CardHeader>
               <CardContent className="p-6 flex flex-col flex-grow">
@@ -2077,7 +2077,7 @@ const SoulFoodLanding = () => {
                   </li>
                   <li className="flex items-start space-x-2">
                     <span className="text-orange-500 mt-0.5">✓</span>
-                    <span className="text-slate-700 text-sm">All multimedia content (audio & video)</span>
+                    <span className="text-slate-700 text-sm">All available multimedia content (audio; video as released).</span>
                   </li>
                   <li className="flex items-start space-x-2">
                     <span className="text-orange-500 mt-0.5">✓</span>
