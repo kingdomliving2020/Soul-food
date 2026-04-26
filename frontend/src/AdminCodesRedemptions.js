@@ -16,7 +16,7 @@ import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
-import { Upload, RefreshCcw, ArrowLeft, AlertTriangle, CheckCircle2, Ban, ChevronRight } from 'lucide-react';
+import { Upload, RefreshCcw, ArrowLeft, AlertTriangle, CheckCircle2, Ban, ChevronRight, Sparkles, FlaskConical, Layers } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -37,7 +37,10 @@ const StatusBadge = ({ status }) => {
 
 const AdminCodesRedemptions = () => {
   const headers = useAuthHeaders();
+  const [tab, setTab] = useState('batches'); // batches | demo | test
   const [batches, setBatches] = useState([]);
+  const [demoCodes, setDemoCodes] = useState([]);
+  const [testCodes, setTestCodes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedBatch, setSelectedBatch] = useState(null);
   const [codes, setCodes] = useState([]);
@@ -45,6 +48,8 @@ const AdminCodesRedemptions = () => {
   const [importMessage, setImportMessage] = useState('');
   const [importError, setImportError] = useState('');
   const [importing, setImporting] = useState(false);
+  const [seeding, setSeeding] = useState(false);
+  const [seedMessage, setSeedMessage] = useState('');
   const [overrideTarget, setOverrideTarget] = useState(null);
   const [overrideStatus, setOverrideStatus] = useState('REVOKED');
   const [overrideReason, setOverrideReason] = useState('');
@@ -62,7 +67,51 @@ const AdminCodesRedemptions = () => {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { loadBatches(); }, [loadBatches]);
+  const loadFlatList = useCallback(async (codeType) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/codes-redemptions/list?code_type=${codeType}`, { headers });
+      const data = await res.json();
+      if (codeType === 'demo') setDemoCodes(data.codes || []);
+      if (codeType === 'test') setTestCodes(data.codes || []);
+    } catch (e) {
+      console.error(`Failed to load ${codeType} codes`, e);
+    } finally {
+      setLoading(false);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (tab === 'batches') loadBatches();
+    else if (tab === 'demo') loadFlatList('demo');
+    else if (tab === 'test') loadFlatList('test');
+  }, [tab, loadBatches, loadFlatList]);
+
+  const refreshCurrent = () => {
+    if (tab === 'batches') loadBatches();
+    else if (tab === 'demo') loadFlatList('demo');
+    else if (tab === 'test') loadFlatList('test');
+  };
+
+  const handleSeedDemoTest = async () => {
+    setSeeding(true);
+    setSeedMessage('');
+    try {
+      const res = await fetch(`${API_URL}/api/admin/codes-redemptions/seed-demo-test`, {
+        method: 'POST',
+        headers,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Seed failed');
+      setSeedMessage(`Seed complete — ${data.inserted} inserted, ${data.refreshed} refreshed`);
+      if (tab === 'demo') loadFlatList('demo');
+      if (tab === 'test') loadFlatList('test');
+    } catch (err) {
+      setSeedMessage(`Error: ${err.message}`);
+    } finally {
+      setSeeding(false);
+    }
+  };
 
   const openBatch = async (batch) => {
     setSelectedBatch(batch);
@@ -267,97 +316,311 @@ const AdminCodesRedemptions = () => {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span>Codes & Redemptions</span>
-            <Button onClick={loadBatches} variant="ghost" size="sm" data-testid="refresh-batches-btn">
+            <Button onClick={refreshCurrent} variant="ghost" size="sm" data-testid="refresh-codes-btn">
               <RefreshCcw className="w-4 h-4 mr-1" /> Refresh
             </Button>
           </CardTitle>
           <p className="text-sm text-slate-500">
-            System of record for batch redemption codes. <span className="font-medium text-slate-700">All admins see every batch — visibility is global.</span> Marketing/demo coupons are tracked separately.
+            System of record for batch + internal demo + QA test codes. <span className="font-medium text-slate-700">All admins see every code — visibility is global.</span> Marketing coupons are tracked separately.
           </p>
+
+          {/* Tabs */}
+          <div className="flex gap-2 mt-3" data-testid="code-type-tabs">
+            <Button
+              variant={tab === 'batches' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => { setTab('batches'); setSelectedBatch(null); }}
+              data-testid="tab-batches"
+            >
+              <Layers className="w-4 h-4 mr-1" /> Batches
+            </Button>
+            <Button
+              variant={tab === 'demo' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => { setTab('demo'); setSelectedBatch(null); }}
+              data-testid="tab-demo"
+            >
+              <Sparkles className="w-4 h-4 mr-1" /> Demo
+            </Button>
+            <Button
+              variant={tab === 'test' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => { setTab('test'); setSelectedBatch(null); }}
+              data-testid="tab-test"
+            >
+              <FlaskConical className="w-4 h-4 mr-1" /> $1 Test
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 bg-slate-50">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <Upload className="w-5 h-5 text-slate-500" />
-              <span className="text-sm font-medium">
-                {importing ? 'Importing…' : 'Import CSV — auto-detects schema'}
-              </span>
-              <input
-                type="file"
-                accept=".csv"
-                onChange={handleImport}
-                disabled={importing}
-                className="hidden"
-                data-testid="import-csv-input"
-              />
-              <Button asChild size="sm" disabled={importing} data-testid="import-csv-btn">
-                <span>Choose file…</span>
-              </Button>
-            </label>
-            {importMessage && (
-              <p className="mt-2 text-sm text-green-700 flex items-center gap-1" data-testid="import-success">
-                <CheckCircle2 className="w-4 h-4" /> {importMessage}
-              </p>
-            )}
-            {importError && (
-              <p className="mt-2 text-sm text-red-700 flex items-center gap-1" data-testid="import-error">
-                <Ban className="w-4 h-4" /> {importError}
-              </p>
-            )}
-          </div>
+          {tab === 'batches' && (
+            <>
+              <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 bg-slate-50">
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Upload className="w-5 h-5 text-slate-500" />
+                  <span className="text-sm font-medium">
+                    {importing ? 'Importing…' : 'Import CSV — auto-detects schema'}
+                  </span>
+                  <input
+                    type="file"
+                    accept=".csv"
+                    onChange={handleImport}
+                    disabled={importing}
+                    className="hidden"
+                    data-testid="import-csv-input"
+                  />
+                  <Button asChild size="sm" disabled={importing} data-testid="import-csv-btn">
+                    <span>Choose file…</span>
+                  </Button>
+                </label>
+                {importMessage && (
+                  <p className="mt-2 text-sm text-green-700 flex items-center gap-1" data-testid="import-success">
+                    <CheckCircle2 className="w-4 h-4" /> {importMessage}
+                  </p>
+                )}
+                {importError && (
+                  <p className="mt-2 text-sm text-red-700 flex items-center gap-1" data-testid="import-error">
+                    <Ban className="w-4 h-4" /> {importError}
+                  </p>
+                )}
+              </div>
 
-          {loading ? (
-            <p className="text-slate-500 text-sm">Loading batches…</p>
-          ) : batches.length === 0 ? (
-            <p className="text-sm text-slate-500 italic">No batches imported yet. Upload a CSV above.</p>
-          ) : (
-            <table className="w-full text-sm" data-testid="batches-table">
-              <thead>
-                <tr className="text-left text-slate-500 border-b">
-                  <th className="py-2">Batch</th>
-                  <th className="py-2">Series</th>
-                  <th className="py-2">Edition</th>
-                  <th className="py-2">Type</th>
-                  <th className="py-2">Total</th>
-                  <th className="py-2">Redeemed</th>
-                  <th className="py-2">Remaining</th>
-                  <th className="py-2">Imported by</th>
-                  <th className="py-2 text-right"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {batches.map((b) => (
-                  <tr
-                    key={`${b.batch_id}-${b.delivery_type}`}
-                    className="border-b hover:bg-slate-50 cursor-pointer"
-                    onClick={() => openBatch(b)}
-                    data-testid={`batch-row-${b.batch_id}`}
-                  >
-                    <td className="py-2 font-mono text-xs">{b.batch_id}</td>
-                    <td className="py-2">{b.series || '—'}</td>
-                    <td className="py-2">{b.edition || '—'}</td>
-                    <td className="py-2">
-                      <Badge className="bg-slate-100 text-slate-700 text-xs">{b.delivery_type}</Badge>
-                      {b.total_hours && <span className="ml-2 text-xs text-slate-500">{b.total_hours}h</span>}
-                      {b.duration_days && <span className="ml-2 text-xs text-slate-500">{b.duration_days}d</span>}
-                    </td>
-                    <td className="py-2 font-medium">{b.total}</td>
-                    <td className="py-2 text-blue-700">{b.redeemed}</td>
-                    <td className="py-2 text-green-700 font-medium">{b.remaining}</td>
-                    <td className="py-2 text-xs text-slate-500" title={b.imported_from || ''}>
-                      {b.imported_by || '—'}
-                    </td>
-                    <td className="py-2 text-right text-slate-400">
-                      <ChevronRight className="w-4 h-4 inline" />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              {loading ? (
+                <p className="text-slate-500 text-sm">Loading batches…</p>
+              ) : batches.length === 0 ? (
+                <p className="text-sm text-slate-500 italic">No batches imported yet. Upload a CSV above.</p>
+              ) : (
+                <table className="w-full text-sm" data-testid="batches-table">
+                  <thead>
+                    <tr className="text-left text-slate-500 border-b">
+                      <th className="py-2">Batch</th>
+                      <th className="py-2">Series</th>
+                      <th className="py-2">Edition</th>
+                      <th className="py-2">Type</th>
+                      <th className="py-2">Total</th>
+                      <th className="py-2">Redeemed</th>
+                      <th className="py-2">Remaining</th>
+                      <th className="py-2">Imported by</th>
+                      <th className="py-2 text-right"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {batches.map((b) => (
+                      <tr
+                        key={`${b.batch_id}-${b.delivery_type}`}
+                        className="border-b hover:bg-slate-50 cursor-pointer"
+                        onClick={() => openBatch(b)}
+                        data-testid={`batch-row-${b.batch_id}`}
+                      >
+                        <td className="py-2 font-mono text-xs">{b.batch_id}</td>
+                        <td className="py-2">{b.series || '—'}</td>
+                        <td className="py-2">{b.edition || '—'}</td>
+                        <td className="py-2">
+                          <Badge className="bg-slate-100 text-slate-700 text-xs">{b.delivery_type}</Badge>
+                          {b.total_hours && <span className="ml-2 text-xs text-slate-500">{b.total_hours}h</span>}
+                          {b.duration_days && <span className="ml-2 text-xs text-slate-500">{b.duration_days}d</span>}
+                        </td>
+                        <td className="py-2 font-medium">{b.total}</td>
+                        <td className="py-2 text-blue-700">{b.redeemed}</td>
+                        <td className="py-2 text-green-700 font-medium">{b.remaining}</td>
+                        <td className="py-2 text-xs text-slate-500" title={b.imported_from || ''}>
+                          {b.imported_by || '—'}
+                        </td>
+                        <td className="py-2 text-right text-slate-400">
+                          <ChevronRight className="w-4 h-4 inline" />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </>
+          )}
+
+          {(tab === 'demo' || tab === 'test') && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between border-2 border-dashed border-slate-300 rounded-lg p-3 bg-slate-50">
+                <div className="text-sm text-slate-600">
+                  {tab === 'demo' ? (
+                    <span>Internal IE preview codes — BKFT + HOL only · 90-min session cap · no full downloads · max 5 uses each.</span>
+                  ) : (
+                    <span>Admin QA $1 checkout codes — auto-disable after Apr 28, 2026 11:59 PM ET. No fulfillment.</span>
+                  )}
+                </div>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleSeedDemoTest}
+                  disabled={seeding}
+                  data-testid="seed-demo-test-btn"
+                >
+                  {seeding ? 'Seeding…' : 'Seed / refresh codes'}
+                </Button>
+              </div>
+              {seedMessage && (
+                <p className={`text-sm ${seedMessage.startsWith('Error') ? 'text-red-700' : 'text-green-700'}`} data-testid="seed-message">
+                  {seedMessage}
+                </p>
+              )}
+
+              {tab === 'demo' && (
+                <DemoTable codes={demoCodes} loading={loading} onOverride={(c) => { setOverrideTarget(c); setOverrideStatus(c.status === 'REVOKED' ? 'RESTORED' : 'REVOKED'); setOverrideReason(''); }} />
+              )}
+              {tab === 'test' && (
+                <TestTable codes={testCodes} loading={loading} onOverride={(c) => { setOverrideTarget(c); setOverrideStatus(c.status === 'REVOKED' ? 'RESTORED' : 'REVOKED'); setOverrideReason(''); }} />
+              )}
+            </div>
           )}
         </CardContent>
       </Card>
+
+      {/* Override dialog reused for demo/test */}
+      <Dialog open={!!overrideTarget && !selectedBatch} onOpenChange={(o) => !o && setOverrideTarget(null)}>
+        <DialogContent className="bg-white" data-testid="override-dialog-flat">
+          <DialogHeader>
+            <DialogTitle>Override code</DialogTitle>
+          </DialogHeader>
+          {overrideTarget && (
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 font-mono">{overrideTarget.code}</p>
+              <div>
+                <label className="text-xs text-slate-500 block mb-1">New status</label>
+                <select
+                  value={overrideStatus}
+                  onChange={(e) => setOverrideStatus(e.target.value)}
+                  className="w-full border border-slate-300 rounded-md px-2 py-1.5 text-sm"
+                  data-testid="override-status-select-flat"
+                >
+                  <option value="REVOKED">REVOKED — block redemption</option>
+                  <option value="EXPIRED">EXPIRED — mark expired</option>
+                  <option value="RESTORED">RESTORED — re-enable (sets status to ACTIVE)</option>
+                  <option value="ACTIVE">ACTIVE — force active</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-xs text-slate-500 block mb-1">Reason (audit trail)</label>
+                <Textarea
+                  value={overrideReason}
+                  onChange={(e) => setOverrideReason(e.target.value)}
+                  placeholder="Why this override? (visible in audit logs)"
+                  rows={3}
+                  data-testid="override-reason-input-flat"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOverrideTarget(null)}>Cancel</Button>
+            <Button
+              onClick={async () => {
+                if (!overrideTarget || overrideReason.trim().length < 2) return;
+                try {
+                  const res = await fetch(
+                    `${API_URL}/api/admin/codes-redemptions/codes/${encodeURIComponent(overrideTarget.code)}/override`,
+                    {
+                      method: 'PATCH',
+                      headers: { ...headers, 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ status: overrideStatus, reason: overrideReason.trim() }),
+                    }
+                  );
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.detail || 'Override failed');
+                  setOverrideTarget(null);
+                  setOverrideReason('');
+                  if (tab === 'demo') loadFlatList('demo');
+                  if (tab === 'test') loadFlatList('test');
+                } catch (err) {
+                  alert(err.message);
+                }
+              }}
+              disabled={overrideReason.trim().length < 2}
+              data-testid="override-submit-btn-flat"
+            >
+              Apply override
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
+  );
+};
+
+const DemoTable = ({ codes, loading, onOverride }) => {
+  if (loading) return <p className="text-slate-500 text-sm">Loading demo codes…</p>;
+  if (!codes.length) return <p className="text-sm text-slate-500 italic">No demo codes seeded yet. Click "Seed / refresh codes".</p>;
+  return (
+    <table className="w-full text-sm" data-testid="demo-codes-table">
+      <thead>
+        <tr className="text-left text-slate-500 border-b">
+          <th className="py-2">Code</th>
+          <th className="py-2">Series allowed</th>
+          <th className="py-2">Total hours</th>
+          <th className="py-2">Session cap</th>
+          <th className="py-2">Uses</th>
+          <th className="py-2">Status</th>
+          <th className="py-2 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {codes.map((c) => (
+          <tr key={c.code} className="border-b hover:bg-slate-50" data-testid={`demo-row-${c.code}`}>
+            <td className="py-2 font-mono text-xs">{c.code}</td>
+            <td className="py-2 text-xs">{(c.series_allowed || []).join(' + ') || '—'}</td>
+            <td className="py-2 font-medium">{c.total_hours}h</td>
+            <td className="py-2">{c.session_cap_minutes} min</td>
+            <td className="py-2">{c.uses_used} / {c.max_uses}</td>
+            <td className="py-2"><StatusBadge status={c.status} /></td>
+            <td className="py-2 text-right">
+              <Button size="sm" variant="outline" onClick={() => onOverride(c)} data-testid={`demo-override-${c.code}`}>
+                Override
+              </Button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+const TestTable = ({ codes, loading, onOverride }) => {
+  if (loading) return <p className="text-slate-500 text-sm">Loading test codes…</p>;
+  if (!codes.length) return <p className="text-sm text-slate-500 italic">No $1 test codes seeded yet. Click "Seed / refresh codes".</p>;
+  return (
+    <table className="w-full text-sm" data-testid="test-codes-table">
+      <thead>
+        <tr className="text-left text-slate-500 border-b">
+          <th className="py-2">Code</th>
+          <th className="py-2">Behavior</th>
+          <th className="py-2">Uses</th>
+          <th className="py-2">Expires</th>
+          <th className="py-2">Status</th>
+          <th className="py-2 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {codes.map((c) => {
+          const expiresLabel = c.expires_at ? new Date(c.expires_at).toLocaleString() : '—';
+          const isPast = c.expires_at && new Date(c.expires_at).getTime() < Date.now();
+          return (
+            <tr key={c.code} className="border-b hover:bg-slate-50" data-testid={`test-row-${c.code}`}>
+              <td className="py-2 font-mono text-xs">{c.code}</td>
+              <td className="py-2 text-xs">$1 checkout (no fulfillment)</td>
+              <td className="py-2">{c.uses_used} / {c.max_uses === 0 ? '∞' : c.max_uses}</td>
+              <td className="py-2 text-xs">
+                <span className={isPast ? 'text-red-600 font-medium' : 'text-slate-600'}>{expiresLabel}</span>
+                {isPast && <Badge className="ml-2 bg-red-100 text-red-700 text-[10px]">Past due</Badge>}
+              </td>
+              <td className="py-2"><StatusBadge status={c.status} /></td>
+              <td className="py-2 text-right">
+                <Button size="sm" variant="outline" onClick={() => onOverride(c)} data-testid={`test-override-${c.code}`}>
+                  Override
+                </Button>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
   );
 };
 

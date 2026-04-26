@@ -3,16 +3,21 @@ Codes & Redemptions — system of record for batch redemption codes.
 
 Schema (db.redemption_codes):
   code              str (unique)
+  code_type         str             batch | demo | test  (default: batch)
   series            str | None      e.g. HOL, BKFT — None for pure game/edition codes
   edition           str             AE | YE | IE
-  delivery_type     str             DIG | GAME | HOUR | SUB
+  delivery_type     str             DIG | GAME | HOUR | SUB | DEMO | DOLLAR_TEST
   batch_id          str             logical batch identifier
   batch_size        int | None      DIG only
   sequence          int | None      DIG only
-  total_hours       int | None      GAME / HOUR
+  total_hours       int | None      GAME / HOUR / demo
+  session_cap_minutes int | None    demo (per-session cap)
+  series_allowed    list[str] | None demo (e.g. ["BKFT","HOL"])
+  preview_only      bool | None     demo (true → no full downloads, no fulfillment)
+  unlocks           list[str] | None demo (preview-mode flags)
   pacing            str | None      SUB
   duration_days     int | None      SUB
-  max_uses          int             default 1
+  max_uses          int             default 1; 0 means unlimited
   uses_used         int             default 0
   status            str             ACTIVE | REDEEMED | REVOKED | EXPIRED | OVERRIDE_<...>
   expires_at        datetime | None
@@ -26,6 +31,7 @@ Schema (db.redemption_codes):
   override_at           datetime | None
   imported_from_filename str
   imported_at           datetime
+  imported_by_admin_email str | None
   created_at, updated_at
 """
 import csv
@@ -78,6 +84,7 @@ def _row_to_doc(row: dict, schema: str, filename: str, now: datetime) -> dict:
 
     base = {
         "code": code,
+        "code_type": "batch",
         "series": (row.get("series") or "").strip() or None,
         "edition": (row.get("edition") or "").strip().upper() or None,
         "delivery_type": (row.get("delivery_type") or "").strip().upper() or None,
@@ -165,13 +172,35 @@ async def import_csv(
     return {"message": "Import complete", **summary}
 
 
+async def _auto_expire_due_codes() -> int:
+    """Cheap expire-on-read sweep: any ACTIVE code whose expires_at is in the past
+    is flipped to EXPIRED. No cron — runs at the top of each list endpoint."""
+    now = datetime.now(timezone.utc)
+    res = await db.redemption_codes.update_many(
+        {"status": "ACTIVE", "expires_at": {"$ne": None, "$lt": now}},
+        {"$set": {"status": "EXPIRED", "updated_at": now}},
+    )
+    return res.modified_count
+
+
 # ---------------------------------------------------------------------------
 # GET /batches — aggregated batch list
 # ---------------------------------------------------------------------------
 @router.get("/batches")
 async def list_batches(admin: AdminUser = Depends(get_current_admin)):
-    """Aggregate codes into batches with totals."""
+    """Aggregate codes into batches with totals. Scoped to code_type=batch
+    (and legacy docs without code_type, treated as batch)."""
+    await _auto_expire_due_codes()
     pipeline = [
+        {
+            "$match": {
+                "$or": [
+                    {"code_type": "batch"},
+                    {"code_type": {"$exists": False}},
+                    {"code_type": None},
+                ]
+            }
+        },
         {
             "$group": {
                 "_id": {
@@ -310,3 +339,138 @@ async def get_code(code: str, admin: AdminUser = Depends(get_current_admin)):
         if hasattr(v, "isoformat"):
             doc[k] = v.isoformat()
     return doc
+
+
+
+# ---------------------------------------------------------------------------
+# Demo & Test code seed + listing
+# ---------------------------------------------------------------------------
+# April 28, 2026 11:59 PM Eastern (EDT, UTC-4) → 2026-04-29 03:59:00 UTC
+DOLLAR_TEST_EXPIRES_UTC = datetime(2026, 4, 29, 3, 59, 0, tzinfo=timezone.utc)
+
+DEMO_CODES_DEF = [
+    {"code": "DEMOSOFU79", "total_hours": 25},
+    {"code": "DEMOSOFU77", "total_hours": 25},
+    {"code": "DEMOSOFU80", "total_hours": 5},
+    {"code": "DEMOSOFU97", "total_hours": 5},
+    {"code": "DEMOSOFU60", "total_hours": 5},
+    {"code": "DEMOSOFU55", "total_hours": 5},
+]
+
+TEST_CODES_DEF = [
+    {"code": "BETADOLLAR79"},
+    {"code": "BETADOLLAR97"},
+]
+
+DEMO_UNLOCKS = [
+    "preview_answer_keys",
+    "preview_one_map",
+    "preview_offline_cards",
+    "presenter_games_enabled",
+]
+
+
+def _build_demo_doc(code: str, total_hours: int, now: datetime, admin_email: Optional[str]) -> dict:
+    return {
+        "code": code,
+        "code_type": "demo",
+        "series": None,
+        "edition": "IE",
+        "delivery_type": "DEMO",
+        "batch_id": "DEMO-INTERNAL",
+        "total_hours": total_hours,
+        "session_cap_minutes": 90,
+        "series_allowed": ["BKFT", "HOL"],
+        "preview_only": True,
+        "unlocks": DEMO_UNLOCKS,
+        "max_uses": 5,
+        "uses_used": 0,
+        "status": "ACTIVE",
+        "expires_at": None,
+        "notes": "Internal preview — IE in preview mode only; no full downloads; no fulfillment.",
+        "imported_from_filename": "seed:demo",
+        "imported_at": now,
+        "imported_by_admin_email": admin_email,
+        "created_at": now,
+        "updated_at": now,
+        "schema_kind": "demo",
+    }
+
+
+def _build_test_doc(code: str, now: datetime, admin_email: Optional[str]) -> dict:
+    return {
+        "code": code,
+        "code_type": "test",
+        "series": None,
+        "edition": None,
+        "delivery_type": "DOLLAR_TEST",
+        "batch_id": "TEST-DOLLAR",
+        "max_uses": 0,  # 0 = unlimited until expiry
+        "uses_used": 0,
+        "status": "ACTIVE",
+        "expires_at": DOLLAR_TEST_EXPIRES_UTC,
+        "notes": "Admin QA only — $1 checkout. Auto-expires Apr 28 2026 11:59 PM ET. No fulfillment.",
+        "imported_from_filename": "seed:test",
+        "imported_at": now,
+        "imported_by_admin_email": admin_email,
+        "created_at": now,
+        "updated_at": now,
+        "schema_kind": "dollar_test",
+    }
+
+
+@router.post("/seed-demo-test")
+async def seed_demo_test(admin: AdminUser = Depends(get_current_admin)):
+    """Idempotently insert/refresh the 6 internal DEMO codes and 2 BETADOLLAR test codes.
+    Existing codes are NOT overwritten on uses_used / status — only the static
+    config fields (rules) are kept in sync. Safe to re-run."""
+    now = datetime.now(timezone.utc)
+    admin_email = getattr(admin, "email", None) or getattr(admin, "id", None)
+    inserted, refreshed = 0, 0
+
+    for d in DEMO_CODES_DEF:
+        doc = _build_demo_doc(d["code"], d["total_hours"], now, admin_email)
+        existing = await db.redemption_codes.find_one({"code": doc["code"]}, {"_id": 0, "uses_used": 1, "status": 1})
+        if existing:
+            # Preserve runtime state, refresh rules
+            update = {k: v for k, v in doc.items() if k not in ("uses_used", "status", "created_at")}
+            update["updated_at"] = now
+            await db.redemption_codes.update_one({"code": doc["code"]}, {"$set": update})
+            refreshed += 1
+        else:
+            await db.redemption_codes.insert_one(doc)
+            inserted += 1
+
+    for d in TEST_CODES_DEF:
+        doc = _build_test_doc(d["code"], now, admin_email)
+        existing = await db.redemption_codes.find_one({"code": doc["code"]}, {"_id": 0, "uses_used": 1, "status": 1})
+        if existing:
+            update = {k: v for k, v in doc.items() if k not in ("uses_used", "status", "created_at")}
+            update["updated_at"] = now
+            await db.redemption_codes.update_one({"code": doc["code"]}, {"$set": update})
+            refreshed += 1
+        else:
+            await db.redemption_codes.insert_one(doc)
+            inserted += 1
+
+    summary = {"inserted": inserted, "refreshed": refreshed,
+               "demo_codes": [d["code"] for d in DEMO_CODES_DEF],
+               "test_codes": [d["code"] for d in TEST_CODES_DEF]}
+    await log_admin_action("seed_demo_test_codes", admin.id, "redemption_codes", "seed:demo+test", summary)
+    return {"message": "Seed complete", **summary}
+
+
+@router.get("/list")
+async def list_codes_by_type(
+    code_type: str = Query(..., pattern="^(demo|test)$"),
+    admin: AdminUser = Depends(get_current_admin),
+):
+    """Flat list of demo OR test codes. Auto-expires past-due codes on read."""
+    await _auto_expire_due_codes()
+    docs = await db.redemption_codes.find({"code_type": code_type}, {"_id": 0}).sort("code", 1).to_list(200)
+    for d in docs:
+        for k in ("imported_at", "redeemed_at", "override_at", "created_at", "updated_at", "expires_at"):
+            v = d.get(k)
+            if hasattr(v, "isoformat"):
+                d[k] = v.isoformat()
+    return {"code_type": code_type, "count": len(docs), "codes": docs}

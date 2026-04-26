@@ -1,0 +1,37 @@
+{
+  "summary": "Tested Admin Codes & Redemptions extension for 6 internal DEMO codes + 2 BETADOLLAR $1-test codes. Backend pytest: 9/9 passed (seed idempotency, list/demo, list/test, auto-expire-on-read, /batches scoping with total_batches=136, override REVOKE+RESTORE). Frontend Playwright: all tabs render, demo/test tables show correct rows with expected data, seed button shows '0 inserted, 8 refreshed', override dialog flips DEMOSOFU55 to REVOKED then restored to ACTIVE.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "/admin/codes-redemptions (Batches tab + Batch detail drilldown)", "issues": ["React 'Encountered two children with the same key' warnings in console for batch codes (e.g. B10-01-DIG, B25-01-PHY, etc.) — list rendering uses non-unique keys when same sequence appears in multiple sub-batches. Pre-existing, not in scope of this iteration but should be cleaned up. Use composite key (batch_id+code) instead of just code."]},
+      {"screen": "Override dialog", "issues": ["Radix DialogContent missing aria-describedby/Description warning — minor a11y improvement."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_demo_test_codes.py",
+    "/app/test_reports/pytest/iter31_demo_test.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Auto-expire sweep runs on every /batches and /list call — efficient via single update_many; good design.",
+    "_build_demo_doc/_build_test_doc preserve uses_used and status on refresh (only static rules are updated) — correct idempotency semantics.",
+    "DEMO-INTERNAL and TEST-DOLLAR are excluded from /batches via match on code_type in {batch, missing, null} — verified scoping holds (total_batches=136).",
+    "Existing React key warnings on batch code listing (B10-01-DIG etc.) are not from this iteration but should be addressed — multiple rows with same 'code' value across different batches likely cause it.",
+    "POST /seed-demo-test should consider returning 201 on first creation vs 200 on refresh — currently 200 always (acceptable but not REST-strict)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_demo_test_codes.py (new)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123! — used 'Continue without 2FA' on /2fa-setup",
+  "seed_data_creation": "POST /api/admin/codes-redemptions/seed-demo-test inserted/refreshed 6 demo codes (DEMOSOFU79/77/80/97/60/55) and 2 test codes (BETADOLLAR79/97). DEMOSOFU55 was toggled REVOKED then restored to ACTIVE. BETADOLLAR79 expires_at temporarily set to past for auto-expire test, then restored to 2026-04-29T03:59:00Z ACTIVE.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iteration 31 verified the demo/test code admin endpoints + UI. State at end: all 6 demo codes ACTIVE 0/5 uses, both BETADOLLAR codes ACTIVE 0/∞ uses with expires_at=2026-04-29T03:59:00Z. /batches total_batches=136 unchanged and excludes DEMO-INTERNAL/TEST-DOLLAR. Pre-existing React key warnings on batch list view exist but are out of scope. Phase 2 user-side redemption was NOT tested (out of scope per request).",
+  "rca of the issue": "N/A — no failures in this iteration."
+}
