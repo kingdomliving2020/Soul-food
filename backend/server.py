@@ -432,6 +432,36 @@ async def get_lesson(lesson_id: str):
     
     return lesson
 
+# Capture build/version metadata at boot for /api/health/version
+import subprocess
+try:
+    _git_sha = subprocess.check_output(
+        ["git", "rev-parse", "--short", "HEAD"],
+        cwd=str(ROOT_DIR.parent),
+        stderr=subprocess.DEVNULL,
+        timeout=2,
+    ).decode().strip()
+except Exception:
+    _git_sha = os.environ.get("APP_GIT_SHA", "unknown")
+_boot_time_utc = datetime.now(timezone.utc).isoformat()
+_app_version = os.environ.get("APP_VERSION", "soft-launch")
+
+
+@api_router.get("/health/version")
+async def health_version():
+    """Lightweight build-stamp endpoint. Lets ops verify whether a given
+    environment is running stale code without needing a full health check.
+    Public on purpose — returns no PII or secrets."""
+    return {
+        "status": "ok",
+        "app": "soul-food-api",
+        "version": _app_version,
+        "git_sha": _git_sha,
+        "booted_at": _boot_time_utc,
+        "now": datetime.now(timezone.utc).isoformat(),
+    }
+
+
 # Include the router in the main app
 app.include_router(api_router)
 

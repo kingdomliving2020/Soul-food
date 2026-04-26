@@ -1248,7 +1248,11 @@ async def reset_password(req: ResetPasswordRequest):
         role = user.get("role", "member")
         session_timeout = {"admin": 120, "instructor": 120}.get(role, 90)
         access_token = create_access_token(
-            data={"sub": user_id, "role": role},
+            data={
+                "sub": user_id,
+                "role": role,
+                "access_level": user.get("access_level", "free"),
+            },
             expires_delta=timedelta(minutes=session_timeout)
         )
         return {

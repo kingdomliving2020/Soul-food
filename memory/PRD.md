@@ -165,6 +165,10 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] No DB-side cleanup needed: 0 instructor users had `tfa_enabled=True` at the time of the change. The runtime gate `requires_2fa(role)` makes legacy `tfa_enabled` flags inert for instructors.
 - [x] Test credentials updated in `/app/memory/test_credentials.md` with non-2FA instructor account.
 
+### Backend P1 Fixes (Apr 26, 2026)
+- [x] **Password-reset auto-login JWT now embeds `access_level` claim** (`auth_routes_v2.py` line ~1250). Verified end-to-end: created a real reset token via `security.create_reset_token`, called `/api/auth/reset-password`, decoded returned JWT → `{role:'admin', access_level:'admin'}`. Hit `/api/admin/codes-redemptions/batches` with the reset-flow JWT → 200 (was 403).
+- [x] **`/api/health/version` endpoint live** (server.py near `app.include_router(api_router)`). Captures `git_sha`, `version`, `booted_at`, `now`. Public, no PII. Curl: `curl https://kingdom-soul.com/api/health/version` to instantly verify whether prod is running stale code.
+
 ### Earlier Work
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 
