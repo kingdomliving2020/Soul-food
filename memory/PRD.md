@@ -148,6 +148,17 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] **UI polish — game thumbnails** — Grid Iron Challenge AE/YE and Passport Trek AE/YE thumbnails (`/covers/game-gridiron-{ae,ye}.png`, `/covers/game-passport-{ae,ye}.png`) now render in InstructorToolbox `offlineGameFiles` cards and Game Setup tile cards. Trivia Mix-up & Tricky Testaments retained existing storefront logos.
 - [x] Health Check: 7/7 backend pytest pass (batches w/ imported_by, 4 game files, map image, game assets). Frontend live-verified: 8 toolbox tiles, Answer Keys preview banner + all View/PDF buttons disabled. iteration_30.json clean.
 
+### Codes & Redemptions — Demo + $1 Test Code Types (Apr 26, 2026)
+- [x] Schema extended: `code_type` field on `db.redemption_codes` with values `batch | demo | test`. Legacy CSV-imported codes default to `batch` and are also matched in /batches via $or on missing/null code_type.
+- [x] Demo codes (6): DEMOSOFU79, DEMOSOFU77 → 25 total hours · DEMOSOFU80, DEMOSOFU97, DEMOSOFU60, DEMOSOFU55 → 5 total hours. All share: edition=IE, delivery_type=DEMO, batch_id=DEMO-INTERNAL, series_allowed=[BKFT,HOL], session_cap_minutes=90, max_uses=5, preview_only=true, unlocks=[preview_answer_keys, preview_one_map, preview_offline_cards, presenter_games_enabled].
+- [x] $1 Test codes (2): BETADOLLAR79, BETADOLLAR97 — code_type=test, delivery_type=DOLLAR_TEST, max_uses=0 (unlimited), expires_at=2026-04-29T03:59:00Z (= 11:59 PM ET Apr 28, 2026).
+- [x] Auto-expire-on-read: `_auto_expire_due_codes()` sweeps ACTIVE+past-due codes → EXPIRED at the top of every `/batches` and `/list` endpoint. No cron required (per user choice 3c).
+- [x] New endpoints: POST `/api/admin/codes-redemptions/seed-demo-test` (idempotent — preserves uses_used/status, refreshes rules), GET `/api/admin/codes-redemptions/list?code_type=demo|test`.
+- [x] /batches scoping: now matches only code_type=batch (or missing/null), so demo/test codes never appear in batch aggregation. total_batches stays at 136.
+- [x] Frontend: AdminCodesRedemptions tabs (Batches | Demo | $1 Test) with DemoTable + TestTable subcomponents. Seed/refresh button on demo & test tabs. Override dialog reused for flat lists. Tooltips, "Past due" warning badge on test rows where expires_at < now.
+- [x] Test report iteration_31.json: 9/9 backend pytest pass + full frontend Playwright pass.
+- [ ] Phase 2 (user-facing redemption flow) STILL BLOCKED per user (4a).
+
 ### Earlier Work
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 
