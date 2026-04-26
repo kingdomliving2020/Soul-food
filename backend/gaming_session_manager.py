@@ -58,20 +58,24 @@ GAMING_TIERS = {
         "description": "Monthly subscription with category selection perk"
     },
     "game_pass_90": {
-        "name": "90-Day Game Pass",
-        "daily_limit_minutes": 300,  # 5 hours
+        "name": "3-Hour Game Pass",
+        "daily_limit_minutes": None,        # cumulative model — no daily cap
+        "total_minutes": 180,                # 3 hours total cumulative runtime
+        "expires_days": 90,                  # window in which to spend it
         "idle_timeout_minutes": 30,
         "priority": 3,
         "category_selection": False,
-        "description": "Quarterly pass with 5hr daily limit"
+        "description": "3 hours total cumulative play across both online games per edition; 90-day window"
     },
     "game_pass_30": {
-        "name": "30-Day Game Pass",
-        "daily_limit_minutes": 240,  # 4 hours
+        "name": "1-Hour Game Pass",
+        "daily_limit_minutes": None,        # cumulative model — no daily cap
+        "total_minutes": 60,                 # 1 hour total cumulative runtime
+        "expires_days": 30,                  # window in which to spend it
         "idle_timeout_minutes": 20,
         "priority": 2,
         "category_selection": False,
-        "description": "Monthly pass with 4hr daily limit"
+        "description": "1 hour total cumulative play across both online games per edition; 30-day window"
     },
     "free_beta": {
         "name": "Free/Beta Access",
@@ -179,6 +183,69 @@ async def get_daily_usage(user_id: str) -> int:
     return total_minutes
 
 
+# =============================================================================
+# CUMULATIVE-MINUTE PASS HELPERS (Item 4)
+# =============================================================================
+async def _get_active_cumulative_pass(user_id: str, pass_type: str):
+    """Return the most recent active cumulative-runtime pass record for a user."""
+    return await db.gaming_passes.find_one(
+        {
+            "user_id": user_id,
+            "pass_type": pass_type,
+            "status": "active",
+            "expires_at": {"$gt": datetime.now(timezone.utc)},
+        },
+        {"_id": 0},
+        sort=[("created_at", -1)],
+    )
+
+
+async def get_pass_minutes_remaining(user_id: str, tier: str) -> Optional[int]:
+    """Return remaining cumulative minutes on the user's active pass.
+    None if the tier doesn't use the cumulative model."""
+    config = GAMING_TIERS.get(tier, {})
+    total = config.get("total_minutes")
+    if total is None:
+        return None
+    record = await _get_active_cumulative_pass(user_id, tier)
+    if not record:
+        return None
+    if "minutes_remaining" in record:
+        try:
+            return max(0, int(record.get("minutes_remaining", 0) or 0))
+        except (TypeError, ValueError):
+            return 0
+    used = int(record.get("minutes_used", 0) or 0)
+    return max(0, total - used)
+
+
+async def deduct_pass_minutes(user_id: str, tier: str, minutes: int) -> None:
+    """Decrement minutes_remaining on the active cumulative-runtime pass.
+    Marks the pass as 'exhausted' when it reaches 0."""
+    if minutes <= 0:
+        return
+    config = GAMING_TIERS.get(tier, {})
+    if config.get("total_minutes") is None:
+        return
+    record = await _get_active_cumulative_pass(user_id, tier)
+    if not record:
+        return
+    current_remaining = int(record.get("minutes_remaining", config["total_minutes"]) or 0)
+    new_remaining = max(0, current_remaining - int(minutes))
+    new_used = int(record.get("minutes_used", 0) or 0) + int(minutes)
+    update = {
+        "minutes_remaining": new_remaining,
+        "minutes_used": new_used,
+        "updated_at": datetime.now(timezone.utc),
+    }
+    if new_remaining == 0:
+        update["status"] = "exhausted"
+    where = {"id": record["id"]} if record.get("id") else {
+        "user_id": user_id, "pass_type": tier, "status": "active"
+    }
+    await db.gaming_passes.update_one(where, {"$set": update})
+
+
 async def can_start_session(user_id: str) -> Tuple[bool, str, Dict]:
     """
     Check if user can start a new gaming session.
@@ -197,6 +264,27 @@ async def can_start_session(user_id: str) -> Tuple[bool, str, Dict]:
         return False, "You already have an active gaming session.", {
             "session_id": active_session.get("session_id"),
             "tier": tier
+        }
+    
+    # Cumulative-runtime passes (1-hour, 3-hour) — check minutes_remaining
+    if tier_config.get("total_minutes") is not None:
+        remaining = await get_pass_minutes_remaining(user_id, tier)
+        if remaining is None:
+            remaining = tier_config["total_minutes"]
+        if remaining <= 0:
+            return False, "Your game pass has been fully used. Purchase a new pass to continue.", {
+                "tier": tier,
+                "total_minutes": tier_config["total_minutes"],
+                "remaining": 0,
+                "model": "cumulative",
+            }
+        return True, f"Session allowed. {remaining} minutes remaining on your pass.", {
+            "tier": tier,
+            "total_minutes": tier_config["total_minutes"],
+            "remaining": remaining,
+            "idle_timeout": tier_config.get("idle_timeout_minutes"),
+            "category_selection": tier_config.get("category_selection", False),
+            "model": "cumulative",
         }
     
     # Check daily limit (None = unlimited)
@@ -360,6 +448,7 @@ async def update_session_activity(session_id: str) -> Tuple[bool, str, Optional[
 async def end_gaming_session(session_id: str, reason: str = "user_ended") -> bool:
     """
     End a gaming session and record final duration.
+    For cumulative-runtime passes, deduct the elapsed minutes from the user's pass.
     """
     session = await db.gaming_sessions.find_one({"session_id": session_id}, {"_id": 0})
     
@@ -384,6 +473,15 @@ async def end_gaming_session(session_id: str, reason: str = "user_ended") -> boo
         }
     )
     
+    # Deduct from cumulative-runtime pass if applicable
+    user_id = session.get("user_id")
+    tier = session.get("tier")
+    if user_id and tier and GAMING_TIERS.get(tier, {}).get("total_minutes") is not None:
+        try:
+            await deduct_pass_minutes(user_id, tier, duration_minutes)
+        except Exception as e:
+            print(f"[Gaming] Failed to deduct minutes for {user_id} on {tier}: {e}")
+    
     # Log session end
     print(f"[Gaming] Session {session_id} ended: {reason}, duration: {duration_minutes} min")
     
@@ -402,17 +500,32 @@ async def get_session_status(user_id: str) -> Dict:
         "user_id": user_id,
         "status": "active"
     }, {"_id": 0})
-    
+
     used_today = await get_daily_usage(user_id)
     daily_limit = tier_config.get("daily_limit_minutes")
+    total_minutes = tier_config.get("total_minutes")
+    pass_remaining = None
+    pass_used = None
+    if total_minutes is not None:
+        # Cumulative-runtime model
+        pass_remaining = await get_pass_minutes_remaining(user_id, tier)
+        if pass_remaining is None:
+            pass_remaining = total_minutes
+        pass_used = max(0, total_minutes - pass_remaining)
+
     remaining = None
     if daily_limit:
         remaining = max(0, daily_limit - used_today)
-    
+    elif total_minutes is not None:
+        remaining = pass_remaining
+
     return {
         "tier": tier,
         "tier_name": tier_config.get("name"),
         "daily_limit_minutes": daily_limit,
+        "total_minutes": total_minutes,           # cumulative model: pass budget
+        "pass_minutes_remaining": pass_remaining, # cumulative model: minutes left
+        "pass_minutes_used": pass_used,           # cumulative model: minutes spent
         "used_today_minutes": used_today,
         "remaining_minutes": remaining,
         "idle_timeout_minutes": tier_config.get("idle_timeout_minutes"),

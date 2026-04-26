@@ -119,17 +119,42 @@ def get_order_confirmation_template(
     audio_codes: List[Dict] = None
 ) -> str:
     """Generate order confirmation email HTML"""
-    
-    # Build items list
+
+    # Build items list (with bundle expansion + expected-delivery hints)
+    try:
+        from payment_routes import expand_items_for_receipt
+        expanded = expand_items_for_receipt(items)
+    except Exception:
+        expanded = []
+
     items_html = ""
-    for item in items:
+    for idx, item in enumerate(items):
         price = item.get('price', 0) or item.get('salePrice', 0)
         qty = item.get('quantity', 1)
+        # Sub-deliverables for this row (bundle expansion or single)
+        sub_html = ""
+        row = expanded[idx] if idx < len(expanded) else None
+        if row and (row.get("is_bundle") or len(row.get("deliverables", [])) > 1):
+            sub_html = '<ul style="margin: 8px 0 0 18px; padding: 0; color: #4b5563; font-size: 13px;">'
+            for d in row.get("deliverables", []):
+                pending_tag = (
+                    f' <span style="color:#b45309;font-weight:600;">— Pending ({d.get("expected_by","")})</span>'
+                    if d.get("status") == "pending" else ""
+                )
+                sub_html += f'<li>{d.get("label","")}{pending_tag}</li>'
+            sub_html += '</ul>'
+        elif row and row.get("deliverables") and row["deliverables"][0].get("status") == "pending":
+            d = row["deliverables"][0]
+            sub_html = (
+                f'<div style="margin-top:6px;color:#b45309;font-size:13px;font-weight:600;">'
+                f'Pending — {d.get("expected_by","")}</div>'
+            )
         items_html += f"""
         <tr>
             <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb;">
                 <strong style="color: #1f2937;">{item.get('name', 'Product')}</strong>
                 <div style="color: #6b7280; font-size: 14px;">Qty: {qty}</div>
+                {sub_html}
             </td>
             <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb; text-align: right; color: #1f2937;">
                 ${price * qty:.2f}

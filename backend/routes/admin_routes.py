@@ -1033,11 +1033,20 @@ async def get_order_detail(order_number: str, admin: AdminUser = Depends(get_cur
         {"order_id": order_number}, {"_id": 0}
     ).sort("timestamp", -1).to_list(50)
 
+    # Build expanded deliverables view (handles bundles, gating, expected delivery)
+    src_items = (transaction or {}).get("items", []) or (order or {}).get("items", [])
+    try:
+        from payment_routes import expand_items_for_receipt
+        expanded_items = expand_items_for_receipt(src_items)
+    except Exception:
+        expanded_items = []
+
     return {
         "transaction": transaction,
         "order": order,
         "download_links": download_links,
         "delivery_logs": delivery_logs,
+        "expanded_items": expanded_items,
     }
 
 

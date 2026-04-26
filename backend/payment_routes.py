@@ -11,7 +11,7 @@ from emergentintegrations.payments.stripe.checkout import (
     CheckoutStatusResponse,
     CheckoutSessionRequest
 )
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 load_dotenv()
 
@@ -587,6 +587,106 @@ def is_deliverable(product_id: str) -> tuple:
         return (False, "file_missing_on_disk")
 
     return (True, "ok")
+
+
+# =============================================================================
+# EXPECTED DELIVERY MESSAGING (Item 3)
+# =============================================================================
+# When an item is gated, surface an expected-delivery hint to the customer
+# instead of silent absence. Single global date for now per Q1=a; tighten later.
+EXPECTED_DELIVERY_DEFAULT = "Expected by Mother's Day (May 10, 2026)"
+
+
+def expected_delivery_for(product_id: str) -> str:
+    """Return a human-readable expected-delivery hint for a gated/missing item.
+    Returns "" if the item is fully deliverable today."""
+    ok, _ = is_deliverable(product_id)
+    if ok:
+        return ""
+    return EXPECTED_DELIVERY_DEFAULT
+
+
+# =============================================================================
+# HUMAN-READABLE LABELS FOR RECEIPTS / MY LIBRARY (Item 2)
+# =============================================================================
+PRODUCT_DISPLAY_LABELS = {
+    "holiday_ae": "Holiday 4C's — Adult Edition",
+    "holiday_ye": "Holiday 4C's — Youth Edition",
+    "holiday_ie": "Holiday 4C's — Instructor Edition",
+    "breakfast-snack-month-1-adult-interactive": "Break*fast — Month 1 Snack Pack (Adult Edition)",
+    "breakfast-snack-month-1-youth-interactive": "Break*fast — Month 1 Snack Pack (Youth Edition)",
+    "breakfast-snack-month-2-adult-interactive": "Break*fast — Month 2 Snack Pack (Adult Edition)",
+    "breakfast-snack-month-2-youth-interactive": "Break*fast — Month 2 Snack Pack (Youth Edition)",
+    "breakfast-snack-month-3-adult-interactive": "Break*fast — Month 3 Snack Pack (Adult Edition)",
+    "breakfast-snack-month-3-youth-interactive": "Break*fast — Month 3 Snack Pack (Youth Edition)",
+    "snack_pack_ae_m1": "Break*fast — Month 1 Snack Pack (Adult Edition)",
+    "snack_pack_ye_m1": "Break*fast — Month 1 Snack Pack (Youth Edition)",
+    "snack_pack_ae_m2": "Break*fast — Month 2 Snack Pack (Adult Edition)",
+    "snack_pack_ye_m2": "Break*fast — Month 2 Snack Pack (Youth Edition)",
+    "snack_pack_ae_m3": "Break*fast — Month 3 Snack Pack (Adult Edition)",
+    "snack_pack_ye_m3": "Break*fast — Month 3 Snack Pack (Youth Edition)",
+    "game_pass_30": "Game Pass — 1 Hour (cumulative across games)",
+    "game_pass_90": "Game Pass — 3 Hours (cumulative across games)",
+    "breakfast_ae_digital": "Break*fast (Adult) — Full Workbook",
+    "breakfast_ye_digital": "Break*fast (Youth) — Full Workbook",
+    "breakfast_ie_digital": "Break*fast (Instructor) — Full Workbook",
+}
+
+
+def display_label_for(product_id: str, fallback: str = "") -> str:
+    """Return a human-readable label for a product, falling back to the raw id."""
+    pid = (product_id or "").strip()
+    return PRODUCT_DISPLAY_LABELS.get(pid) or PRODUCT_DISPLAY_LABELS.get(normalize_product_id(pid)) or (fallback or pid)
+
+
+def expand_items_for_receipt(items: list) -> list:
+    """Expand a cart of items into per-deliverable rows for receipts/order detail.
+
+    For each cart item:
+      - If it's a bundle, expand to its sub-items (via BUNDLE_EXPANSIONS).
+      - Each row is annotated with status: "deliverable" or "pending"
+        and (when pending) an expected_by message.
+      - Bundle parent retains its original line for context but exposes its
+        sub-deliverables via the `deliverables` field.
+
+    Returns: list of {item_name, item_total, deliverables: [{label, status, expected_by}]}
+    """
+    rows = []
+    for it in items or []:
+        raw_id = (it.get("product_id") or it.get("id") or it.get("uniqueKey") or "").strip()
+        item_name = it.get("name") or display_label_for(raw_id, raw_id)
+        bundle_key = raw_id.lower()
+        normalized = normalize_product_id(raw_id)
+        if bundle_key not in BUNDLE_EXPANSIONS and normalized.lower() in BUNDLE_EXPANSIONS:
+            bundle_key = normalized.lower()
+
+        deliverables = []
+        if bundle_key in BUNDLE_EXPANSIONS:
+            for sub_id in BUNDLE_EXPANSIONS[bundle_key]:
+                ok, _reason = is_deliverable(sub_id)
+                deliverables.append({
+                    "product_id": sub_id,
+                    "label": display_label_for(sub_id),
+                    "status": "deliverable" if ok else "pending",
+                    "expected_by": "" if ok else EXPECTED_DELIVERY_DEFAULT,
+                })
+        else:
+            ok, _reason = is_deliverable(raw_id) if raw_id else (False, "empty")
+            deliverables.append({
+                "product_id": raw_id or normalized,
+                "label": display_label_for(raw_id, item_name),
+                "status": "deliverable" if ok else "pending",
+                "expected_by": "" if ok else EXPECTED_DELIVERY_DEFAULT,
+            })
+
+        rows.append({
+            "item_name": item_name,
+            "item_total": it.get("total_price") or it.get("salePrice") or it.get("price") or 0,
+            "quantity": it.get("quantity", 1),
+            "is_bundle": bundle_key in BUNDLE_EXPANSIONS,
+            "deliverables": deliverables,
+        })
+    return rows
 
 
 def resolve_item_to_file_entries(item: dict) -> list:
@@ -1960,6 +2060,16 @@ async def get_checkout_status(session_id: str):
             
             # Grant audio access for Holiday/4C series purchases
             await _grant_audio_access_for_items(items, customer_email)
+            # Grant game-pass entitlement (1hr/3hr cumulative) for any game-pass items
+            try:
+                await _grant_game_pass_for_items(
+                    items=items,
+                    user_id=transaction.get("user_id") or "",
+                    customer_email=customer_email,
+                    order_number=order_number,
+                )
+            except Exception as gp_err:
+                print(f"[Status Check] Error granting game pass: {gp_err}")
             
             # Send order confirmation email  
             if customer_email:
@@ -2187,6 +2297,16 @@ async def stripe_webhook(request: Request):
                 
                 # Grant audio access for Holiday/4C series purchases
                 await _grant_audio_access_for_items(items, customer_email)
+                # Grant game-pass entitlement (1hr/3hr cumulative)
+                try:
+                    await _grant_game_pass_for_items(
+                        items=items,
+                        user_id=transaction.get("user_id") or "",
+                        customer_email=customer_email,
+                        order_number=order_number,
+                    )
+                except Exception as gp_err:
+                    print(f"[Webhook] Error granting game pass: {gp_err}")
                 if customer_email:
                     try:
                         from email_service import send_order_confirmation
@@ -2525,6 +2645,7 @@ async def get_order_details(order_id: str):
     return {
         "order_id": order.get("order_id", order_id),
         "items": order.get("items", []),
+        "expanded_items": expand_items_for_receipt(order.get("items", [])),
         "payment_status": order.get("payment_status", "unknown"),
         "order_type": order.get("order_type", "unknown"),
         "coupon_code": order.get("coupon_code"),
@@ -2714,7 +2835,6 @@ async def _grant_audio_access_for_items(items: list, customer_email: str):
     Called by both webhook and status-check fulfillment paths."""
     if not customer_email:
         return
-    
     grant_holiday_audio = False
     specific_lessons = []
     
@@ -2764,6 +2884,95 @@ async def _grant_audio_access_for_items(items: list, customer_email: str):
         upsert=True
     )
     print(f"[Fulfillment] Audio access granted for {customer_email}: holiday/{lessons_to_grant}")
+
+
+# =============================================================================
+# GAME PASS ENTITLEMENT GRANT (Item 4)
+# =============================================================================
+# Maps purchase items to gaming_passes records so the runtime tier resolver
+# (gaming_session_manager.get_user_gaming_tier) finds the correct pass and
+# its cumulative-minute budget.
+
+GAME_PASS_SKU_MAP = {
+    # canonical SKUs
+    "game_pass_30": ("game_pass_30", 60, 30),
+    "game_pass_90": ("game_pass_90", 180, 90),
+    # display-name fallbacks
+    "1-hour game pass": ("game_pass_30", 60, 30),
+    "1 hour game pass": ("game_pass_30", 60, 30),
+    "3-hour game pass": ("game_pass_90", 180, 90),
+    "3 hour game pass": ("game_pass_90", 180, 90),
+}
+
+
+def _detect_game_pass_in_item(item: dict):
+    """Return (pass_type, total_minutes, expires_days) if this item is a game pass, else None."""
+    pid = (item.get("product_id") or item.get("id") or "").lower().strip()
+    if pid in GAME_PASS_SKU_MAP:
+        return GAME_PASS_SKU_MAP[pid]
+    name = (item.get("name") or "").lower().strip()
+    for key, val in GAME_PASS_SKU_MAP.items():
+        if key in name:
+            return val
+    # Heuristic for legacy "30-Day" / "90-Day" naming
+    if "game" in name or "pass" in name:
+        if "90" in name or "3-hour" in name or "3 hour" in name:
+            return ("game_pass_90", 180, 90)
+        if "30" in name or "1-hour" in name or "1 hour" in name:
+            return ("game_pass_30", 60, 30)
+    return None
+
+
+async def _grant_game_pass_for_items(items: list, user_id: str, customer_email: str, order_number: str):
+    """Create a `gaming_passes` record for any game-pass items in the order.
+    Idempotent: if a pass with the same (user_id, order_number, pass_type) exists, no duplicate created.
+    Granted as cumulative-runtime per Item 4 (1hr / 3hr cumulative across both online games)."""
+    import secrets as _secrets
+    if not user_id and not customer_email:
+        return
+    granted = []
+    for item in items or []:
+        detected = _detect_game_pass_in_item(item)
+        if not detected:
+            continue
+        pass_type, total_minutes, expires_days = detected
+
+        # Resolve user_id from email if missing (claim path)
+        owner_id = user_id
+        if not owner_id and customer_email:
+            owner = await db.users.find_one({"email": customer_email.lower().strip()}, {"_id": 0, "id": 1})
+            owner_id = (owner or {}).get("id")
+        if not owner_id:
+            print(f"[GamePass] Skipped grant for order {order_number}: no user_id (guest checkout, will grant on claim)")
+            continue
+
+        # Idempotency: skip if already granted for this order + pass_type
+        existing = await db.gaming_passes.find_one(
+            {"user_id": owner_id, "pass_type": pass_type, "order_number": order_number},
+            {"_id": 0, "id": 1},
+        )
+        if existing:
+            continue
+
+        now = datetime.now(timezone.utc)
+        pass_doc = {
+            "id": _secrets.token_hex(12),
+            "user_id": owner_id,
+            "customer_email": customer_email,
+            "pass_type": pass_type,
+            "minutes_remaining": total_minutes,
+            "minutes_used": 0,
+            "total_minutes": total_minutes,
+            "status": "active",
+            "order_number": order_number,
+            "created_at": now,
+            "expires_at": now + timedelta(days=expires_days),
+            "model": "cumulative",
+        }
+        await db.gaming_passes.insert_one(pass_doc)
+        granted.append(pass_type)
+        print(f"[GamePass] Granted {pass_type} ({total_minutes} min) to user {owner_id} for order {order_number}")
+    return granted
 
 
 # =============================================================================
@@ -2859,6 +3068,16 @@ async def admin_refulfill_order(order_number: str, request: Request):
     
     # Grant audio access
     await _grant_audio_access_for_items(items, customer_email)
+    # Grant game-pass entitlement (1hr/3hr cumulative)
+    try:
+        await _grant_game_pass_for_items(
+            items=items,
+            user_id=(txn or {}).get("user_id") or "",
+            customer_email=customer_email,
+            order_number=order_number,
+        )
+    except Exception as gp_err:
+        print(f"[Refulfill] Error granting game pass: {gp_err}")
     
     return {
         "order_number": order_number,

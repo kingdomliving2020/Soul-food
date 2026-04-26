@@ -1146,8 +1146,8 @@ const SoulFoodLanding = () => {
                         <Check className="w-3.5 h-3.5 text-purple-700" />
                       </div>
                       <div>
-                        <p className="font-semibold text-slate-800 text-sm">Break*fast Series — Full Digital Workbook</p>
-                        <p className="text-xs text-slate-500">Morning-themed devotionals — Prayer, Through & Worship modules</p>
+                        <p className="font-semibold text-slate-800 text-sm">Break*fast Series — Month 1 Snack Pack (SP1)</p>
+                        <p className="text-xs text-slate-500">Prayer Is the First Resort — 4-week SP1 module</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">

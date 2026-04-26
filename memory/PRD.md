@@ -117,6 +117,14 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Regression test `tests/test_bundle_rules.py`: 31/31 pass, including all bundle expansions, single-item paths, and gating cases
 - [x] Lint clean, backend healthy, no behavioral changes to the 5 fulfillment call sites
 
+### Follow-Up Items 1-4 Aligned (Apr 25, 2026)
+- [x] **Item 1 — Bundle labeling**: SoulFoodApp.js storefront copy now reads "Break*fast Series — Month 1 Snack Pack (SP1)" (was "Full Digital Workbook"). Reflects actual delivery.
+- [x] **Item 2 — Receipt itemization**: New `expand_items_for_receipt()` helper plus `PRODUCT_DISPLAY_LABELS` map. Surfaced via `/api/payments/order/{id}` (added `expanded_items`) and `/api/admin/orders/{order_number}/detail`. Email confirmation template now lists per-bundle sub-deliverables with friendly labels.
+- [x] **Item 3 — Expected delivery**: New `EXPECTED_DELIVERY_DEFAULT` ("Expected by Mother's Day (May 10, 2026)") and `expected_delivery_for(product_id)` helper. Receipt rows for gated items now show "Pending — Expected by …" instead of silent absence.
+- [x] **Item 4 — Game Pass cumulative runtime**: GAMING_TIERS re-scoped: `game_pass_30` → "1-Hour Game Pass" (60 min total cumulative, 30-day window); `game_pass_90` → "3-Hour Game Pass" (180 min total cumulative, 90-day window). Daily-limit removed for these tiers. New helpers `get_pass_minutes_remaining`, `deduct_pass_minutes`. `can_start_session`, `end_gaming_session`, `get_session_status` all honor cumulative model. Webhook now creates `gaming_passes` record at purchase time (was missing — root cause of "30 min regardless of SKU"). Idempotent grant on (user_id, order_number, pass_type).
+- [x] Regression tests `tests/test_followup_items.py`: **38/38 PASS**, plus original `tests/test_bundle_rules.py` still **38/38 PASS** (no regressions to existing fulfillment).
+- [x] Lint clean (Python ruff + JS eslint), backend healthy, frontend healthy.
+
 ### Earlier Work
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 
