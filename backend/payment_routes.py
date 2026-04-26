@@ -513,69 +513,134 @@ def normalize_product_id(product_id: str) -> str:
 
 # --- Bundle definitions: bundle ID -> list of individual product IDs ---
 BUNDLE_EXPANSIONS = {
-    'starter-bundle-4cs-bkft-ae': ['holiday_ae', 'breakfast_ae_digital'],
-    'starter-bundle-4cs-bkft-ye': ['holiday_ye', 'breakfast_ye_digital'],
-    'starter-bundle-4cs-bkft-ae-ie': ['holiday_ae', 'breakfast_ae_digital', 'holiday_ie', 'breakfast_ie_digital'],
-    'starter-bundle-4cs-bkft-ye-ie': ['holiday_ye', 'breakfast_ye_digital', 'holiday_ie', 'breakfast_ie_digital'],
-    'holiday-table-bundle': ['holiday_ae'],
-    'holiday-table-bundle-ae': ['holiday_ae', 'breakfast-snack-month-1-adult-interactive'],
-    'holiday-table-bundle-ye': ['holiday_ye', 'breakfast-snack-month-1-youth-interactive'],
-    'full-table-experience': ['holiday_ae'],
-    'full-table-experience-ae': ['holiday_ae', 'breakfast-snack-month-1-adult-interactive'],
-    'full-table-experience-ye': ['holiday_ye', 'breakfast-snack-month-1-youth-interactive'],
+    # Bundles never merge across editions. Each sub-id resolves to its own file.
+    # Full Breakfast workbooks (breakfast_*_digital) are personal-study and gated —
+    # bundles deliver Breakfast SP1 instead. Holiday AE/YE/IE all have files and
+    # deliver as separate downloads. Breakfast IE SP1 files do not yet exist; they
+    # will be skipped at fulfillment until uploaded.
+    'starter-bundle-4cs-bkft-ae':    ['holiday_ae', 'breakfast-snack-month-1-adult-interactive'],
+    'starter-bundle-4cs-bkft-ye':    ['holiday_ye', 'breakfast-snack-month-1-youth-interactive'],
+    'starter-bundle-4cs-bkft-ae-ie': ['holiday_ae', 'breakfast-snack-month-1-adult-interactive', 'holiday_ie'],
+    'starter-bundle-4cs-bkft-ye-ie': ['holiday_ye', 'breakfast-snack-month-1-youth-interactive', 'holiday_ie'],
+    'holiday-table-bundle':           ['holiday_ae'],
+    'holiday-table-bundle-ae':        ['holiday_ae', 'breakfast-snack-month-1-adult-interactive'],
+    'holiday-table-bundle-ye':        ['holiday_ye', 'breakfast-snack-month-1-youth-interactive'],
+    'full-table-experience':          ['holiday_ae'],
+    'full-table-experience-ae':       ['holiday_ae', 'breakfast-snack-month-1-adult-interactive'],
+    'full-table-experience-ye':       ['holiday_ye', 'breakfast-snack-month-1-youth-interactive'],
 }
+
+
+# =============================================================================
+# DELIVERABILITY GATE
+# =============================================================================
+# Per fulfillment policy:
+#   - Holiday: AE/YE/IE deliver as separate files; never merged across editions.
+#   - Breakfast SP1/2/3 (snack packs): deliver per edition; one file per (edition, month).
+#   - Full Breakfast (breakfast_*_digital, breakfast-full-*): personal-study,
+#     GATED regardless of whether the PDF exists on disk.
+#   - Holiday per-chapter nibbles (holiday-nibble-*): GATED — those mappings
+#     historically substituted the full book PDF, which violates the no-merge rule.
+#   - Files must physically exist on disk; missing files gate (no substitution).
+import re as _re_deliv
+
+_GATED_FULL_BREAKFAST_IDS = {
+    "breakfast_ae_digital", "breakfast_ye_digital", "breakfast_ie_digital",
+}
+_GATED_FULL_BREAKFAST_PATTERN = _re_deliv.compile(
+    r"^breakfast-full-(adult|youth|instructor|ae|ye|ie)-(digital|print|epub|interactive)$"
+)
+
+
+def is_deliverable(product_id: str) -> tuple:
+    """Return (deliverable: bool, reason: str).
+
+    A product is deliverable only if:
+      1. It is not on the explicit gate list (full Breakfast / holiday nibble),
+      2. It maps to a known file in PRODUCT_FILES, and
+      3. The mapped file physically exists on disk.
+    Substitution across editions is never allowed.
+    """
+    if not product_id:
+        return (False, "empty_product_id")
+
+    normalized = normalize_product_id(product_id)
+
+    # Rule 1: Full Breakfast workbooks are personal-study, always gated.
+    if normalized in _GATED_FULL_BREAKFAST_IDS:
+        return (False, "gated_full_breakfast_personal_study")
+    if _GATED_FULL_BREAKFAST_PATTERN.match(normalized):
+        return (False, "gated_full_breakfast_personal_study")
+
+    # Rule 2: Holiday per-chapter nibbles historically substituted the full
+    # workbook. Substitution across editions/scopes is not allowed.
+    if normalized.startswith("holiday-nibble-"):
+        return (False, "gated_no_substitution_holiday_nibble")
+
+    # Rule 3: Must have a file mapping.
+    filename = PRODUCT_FILES.get(normalized)
+    if not filename:
+        return (False, "no_file_mapping")
+
+    # Rule 4: File must physically exist.
+    if not os.path.exists(os.path.join(PDF_DIR, filename)):
+        return (False, "file_missing_on_disk")
+
+    return (True, "ok")
 
 
 def resolve_item_to_file_entries(item: dict) -> list:
     """Given a cart/transaction item, return a list of (product_id, file_key) tuples
     that should get download links. Handles bundles, display names, and internal IDs.
-    
+
+    Applies the deliverability gate (is_deliverable) so that:
+      - Full Breakfast workbooks are never auto-delivered (personal-study).
+      - Holiday per-chapter nibbles never substitute the full workbook PDF.
+      - Missing files (e.g., Breakfast IE SP1) are skipped, not substituted.
+    Skipped items are logged with a clear reason for admin visibility.
+
     Returns: list of dicts with {product_id, name, file_key}
     """
-    raw_id = (item.get("normalized_product_id") or item.get("product_id") 
+    raw_id = (item.get("normalized_product_id") or item.get("product_id")
               or item.get("id") or item.get("uniqueKey", ""))
     item_name = item.get("name", raw_id)
-    
+
     # 1. Try direct normalize (handles internal IDs and cart-generated IDs)
     resolved = normalize_product_id(raw_id)
-    
-    # 2. If raw_id didn't resolve, try the display name  
+
+    # 2. If raw_id didn't resolve, try the display name
     if resolved not in PRODUCT_FILES and resolved == raw_id:
         name_resolved = resolve_display_name_to_product_id(item_name)
         if name_resolved and name_resolved in PRODUCT_FILES:
             resolved = name_resolved
-    
-    # 3. Check if it's a bundle — expand to individual items
+
+    # 3. Bundle expansion (raw_id or resolved id)
     bundle_key = raw_id.lower().strip()
+    if bundle_key not in BUNDLE_EXPANSIONS and resolved.lower() in BUNDLE_EXPANSIONS:
+        bundle_key = resolved.lower()
+
     if bundle_key in BUNDLE_EXPANSIONS:
         entries = []
         for sub_id in BUNDLE_EXPANSIONS[bundle_key]:
-            if sub_id in PRODUCT_FILES:
+            ok, reason = is_deliverable(sub_id)
+            if ok:
                 entries.append({
                     "product_id": sub_id,
                     "name": f"{item_name} ({sub_id})",
-                    "file_key": sub_id
+                    "file_key": sub_id,
                 })
-        if entries:
-            return entries
-    
-    # Also check if the resolved ID is a bundle
-    if resolved.lower() in BUNDLE_EXPANSIONS:
-        entries = []
-        for sub_id in BUNDLE_EXPANSIONS[resolved.lower()]:
-            if sub_id in PRODUCT_FILES:
-                entries.append({
-                    "product_id": sub_id,
-                    "name": f"{item_name} ({sub_id})",
-                    "file_key": sub_id
-                })
-        if entries:
-            return entries
-    
-    # 4. Single product
+            else:
+                print(f"[Fulfillment] Bundle '{bundle_key}': skipping sub-item '{sub_id}' (gated: {reason})")
+        return entries
+
+    # 4. Single product — apply deliverability gate
     if resolved in PRODUCT_FILES:
-        return [{"product_id": resolved, "name": item_name, "file_key": resolved}]
-    
+        ok, reason = is_deliverable(resolved)
+        if ok:
+            return [{"product_id": resolved, "name": item_name, "file_key": resolved}]
+        print(f"[Fulfillment] Item '{raw_id}' (resolved={resolved}) gated: {reason}")
+        return []
+
     # 5. No resolution — log and return empty (game passes, subscriptions, etc.)
     print(f"[Fulfillment] Could not resolve to file: raw_id={raw_id}, name={item_name}, resolved={resolved}")
     return []

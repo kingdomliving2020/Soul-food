@@ -105,6 +105,18 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Verified in preview via Playwright eval: `fetch('/api/api/payments/catalog')` → finalUrl is `/api/payments/catalog`, status 200, real catalog returned.
 - [x] Once production is redeployed with this code, all 31 files that read `REACT_APP_BACKEND_URL` are protected — even if env var is left misconfigured. Recommended: also fix the env var to `https://kingdom-soul.com` (no trailing /api).
 
+### Bundle + File Delivery Policy Aligned (Apr 25, 2026)
+- [x] Holiday: AE/YE/IE deliver as separate files; never merged across editions (all 3 PDFs verified on disk)
+- [x] Breakfast SP1/SP2/SP3: deliver per edition; AE+YE files exist, IE gated until uploaded
+- [x] Full Breakfast (`breakfast_*_digital`, `breakfast-full-*`): GATED as personal-study, never auto-fulfilled
+- [x] Holiday per-chapter nibbles (`holiday-nibble-*`): GATED — no substitution to full workbook PDF allowed
+- [x] All deliverable items must physically exist on disk; missing files gate (no substitution)
+- [x] New `is_deliverable(product_id)` gate function in `payment_routes.py` enforces all rules at the resolution boundary
+- [x] `BUNDLE_EXPANSIONS` updated: starter bundles now deliver Holiday + SP1 (was Holiday + Full Breakfast)
+- [x] `resolve_item_to_file_entries` filters via the gate; gated/missing items log clear reasons for admin
+- [x] Regression test `tests/test_bundle_rules.py`: 31/31 pass, including all bundle expansions, single-item paths, and gating cases
+- [x] Lint clean, backend healthy, no behavioral changes to the 5 fulfillment call sites
+
 ### Earlier Work
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 
