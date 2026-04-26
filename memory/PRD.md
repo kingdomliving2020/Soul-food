@@ -125,6 +125,21 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Regression tests `tests/test_followup_items.py`: **38/38 PASS**, plus original `tests/test_bundle_rules.py` still **38/38 PASS** (no regressions to existing fulfillment).
 - [x] Lint clean (Python ruff + JS eslint), backend healthy, frontend healthy.
 
+### Phase 1 — Codes & Redemptions Admin (Apr 26, 2026)
+- [x] System of record established: new `db.redemption_codes` collection with full schema (code, series, edition, delivery_type, batch_id, batch_size, sequence, total_hours, pacing, duration_days, max_uses, uses_used, status, expires_at, notes, redemption + override audit fields)
+- [x] CSV importer with auto-detection of 4 schemas: `student_batch`, `game_only`, `hour_seasonal`, `subscription`
+- [x] `POST /api/admin/codes-redemptions/import-csv` — multipart upload, idempotent (dedupe by `code`)
+- [x] `GET /api/admin/codes-redemptions/batches` — aggregated batches with total/redeemed/remaining/active/revoked counts
+- [x] `GET /api/admin/codes-redemptions/batches/{batch_id}/codes?series&edition&delivery_type` — drill-down with proper scoping (fixed bug where unscoped query returned codes from sibling batches sharing batch_id)
+- [x] `PATCH /api/admin/codes-redemptions/codes/{code}/override` — admin override with status (REVOKED/EXPIRED/RESTORED/ACTIVE) + required reason; full audit trail (override_by_admin, override_at, override_reason)
+- [x] `GET /api/admin/codes-redemptions/codes/{code}` — single-code detail
+- [x] All admin actions logged via existing `log_admin_action` to `admin_audit_logs`
+- [x] Frontend: new `AdminCodesRedemptions.js` component wired into AdminConsole sidebar as "Codes & Redemptions" (Tag icon)
+- [x] "Submitted Codes" sidebar item kept as read-only history per directive
+- [x] E2E verified on preview: imported 2,170 codes across all 4 CSV schemas; 136 batches aggregated; drill-down + override + restore + idempotent re-import all pass
+- [x] Lint clean (Python ruff + JS ESLint)
+- [ ] **Phase 2 deferred** (per user): user redemption surface in My Library + entitlement-grant logic per delivery_type. Demo-coupon mechanics (preview-only IE, 5h/25h presenter caps, 90-min session cap) noted for alignment.
+
 ### Earlier Work
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 

@@ -5,12 +5,13 @@ import {
   Image, BookOpen, Shield, Settings, LogOut, Menu, X,
   ChevronRight, Plus, Edit, Trash2, Eye, Clock, Archive,
   Download, Upload, RefreshCw, Search, Filter, AlertTriangle,
-  Video, History, Lock, Unlock, Mail, TicketCheck
+  Video, History, Lock, Unlock, Mail, TicketCheck, Tag
 } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
 import { Toaster, toast } from 'sonner';
 import { safeJson } from './lib/safeFetch';
+import AdminCodesRedemptions from './AdminCodesRedemptions';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -42,6 +43,7 @@ const navItems = [
   { path: '/admin/users', icon: Users, label: 'Users & Roles' },
   { path: '/admin/logs', icon: Shield, label: 'Audit Logs' },
   { path: '/admin/codes', icon: TicketCheck, label: 'Submitted Codes' },
+  { path: '/admin/codes-redemptions', icon: Tag, label: 'Codes & Redemptions' },
 ];
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -1773,6 +1775,7 @@ const AdminConsole = () => {
                 <Route path="users/*" element={<UsersManager />} />
                 <Route path="logs/*" element={<AuditLogs />} />
                 <Route path="codes/*" element={<SubmittedCodes />} />
+                <Route path="codes-redemptions/*" element={<AdminCodesRedemptions />} />
               </Routes>
             </main>
           </div>

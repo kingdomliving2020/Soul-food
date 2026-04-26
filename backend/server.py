@@ -79,6 +79,14 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load admin routes: {e}")
 
+# Import codes & redemptions admin routes (system of record for batch CSV codes)
+try:
+    from routes.code_admin_routes import router as code_admin_router
+    app.include_router(code_admin_router)
+    print("✅ Codes & Redemptions admin routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load codes-redemptions routes: {e}")
+
 # Import download protection routes
 try:
     from routes.download_routes import router as download_router
