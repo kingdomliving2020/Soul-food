@@ -1768,7 +1768,7 @@ async def seed_product_file_mappings(admin: AdminUser = Depends(get_current_admi
             await db.product_file_mappings.insert_one({
                 "product_id": product_id,
                 "filename": filename,
-                "file_path": f"/app/content/downloads/{filename}",
+                "file_path": f"/app/backend/content/downloads/{filename}",
                 "active": True,
                 "created_at": datetime.now(timezone.utc),
                 "updated_at": datetime.now(timezone.utc)
@@ -1817,10 +1817,10 @@ async def add_product_file_mapping(
         raise HTTPException(status_code=400, detail="product_id and filename are required")
     
     # Verify file exists
-    file_path = f"/app/content/downloads/{filename}"
+    file_path = f"/app/backend/content/downloads/{filename}"
     if not os.path.exists(file_path):
         # List available files for convenience
-        available = [f for f in os.listdir("/app/content/downloads") if f.endswith('.pdf')]
+        available = [f for f in os.listdir("/app/backend/content/downloads") if f.endswith('.pdf')]
         raise HTTPException(status_code=400, detail=f"File not found: {filename}. Available: {available[:20]}")
     
     existing = await db.product_file_mappings.find_one({"product_id": product_id})
@@ -1860,7 +1860,10 @@ async def delete_product_file_mapping(
 @router.get("/fulfillment/files")
 async def list_available_files(admin: AdminUser = Depends(get_current_admin)):
     """List all PDF/content files available in the downloads directory"""
-    download_dir = "/app/content/downloads"
+    download_dir = "/app/backend/content/downloads"
+    if not os.path.isdir(download_dir):
+        # legacy fallback
+        download_dir = "/app/content/downloads"
     files = []
     for root, dirs, filenames in os.walk(download_dir):
         for f in sorted(filenames):
@@ -2070,9 +2073,9 @@ async def retry_order_fulfillment(
 async def check_content_health():
     """Check if content/download files exist on this server (no auth required for diagnostics)"""
     content_dirs = {
-        "/app/content/downloads": [],
-        "/app/content/bonus": [],
-        "/app/content/holiday": [],
+        "/app/backend/content/downloads": [],
+        "/app/backend/content/bonus": [],
+        "/app/backend/content/holiday": [],
         "/app/backend/lesson_pdfs": [],
     }
     
@@ -2094,20 +2097,30 @@ async def check_content_health():
         else:
             results[directory] = {"exists": False, "pdf_count": 0, "files": []}
     
-    # Check download_links with broken file paths
+    # Check download_links with broken file paths.
+    # A link counts as "broken" only if NEITHER the literal stored path NOR the
+    # resolver fallback locates the file. If the resolver finds it (e.g. legacy
+    # /app/content/* path now lives at /app/backend/content/*), the link is healthy
+    # at runtime and we don't surface it.
     broken_links = []
-    async for link in db.download_links.find({"revoked": False}, {"_id": 0, "file_path": 1, "order_id": 1, "product_name": 1}).limit(100):
+    legacy_resolved = 0
+    async for link in db.download_links.find({"revoked": False}, {"_id": 0, "file_path": 1, "order_id": 1, "product_name": 1}).limit(500):
         fp = link.get("file_path", "")
-        if fp and not os.path.exists(fp):
-            # Try resolve
-            from routes.download_routes import resolve_file_path
-            resolved = resolve_file_path(fp)
-            broken_links.append({
-                "order_id": link.get("order_id"),
-                "product_name": link.get("product_name"),
-                "stored_path": fp,
-                "resolved": resolved or "NOT FOUND"
-            })
+        if not fp:
+            continue
+        if os.path.exists(fp):
+            continue
+        from routes.download_routes import resolve_file_path
+        resolved = resolve_file_path(fp)
+        if resolved and os.path.exists(resolved):
+            legacy_resolved += 1
+            continue
+        broken_links.append({
+            "order_id": link.get("order_id"),
+            "product_name": link.get("product_name"),
+            "stored_path": fp,
+            "resolved": resolved or "NOT FOUND"
+        })
     
     return {
         "server_time": datetime.now(timezone.utc).isoformat(),
@@ -2115,5 +2128,6 @@ async def check_content_health():
         "total_size_mb": round(total_size / (1024 * 1024), 1),
         "directories": results,
         "broken_download_links": broken_links[:20],
-        "broken_link_count": len(broken_links)
+        "broken_link_count": len(broken_links),
+        "legacy_paths_auto_resolved": legacy_resolved,
     }

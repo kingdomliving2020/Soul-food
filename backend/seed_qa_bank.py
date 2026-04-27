@@ -852,7 +852,7 @@ def seed_passion_week_image():
         "asset_type": "passion_week_map",
         "name": "The Passion Week in Jerusalem",
         "description": "Map showing the movements of Jesus during Passion Week, including Sunday through Friday locations",
-        "file_path": "/app/content/images/passion-week-jesus.png",
+        "file_path": "/app/backend/content/images/passion-week-jesus.png",
         "source_url": "https://customer-assets.emergentagent.com/job_64d80310-cc07-4e65-acc3-6144c54ee276/artifacts/ts6ftdbn_Passion%20Week%20-%20Jesus.png",
         "seeded_at": datetime.now(timezone.utc)
     })

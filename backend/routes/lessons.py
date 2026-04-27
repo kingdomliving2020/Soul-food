@@ -1873,8 +1873,10 @@ async def download_nibble_pdf(nibble_id: str):
     
     # Check multiple possible locations for uploaded PDFs
     possible_paths = [
-        f"/app/content/downloads/{nibble_id}.pdf",
+        f"/app/backend/content/downloads/{nibble_id}.pdf",
         f"/app/backend/lesson_pdfs/{nibble_id}.pdf",
+        f"/app/backend/content/{nibble_id}.pdf",
+        f"/app/content/downloads/{nibble_id}.pdf",
         f"/app/content/{nibble_id}.pdf"
     ]
     
@@ -2070,8 +2072,10 @@ async def download_in_his_image(edition: str):
     
     # Check multiple possible locations
     possible_paths = [
-        f"/app/content/downloads/{filename}",
+        f"/app/backend/content/downloads/{filename}",
         f"/app/backend/lesson_pdfs/{filename}",
+        f"/app/backend/content/{filename}",
+        f"/app/content/downloads/{filename}",
         f"/app/content/{filename}"
     ]
     

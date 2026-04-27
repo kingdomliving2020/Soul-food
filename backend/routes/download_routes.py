@@ -23,11 +23,16 @@ from download_protection import (
 router = APIRouter(prefix="/api/downloads", tags=["downloads"])
 
 # Known content directories to search for PDF files
+# Primary: /app/backend/content/* (ships with backend deploy bundle).
+# Legacy: /app/content/* kept for any DB rows whose file_path was stored before the move.
 CONTENT_DIRS = [
+    "/app/backend/content/downloads",
+    "/app/backend/content/bonus",
+    "/app/backend/content/holiday",
+    "/app/backend/lesson_pdfs",
     "/app/content/downloads",
     "/app/content/bonus",
     "/app/content/holiday",
-    "/app/backend/lesson_pdfs",
 ]
 
 

@@ -23,7 +23,7 @@ client = AsyncIOMotorClient(MONGO_URL)
 db = client[os.environ.get('DB_NAME', 'soul_food_db')]
 
 # PDF files directory
-PDF_DIR = "/app/content/downloads"
+PDF_DIR = "/app/backend/content/downloads"
 
 # Product ID to PDF file mapping
 PRODUCT_FILES = {
