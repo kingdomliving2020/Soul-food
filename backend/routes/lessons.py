@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.responses import StreamingResponse
 from typing import List, Optional
 from datetime import datetime
@@ -1796,6 +1796,126 @@ async def get_nibble(nibble_id: str):
         if nibble["id"] == nibble_id:
             return {"nibble": nibble}
     raise HTTPException(status_code=404, detail="Nibble not found")
+
+
+# ---------------------------------------------------------------------------
+# Entitlement check — INLINE viewer access (bypasses fulfillment / download_link
+# logic entirely per soft-launch policy: if a user has an active entitlement —
+# either the lesson is free OR they have a paid order whose items expand to a
+# product covering this nibble — they may render the iPDF in the browser viewer.
+# ---------------------------------------------------------------------------
+def _grants_for_nibble(nibble_id: str) -> set:
+    """Set of product_ids whose ownership grants viewer access to this nibble."""
+    parts = nibble_id.split("-") if nibble_id else []
+    grants: set = set()
+    if len(parts) < 3:
+        return grants
+    series = parts[0]
+    edition_code = parts[1]
+    edition_word = {"ae": "adult", "ye": "youth", "ie": "instructor"}.get(edition_code, "adult")
+    # 1. Direct interactive nibble product
+    grants.add(f"{series}-nibble-{nibble_id}-{edition_word}-interactive")
+    # 2. Any-nibble pass for this edition
+    grants.add(f"{series}-nibble-{edition_word}-interactive")
+    # 3. Full series interactive
+    grants.add(f"{series}-full-{edition_word}-interactive")
+    grants.add(f"{series}-full-{edition_code}-interactive")
+    # 4. Series digital / print
+    grants.add(f"{series}_{edition_code}")
+    grants.add(f"{series}_{edition_code}_digital")
+    grants.add(f"{series}_{edition_code}_print")
+    # 5. Breakfast snack packs cover their lessons (broad pass — narrows below if needed)
+    if series == "breakfast":
+        for m in (1, 2, 3):
+            grants.add(f"breakfast-snack-month-{m}-{edition_word}-interactive")
+            grants.add(f"breakfast-snack-month-{m}-{edition_word}-digital")
+    return grants
+
+
+def _expand_purchased_product_ids(items: list) -> set:
+    """Given the items array on a paid order, return the full set of effective
+    product_ids the buyer owns — including bundle expansions."""
+    try:
+        from payment_routes import BUNDLE_EXPANSIONS
+    except Exception:
+        BUNDLE_EXPANSIONS = {}
+    owned: set = set()
+    for it in items or []:
+        pid = it.get("product_id") or it.get("id") or it.get("uniqueKey")
+        if not pid:
+            continue
+        owned.add(pid)
+        # Expand if bundle
+        if pid in BUNDLE_EXPANSIONS:
+            for sub in BUNDLE_EXPANSIONS[pid]:
+                owned.add(sub)
+    return owned
+
+
+@router.get("/entitlement/{nibble_id}")
+async def check_nibble_entitlement(nibble_id: str, request: Request):
+    """Return {has_access, reason} for the current user against a given nibble.
+    Free nibbles always return has_access=true. For paid nibbles, scans the
+    user's paid orders (payment_transactions) and matches against bundle-aware
+    grant set. Auth optional — unauthenticated requests get has_access=false
+    unless the nibble is free."""
+    # Locate the nibble first to read its is_free flag
+    nibble = next((n for n in ALL_NIBBLES if n["id"] == nibble_id), None)
+    if not nibble:
+        raise HTTPException(status_code=404, detail="Nibble not found")
+
+    if nibble.get("is_free") is True:
+        return {"has_access": True, "reason": "free", "nibble_id": nibble_id}
+
+    # Auth optional — peek at the bearer token if present.
+    user_id, user_email = None, None
+    auth_header = request.headers.get("Authorization") or ""
+    if auth_header.startswith("Bearer "):
+        token = auth_header.split(" ", 1)[1]
+        try:
+            from jose import jwt
+            secret = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
+            payload = jwt.decode(token, secret, algorithms=["HS256"])
+            user_id = payload.get("sub")
+            user_email = payload.get("email")
+        except Exception:
+            pass  # fall through to anon
+
+    if not user_id and not user_email:
+        return {"has_access": False, "reason": "not_authenticated", "nibble_id": nibble_id}
+
+    # Resolve email if missing
+    if user_id and not user_email:
+        from server import db
+        u = await db.users.find_one({"id": user_id}, {"_id": 0, "email": 1})
+        if u:
+            user_email = u.get("email")
+
+    # Scan paid transactions for this user
+    from server import db
+    or_clauses = []
+    if user_id:
+        or_clauses.append({"user_id": user_id})
+    if user_email:
+        or_clauses.append({"customer_email": user_email})
+    query = {"payment_status": "paid", "$or": or_clauses} if or_clauses else None
+    if not query:
+        return {"has_access": False, "reason": "not_authenticated", "nibble_id": nibble_id}
+
+    grants = _grants_for_nibble(nibble_id)
+    cursor = db.payment_transactions.find(query, {"_id": 0, "items": 1, "order_number": 1, "session_id": 1})
+    async for txn in cursor:
+        owned = _expand_purchased_product_ids(txn.get("items"))
+        if owned & grants:
+            return {
+                "has_access": True,
+                "reason": "purchased",
+                "nibble_id": nibble_id,
+                "order_number": txn.get("order_number") or txn.get("session_id"),
+            }
+
+    return {"has_access": False, "reason": "no_matching_purchase", "nibble_id": nibble_id}
+
 
 @router.post("/progress/save")
 async def save_progress(data: dict):

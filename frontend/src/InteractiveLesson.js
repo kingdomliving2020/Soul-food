@@ -86,6 +86,7 @@ const InteractiveLesson = () => {
 
   useEffect(() => {
     fetchNibble();
+    fetchEntitlement();
   }, [nibbleId]);
 
   const fetchNibble = async () => {
@@ -103,6 +104,24 @@ const InteractiveLesson = () => {
       toast.error('Failed to load lesson');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchEntitlement = async () => {
+    // Check if the current user has an active entitlement for this nibble.
+    // INLINE viewer access — bypasses fulfillment / download_link logic entirely.
+    try {
+      const token = localStorage.getItem('soul_food_token');
+      const headers = token ? { Authorization: `Bearer ${token}` } : {};
+      const res = await fetch(`${API}/interactive-lessons/entitlement/${nibbleId}`, { headers });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data?.has_access) {
+        setHasPurchased(true);
+      }
+    } catch (e) {
+      // Silent fail — gate falls back to the existing isFreelesson() check
+      console.error('entitlement check failed', e);
     }
   };
 
