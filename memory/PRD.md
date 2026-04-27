@@ -169,6 +169,25 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] **Password-reset auto-login JWT now embeds `access_level` claim** (`auth_routes_v2.py` line ~1250). Verified end-to-end: created a real reset token via `security.create_reset_token`, called `/api/auth/reset-password`, decoded returned JWT → `{role:'admin', access_level:'admin'}`. Hit `/api/admin/codes-redemptions/batches` with the reset-flow JWT → 200 (was 403).
 - [x] **`/api/health/version` endpoint live** (server.py near `app.include_router(api_router)`). Captures `git_sha`, `version`, `booted_at`, `now`. Public, no PII. Curl: `curl https://kingdom-soul.com/api/health/version` to instantly verify whether prod is running stale code.
 
+### Post-Deploy Triage — Code Bugs Fixed (Apr 27, 2026)
+- [x] **DEMOSOFU* + BETADOLLAR* now wired into checkout coupon validation** (`/app/backend/coupon_routes.py`).
+  - `validate_coupon` falls through to `db.redemption_codes` after a `db.coupons` miss via new `_validate_redemption_code_as_coupon` helper.
+  - DEMOSOFU codes: 100% off, valid only when ALL cart product_ids start with `holiday`/`breakfast`/`hol`/`bkft`. Honors max_uses (5) and status. Non-BKFT/HOL items return friendly rejection.
+  - BETADOLLAR codes: `override_total = $1`. Auto-rejects if past expires_at (Apr 28 2026 11:59 PM ET).
+  - `/api/coupons/use/{code}` now also increments `redemption_codes.uses_used` as a fallback when no `db.coupons` match.
+- [x] **Admin Orders intermittent zero rows fixed** (`/app/backend/routes/admin_routes.py` + `/app/frontend/src/AdminOrders.js`).
+  - Removed duplicate `@router.get('/orders')` and `/orders/{order_number}/send-email` routes at line 2060+ (response shape `{orders}`) which had been shadowing the canonical line-952 endpoint (response shape `{items}`).
+  - Rewrote `AdminOrders.js fetchOrders/fetchRefundRequests` to use `fetch()` with Bearer auth and correctly destructure `{ ok, data }` from `safeJson` (previously was raw XHR with no auth and reading `data.orders`).
+  - Verified: /admin/orders now renders all 77 preview orders.
+- [x] **Tricky Testaments wrong-answer score deduction restored** (`/app/frontend/src/TrickyTestamentGame.js`).
+  - 'Missed it!' button (~line 755) now deducts `selectedQuestion.points` for regular wrong answers in addition to the existing `wager` deduction for Daily Double. Label updated to `Missed it -<points>`.
+
+### Production-Only Issues — Awaiting Deploy Bundle Fix (NOT CODE)
+- [ ] **`/app/content/` directory missing from production deploy bundle** (~/api/admin/content-health on prod shows 41 broken `download_links` and `/app/content/downloads`, `/app/content/bonus`, `/app/content/holiday` all `exists=False`). Preview has the full 298 MB tree of 129 git-tracked files; production only has `/app/backend/lesson_pdfs/` (26 PDFs, 70 MB). User must redeploy with the full content tree, OR contact Emergent Support to confirm what's in the deploy bundle. This is the root cause of: orders staying in "Processing", download links 404'ing, IE Toolbox assets failing to open, My Library downloads failing, Resend links not delivering files. No amount of code changes can fix this from the preview pod — the missing files literally aren't on the production filesystem.
+
+### Lifelines for Tricky Testaments (clarification needed)
+- TrickyTestamentGame is a Jeopardy-style game and has never had Millionaire-style lifelines (50/50, ask audience, etc.). Lifelines belong to MixUpGame (the Trivia Mix-up game). Asked user to confirm whether they wanted lifelines added as a new feature or if they were looking at the wrong game.
+
 ### Earlier Work
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 
