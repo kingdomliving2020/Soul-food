@@ -1,0 +1,37 @@
+{
+  "summary": "Iteration 33 — RETEST of AdminOrders.js safeJson destructure fix from iteration_32. PASSED. /admin/orders now renders 'Orders (77)' header with all 77 order rows displayed (verified live in browser as admin overflowharvest@gmail.com after 'Continue without 2FA'). The previous bug (data.items undefined on the safeJson wrapper) is fully resolved — fetchOrders and fetchRefundRequests both correctly destructure { ok, data } now. Frontend admin orders flow is GREEN.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "/admin/orders",
+        "issues": [
+          "React 'Encountered two children with the same key' warning logged ~14 times. Root cause: AdminOrders.js line 359 uses key={order.order_number}, but several rows in the dataset have no order_number (visible as 'pendingNo email 0/1 item(s) $0.00' rows with no SF-2026-XXX prefix — see Feb 27 2026, Jan 9-10 2026 entries). These collapse to key={undefined} and collide. Recommend key={order.order_number || order.id || `idx-${idx}`}. Non-blocking — list still renders all 77 rows."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "(Low priority) Fix duplicate React key warning in AdminOrders.js line 359 — fall back to order.id or row index when order_number is missing (some orders in DB have empty order_number).",
+    "(Out of scope, noted in iter_32) Investigate why several DB rows have empty order_number / customer_email / 0 items / $0.00 — likely abandoned cart inserts that should be filtered or labeled in the admin list."
+  ],
+  "critical_code_review_comments": [
+    "AdminOrders.js fetchOrders/fetchRefundRequests safeJson destructuring is now consistent with the other 4 callsites in the same file — bug confirmed fixed.",
+    "Minor: key collision warning (see design_issues) — cosmetic but pollutes console; should be cleaned up alongside the duplicate-key fix in TrickyTestamentGame-style data hygiene.",
+    "Refund-request alert banner did not render in this run (refundRequests=[] from API) — this is correct behavior given there are 0 pending refund requests in preview DB; no fix needed."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100% (no backend retest, prior 14/14 still valid)", "frontend": "100% (Admin Orders renders 77/77)"},
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123! — used 'Continue without 2FA' link on /2fa-setup page after login.",
+  "seed_data_creation": "None.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All 5 reported bugs from prior iterations are resolved or out of scope. Admin Orders bug from iter_32 is shipped + verified. Only outstanding cosmetic item is the React duplicate-key warning on /admin/orders (rows with missing order_number). Admin login flow: POST /api/auth/login with {identifier, password}, then on /2fa-setup click 'Continue without 2FA'. Preview backend URL: https://soul-checkout-stage.preview.emergentagent.com. Preview DB has 77 orders, 0 pending refund requests at time of test.",
+  "rca of the issue": "Iteration 32 RCA reproduced and verified fixed: AdminOrders.fetchOrders previously did 'const data = await safeJson(res, {})' and read data.items off the wrapper {ok,status,data} — always returning []. After fix to 'const { ok, data } = await safeJson(res); ... data.items' the canonical /api/admin/orders endpoint payload {items:[77], total:77, ...} flows into orders state correctly. Live browser screenshot confirms 'Orders (77)' header and 10+ visible SF-2026-* rows. Same one-line fix was also applied to fetchRefundRequests (no banner shown because refund_requests=[] in preview DB, which is correct)."
+}

@@ -59,7 +59,12 @@ const AdminOrders = () => {
       const res = await fetch(`${BACKEND_URL}/api/admin/orders?limit=100`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
-      const data = await safeJson(res, {});
+      const { ok, data } = await safeJson(res);
+      if (!ok) {
+        console.error('Failed to fetch orders:', data);
+        setOrders([]);
+        return;
+      }
       // Canonical endpoint returns { items, total, page, limit, pages }.
       setOrders(data.items || data.orders || []);
     } catch (e) {
@@ -75,7 +80,11 @@ const AdminOrders = () => {
       const res = await fetch(`${BACKEND_URL}/api/orders/admin/refund-requests?status=pending`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
-      const data = await safeJson(res, {});
+      const { ok, data } = await safeJson(res);
+      if (!ok) {
+        setRefundRequests([]);
+        return;
+      }
       setRefundRequests(data.requests || []);
     } catch (e) {
       console.error('Failed to fetch refund requests:', e);
