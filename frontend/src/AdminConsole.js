@@ -253,6 +253,9 @@ const Dashboard = () => {
         </div>
       </div>
       
+      {/* Content Health (read-only diagnostic) */}
+      <ContentHealthTile token={token} />
+
       {/* Recent Activity */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-xl shadow-sm border p-6">
@@ -301,6 +304,109 @@ const Dashboard = () => {
           )}
         </div>
       </div>
+    </div>
+  );
+};
+
+const ContentHealthTile = ({ token }) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const load = async () => {
+    setRefreshing(true);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/content-health`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (res.ok) setData(await res.json());
+    } catch (e) {
+      console.error('content-health load failed', e);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [token]);
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border p-6" data-testid="content-health-tile">
+        <h2 className="text-lg font-semibold text-slate-800 mb-2">Content Health</h2>
+        <p className="text-sm text-slate-500">Loading…</p>
+      </div>
+    );
+  }
+
+  const dirs = data?.directories || {};
+  const missingDirs = Object.entries(dirs).filter(([, info]) => info && info.exists === false).map(([p]) => p);
+  const broken = data?.broken_link_count || 0;
+  const totalPdfs = data?.total_pdf_files || 0;
+  const totalMb = data?.total_size_mb || 0;
+  const isHealthy = missingDirs.length === 0 && broken === 0;
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm border p-6" data-testid="content-health-tile">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <h2 className="text-lg font-semibold text-slate-800">Content Health</h2>
+          <span
+            className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+              isHealthy ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+            }`}
+            data-testid="content-health-status-badge"
+          >
+            {isHealthy ? 'Healthy' : 'Issues detected'}
+          </span>
+        </div>
+        <button
+          onClick={load}
+          disabled={refreshing}
+          className="text-xs text-slate-500 hover:text-slate-700 underline disabled:opacity-50"
+          data-testid="content-health-refresh"
+        >
+          {refreshing ? 'Refreshing…' : 'Refresh'}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+        <div className="bg-slate-50 rounded-lg p-3" data-testid="content-health-pdfs">
+          <p className="text-xs text-slate-500">PDFs on disk</p>
+          <p className="text-xl font-bold text-slate-800">{totalPdfs}</p>
+        </div>
+        <div className="bg-slate-50 rounded-lg p-3" data-testid="content-health-size">
+          <p className="text-xs text-slate-500">Total size</p>
+          <p className="text-xl font-bold text-slate-800">{totalMb} MB</p>
+        </div>
+        <div className="bg-slate-50 rounded-lg p-3" data-testid="content-health-missing-dirs">
+          <p className="text-xs text-slate-500">Missing dirs</p>
+          <p className={`text-xl font-bold ${missingDirs.length > 0 ? 'text-red-600' : 'text-green-600'}`}>{missingDirs.length}</p>
+        </div>
+        <div className="bg-slate-50 rounded-lg p-3" data-testid="content-health-broken-links">
+          <p className="text-xs text-slate-500">Broken links</p>
+          <p className={`text-xl font-bold ${broken > 0 ? 'text-red-600' : 'text-green-600'}`}>{broken}</p>
+        </div>
+      </div>
+
+      <div className="space-y-1.5 text-sm">
+        {Object.entries(dirs).map(([path, info]) => (
+          <div key={path} className="flex items-center justify-between py-1 border-b border-slate-100 last:border-0">
+            <span className="font-mono text-xs text-slate-600">{path}</span>
+            {info?.exists ? (
+              <span className="text-xs text-green-700">{info.pdf_count || 0} PDFs</span>
+            ) : (
+              <span className="text-xs font-semibold text-red-700">MISSING</span>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {!isHealthy && (
+        <p className="mt-3 text-xs text-slate-500 italic" data-testid="content-health-hint">
+          Tip: missing directories usually mean the deploy bundle excluded <code>/app/content/**</code>. Redeploy with the full content tree, or run the same check on production at <code>/api/admin/content-health</code> to compare.
+        </p>
+      )}
     </div>
   );
 };
