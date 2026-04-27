@@ -1,0 +1,45 @@
+{
+  "summary": "Iteration 32 — DEMOSOFU/BETADOLLAR coupon validation, Admin Orders shape/auth, and Tricky Testaments wrong-answer deduction. Backend pytest 14/14 PASSED. Tricky Testaments wrong-answer deduction VERIFIED in browser (label 'Missed it -100', score 0 -> -100). Admin Orders BLOCKED by frontend safeJson misuse — API returns 77 orders correctly but UI renders 'Orders (0) / No orders found' because AdminOrders.fetchOrders treats safeJson() return value as the API body.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "/admin/orders list rendering",
+        "issue": "AdminOrders.js uses 'const data = await safeJson(res, {})' then reads data.items / data.orders. But safeJson(response) returns { ok, status, data }, so data.items is always undefined and orders state stays []. Network call is correct (200 with 77 items confirmed via in-page eval), only the destructuring is wrong. Same bug in fetchRefundRequests (line 78 reads data.requests on the wrapper, not the body).",
+        "affected_selectors": ["AdminOrders.js:62", "AdminOrders.js:78"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration_32_coupons_admin_orders.py",
+    "/app/test_reports/pytest/iter32.xml"
+  ],
+  "action_items": [
+    "FIX AdminOrders.js fetchOrders (line 56-71): change 'const data = await safeJson(res, {});' to 'const { data } = await safeJson(res);' so that data.items resolves to the API body's items array.",
+    "FIX AdminOrders.js fetchRefundRequests (line 73-84): same destructuring fix — 'const { data } = await safeJson(res);' before reading data.requests.",
+    "Optional: Audit other safeJson callsites in AdminOrders.js (lines 131, 151, 170, 192 already use the correct '{ ok, data }' destructure) to confirm consistency."
+  ],
+  "critical_code_review_comments": [
+    "safeJson returns { ok, status, data } — must always be destructured. Two callsites in AdminOrders.js break this contract (lines 62, 78). The other four callsites in the same file get it right; this is an isolated copy/paste regression introduced when fetchOrders was rewritten from XHR to fetch.",
+    "Backend coupon_routes._validate_redemption_code_as_coupon correctly: (1) treats demo+test code_type only, (2) auto-expires past expires_at on read, (3) blocks REVOKED/EXPIRED, (4) enforces uses_used >= max_uses, (5) restricts demo codes to holiday/breakfast/bkft/hol prefixes, (6) returns override_total=1.0 for test codes. All 10 backend cases pass.",
+    "/api/coupons/use/{code} now correctly falls back to redemption_codes.uses_used $inc when not in coupons collection — verified via mongo direct query.",
+    "Only one /api/admin/orders GET route registered (routes/admin_routes.py line 952); duplicate at line 2060+ confirmed deleted. Resend-email route at line 1053 only; /send-email alias gone (returns 404 as expected).",
+    "TrickyTestamentGame.js Missed it! button now deducts both DD-wager and regular point value; label correctly shows 'Missed it -<n>'. Verified live: 0 -> -100 Stacks on a 100-pt regular tile.",
+    "Preview /api/admin/content-health returns broken_link_count=0 — confirms content tree is intact in preview (production /app/content/ deploy gap is out of scope as noted)."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration_32_coupons_admin_orders.py (new)"
+  ],
+  "success_rate": {"backend": "100%", "frontend": "50% (Tricky Testaments PASS; Admin Orders blocked by safeJson destructure bug)"},
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123! — used 'Continue without 2FA' on /2fa-setup",
+  "seed_data_creation": "DEMOSOFU79.uses_used was incremented to 1 then to 5 during max-uses test, status briefly REVOKED — autouse fixture restores it to uses_used=0, status=ACTIVE before AND after each test. Final state: DEMOSOFU79 uses_used=0 ACTIVE. All other codes untouched.",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend coupon validation for DEMOSOFU/BETADOLLAR fully verified (14/14 pytest pass). Tricky Testaments deduction verified live. ONLY remaining item: AdminOrders.js safeJson destructure bug — once main agent applies the 2-line fix, retest /admin/orders UI in browser to confirm the 77 orders render and refund-requests alert banner shows up. Test file at /app/backend/tests/test_iteration_32_coupons_admin_orders.py is reusable for regression. Per request, Phase 2 user-side redemption flow + production fulfillment files (/app/content/ deploy gap) remain out of scope.",
+  "rca of the issue": "Admin Orders 'zero rows' RCA — Reproduction: log in as admin, go to /admin/orders, observe 'Orders (0) / No orders found' even though backend has 77 orders. Verified via in-browser fetch eval: GET /api/admin/orders?limit=100 returns 200 with {items:[77 items], total:77, ...}. Root cause: safeJson(response) returns wrapper {ok,status,data}, but fetchOrders does 'const data = await safeJson(res, {})' and then reads data.items — which doesn't exist on the wrapper. Always returns []. Mitigation: change to 'const { data } = await safeJson(res);' (matches the pattern already used on lines 131/151/170/192 of the same file). Same one-line fix needed for fetchRefundRequests."
+}

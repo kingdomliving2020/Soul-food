@@ -2055,76 +2055,11 @@ async def retry_order_fulfillment(
     }
 
 
-# ==================== ORDER MANAGEMENT ====================
-
-@router.get("/orders")
-async def list_orders(
-    status: Optional[str] = None,
-    email: Optional[str] = None,
-    page: int = 1,
-    limit: int = 20,
-    admin: AdminUser = Depends(get_current_admin)
-):
-    """List all orders with filtering"""
-    query = {}
-    if status:
-        query["payment_status"] = status
-    if email:
-        query["customer_email"] = {"$regex": email, "$options": "i"}
-    
-    skip = (page - 1) * limit
-    total = await db.payment_transactions.count_documents(query)
-    orders = await db.payment_transactions.find(
-        query, {"_id": 0}
-    ).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
-    
-    # Add download link count for each
-    for order in orders:
-        order_num = order.get("order_number")
-        if order_num:
-            dl_count = await db.download_links.count_documents({"order_id": order_num})
-            order["download_link_count"] = dl_count
-    
-    return {"orders": orders, "total": total, "page": page}
-
-
-@router.post("/orders/{order_number}/send-email")
-async def resend_order_email(
-    order_number: str,
-    admin: AdminUser = Depends(get_current_admin)
-):
-    """Resend the order confirmation + download links email"""
-    from email_service import send_order_confirmation
-    
-    order = await db.payment_transactions.find_one(
-        {"order_number": order_number}, {"_id": 0}
-    )
-    if not order:
-        raise HTTPException(status_code=404, detail="Order not found")
-    
-    email = order.get("customer_email")
-    if not email:
-        raise HTTPException(status_code=400, detail="No customer email on order")
-    
-    links = await db.download_links.find(
-        {"order_id": order_number, "revoked": False},
-        {"_id": 0, "token": 1, "product_name": 1}
-    ).to_list(50)
-    
-    download_links = [{"token": link["token"], "product_name": link.get("product_name", "Digital Content")} for link in links]
-    
-    result = await send_order_confirmation(
-        to_email=email,
-        order_id=order_number,
-        items=order.get("items", []),
-        total=order.get("total_amount", 0),
-        download_links=download_links,
-        customer_name=order.get("customer_name", "")
-    )
-    
-    await log_admin_action("resend_email", admin.id, "order", order_number, {"email": email})
-    
-    return {"message": f"Email sent to {email}", "result": result}
+# ==================== ORDER MANAGEMENT (deprecated duplicates removed Apr 26 2026) ====================
+# The canonical /orders, /orders/{order_number}/detail, and /orders/{order_number}/resend-email
+# endpoints live above (~line 952-1100). The duplicates that previously sat here returned a
+# different response shape ({orders:[...]} vs {items:[...]}) and an unprotected /send-email
+# alias which led to AdminOrders.js intermittently rendering zero rows.
 
 
 # =============================================================================

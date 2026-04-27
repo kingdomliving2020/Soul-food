@@ -55,44 +55,32 @@ const AdminOrders = () => {
 
   const fetchOrders = async () => {
     setLoading(true);
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `${BACKEND_URL}/api/orders/admin/list?limit=100`, true);
-    
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4) {
-        setLoading(false);
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            setOrders(data.orders || []);
-          } catch (e) {
-            console.error('Failed to parse orders:', e);
-          }
-        }
-      }
-    };
-    
-    xhr.send();
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders?limit=100`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      const data = await safeJson(res, {});
+      // Canonical endpoint returns { items, total, page, limit, pages }.
+      setOrders(data.items || data.orders || []);
+    } catch (e) {
+      console.error('Failed to fetch orders:', e);
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchRefundRequests = async () => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `${BACKEND_URL}/api/orders/admin/refund-requests?status=pending`, true);
-    
-    xhr.onreadystatechange = function() {
-      if (xhr.readyState === 4) {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            setRefundRequests(data.requests || []);
-          } catch (e) {
-            console.error('Failed to parse refund requests:', e);
-          }
-        }
-      }
-    };
-    
-    xhr.send();
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/orders/admin/refund-requests?status=pending`, {
+        headers: { Authorization: `Bearer ${getToken()}` }
+      });
+      const data = await safeJson(res, {});
+      setRefundRequests(data.requests || []);
+    } catch (e) {
+      console.error('Failed to fetch refund requests:', e);
+      setRefundRequests([]);
+    }
   };
 
   const handleProcessRefund = async (orderNumber) => {

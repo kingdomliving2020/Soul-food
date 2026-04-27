@@ -754,15 +754,15 @@ const TrickyTestamentGame = () => {
                   </Button>
                   <Button
                     onClick={() => {
-                      if (selectedQuestion.id === dailyDoubleIndex && wager > 0) {
-                        setScore(score - wager);
-                      }
+                      // Deduct points on wrong answer (Daily Double uses wager, regular uses point value)
+                      const deduction = (selectedQuestion.id === dailyDoubleIndex && wager > 0) ? wager : selectedQuestion.points;
+                      setScore(score - deduction);
                       returnToBoard();
                     }}
                     className="bg-red-500 hover:bg-red-600 text-white font-bold px-8 py-4 text-base rounded-xl flex-1 max-w-[200px]"
                     data-testid="missed-it-btn"
                   >
-                    Missed it{selectedQuestion.id === dailyDoubleIndex && wager > 0 ? ` -${wager}` : ''}
+                    Missed it -{selectedQuestion.id === dailyDoubleIndex && wager > 0 ? wager : selectedQuestion.points}
                   </Button>
                 </div>
               </div>

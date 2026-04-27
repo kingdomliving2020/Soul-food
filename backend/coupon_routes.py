@@ -154,6 +154,93 @@ async def get_current_admin(
 # Public Endpoints
 # =============================================================================
 
+async def _validate_redemption_code_as_coupon(input_code: str, request) -> Optional[CouponValidateResponse]:
+    """Treat DEMOSOFU* (demo) and BETADOLLAR* (test) redemption codes as checkout
+    coupons. Returns a CouponValidateResponse if the code matches a redemption
+    code, else None to let the caller continue with its existing fallthrough."""
+    rc = await db.redemption_codes.find_one(
+        {"code": {"$regex": f"^{input_code}$", "$options": "i"},
+         "code_type": {"$in": ["demo", "test"]}},
+        {"_id": 0}
+    )
+    if not rc:
+        return None
+
+    # Status / expiry / uses gates (mirrors auto-expire-on-read semantics)
+    now = datetime.now(timezone.utc)
+    expires_at = rc.get("expires_at")
+    if expires_at and isinstance(expires_at, str):
+        try:
+            expires_at = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+        except Exception:
+            expires_at = None
+    if expires_at and getattr(expires_at, "tzinfo", None) is None:
+        # Naive datetime stored — assume UTC
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if expires_at and expires_at < now:
+        # mark expired (cheap on-read sweep, same pattern as code_admin_routes)
+        await db.redemption_codes.update_one(
+            {"code": rc["code"]},
+            {"$set": {"status": "EXPIRED", "updated_at": now}}
+        )
+        return CouponValidateResponse(valid=False, message="This code has expired", code=rc["code"])
+
+    if rc.get("status") not in ("ACTIVE", None):
+        return CouponValidateResponse(
+            valid=False,
+            message=f"Code is {rc.get('status','inactive').lower()} and cannot be used",
+            code=rc["code"]
+        )
+
+    max_uses = int(rc.get("max_uses", 0) or 0)
+    uses_used = int(rc.get("uses_used", 0) or 0)
+    if max_uses > 0 and uses_used >= max_uses:
+        return CouponValidateResponse(
+            valid=False,
+            message=f"This code has reached its maximum usage limit ({max_uses} uses)",
+            code=rc["code"]
+        )
+
+    code_type = rc.get("code_type")
+    if code_type == "demo":
+        # Demo codes only apply to BKFT + HOL series products
+        product_ids = request.product_ids or []
+        if not product_ids:
+            return CouponValidateResponse(
+                valid=False,
+                message="Add an item to your cart before applying this code",
+                code=rc["code"]
+            )
+        allowed_prefixes = ("holiday", "breakfast", "bkft", "hol")
+        not_allowed = [p for p in product_ids if not str(p).lower().startswith(allowed_prefixes)]
+        if not_allowed:
+            return CouponValidateResponse(
+                valid=False,
+                message="Demo codes are valid for Holiday + Break*fast products only",
+                code=rc["code"]
+            )
+        return CouponValidateResponse(
+            valid=True,
+            discount_percent=100,
+            discount_dollars=0.0,
+            message="Demo code applied — 100% off (preview mode, BKFT + HOL only)",
+            code=rc["code"]
+        )
+
+    if code_type == "test":
+        # $1-checkout test codes: override total to $1 regardless of cart
+        return CouponValidateResponse(
+            valid=True,
+            discount_percent=0,
+            discount_dollars=0.0,
+            override_total=1.0,
+            message="Test code applied — cart total set to $1.00",
+            code=rc["code"]
+        )
+
+    return None
+
+
 @router.post("/validate", response_model=CouponValidateResponse)
 async def validate_coupon(request: CouponValidateRequest):
     """Validate a coupon code and return discount information"""
@@ -218,6 +305,10 @@ async def validate_coupon(request: CouponValidateRequest):
     })
     
     if not coupon:
+        # THIRD: fall through to redemption_codes (DEMOSOFU* / BETADOLLAR* etc.)
+        rc_response = await _validate_redemption_code_as_coupon(input_code, request)
+        if rc_response is not None:
+            return rc_response
         return CouponValidateResponse(
             valid=False,
             message="Invalid coupon code",
@@ -320,8 +411,19 @@ async def record_coupon_use(code: str, order_id: Optional[str] = None):
     )
     
     if result.modified_count == 0:
-        # Coupon might not exist in DB yet, that's OK for legacy codes
-        pass
+        # Coupon might not exist in coupons collection — try redemption_codes
+        # (DEMOSOFU* / BETADOLLAR* live there)
+        rc_result = await db.redemption_codes.update_one(
+            {"code": {"$regex": f"^{code}$", "$options": "i"},
+             "code_type": {"$in": ["demo", "test"]}},
+            {
+                "$inc": {"uses_used": 1},
+                "$set": {"updated_at": datetime.now(timezone.utc)}
+            }
+        )
+        if rc_result.modified_count == 0:
+            # Legacy / unknown — that's still OK, log silently
+            pass
     
     # Also record in coupon_usage collection for history
     await db.coupon_usage.insert_one({
