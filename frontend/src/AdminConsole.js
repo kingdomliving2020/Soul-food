@@ -5,7 +5,7 @@ import {
   Image, BookOpen, Shield, Settings, LogOut, Menu, X,
   ChevronRight, Plus, Edit, Trash2, Eye, Clock, Archive,
   Download, Upload, RefreshCw, Search, Filter, AlertTriangle,
-  Video, History, Lock, Unlock, Mail, TicketCheck, Tag
+  Video, History, Lock, Unlock, Mail, TicketCheck, Tag, CheckCircle
 } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
@@ -1041,6 +1041,51 @@ const OrdersManager = () => {
     finally { setActionLoading(''); }
   };
 
+  const syncFromStripe = async (orderNumber) => {
+    setActionLoading(`sync-${orderNumber}`);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/sync-stripe`, {
+        method: 'POST', headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        toast.success(data.message || 'Synced from Stripe');
+        fetchOrders();
+        if (selected?.transaction?.order_number === orderNumber) loadDetail(orderNumber);
+      } else if (res.ok) {
+        toast.warning(data.message || 'Stripe says not paid yet');
+      } else {
+        toast.error(data.detail || 'Stripe sync failed');
+      }
+    } catch { toast.error('Failed to sync'); }
+    finally { setActionLoading(''); }
+  };
+
+  const markPaid = async (orderNumber) => {
+    const reason = window.prompt(
+      `Manually mark ${orderNumber} as PAID?\n\nThis will create download links and skip Stripe verification.\nEnter a reason for the audit log:`,
+      'Verified payment via Stripe Dashboard'
+    );
+    if (!reason || !reason.trim()) return;
+    setActionLoading(`paid-${orderNumber}`);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/mark-paid`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: reason.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(data.message || 'Order marked paid');
+        fetchOrders();
+        if (selected?.transaction?.order_number === orderNumber) loadDetail(orderNumber);
+      } else {
+        toast.error(data.detail || 'Failed');
+      }
+    } catch { toast.error('Failed to mark paid'); }
+    finally { setActionLoading(''); }
+  };
+
   return (
     <div className="space-y-4">
       {/* Header + Search */}
@@ -1114,6 +1159,18 @@ const OrdersManager = () => {
                             <button onClick={() => loadDetail(on)} className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-blue-600" title="View Details" data-testid={`view-detail-${on}`}>
                               <Eye size={15} />
                             </button>
+                            {order.payment_status !== 'paid' && order.payment_status !== 'completed' && (
+                              <>
+                                <button onClick={() => syncFromStripe(on)} disabled={actionLoading === `sync-${on}`}
+                                  className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-indigo-600 disabled:opacity-40" title="Sync from Stripe" data-testid={`sync-stripe-${on}`}>
+                                  {actionLoading === `sync-${on}` ? <RefreshCw size={15} className="animate-spin" /> : <RefreshCw size={15} />}
+                                </button>
+                                <button onClick={() => markPaid(on)} disabled={actionLoading === `paid-${on}`}
+                                  className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-green-700 disabled:opacity-40" title="Mark as Paid (manual override)" data-testid={`mark-paid-${on}`}>
+                                  {actionLoading === `paid-${on}` ? <RefreshCw size={15} className="animate-spin" /> : <CheckCircle size={15} />}
+                                </button>
+                              </>
+                            )}
                             <button onClick={() => resendEmail(on)} disabled={actionLoading === `resend-${on}`}
                               className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-orange-600 disabled:opacity-40" title="Resend Email" data-testid={`resend-email-${on}`}>
                               {actionLoading === `resend-${on}` ? <RefreshCw size={15} className="animate-spin" /> : <Mail size={15} />}

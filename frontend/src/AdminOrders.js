@@ -171,6 +171,56 @@ const AdminOrders = () => {
     }
   };
 
+  const handleSyncStripe = async (orderNumber) => {
+    setActionLoading(`sync-${orderNumber}`);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/sync-stripe`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const { ok, data } = await safeJson(res);
+      if (ok && data.success) {
+        toast.success(data.message || 'Synced from Stripe');
+        fetchOrders();
+      } else if (ok) {
+        toast.warning(data.message || 'Stripe says not paid yet');
+      } else {
+        toast.error(`Sync failed: ${data.detail || JSON.stringify(data)}`);
+      }
+    } catch (err) {
+      toast.error(`Network error: ${err.message}`);
+    } finally {
+      setActionLoading('');
+    }
+  };
+
+  const handleMarkPaid = async (orderNumber) => {
+    const reason = window.prompt(
+      `Manually mark ${orderNumber} as PAID?\n\nThis will create download links and skip Stripe verification.\nEnter a reason for the audit log:`,
+      'Verified payment via Stripe Dashboard'
+    );
+    if (!reason || !reason.trim()) return;
+    setActionLoading(`paid-${orderNumber}`);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/mark-paid`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: reason.trim() }),
+      });
+      const { ok, data } = await safeJson(res);
+      if (ok && data.success) {
+        toast.success(data.message || 'Order marked paid');
+        fetchOrders();
+      } else {
+        toast.error(`Mark-paid failed: ${data.detail || JSON.stringify(data)}`);
+      }
+    } catch (err) {
+      toast.error(`Network error: ${err.message}`);
+    } finally {
+      setActionLoading('');
+    }
+  };
+
   const handleRefulfill = async (orderNumber) => {
     setActionLoading(`refulfill-${orderNumber}`);
     try {
@@ -390,6 +440,28 @@ const AdminOrders = () => {
                         </p>
                       </div>
                       <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                        {(order.payment_status !== 'paid' && order.payment_status !== 'completed') && (
+                          <>
+                            <button
+                              onClick={() => handleSyncStripe(order.order_number)}
+                              disabled={actionLoading === `sync-${order.order_number}`}
+                              className="p-2 rounded-lg hover:bg-indigo-50 text-slate-400 hover:text-indigo-600 disabled:opacity-40 transition-colors"
+                              title="Sync from Stripe (verify payment + flip to paid + create download links)"
+                              data-testid={`sync-stripe-btn-${order.order_number}`}
+                            >
+                              {actionLoading === `sync-${order.order_number}` ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                            </button>
+                            <button
+                              onClick={() => handleMarkPaid(order.order_number)}
+                              disabled={actionLoading === `paid-${order.order_number}`}
+                              className="p-2 rounded-lg hover:bg-green-50 text-slate-400 hover:text-green-700 disabled:opacity-40 transition-colors"
+                              title="Mark as Paid (manual override — bypasses Stripe)"
+                              data-testid={`mark-paid-btn-${order.order_number}`}
+                            >
+                              {actionLoading === `paid-${order.order_number}` ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+                            </button>
+                          </>
+                        )}
                         <button
                           onClick={() => handleRefulfill(order.order_number)}
                           disabled={actionLoading === `refulfill-${order.order_number}` || order.payment_status !== 'paid'}

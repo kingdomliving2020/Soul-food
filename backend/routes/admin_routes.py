@@ -1136,6 +1136,168 @@ async def admin_grant_access(order_number: str, admin: AdminUser = Depends(get_c
 
     return {"success": True, "message": f"{created} download link(s) created for {order_number}", "links_created": created}
 
+
+@router.post("/orders/{order_number}/sync-stripe")
+async def admin_sync_stripe(order_number: str, admin: AdminUser = Depends(get_current_admin)):
+    """Verify a pending order against Stripe and, if paid, flip the order to
+    paid + create download links. This is the canonical fallback when the
+    Stripe webhook is unreachable / blocked. Idempotent."""
+    import stripe
+    stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+    if not stripe.api_key:
+        raise HTTPException(status_code=500, detail="STRIPE_SECRET_KEY not configured on server")
+
+    order_number = order_number.strip().upper()
+    tx = await db.payment_transactions.find_one({"order_number": order_number}, {"_id": 0})
+    if not tx:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    session_id = tx.get("session_id") or tx.get("stripe_session_id")
+    if not session_id:
+        raise HTTPException(status_code=400, detail="No Stripe session_id on this order — use 'Mark as Paid' for manual orders")
+
+    try:
+        sess = stripe.checkout.Session.retrieve(session_id)
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Stripe lookup failed: {e}")
+
+    stripe_paid = (getattr(sess, "payment_status", None) == "paid")
+    already_paid = tx.get("payment_status") == "paid"
+
+    if not stripe_paid:
+        return {
+            "success": False,
+            "stripe_payment_status": getattr(sess, "payment_status", None),
+            "stripe_session_status": getattr(sess, "status", None),
+            "message": f"Stripe reports payment_status='{getattr(sess, 'payment_status', 'unknown')}'. Order not flipped.",
+        }
+
+    now = datetime.now(timezone.utc)
+    if not already_paid:
+        await db.payment_transactions.update_one(
+            {"order_number": order_number},
+            {"$set": {
+                "payment_status": "paid",
+                "status": "completed",
+                "stripe_status": getattr(sess, "status", None),
+                "stripe_amount_total": getattr(sess, "amount_total", None),
+                "synced_from_stripe_by": admin.id,
+                "synced_from_stripe_at": now,
+                "updated_at": now,
+            }}
+        )
+
+    # Create / refresh download links inline (idempotent)
+    from download_protection import create_download_link
+    items = tx.get("items", [])
+    created = 0
+    for item in items:
+        product_id = item.get("product_id", item.get("id", ""))
+        if not product_id:
+            continue
+        mapping = await db.product_files.find_one({"product_id": product_id}, {"_id": 0})
+        if not mapping:
+            continue
+        for f in mapping.get("files", []):
+            await create_download_link(
+                order_id=order_number,
+                user_id=tx.get("claimed_by_user_id", order_number),
+                user_email=tx.get("customer_email", ""),
+                product_id=product_id,
+                product_name=item.get("name", product_id),
+                file_path=f.get("path", ""),
+                payment_verified=True,
+            )
+            created += 1
+
+    await log_admin_action(
+        "sync_stripe", admin.id, "order", order_number,
+        {"already_paid": already_paid, "links_created": created}
+    )
+    return {
+        "success": True,
+        "already_paid": already_paid,
+        "links_created": created,
+        "message": (
+            f"Stripe confirmed paid. {'Order was already marked paid.' if already_paid else 'Order flipped to paid.'} "
+            f"{created} download link(s) ensured."
+        ),
+    }
+
+
+class MarkPaidRequest(BaseModel):
+    reason: str = "manual admin override"
+
+
+@router.post("/orders/{order_number}/mark-paid")
+async def admin_mark_paid(
+    order_number: str,
+    req: MarkPaidRequest,
+    admin: AdminUser = Depends(get_current_admin),
+):
+    """Force an order into 'paid' status WITHOUT touching Stripe. Use only when
+    Stripe is unreachable or you've confirmed the funds via dashboard. Creates
+    download links and stamps an audit trail."""
+    order_number = order_number.strip().upper()
+    tx = await db.payment_transactions.find_one({"order_number": order_number}, {"_id": 0})
+    if not tx:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    if not (req.reason or "").strip():
+        raise HTTPException(status_code=400, detail="A reason is required for manual override")
+
+    now = datetime.now(timezone.utc)
+    already_paid = tx.get("payment_status") == "paid"
+    if not already_paid:
+        await db.payment_transactions.update_one(
+            {"order_number": order_number},
+            {"$set": {
+                "payment_status": "paid",
+                "status": "completed",
+                "manual_paid_by": admin.id,
+                "manual_paid_reason": req.reason.strip(),
+                "manual_paid_at": now,
+                "updated_at": now,
+            }}
+        )
+
+    # Create download links
+    from download_protection import create_download_link
+    items = tx.get("items", [])
+    created = 0
+    for item in items:
+        product_id = item.get("product_id", item.get("id", ""))
+        if not product_id:
+            continue
+        mapping = await db.product_files.find_one({"product_id": product_id}, {"_id": 0})
+        if not mapping:
+            continue
+        for f in mapping.get("files", []):
+            await create_download_link(
+                order_id=order_number,
+                user_id=tx.get("claimed_by_user_id", order_number),
+                user_email=tx.get("customer_email", ""),
+                product_id=product_id,
+                product_name=item.get("name", product_id),
+                file_path=f.get("path", ""),
+                payment_verified=True,
+            )
+            created += 1
+
+    await log_admin_action(
+        "mark_paid", admin.id, "order", order_number,
+        {"reason": req.reason, "already_paid": already_paid, "links_created": created}
+    )
+    return {
+        "success": True,
+        "already_paid": already_paid,
+        "links_created": created,
+        "message": (
+            f"Order marked paid {'(was already paid)' if already_paid else 'manually'}. "
+            f"{created} download link(s) created."
+        ),
+    }
+
 # =============================================================================
 # USER MANAGEMENT
 # =============================================================================

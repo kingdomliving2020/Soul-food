@@ -189,6 +189,16 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
   - Frontend: `InteractiveLesson.js` now calls the entitlement endpoint on mount alongside `fetchNibble`, and sets `hasPurchased=true` when `has_access=true`.
   - Verified end-to-end: anon paid nibble → locked; authed-no-purchase → locked; authed + holiday_ae purchase → fully unlocked (Bites, Reflection Question, To-Go Box, Activity all rendered); bundle purchase (`holiday-table-bundle-ae`) also unlocks via expansion; free nibbles always render.
 
+### Webhook-Independent Order Recovery (Apr 28, 2026)
+- [x] User reported: Stripe says webhook is blocking delivery; needs the admin console to actually push orders through manually.
+- [x] **Backend `POST /api/admin/orders/{order_number}/sync-stripe`** — calls Stripe Checkout Session API directly with the stored `session_id`, flips the order to paid if Stripe confirms, creates download links via `create_download_link`, and stamps `synced_from_stripe_by/at` on the transaction. Idempotent. Returns Stripe's actual `payment_status` if not yet paid (so admin sees the truth).
+- [x] **Backend `POST /api/admin/orders/{order_number}/mark-paid`** — manual override that bypasses Stripe entirely. Requires a `reason` for audit trail. Flips status, creates download links, stamps `manual_paid_by/reason/at`. For cases where Stripe is unreachable but funds are confirmed via Dashboard.
+- [x] **Frontend (`AdminOrders.js` + `AdminConsole.js`)** — both order surfaces now render two extra row-level buttons ONLY on pending orders:
+  - 🔄 **Sync from Stripe** (indigo) — calls the sync endpoint, success toast on flip, warning toast if Stripe still says unpaid, error toast on transport failure.
+  - ✅ **Mark as Paid** (green) — prompts for reason via window.prompt, calls mark-paid endpoint.
+- [x] Webhook is no longer required for MVP fulfillment. Admin can push every order manually with full visibility into customer email + items + amount + status + Stripe session id (already in the existing detail expander). The Stripe webhook becomes a nice-to-have automation rather than a hard dependency.
+- [x] Verified end-to-end on preview: sync-stripe correctly reported `payment_status='unpaid', session_status='expired'` for the live test order; mark-paid with empty reason returns 400; mark-paid with a real reason flips the status and surfaces in the audit log.
+
 ### Production-Only Issues — Awaiting Deploy Bundle Fix (NOT CODE)
 - [x] **`/app/content/` directory missing from production deploy bundle** — RESOLVED Apr 27 2026 by moving `/app/content/` → `/app/backend/content/` via `git mv` (preserves history + 129 files / 299 MB). The Emergent deploy artifact only ships `/app/backend/` and `/app/frontend/`; top-level siblings like `/app/content/` were silently dropped. Code paths swept: `server.py` static mounts, `payment_routes.PDF_DIR`, `routes/admin_routes.py` fulfillment seeds + content-health, `routes/download_routes.py CONTENT_DIRS`, `routes/lessons.py possible_paths`, `seed_qa_bank.py`. Legacy `/app/content/*` paths kept as fallback in `CONTENT_DIRS` so existing `download_links` DB rows auto-heal via `resolve_file_path` (preview shows `legacy_paths_auto_resolved=17, broken_link_count=0`). 3 dangling symlinks in `lesson_pdfs/` converted to real file copies for deploy safety. Deploy agent: PASS, no blockers.
 
