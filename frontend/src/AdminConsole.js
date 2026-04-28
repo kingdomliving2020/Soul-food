@@ -35,6 +35,7 @@ const useAdmin = () => {
 
 const navItems = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard', exact: true },
+  { path: '/admin/files', icon: Upload, label: 'File Manager' },
   { path: '/admin/content', icon: FileText, label: 'Content Manager' },
   { path: '/admin/instructor-content', icon: BookOpen, label: 'Instructor Content' },
   { path: '/admin/media', icon: Image, label: 'Media Library' },

@@ -199,6 +199,23 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - [x] Webhook is no longer required for MVP fulfillment. Admin can push every order manually with full visibility into customer email + items + amount + status + Stripe session id (already in the existing detail expander). The Stripe webhook becomes a nice-to-have automation rather than a hard dependency.
 - [x] Verified end-to-end on preview: sync-stripe correctly reported `payment_status='unpaid', session_status='expired'` for the live test order; mark-paid with empty reason returns 400; mark-paid with a real reason flips the status and surfaces in the audit log.
 
+### Content Manager v2 — Durable Storage (Apr 28, 2026)
+- [x] **User pain**: Production missing `/app/backend/content/` after redeploys. Pod filesystem isn't durable. Existing Content Manager / Instructor Content / Media Library / Products tabs were metadata-only with no actual upload. Admin needed a real ops tool.
+- [x] **Integration**: Emergent Object Storage via `EMERGENT_LLM_KEY` (per playbook). Added `EMERGENT_LLM_KEY` to `/app/backend/.env`. New `storage_service.py` wraps init/put/get with auto-retry on 403. Init at server startup; non-fatal if storage unreachable (per-request retry).
+- [x] **New backend routes** (`/app/backend/routes/admin_files_routes.py`, prefix `/api/admin/files`):
+  - `POST /upload` (multipart) — uploads to durable storage + records in `db.files`. Caps: 50 MB per file, allow-list of safe extensions (pdf, png, jpg/jpeg, webp, gif, svg, docx, doc, csv, txt, md, json, mp3, m4a, wav).
+  - `GET ` — paginated list (skip/limit, default 50, max 500). Filters: search, category, include_deleted. **No 6-7 cap.** Returns total + items.
+  - `DELETE /{file_id}` — soft-delete (Emergent Object Storage has no delete API; blob remains, DB record hidden).
+  - `POST /{file_id}/restore`
+  - `POST /{file_id}/replace` (multipart) — uploads new path, updates DB pointer; previous_storage_path retained.
+  - `POST /{file_id}/attach` — link file to product or order with optional role; `db.files.attachments[]`.
+  - `DELETE /{file_id}/attach/{attach_id}` — detach.
+  - `GET /{file_id}/download` — admin-only stream from storage.
+- [x] **New frontend page** `/admin/files` (`AdminFileManager.js`): upload button, search + category filter + show-deleted toggle, paginated table with icon-by-content-type, per-row actions (Download / Attach / Replace / Delete + Restore for deleted), inline attachment chips (click to detach), Replace dialog, Attach dialog with type+id+role.
+- [x] **Sidebar nav**: "File Manager" added to AdminConsole sidebar above Content Manager so it's first-class.
+- [x] **Verified end-to-end**: upload → list → download (round-trip identical) → attach product:holiday_ae + order:SF-2026-TEST → list shows 2 attachments → soft-delete → list excluded by default → include_deleted=true shows it → Restore.
+- [x] **Persistence**: All blobs live in Emergent Object Storage, completely outside the deploy artifact. **Files now survive every redeploy** by design — that's the whole point.
+
 ### Production-Only Issues — Awaiting Deploy Bundle Fix (NOT CODE)
 - [x] **`/app/content/` directory missing from production deploy bundle** — RESOLVED Apr 27 2026 by moving `/app/content/` → `/app/backend/content/` via `git mv` (preserves history + 129 files / 299 MB). The Emergent deploy artifact only ships `/app/backend/` and `/app/frontend/`; top-level siblings like `/app/content/` were silently dropped. Code paths swept: `server.py` static mounts, `payment_routes.PDF_DIR`, `routes/admin_routes.py` fulfillment seeds + content-health, `routes/download_routes.py CONTENT_DIRS`, `routes/lessons.py possible_paths`, `seed_qa_bank.py`. Legacy `/app/content/*` paths kept as fallback in `CONTENT_DIRS` so existing `download_links` DB rows auto-heal via `resolve_file_path` (preview shows `legacy_paths_auto_resolved=17, broken_link_count=0`). 3 dangling symlinks in `lesson_pdfs/` converted to real file copies for deploy safety. Deploy agent: PASS, no blockers.
 

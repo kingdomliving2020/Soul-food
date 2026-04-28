@@ -2008,6 +2008,7 @@ import GamingCentral from './GamingCentral';
 import OrderLookup from './OrderLookup';
 import RefundPolicy from './RefundPolicy';
 import AdminOrders from './AdminOrders';
+import AdminFileManager from './AdminFileManager';
 import InstructorToolbox from './InstructorToolbox';
 import MultimediaPage from './MultimediaPage';
 import RefundRequest from './RefundRequest';
@@ -2038,6 +2039,7 @@ function App() {
             <Route path="/orders/lookup" element={<OrderLookup />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
             <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/files" element={<AdminFileManager />} />
             <Route path="/instructor-toolbox" element={<InstructorToolbox />} />
             <Route path="/multimedia" element={<MultimediaPage />} />
             <Route path="/lesson/free-sample" element={<FreeSampleLesson />} />

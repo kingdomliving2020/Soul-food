@@ -144,6 +144,23 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load gift certificate routes: {e}")
 
+# Import admin file manager (durable Emergent Object Storage)
+try:
+    from routes.admin_files_routes import router as admin_files_router
+    app.include_router(admin_files_router)
+    print("✅ Admin file manager routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load admin file manager routes: {e}")
+
+# Initialize Emergent Object Storage at startup (non-fatal if it fails — we
+# log and let the upload endpoint return a clear 502 if storage is unreachable).
+try:
+    import storage_service
+    storage_service.init_storage()
+    print("✅ Emergent Object Storage initialized")
+except Exception as e:
+    print(f"⚠️ Emergent Object Storage init failed (uploads will retry per request): {e}")
+
 # Import order management routes
 try:
     from routes.order_routes import router as order_router
