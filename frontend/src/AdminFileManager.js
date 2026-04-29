@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Upload, RefreshCw, Trash2, Download, Link2, Unlink, Search,
   ArrowLeft, Loader2, Plus, FileText, Image as ImageIcon,
-  Music, FileType, AlertCircle, CheckCircle
+  Music, FileType, AlertCircle, CheckCircle, History
 } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
@@ -49,6 +49,9 @@ const AdminFileManager = () => {
   const [replaceFor, setReplaceFor] = useState(null);
   const [attachFor, setAttachFor] = useState(null);
   const [attachForm, setAttachForm] = useState({ target_type: 'product', target_id: '', role: '' });
+  const [migrateOpen, setMigrateOpen] = useState(false);
+  const [migrateBusy, setMigrateBusy] = useState(false);
+  const [migrateSummary, setMigrateSummary] = useState(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -242,6 +245,30 @@ const AdminFileManager = () => {
     }
   };
 
+  const runMigration = async (apply) => {
+    setMigrateBusy(true);
+    setMigrateSummary(null);
+    try {
+      const res = await fetch(`${API}/api/admin/files/migrate-legacy?apply=${apply}&attach=true`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Migration failed');
+      setMigrateSummary(data);
+      if (apply) {
+        toast.success(`Migrated ${data.migrated} new file(s); ${data.already_migrated} already up-to-date`);
+        load();
+      } else {
+        toast.success(`Dry-run complete: ${data.would_migrate} new, ${data.already_migrated} already migrated`);
+      }
+    } catch (e) {
+      toast.error(e.message);
+    } finally {
+      setMigrateBusy(false);
+    }
+  };
+
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
@@ -259,6 +286,14 @@ const AdminFileManager = () => {
           <div className="flex items-center gap-2">
             <Button onClick={load} variant="outline" size="sm" data-testid="refresh-btn">
               <RefreshCw className="w-4 h-4 mr-1" /> Refresh
+            </Button>
+            <Button
+              onClick={() => { setMigrateSummary(null); setMigrateOpen(true); }}
+              variant="outline"
+              size="sm"
+              data-testid="migrate-legacy-btn"
+            >
+              <History className="w-4 h-4 mr-1" /> Migrate legacy
             </Button>
             <input
               ref={fileInputRef}
@@ -520,6 +555,62 @@ const AdminFileManager = () => {
           <DialogFooter>
             <Button variant="outline" onClick={() => setAttachFor(null)}>Cancel</Button>
             <Button onClick={submitAttach} data-testid="attach-submit">Attach</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Migrate legacy dialog */}
+      <Dialog open={migrateOpen} onOpenChange={(o) => !migrateBusy && setMigrateOpen(o)}>
+        <DialogContent className="bg-white max-w-2xl" data-testid="migrate-dialog">
+          <DialogHeader><DialogTitle>Migrate legacy files</DialogTitle></DialogHeader>
+          <div className="space-y-3 text-sm text-slate-600">
+            <p>
+              Moves all files in <code className="bg-slate-100 px-1 rounded">/app/backend/content/</code> into
+              durable Emergent Object Storage so they survive every redeploy. Idempotent — files already
+              migrated are skipped (sha256 dedup). Files under <code>downloads/</code> that match a known
+              product file are auto-attached to those products.
+            </p>
+            <p className="text-xs text-slate-500">
+              Run a dry-run first to preview the plan, then click "Apply" to actually migrate.
+            </p>
+            {migrateSummary && (
+              <div className="border rounded p-3 bg-slate-50 text-xs space-y-1" data-testid="migrate-summary">
+                <div><b>Mode:</b> {migrateSummary.apply ? 'APPLIED' : 'DRY-RUN'}</div>
+                <div><b>Total:</b> {migrateSummary.total}</div>
+                <div><b>Migrated:</b> {migrateSummary.migrated}</div>
+                <div><b>Would migrate:</b> {migrateSummary.would_migrate}</div>
+                <div><b>Already migrated:</b> {migrateSummary.already_migrated}</div>
+                <div><b>Auto-attached:</b> {migrateSummary.auto_attached_count}</div>
+                <div><b>Skipped (ext):</b> {migrateSummary.skipped_ext}</div>
+                <div className={migrateSummary.errors > 0 ? 'text-red-600' : ''}>
+                  <b>Errors:</b> {migrateSummary.errors}
+                </div>
+                {migrateSummary.errors > 0 && (
+                  <ul className="mt-2 list-disc pl-5 text-red-600">
+                    {(migrateSummary.results || []).filter(r => ['error', 'upload_failed'].includes(r.status)).slice(0, 10).map((r) => (
+                      <li key={r.path}>{r.path} — {r.reason}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setMigrateOpen(false)} disabled={migrateBusy}>Close</Button>
+            <Button
+              variant="outline"
+              onClick={() => runMigration(false)}
+              disabled={migrateBusy}
+              data-testid="migrate-dryrun-btn"
+            >
+              {migrateBusy ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : null} Dry run
+            </Button>
+            <Button
+              onClick={() => runMigration(true)}
+              disabled={migrateBusy}
+              data-testid="migrate-apply-btn"
+            >
+              {migrateBusy ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : null} Apply
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

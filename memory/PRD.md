@@ -222,6 +222,14 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 ### Lifelines for Tricky Testaments (clarification needed)
 - TrickyTestamentGame is a Jeopardy-style game and has never had Millionaire-style lifelines (50/50, ask audience, etc.). Lifelines belong to MixUpGame (the Trivia Mix-up game). Asked user to confirm whether they wanted lifelines added as a new feature or if they were looking at the wrong game.
 
+### Legacy Files Migration → Object Storage (Apr 29, 2026)
+- [x] **New script** `/app/backend/scripts/migrate_legacy_files.py` walks `/app/backend/content/` recursively, hashes each file (sha256), uploads to Emergent Object Storage via `storage_service.put_object`, and inserts a `db.files` record using the same schema as the Admin File Manager. Idempotent — re-runs are safe (`legacy_sha256` dedup; identical bytes are merged into one record).
+- [x] **Auto-attach (option c — skip ambiguous)**: For files under `content/downloads/`, the script builds an inverse index of `payment_routes.PRODUCT_FILES` and attaches each migrated file to every product_id that aliases it (role=`legacy`). Files outside downloads/ (holiday/, bonus/, images/, etc.) are left unattached for manual wiring.
+- [x] **Admin endpoint** `POST /api/admin/files/migrate-legacy?apply=&attach=` runs the migration in-process. Dry-run by default; `apply=true` actually writes. Returns full summary (`total / migrated / already_migrated / would_migrate / auto_attached_count / errors / results`).
+- [x] **UI**: "Migrate legacy" button in `AdminFileManager.js` opens a dialog with Dry-run + Apply actions and a summary panel showing the per-status counts (and per-file error rows when present).
+- [x] **Verified end-to-end**: 129 source files → 102 unique blobs in storage (27 duplicates merged), 228 product auto-attachments, round-trip download of 13.3 MB `holiday-ae-full.pdf` byte-identical, idempotent re-run = 0 new / 129 already_migrated / 0 new attachments.
+- [x] All blobs now durable across redeploys. Local `/app/backend/content/` becomes a deploy-time seed only — DB pointers carry users forward.
+
 ### Earlier Work
 - Purchase Flow, Conversion Layer, Auth Fixes, Email Fixes, Store, Games, Coupons
 

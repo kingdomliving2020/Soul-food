@@ -243,6 +243,26 @@ async def detach_file(file_id: str, attach_id: str, admin: AdminUser = Depends(g
     return {"success": True}
 
 
+@router.post("/migrate-legacy")
+async def migrate_legacy_files(
+    apply: bool = Query(False, description="If false, returns a dry-run plan"),
+    attach: bool = Query(True, description="Auto-attach migrated files to products via PRODUCT_FILES heuristic"),
+    admin: AdminUser = Depends(get_current_admin),
+):
+    """One-shot migration of legacy files in /app/backend/content/ to durable
+    Emergent Object Storage. Idempotent — already-migrated files are skipped
+    via sha256 dedup. Set ?apply=true to actually upload."""
+    try:
+        from scripts.migrate_legacy_files import run_migration
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"migration module unavailable: {e}")
+    try:
+        summary = await run_migration(apply=apply, attach=attach)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"migration failed: {e}")
+    return summary
+
+
 @router.get("/{file_id}/download")
 async def download_file(file_id: str, admin: AdminUser = Depends(get_current_admin)):
     """Admin-only file download. Streams from Emergent Object Storage."""
