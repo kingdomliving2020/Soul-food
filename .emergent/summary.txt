@@ -1,0 +1,144 @@
+<analysis>**original_problem_statement**: 
+Soft-launching MVP for Soul Food (kingdom-soul.com). The core recent objectives were MVP hardening, fixing production deployment bundle omissions (missing content directories), adding internal demo/test codes, unblocking paid interactive PDFs (iPDFs), adding manual order fulfillment controls to the Admin Console, and replacing local file storage with durable Emergent Object Storage for the Content Manager.
+
+**User's preferred language**: English
+(INSTRUCT NEXT AGENT: You MUST respond in English only)
+
+**what currently exists?** 
+A full-stack React/FastAPI/MongoDB app with Stripe, Resend, and recently integrated Emergent Object Storage. Features include an Admin Codes & Redemptions module (batch/demo/test), Instructor Toolbox, interactive games (Tricky Testaments, Millionaire), Admin Orders with manual fulfillment overrides, and a new durable Admin File Manager. Local content files were moved to  to ensure deployment, but are now transitioning to Object Storage for true durability across redeploys.
+
+**Last working item**:
+    - Last item agent was working: The user just requested the implementation of the legacy files migration script (to move existing local files in  to Emergent Object Storage and update DB references) and adding a Refresh button to the Content Manager tab. 
+    - Status: NOT STARTED
+    - Agent Testing Done: N
+    - Which testing method agent to use?: backend testing agent
+    - User Testing Done: N
+
+**All Pending/In progress Issue list**:
+  None. All reported production issues from the previous deploy have been resolved.
+
+**In progress Task List**:
+  Task 1: Legacy Files Migration to Object Storage & UI Polish
+     - Where to resume: Create the Python script to scan the legacy local filesystem (e.g., ), push the bytes to Emergent Object Storage via , and update the respective DB documents. Then, add a Refresh button to .
+     - What will be achieved with this?: All existing buyer downloads will survive future redeploys with zero manual re-uploading work. The Admin UI will have a quick refresh mechanism.
+     - Status: NOT STARTED
+     - Should Test frontend/backend/both after fix?: both
+     - Blocked on something: None
+
+**Upcoming and Future Tasks**
+    Upcoming Tasks:
+    - Phase 2 of Codes & Redemptions (User-Facing Redemption Flow) (P1): Awaiting user approval of Phase 1 before building a Redeem Access Code input in the My Library frontend.
+    
+    Future Tasks (On HOLD):
+    - Password Reset on First Login (force change for temp credentials to meet NIST compliance). (P2)
+    - Security Upgrade: Move auth tokens from localStorage to  cookies. (P2)
+    - SMS OTP (UI/logic prep). (P2)
+    - Gift Certificates. (P2)
+    - Subscription/Recurring Billing backend and full UI. (P2)
+    - Word Search Game. (P2)
+    - Video Integration into My Library. (P2)
+    - Function complexity refactoring (, , , ). (P2)
+
+**Completed work in this session**
+- Instructor 2FA friction removed (applied to Admin/Owner only) (DONE)
+- Demo and  Test Codes logic added to Codes & Redemptions (, ) (DONE)
+- Auth auto-login JWT  latent bug fixed (DONE)
+- Added  health endpoint (DONE)
+- Tricky Testaments wagers and wrong-answer point deductions fixed (DONE)
+- Added Content Health diagnostic tile to Admin Dashboard (DONE)
+- Moved local  to  to fix production deploy bundle omission (DONE)
+- Fixed Paid iPDFs (Interactive Lessons) to bypass lock screens by implementing  (DONE)
+- Added manual Sync from Stripe, Mark as Paid, Grant Access, and Resend Email buttons to Admin Orders (DONE)
+- Built durable File Manager v2 using Emergent Object Storage (, ) (DONE)
+
+**Earlier issues found/mentioned but not fixed**
+None. Agent systematically addressed all post-deploy bugs.
+
+**Known issue recurrence from previous fork**
+  - Issue recurrence in previous fork: None
+  - Recurrence count: 0
+  - Status: RESOLVED
+
+**Code Architecture**
+-  (New: Wrapper for Emergent Object Storage)
+-  (New: CRUD for admin durable files)
+-  (New: UI for Content Manager)
+-  (Contains relocated legacy static files; target for upcoming migration)
+-  (Authentication, JWT minting)
+-  (Includes order manual overrides)
+-  (iPDF viewer with entitlement validations)
+
+**Key Technical Concepts**
+React, FastAPI, MongoDB, Stripe (Payments/Webhooks), Resend (Emails), Emergent Object Storage, JWT Authentication. 
+
+**key DB schema**
+  - :  (NEW)
+  - : 
+  - : 
+
+**changes in tech stack**
+  - Added Emergent Object Storage integration using the universal .
+
+**All files of reference** 
+-  (Object storage integration logic)
+-  (File CRUD endpoints)
+-  (Admin file UI)
+-  (Order sync/fulfillment UI)
+-  (Contains )
+
+**Areas that need refactoring**
+-  contains too much logic (checkout, webhooks, dictionary references, manual sync). Should be split up.
+
+**key api endpoints**
+-  (Upload to Object Storage)
+-  (Manual webhook bypass)
+-  (Manual fulfillment)
+-  (Validates if a user owns an iPDF without relying on download links)
+
+**Critical Info for New Agent**
+- **Production vs. Preview:** The user frequently deploys to . Changes MUST be made in the preview environment, and the user handles the production redeploy.
+- **Emergent Object Storage:** The new File Manager relies on  in the environment to function. The backend is configured to use it.
+- **Legacy File Migration:** The user's immediate request is to migrate legacy local files (located in ) to Object Storage so they survive redeploys seamlessly.
+
+**documents and test reports created in this job**
+  -  through 
+  -  (Updated)
+  -  (Updated)
+
+**Last 10 User Messages and any pending HUMAN messages** 
+- (User) Deploys to prod. do the improvement suggestion with the legacy files, also add refresh button on content manager tab (Pending task)
+- (Agent) Completes Deployer Check. Mentions  requirement for Prod.
+- (User) Requests Deployer check.
+- (Agent) Finishes building File Manager v2 with Object Storage.
+- (User) Requests Content Manager to be a real operational tool with durable storage.
+- (Agent) Finishes adding Admin Orders manual override buttons.
+- (User) Asks if Stripe webhook is required for MVP and asks for manual Admin UI buttons to bypass it.
+- (Agent) Finishes fixing iPDF lock screen via entitlement endpoint.
+- (User) Reports Paid iPDFs are locked while Free iPDFs render perfectly.
+- (Agent) Finishes deploy bundle fix (moving  to ).
+
+**Project Health Check:**
+- Broken: Legacy files still sit locally in  and need migration to the new Object Storage.
+- Mocked: Phase 2 Code Redemption flow.
+
+**3rd Party Integrations** 
+- Emergent Object Storage — uses Emergent LLM Key ()
+- Stripe (Payments) — requires User API Key
+- Resend (Emails) — requires User API Key
+
+**Testing status**
+  - Testing agent used after significant changes: YES
+  - Troubleshoot agent used after agent stuck in loop: NO
+  - Test files created: Updated various  files in 
+  - Known regressions: None currently.
+
+**Credentials to test flow:**
+Use credentials found in .
+
+**What agent forgot to execute**
+The agent is exactly at the point of receiving the prompt to create the legacy files migration script and UI refresh button. Nothing was overlooked.
+
+**Debugging checklist for current issue**
+    Issue: Legacy Files Migration
+    Backend files to check: Create a new script (e.g., ) that uses  to upload files from  and inserts records into . Update existing download link pointers in DB if applicable.
+    Frontend files to check:  (Add a standard  icon button that calls the existing  function).</analysis>

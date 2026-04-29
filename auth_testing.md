@@ -30,11 +30,11 @@ print('User ID: ' + userId);
 ## Step 2: Test Backend API
 ```bash
 # Test auth endpoint
-curl -X GET "https://soul-checkout-stage.preview.emergentagent.com/api/auth/me" \
+curl -X GET "https://content-durability.preview.emergentagent.com/api/auth/me" \
   -H "Authorization: Bearer YOUR_SESSION_TOKEN"
 
 # Test rewards balance
-curl -X GET "https://soul-checkout-stage.preview.emergentagent.com/api/auth/rewards/balance" \
+curl -X GET "https://content-durability.preview.emergentagent.com/api/auth/rewards/balance" \
   -H "Authorization: Bearer YOUR_SESSION_TOKEN"
 ```
 
@@ -50,7 +50,7 @@ await page.context.add_cookies([{
     "secure": true,
     "sameSite": "None"
 }]);
-await page.goto("https://soul-checkout-stage.preview.emergentagent.com");
+await page.goto("https://content-durability.preview.emergentagent.com");
 ```
 
 ## Quick Debug

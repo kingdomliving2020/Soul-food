@@ -168,7 +168,7 @@ class TestCheckoutFlow:
                 "quantity": 1,
                 "salePrice": 16.99
             }],
-            "origin_url": "https://soul-checkout-stage.preview.emergentagent.com"
+            "origin_url": "https://content-durability.preview.emergentagent.com"
         })
         assert response.status_code == 200
         data = response.json()
@@ -185,7 +185,7 @@ class TestCheckoutFlow:
                 {"product_id": "holiday_ae", "name": "Holiday Adult Edition", "quantity": 1, "salePrice": 16.99},
                 {"product_id": "snack_pack_ae_m1", "name": "Snack Pack AE M1", "quantity": 1, "salePrice": 8.99}
             ],
-            "origin_url": "https://soul-checkout-stage.preview.emergentagent.com"
+            "origin_url": "https://content-durability.preview.emergentagent.com"
         })
         assert response.status_code == 200
         data = response.json()
