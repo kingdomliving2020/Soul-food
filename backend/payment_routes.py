@@ -780,19 +780,24 @@ async def get_pdf_path_async(product_id: str) -> Optional[str]:
       1. db.files (Emergent Object Storage) — find any non-deleted file attached
          to product:product_id. Return ``objstore:<storage_path>`` so the
          download endpoint can route it through storage_service.get_object().
-      2. db.product_file_mappings — explicit admin override (returns the path
-         from the mapping if the file exists on disk).
-      3. Local /app/backend/content/downloads/ via PRODUCT_FILES — only as a
+         This is the single source of truth for fulfillment.
+      2. Local /app/backend/content/downloads/ via PRODUCT_FILES — only as a
          legacy fallback. Logged as a warning because it won't survive the
          next redeploy.
-      4. Expected local path even if missing on disk — last-resort guess.
+      3. Expected local path even if missing on disk — last-resort guess.
+
+    Note: ``db.product_file_mappings`` is DEPRECATED as of Apr 30, 2026. The
+    File Manager's attach/detach UI (writing to ``db.files.attachments[]``)
+    is now the only admin surface for pinning files to products. Use
+    ``POST /api/admin/files/repair-product-mappings`` to clean up legacy
+    entries in that collection.
 
     Use the ``objstore:`` prefix to distinguish durable references from disk
     paths in download_links records and in download_routes.py.
     """
     normalized_id = normalize_product_id(product_id)
 
-    # 1. Object Storage via db.files attachment (preferred for all new fulfillments)
+    # 1. Object Storage via db.files attachment (single source of truth)
     obj = await db.files.find_one(
         {
             "is_deleted": False,
@@ -811,25 +816,14 @@ async def get_pdf_path_async(product_id: str) -> Optional[str]:
         print(f"[PDF Path] {product_id} → Object Storage ({obj.get('original_filename')}) = {obj['storage_path']}")
         return ref
 
-    # 2. MongoDB product_file_mappings (explicit override)
-    mapping = await db.product_file_mappings.find_one(
-        {"product_id": {"$in": [product_id, normalized_id]}, "active": True},
-        {"_id": 0, "file_path": 1, "filename": 1}
-    )
-    if mapping:
-        path = mapping.get("file_path") or os.path.join(PDF_DIR, mapping.get("filename", ""))
-        if os.path.exists(path):
-            print(f"[PDF Path] {product_id} → product_file_mappings local path (legacy): {path}")
-            return path
-
-    # 3. Local disk via hardcoded PRODUCT_FILES — legacy only
+    # 2. Local disk via hardcoded PRODUCT_FILES — legacy only
     disk_path = get_pdf_path(product_id)
     if disk_path:
         print(f"[PDF Path] WARNING: {product_id} resolved to LOCAL disk path "
               f"(no Object Storage attachment yet — will not survive redeploy): {disk_path}")
         return disk_path
 
-    # 4. Expected path even if missing — last-resort guess for downstream UX
+    # 3. Expected path even if missing — last-resort guess for downstream UX
     expected = get_expected_pdf_path(product_id)
     if expected:
         print(f"[PDF Path] {product_id}: file not on disk and no Object Storage match — "

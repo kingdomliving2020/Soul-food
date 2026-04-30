@@ -243,6 +243,26 @@ async def detach_file(file_id: str, attach_id: str, admin: AdminUser = Depends(g
     return {"success": True}
 
 
+@router.post("/repair-product-mappings")
+async def repair_product_mappings(
+    apply: bool = Query(False, description="If false, returns a dry-run plan"),
+    admin: AdminUser = Depends(get_current_admin),
+):
+    """Repair or deprecate legacy db.product_file_mappings rows. Entries with a
+    matching db.files product attachment are rewritten to ``objstore:<path>``;
+    rows with no match are marked ``active=False`` and stamped with a reason.
+    Idempotent. Set ``?apply=true`` to actually write."""
+    try:
+        from scripts.repair_product_mappings import run_repair
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"repair module unavailable: {e}")
+    try:
+        summary = await run_repair(apply=apply, actor=getattr(admin, "email", admin.id))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"repair failed: {e}")
+    return summary
+
+
 @router.post("/migrate-legacy")
 async def migrate_legacy_files(
     apply: bool = Query(False, description="If false, returns a dry-run plan"),

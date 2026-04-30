@@ -222,6 +222,13 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 ### Lifelines for Tricky Testaments (clarification needed)
 - TrickyTestamentGame is a Jeopardy-style game and has never had Millionaire-style lifelines (50/50, ask audience, etc.). Lifelines belong to MixUpGame (the Trivia Mix-up game). Asked user to confirm whether they wanted lifelines added as a new feature or if they were looking at the wrong game.
 
+### `product_file_mappings` deprecated + repaired (Apr 30, 2026)
+- [x] **`db.product_file_mappings` is now legacy**. The single source of truth for product↔file bindings is `db.files.attachments[]` (written via File Manager / migration script). The lookup branch was removed from `get_pdf_path_async()` — priority is now: (1) Object Storage via `db.files`, (2) local `PRODUCT_FILES` (legacy), (3) expected path.
+- [x] **Repair script** `/app/backend/scripts/repair_product_mappings.py` + admin endpoint `POST /api/admin/files/repair-product-mappings?apply=`. For each row:
+  - Match to `db.files` attachment → rewrite `file_path` to `objstore:<storage_path>`, refresh `filename`, stamp `repaired_at`/`repaired_by`/`repaired_from`.
+  - No match → set `active=False`, stamp `deprecated_at`/`deprecated_reason`. Stale `/app/content/` paths no longer advertised.
+- [x] **Verified end-to-end** on preview: 230 rows total → 228 rewritten to `objstore:` paths, 2 deprecated (`bonus_names_of_god`, `bonus_times_seasons` — no corresponding legacy file existed). Idempotent re-run = 0 new repairs, 228 `already_objstore`. Zero rows remain with stale active `/app/content/` paths.
+
 ### Fulfillment now writes Object Storage refs, not local paths (Apr 30, 2026)
 - [x] **`get_pdf_path_async()` rewritten** (`/app/backend/payment_routes.py`) with new priority order:
   1. `db.files` Object Storage attachment (preferred for ALL new fulfillments) → returns `objstore:<storage_path>`
