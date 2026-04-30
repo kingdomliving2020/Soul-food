@@ -43,8 +43,14 @@ def resolve_file_path(stored_path: str) -> str:
     2. Try basename in known content directories (for relative paths)
     3. Try the path as relative to each content directory
     Returns the resolved path if found, else empty string.
+
+    Note: Object Storage references (``objstore:<storage_path>``) are NOT
+    resolved here — the download endpoint handles those before calling.
     """
     if not stored_path:
+        return ""
+    if stored_path.startswith("objstore:"):
+        # Durable Object Storage reference — not a local path. Caller handles.
         return ""
     
     # 1. Direct path check
@@ -117,6 +123,55 @@ async def find_object_storage_file(product_id: str, stored_path: str = "") -> Op
     )
 
 
+async def _stream_from_object_storage(
+    storage_path: str,
+    record: dict,
+    token: str,
+    ip_address: str,
+    user_agent: str,
+    original_filename: Optional[str] = None,
+    content_type: Optional[str] = None,
+) -> Response:
+    """Stream a file from Emergent Object Storage as the response body. Records
+    the download against the link token and surfaces the same X-* headers
+    used by local-disk downloads. Common helper used by both the
+    ``objstore:<path>`` branch and the db.files product-attachment fallback."""
+    try:
+        import storage_service as ss
+        data, fetched_ct = ss.get_object(storage_path)
+    except Exception as storage_err:
+        print(f"[Download] Object Storage read failed for {storage_path}: {storage_err}")
+        raise HTTPException(
+            status_code=502,
+            detail="Storage temporarily unavailable. Please try again or contact support@kingdom-soul.com."
+        )
+
+    # Record the download (same accounting as the local path)
+    await record_download(token, ip_address, user_agent)
+    remaining = await get_remaining_downloads(token)
+
+    # Generate safe download filename
+    product_name = record.get("product_name", "Download")
+    safe_name = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in product_name)
+    safe_name = safe_name.strip().replace(" ", "_")[:100]
+    ext = os.path.splitext(original_filename or "file.pdf")[1] or ".pdf"
+    filename = f"SoulFood_{safe_name}{ext}"
+
+    headers = {"X-Downloads-Remaining": str(remaining), "X-Source": "object-storage"}
+    try:
+        expires_at = record.get("expires_at")
+        if expires_at and hasattr(expires_at, "isoformat"):
+            headers["X-Download-Expires"] = expires_at.isoformat()
+        elif expires_at:
+            headers["X-Download-Expires"] = str(expires_at)
+    except Exception:
+        pass
+    headers["Content-Disposition"] = f'attachment; filename="{filename}"'
+
+    media_type = content_type or fetched_ct or "application/octet-stream"
+    return Response(content=data, media_type=media_type, headers=headers)
+
+
 # =============================================================================
 # REQUEST MODELS
 # =============================================================================
@@ -158,6 +213,27 @@ async def download_file(token: str, request: Request):
         
         # Get the file path and resolve it
         file_path = record["file_path"]
+
+        # Object Storage reference (preferred for new fulfillments).
+        # Format: ``objstore:<storage_path>``. Stream directly without disk lookup.
+        if isinstance(file_path, str) and file_path.startswith("objstore:"):
+            storage_path = file_path[len("objstore:"):]
+            obj_meta = None
+            try:
+                # lazy db lookup for original filename + content type
+                from server import db as _db
+                obj_meta = await _db.files.find_one(
+                    {"storage_path": storage_path},
+                    {"_id": 0, "original_filename": 1, "content_type": 1},
+                )
+            except Exception:
+                pass
+            return await _stream_from_object_storage(
+                storage_path, record, token, ip_address, user_agent,
+                original_filename=(obj_meta or {}).get("original_filename"),
+                content_type=(obj_meta or {}).get("content_type"),
+            )
+
         resolved_path = resolve_file_path(file_path)
 
         if not resolved_path:
@@ -168,41 +244,11 @@ async def download_file(token: str, request: Request):
             product_id = record.get("product_id") or record.get("normalized_product_id") or ""
             obj_record = await find_object_storage_file(product_id, file_path)
             if obj_record:
-                try:
-                    import storage_service as ss
-                    data, ctype = ss.get_object(obj_record["storage_path"])
-                except Exception as storage_err:
-                    print(f"[Download] Object Storage read failed for product {product_id} "
-                          f"(file_id={obj_record.get('id')}): {storage_err}")
-                    raise HTTPException(
-                        status_code=502,
-                        detail="Storage temporarily unavailable. Please try again or contact support@kingdom-soul.com."
-                    )
-
-                # Record the download (same accounting as the local path)
-                await record_download(token, ip_address, user_agent)
-                remaining = await get_remaining_downloads(token)
-
-                # Generate safe download filename
-                product_name = record.get("product_name", "Download")
-                safe_name = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in product_name)
-                safe_name = safe_name.strip().replace(" ", "_")[:100]
-                ext = os.path.splitext(obj_record.get("original_filename") or "file.pdf")[1] or ".pdf"
-                filename = f"SoulFood_{safe_name}{ext}"
-
-                headers = {"X-Downloads-Remaining": str(remaining), "X-Source": "object-storage"}
-                try:
-                    expires_at = record.get("expires_at")
-                    if expires_at and hasattr(expires_at, "isoformat"):
-                        headers["X-Download-Expires"] = expires_at.isoformat()
-                    elif expires_at:
-                        headers["X-Download-Expires"] = str(expires_at)
-                except Exception:
-                    pass
-                headers["Content-Disposition"] = f'attachment; filename="{filename}"'
-
-                media_type = obj_record.get("content_type") or ctype or "application/octet-stream"
-                return Response(content=data, media_type=media_type, headers=headers)
+                return await _stream_from_object_storage(
+                    obj_record["storage_path"], record, token, ip_address, user_agent,
+                    original_filename=obj_record.get("original_filename"),
+                    content_type=obj_record.get("content_type"),
+                )
 
             print(f"[Download] FILE NOT FOUND for token. Stored path: {file_path}; "
                   f"no Object Storage attachment for product {product_id}")

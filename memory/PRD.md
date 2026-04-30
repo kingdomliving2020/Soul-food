@@ -222,6 +222,21 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 ### Lifelines for Tricky Testaments (clarification needed)
 - TrickyTestamentGame is a Jeopardy-style game and has never had Millionaire-style lifelines (50/50, ask audience, etc.). Lifelines belong to MixUpGame (the Trivia Mix-up game). Asked user to confirm whether they wanted lifelines added as a new feature or if they were looking at the wrong game.
 
+### Fulfillment now writes Object Storage refs, not local paths (Apr 30, 2026)
+- [x] **`get_pdf_path_async()` rewritten** (`/app/backend/payment_routes.py`) with new priority order:
+  1. `db.files` Object Storage attachment (preferred for ALL new fulfillments) → returns `objstore:<storage_path>`
+  2. `db.product_file_mappings` admin override (returns local path if file exists)
+  3. Local `/app/backend/content/downloads/` via `PRODUCT_FILES` — legacy only, logs a redeploy-fragility warning
+  4. Expected local path even if missing — last-resort guess
+- [x] All 5 fulfillment call sites (webhook, status-check, admin manual sync, admin re-fulfill, admin grant) now persist `objstore:`-prefixed `file_path` values into `download_links` for migrated products. New orders survive every redeploy without re-fulfillment.
+- [x] **`download_routes.py` updated** to handle the new format:
+  - `resolve_file_path()` ignores `objstore:` paths (returns "")
+  - `download_file()` recognizes `objstore:<path>` early and streams via `_stream_from_object_storage()` helper without disk lookup
+  - Existing local-disk + db.files-fallback branches preserved as legacy compat
+  - Helper extracted so all three Object Storage paths (early `objstore:`, db.files product fallback) share one streaming implementation
+- [x] **Verified end-to-end**: `get_pdf_path_async('holiday_ae')` → `objstore:soul-food/downloads/...pdf`. Synthetic download_link with `objstore:` path → HTTP 200, 13.3 MB PDF byte-identical to source, `X-Source: object-storage`, counter increments correctly.
+- [x] Lint clean (Python ruff).
+
 ### Legacy Files Migration → Object Storage (Apr 29, 2026)
 - [x] **New script** `/app/backend/scripts/migrate_legacy_files.py` walks `/app/backend/content/` recursively, hashes each file (sha256), uploads to Emergent Object Storage via `storage_service.put_object`, and inserts a `db.files` record using the same schema as the Admin File Manager. Idempotent — re-runs are safe (`legacy_sha256` dedup; identical bytes are merged into one record).
 - [x] **Auto-attach (option c — skip ambiguous)**: For files under `content/downloads/`, the script builds an inverse index of `payment_routes.PRODUCT_FILES` and attaches each migrated file to every product_id that aliases it (role=`legacy`). Files outside downloads/ (holiday/, bonus/, images/, etc.) are left unattached for manual wiring.
