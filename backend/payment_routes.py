@@ -830,6 +830,51 @@ async def get_pdf_path_async(product_id: str) -> Optional[str]:
               f"using expected path: {expected}")
     return expected
 
+
+async def _verify_file_retrievable(pdf_path: Optional[str]) -> bool:
+    """Confirm the bytes for ``pdf_path`` are actually retrievable BEFORE we
+    mark an order fulfilled. Prevents the 'DB says fulfilled, download 404s'
+    failure mode.
+      * ``objstore:<path>`` → HEAD the object in Emergent Object Storage
+      * local path → ``os.path.exists``
+    Never raises — returns False on any error."""
+    if not pdf_path:
+        return False
+    try:
+        if pdf_path.startswith("objstore:"):
+            storage_path = pdf_path[len("objstore:"):]
+            import storage_service as ss
+            return ss.head_object(storage_path)
+        return os.path.exists(pdf_path)
+    except Exception as e:
+        print(f"[Verify] retrievability check raised for {pdf_path}: {e}")
+        return False
+
+
+async def _verified_entries_for_fulfillment(file_entries: list, caller: str = "fulfillment") -> tuple:
+    """Resolve and VERIFY each file entry. Only verified entries are eligible
+    for download-link creation + fulfilled status.
+
+    Returns ``(verified_list, failures_list)`` where:
+      * verified_list items: ``{...entry, pdf_path}``
+      * failures_list items: ``{...entry, pdf_path, reason}`` with reason in
+        ``{"no_path", "not_retrievable"}``.
+    """
+    verified: list = []
+    failures: list = []
+    for entry in file_entries or []:
+        pdf_path = await get_pdf_path_async(entry["file_key"]) or await get_pdf_path_async(entry["product_id"])
+        if not pdf_path:
+            print(f"[{caller}] VERIFY FAIL ({entry['name']}/{entry['file_key']}): no path resolved")
+            failures.append({**entry, "pdf_path": None, "reason": "no_path"})
+            continue
+        if not await _verify_file_retrievable(pdf_path):
+            print(f"[{caller}] VERIFY FAIL ({entry['name']}/{entry['file_key']}): path not retrievable = {pdf_path}")
+            failures.append({**entry, "pdf_path": pdf_path, "reason": "not_retrievable"})
+            continue
+        verified.append({**entry, "pdf_path": pdf_path})
+    return verified, failures
+
 # Product catalog with list and sale prices
 # Cost = wholesale/production cost, List Price = MSRP, Sale Price = current selling price
 # Updated: January 2026 per Stripe Product Catalog
@@ -1965,6 +2010,7 @@ async def get_checkout_status(session_id: str):
                 items = [{"product_id": product_id, "name": PRODUCTS.get(product_id, {}).get("name", product_id)}]
             
             download_links_created = []
+            verification_failures: list = []
             for item in items:
                 raw_id = item.get("normalized_product_id") or item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
                 item_name = item.get("name", raw_id)
@@ -2044,44 +2090,60 @@ async def get_checkout_status(session_id: str):
                 if not file_entries:
                     print(f"[StatusCheck] No downloadable file for: {item_name} (raw_id={raw_id})")
                     continue
-                
-                for entry in file_entries:
-                    pdf_path = await get_pdf_path_async(entry["file_key"]) or await get_pdf_path_async(entry["product_id"])
-                    print(f"[StatusCheck] file_key={entry['file_key']} -> pdf_path={pdf_path}")
-                    if pdf_path:
-                        try:
-                            token, expires_at = await create_download_link(
-                                order_id=order_number,
-                                user_id=user_id,
-                                user_email=customer_email or "no-email@placeholder.com",
-                                product_id=entry["file_key"],
-                                product_name=entry["name"],
-                                file_path=pdf_path,
-                                payment_verified=True
-                            )
-                            download_links_created.append({
-                                "product_id": entry["file_key"],
-                                "name": entry["name"],
-                                "token": token
-                            })
-                            print(f"[StatusCheck] SUCCESS: Download link for {entry['name']} ({entry['file_key']})")
-                        except Exception as dl_error:
-                            print(f"[StatusCheck] ERROR: Creating download link for {entry['name']}: {dl_error}")
-                            import traceback
-                            traceback.print_exc()
-                    else:
-                        print(f"[StatusCheck] FAIL: No PDF path for {entry['name']} (key={entry['file_key']})")
+
+                # Verify each file is retrievable BEFORE creating download links.
+                # Entries that fail verification are NOT fulfilled and NOT rendered
+                # as download buttons on the frontend.
+                verified_entries, verify_failures = await _verified_entries_for_fulfillment(
+                    file_entries, caller="StatusCheck"
+                )
+                verification_failures.extend(verify_failures)
+
+                for entry in verified_entries:
+                    pdf_path = entry["pdf_path"]
+                    print(f"[StatusCheck] file_key={entry['file_key']} -> pdf_path={pdf_path} (verified)")
+                    try:
+                        token, expires_at = await create_download_link(
+                            order_id=order_number,
+                            user_id=user_id,
+                            user_email=customer_email or "no-email@placeholder.com",
+                            product_id=entry["file_key"],
+                            product_name=entry["name"],
+                            file_path=pdf_path,
+                            payment_verified=True
+                        )
+                        download_links_created.append({
+                            "product_id": entry["file_key"],
+                            "name": entry["name"],
+                            "token": token
+                        })
+                        print(f"[StatusCheck] SUCCESS: Download link for {entry['name']} ({entry['file_key']})")
+                    except Exception as dl_error:
+                        print(f"[StatusCheck] ERROR: Creating download link for {entry['name']}: {dl_error}")
+                        import traceback
+                        traceback.print_exc()
+                        verification_failures.append({**entry, "reason": "link_creation_error", "error": str(dl_error)})
             
-            print(f"[StatusCheck] Fulfillment complete: {len(download_links_created)} download links created")
+            print(f"[StatusCheck] Fulfillment complete: {len(download_links_created)} download links created; "
+                  f"{len(verification_failures)} verification/link failures")
             
-            # Update order status to fulfilled
+            # Update order status to fulfilled — ONLY if at least one verified link was created.
+            # Stash verification failures so Admin Orders + frontend can see them.
             update_fields = {
                 "download_links_generated": len(download_links_created) > 0,
                 "downloads_count": len(download_links_created),
-                "fulfillment_completed_at": datetime.utcnow().isoformat()
+                "fulfillment_completed_at": datetime.utcnow().isoformat(),
+                "fulfillment_verification_failures": [
+                    {k: v for k, v in f.items() if k in ("file_key", "product_id", "name", "pdf_path", "reason", "error")}
+                    for f in verification_failures
+                ],
             }
             if download_links_created:
                 update_fields["status"] = "fulfilled"
+            else:
+                # No verified deliverable → keep status as-is (typically 'paid') and record that
+                # fulfillment is pending verification.
+                update_fields["fulfillment_status"] = "pending_verification"
             
             await db.payment_transactions.update_one(
                 {"session_id": session_id},
@@ -2267,6 +2329,7 @@ async def stripe_webhook(request: Request):
                 print(f"[Webhook] Processing {len(items)} item(s) for fulfillment")
                 
                 download_links_created = []
+                verification_failures: list = []
                 for item in items:
                     raw_id = item.get("normalized_product_id") or item.get("product_id") or item.get("id") or item.get("uniqueKey", "")
                     item_name = item.get("name", raw_id)
@@ -2281,44 +2344,55 @@ async def stripe_webhook(request: Request):
                     if not file_entries:
                         print(f"[Webhook] No downloadable file for: {item_name} (raw_id={raw_id})")
                         continue
-                    
-                    for entry in file_entries:
-                        pdf_path = await get_pdf_path_async(entry["file_key"]) or await get_pdf_path_async(entry["product_id"])
-                        print(f"[Webhook] file_key={entry['file_key']} -> pdf_path={pdf_path}")
-                        if pdf_path:
-                            try:
-                                token, expires_at = await create_download_link(
-                                    order_id=order_number,
-                                    user_id=user_id,
-                                    user_email=customer_email or "no-email@placeholder.com",
-                                    product_id=entry["file_key"],
-                                    product_name=entry["name"],
-                                    file_path=pdf_path,
-                                    payment_verified=True
-                                )
-                                download_links_created.append({
-                                    "product_id": entry["file_key"],
-                                    "name": entry["name"],
-                                    "token": token
-                                })
-                                print(f"[Webhook] SUCCESS: Download link created for {entry['name']} ({entry['file_key']})")
-                            except Exception as dl_error:
-                                print(f"[Webhook] ERROR: Creating download link for {entry['name']}: {dl_error}")
-                                import traceback
-                                traceback.print_exc()
-                        else:
-                            print(f"[Webhook] FAIL: No PDF path for {entry['name']} (key={entry['file_key']})")
+
+                    # Verify each file is retrievable BEFORE creating download links.
+                    verified_entries, verify_failures = await _verified_entries_for_fulfillment(
+                        file_entries, caller="Webhook"
+                    )
+                    verification_failures.extend(verify_failures)
+
+                    for entry in verified_entries:
+                        pdf_path = entry["pdf_path"]
+                        print(f"[Webhook] file_key={entry['file_key']} -> pdf_path={pdf_path} (verified)")
+                        try:
+                            token, expires_at = await create_download_link(
+                                order_id=order_number,
+                                user_id=user_id,
+                                user_email=customer_email or "no-email@placeholder.com",
+                                product_id=entry["file_key"],
+                                product_name=entry["name"],
+                                file_path=pdf_path,
+                                payment_verified=True
+                            )
+                            download_links_created.append({
+                                "product_id": entry["file_key"],
+                                "name": entry["name"],
+                                "token": token
+                            })
+                            print(f"[Webhook] SUCCESS: Download link created for {entry['name']} ({entry['file_key']})")
+                        except Exception as dl_error:
+                            print(f"[Webhook] ERROR: Creating download link for {entry['name']}: {dl_error}")
+                            import traceback
+                            traceback.print_exc()
+                            verification_failures.append({**entry, "reason": "link_creation_error", "error": str(dl_error)})
                 
-                print(f"[Webhook] Fulfillment complete: {len(download_links_created)} download links created")
+                print(f"[Webhook] Fulfillment complete: {len(download_links_created)} download links created; "
+                      f"{len(verification_failures)} verification/link failures")
                 
-                # Update order status to fulfilled
+                # Update order status to fulfilled — ONLY if at least one verified link was created.
                 update_fields = {
                     "download_links_generated": len(download_links_created) > 0,
                     "downloads_count": len(download_links_created),
-                    "fulfillment_completed_at": datetime.utcnow().isoformat()
+                    "fulfillment_completed_at": datetime.utcnow().isoformat(),
+                    "fulfillment_verification_failures": [
+                        {k: v for k, v in f.items() if k in ("file_key", "product_id", "name", "pdf_path", "reason", "error")}
+                        for f in verification_failures
+                    ],
                 }
                 if download_links_created:
                     update_fields["status"] = "fulfilled"
+                else:
+                    update_fields["fulfillment_status"] = "pending_verification"
                 
                 await db.payment_transactions.update_one(
                     {"session_id": session_id},
@@ -3054,42 +3128,58 @@ async def admin_refulfill_order(order_number: str, request: Request):
     
     # Re-create download links using the improved resolver
     download_links_created = []
+    verification_failures: list = []
     for item in items:
         file_entries = resolve_item_to_file_entries(item)
-        for entry in file_entries:
-            pdf_path = await get_pdf_path_async(entry["file_key"]) or await get_pdf_path_async(entry["product_id"])
-            if pdf_path:
-                try:
-                    token, expires_at = await create_download_link(
-                        order_id=order_number,
-                        user_id=user_id or order_number,
-                        user_email=customer_email or "no-email@placeholder.com",
-                        product_id=entry["file_key"],
-                        product_name=entry["name"],
-                        file_path=pdf_path,
-                        payment_verified=True
-                    )
-                    download_links_created.append({
-                        "product_id": entry["file_key"],
-                        "name": entry["name"],
-                        "token": token
-                    })
-                except Exception as e:
-                    download_links_created.append({
-                        "product_id": entry["file_key"],
-                        "name": entry["name"],
-                        "error": str(e)
-                    })
+        if not file_entries:
+            continue
+
+        # Verify each file is retrievable BEFORE creating download links.
+        verified_entries, verify_failures = await _verified_entries_for_fulfillment(
+            file_entries, caller="Refulfill"
+        )
+        verification_failures.extend(verify_failures)
+
+        for entry in verified_entries:
+            pdf_path = entry["pdf_path"]
+            try:
+                token, expires_at = await create_download_link(
+                    order_id=order_number,
+                    user_id=user_id or order_number,
+                    user_email=customer_email or "no-email@placeholder.com",
+                    product_id=entry["file_key"],
+                    product_name=entry["name"],
+                    file_path=pdf_path,
+                    payment_verified=True
+                )
+                download_links_created.append({
+                    "product_id": entry["file_key"],
+                    "name": entry["name"],
+                    "token": token
+                })
+            except Exception as e:
+                download_links_created.append({
+                    "product_id": entry["file_key"],
+                    "name": entry["name"],
+                    "error": str(e)
+                })
+                verification_failures.append({**entry, "reason": "link_creation_error", "error": str(e)})
     
     # Update transaction
     successful_count = len([d for d in download_links_created if "token" in d])
     update_fields = {
         "download_links_generated": successful_count > 0,
         "downloads_count": successful_count,
-        "refulfilled_at": datetime.utcnow().isoformat()
+        "refulfilled_at": datetime.utcnow().isoformat(),
+        "fulfillment_verification_failures": [
+            {k: v for k, v in f.items() if k in ("file_key", "product_id", "name", "pdf_path", "reason", "error")}
+            for f in verification_failures
+        ],
     }
     if successful_count > 0:
         update_fields["status"] = "fulfilled"
+    else:
+        update_fields["fulfillment_status"] = "pending_verification"
     
     await db.payment_transactions.update_one(
         {"order_number": order_number},

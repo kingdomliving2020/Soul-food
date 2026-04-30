@@ -87,6 +87,58 @@ def get_object(path: str) -> Tuple[bytes, str]:
     return b"", "application/octet-stream"
 
 
+def head_object(path: str) -> bool:
+    """Lightweight existence check. Tries HEAD first; falls back to a 1-byte
+    range GET if HEAD is unsupported by the storage backend. Returns True/False.
+    Never raises — use this for pre-fulfillment verification where network
+    errors should be treated as 'not retrievable' rather than fatal."""
+    if not path:
+        return False
+    try:
+        key = init_storage()
+    except Exception as e:
+        logger.warning("head_object init failed for %s: %s", path, e)
+        return False
+    for attempt in range(2):
+        try:
+            resp = requests.head(
+                f"{STORAGE_URL}/objects/{path}",
+                headers={"X-Storage-Key": key},
+                timeout=15,
+                allow_redirects=True,
+            )
+        except Exception as e:
+            logger.warning("head_object HEAD failed for %s: %s", path, e)
+            return False
+        if resp.status_code == 200:
+            return True
+        if resp.status_code == 404:
+            return False
+        if resp.status_code == 403 and attempt == 0:
+            try:
+                key = _refresh_key()
+            except Exception as e:
+                logger.warning("head_object refresh key failed: %s", e)
+                return False
+            continue
+        # HEAD may be unsupported (405) — try a 1-byte range GET
+        if resp.status_code in (405, 501):
+            try:
+                gr = requests.get(
+                    f"{STORAGE_URL}/objects/{path}",
+                    headers={"X-Storage-Key": key, "Range": "bytes=0-0"},
+                    timeout=15,
+                    stream=True,
+                )
+                return gr.status_code in (200, 206)
+            except Exception as e:
+                logger.warning("head_object range-get fallback failed for %s: %s", path, e)
+                return False
+        logger.warning("head_object unexpected status %s for %s", resp.status_code, path)
+        return False
+    return False
+
+
 def make_storage_path(category: str, ext: str) -> str:
     """Generate a UUID-based storage path with app + category prefix."""
     safe_ext = (ext or "bin").lstrip(".").lower()[:8] or "bin"

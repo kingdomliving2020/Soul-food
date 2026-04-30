@@ -222,6 +222,19 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 ### Lifelines for Tricky Testaments (clarification needed)
 - TrickyTestamentGame is a Jeopardy-style game and has never had Millionaire-style lifelines (50/50, ask audience, etc.). Lifelines belong to MixUpGame (the Trivia Mix-up game). Asked user to confirm whether they wanted lifelines added as a new feature or if they were looking at the wrong game.
 
+### Fulfillment gated on retrievability verification (Apr 30, 2026)
+- [x] **Bytes-level verification before `status='fulfilled'`**: new helper `_verify_file_retrievable()` in `payment_routes.py` — for `objstore:<path>` it calls `storage_service.head_object()` (HEAD with range-GET fallback); for local paths it calls `os.path.exists`. Never raises, returns False on any error.
+- [x] **New `storage_service.head_object(path)`** — lightweight existence probe against Emergent Object Storage. Tries HEAD first; falls back to a 1-byte `Range: bytes=0-0` GET if HEAD is unsupported (405/501). 403 triggers a single key refresh + retry. Never raises.
+- [x] **New `_verified_entries_for_fulfillment()`** helper — resolves + verifies each file entry. Returns `(verified, failures)` where failures carry a reason (`no_path` / `not_retrievable`).
+- [x] **All 3 fulfillment sites updated** (webhook, status-check, admin refulfill) to:
+  1. Gather file entries via `resolve_item_to_file_entries`
+  2. Verify retrievability before creating download links
+  3. Set `status='fulfilled'` ONLY if at least one verified link was created
+  4. If nothing verified → set `fulfillment_status='pending_verification'` instead of fulfilled
+  5. Persist `fulfillment_verification_failures[]` on the transaction (product_id, name, pdf_path, reason) for admin visibility
+- [x] **Frontend already correct**: `MyLibrary.js` only renders the "Download PDF" button when `purchase.download_url` exists (line 441). Since we no longer create download_links for failed verifications, the button naturally doesn't render; the status badge shows "Processing" instead.
+- [x] **Verified**: `_verify_file_retrievable` returns correct booleans for all 5 cases (obj-exists, obj-missing, local-exists, local-missing, empty). `_verified_entries_for_fulfillment` correctly splits a mixed entry list into 1 verified + 1 failure. Lint clean, backend healthy.
+
 ### `product_file_mappings` deprecated + repaired (Apr 30, 2026)
 - [x] **`db.product_file_mappings` is now legacy**. The single source of truth for product↔file bindings is `db.files.attachments[]` (written via File Manager / migration script). The lookup branch was removed from `get_pdf_path_async()` — priority is now: (1) Object Storage via `db.files`, (2) local `PRODUCT_FILES` (legacy), (3) expected path.
 - [x] **Repair script** `/app/backend/scripts/repair_product_mappings.py` + admin endpoint `POST /api/admin/files/repair-product-mappings?apply=`. For each row:
