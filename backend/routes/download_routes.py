@@ -9,7 +9,7 @@ Protected download endpoints with:
 """
 
 from fastapi import APIRouter, HTTPException, Request, Depends
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 import os
@@ -72,6 +72,51 @@ def resolve_file_path(stored_path: str) -> str:
     return ""
 
 
+async def find_object_storage_file(product_id: str, stored_path: str = "") -> Optional[dict]:
+    """
+    Fallback resolver: look up the file in db.files by product attachment.
+
+    Returns the db.files record (with id, storage_path, original_filename,
+    content_type) if a matching, non-deleted file is found.
+
+    Match strategy:
+      1. Filter db.files for an active attachment to product:product_id.
+      2. Prefer the record whose original_filename matches the basename of
+         stored_path (so multiple attachments per product disambiguate to the
+         exact file the link was minted against).
+      3. Otherwise fall back to the most recently uploaded match.
+    """
+    if not product_id:
+        return None
+    try:
+        # lazy import to avoid circular with server.py at module load time
+        from server import db
+    except Exception as e:
+        print(f"[Download] Object storage fallback unavailable (db import failed): {e}")
+        return None
+
+    query = {
+        "is_deleted": False,
+        "attachments": {
+            "$elemMatch": {"target_type": "product", "target_id": product_id}
+        },
+    }
+    basename = os.path.basename(stored_path or "").lower()
+    if basename:
+        # Try exact filename match first — disambiguates aliased products
+        exact = await db.files.find_one(
+            {**query, "original_filename": {"$regex": f"^{basename}$", "$options": "i"}},
+            {"_id": 0, "id": 1, "storage_path": 1, "original_filename": 1, "content_type": 1},
+        )
+        if exact:
+            return exact
+    return await db.files.find_one(
+        query,
+        {"_id": 0, "id": 1, "storage_path": 1, "original_filename": 1, "content_type": 1},
+        sort=[("created_at", -1)],
+    )
+
+
 # =============================================================================
 # REQUEST MODELS
 # =============================================================================
@@ -114,9 +159,53 @@ async def download_file(token: str, request: Request):
         # Get the file path and resolve it
         file_path = record["file_path"]
         resolved_path = resolve_file_path(file_path)
-        
+
         if not resolved_path:
-            print(f"[Download] FILE NOT FOUND for token. Stored path: {file_path}")
+            # Fallback: look up the file in db.files by product attachment and
+            # stream from durable Emergent Object Storage. This is the path the
+            # legacy-files migration enabled — even after a redeploy that drops
+            # /app/backend/content/, paid downloads keep working.
+            product_id = record.get("product_id") or record.get("normalized_product_id") or ""
+            obj_record = await find_object_storage_file(product_id, file_path)
+            if obj_record:
+                try:
+                    import storage_service as ss
+                    data, ctype = ss.get_object(obj_record["storage_path"])
+                except Exception as storage_err:
+                    print(f"[Download] Object Storage read failed for product {product_id} "
+                          f"(file_id={obj_record.get('id')}): {storage_err}")
+                    raise HTTPException(
+                        status_code=502,
+                        detail="Storage temporarily unavailable. Please try again or contact support@kingdom-soul.com."
+                    )
+
+                # Record the download (same accounting as the local path)
+                await record_download(token, ip_address, user_agent)
+                remaining = await get_remaining_downloads(token)
+
+                # Generate safe download filename
+                product_name = record.get("product_name", "Download")
+                safe_name = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in product_name)
+                safe_name = safe_name.strip().replace(" ", "_")[:100]
+                ext = os.path.splitext(obj_record.get("original_filename") or "file.pdf")[1] or ".pdf"
+                filename = f"SoulFood_{safe_name}{ext}"
+
+                headers = {"X-Downloads-Remaining": str(remaining), "X-Source": "object-storage"}
+                try:
+                    expires_at = record.get("expires_at")
+                    if expires_at and hasattr(expires_at, "isoformat"):
+                        headers["X-Download-Expires"] = expires_at.isoformat()
+                    elif expires_at:
+                        headers["X-Download-Expires"] = str(expires_at)
+                except Exception:
+                    pass
+                headers["Content-Disposition"] = f'attachment; filename="{filename}"'
+
+                media_type = obj_record.get("content_type") or ctype or "application/octet-stream"
+                return Response(content=data, media_type=media_type, headers=headers)
+
+            print(f"[Download] FILE NOT FOUND for token. Stored path: {file_path}; "
+                  f"no Object Storage attachment for product {product_id}")
             raise HTTPException(
                 status_code=404,
                 detail="File not found on server. Please contact support@kingdom-soul.com for assistance."
@@ -330,7 +419,11 @@ async def diagnose_download(token: str):
     # Check file path resolution
     stored_path = record.get("file_path", "")
     resolved = resolve_file_path(stored_path)
-    
+
+    # Check Object Storage fallback availability
+    product_id = record.get("product_id") or record.get("normalized_product_id") or ""
+    obj_record = await find_object_storage_file(product_id, stored_path) if product_id else None
+
     return {
         "status": "ok",
         "token_found": True,
@@ -339,6 +432,12 @@ async def diagnose_download(token: str):
         "stored_file_path": stored_path,
         "resolved_file_path": resolved,
         "file_exists": bool(resolved),
+        "object_storage_fallback": {
+            "available": bool(obj_record),
+            "file_id": obj_record.get("id") if obj_record else None,
+            "storage_path": obj_record.get("storage_path") if obj_record else None,
+            "original_filename": obj_record.get("original_filename") if obj_record else None,
+        },
         "download_count": record.get("download_count", 0),
         "max_downloads": record.get("max_downloads", 3),
         "revoked": record.get("revoked", False),
