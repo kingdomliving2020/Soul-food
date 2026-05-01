@@ -479,6 +479,42 @@ async def health_version():
     }
 
 
+@api_router.get("/health/seed-manifest")
+async def health_seed_manifest():
+    """Confirm the embedded `/app/backend/seed_files_manifest.json` shipped
+    with this deploy. No auth required and no possibility of path-parameter
+    collision (lives on the health router, not under /admin/files/{file_id}).
+
+    A correct production response after redeploy will be:
+        {"present": true, "readable": true, "count": 102, ...}
+
+    A 404 here means the deploy artifact dropped the manifest JSON — that's
+    direct evidence the platform-side bundling step is the culprit."""
+    import json as _json
+    seed_path = os.path.join(os.path.dirname(__file__), "seed_files_manifest.json")
+    if not os.path.exists(seed_path):
+        return {"present": False, "path": seed_path, "git_sha": _git_sha}
+    try:
+        with open(seed_path, "r") as fh:
+            seed = _json.load(fh)
+    except Exception as e:
+        return {"present": True, "readable": False, "error": str(e), "git_sha": _git_sha}
+    db_count = await db.files.count_documents({"is_deleted": False})
+    return {
+        "present": True,
+        "readable": True,
+        "path": seed_path,
+        "size_bytes": os.path.getsize(seed_path),
+        "schema_version": seed.get("schema_version"),
+        "generated_at": seed.get("generated_at"),
+        "source": seed.get("source"),
+        "count": seed.get("count") or len(seed.get("items") or []),
+        "db_files_active_count": db_count,
+        "autoseed_disabled": os.environ.get("AUTOSEED_FILES_DISABLED") == "1",
+        "git_sha": _git_sha,
+    }
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
