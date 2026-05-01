@@ -57,6 +57,8 @@ const AdminFileManager = () => {
   const [syncBusy, setSyncBusy] = useState(false);
   const [syncSummary, setSyncSummary] = useState(null);
   const importInputRef = useRef(null);
+  const [bulkProgress, setBulkProgress] = useState({ done: 0, total: 0, current: '' });
+  const [dragActive, setDragActive] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -108,6 +110,51 @@ const AdminFileManager = () => {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
+  };
+
+  const handleBulkUpload = async (fileList) => {
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+    if (files.length === 1) return handleUpload(files[0]);
+    setUploading(true);
+    setBulkProgress({ done: 0, total: files.length, current: files[0]?.name || '' });
+    let ok = 0, failed = [];
+    for (let i = 0; i < files.length; i++) {
+      const f = files[i];
+      setBulkProgress({ done: i, total: files.length, current: f.name });
+      try {
+        const fd = new FormData();
+        fd.append('file', f);
+        fd.append('category', category || 'uploads');
+        fd.append('description', '');
+        const res = await fetch(`${API}/api/admin/files/upload`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${getToken()}` },
+          body: fd,
+        });
+        if (!res.ok) {
+          const d = await res.json().catch(() => ({}));
+          failed.push(`${f.name}: ${d.detail || res.status}`);
+        } else {
+          ok += 1;
+        }
+      } catch (e) {
+        failed.push(`${f.name}: ${e.message}`);
+      }
+    }
+    setBulkProgress({ done: files.length, total: files.length, current: '' });
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (failed.length === 0) toast.success(`Uploaded ${ok} files`);
+    else toast.warning(`Uploaded ${ok}, failed ${failed.length}: ${failed.slice(0, 3).join('; ')}${failed.length > 3 ? '…' : ''}`);
+    setPage(0);
+    load();
+  };
+
+  const onDrop = (e) => {
+    e.preventDefault();
+    setDragActive(false);
+    if (e.dataTransfer?.files?.length) handleBulkUpload(e.dataTransfer.files);
   };
 
   const handleReplace = async (file, fileId) => {
@@ -350,8 +397,31 @@ const AdminFileManager = () => {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6" data-testid="admin-file-manager">
+    <div className="min-h-screen bg-slate-50 p-6" data-testid="admin-file-manager"
+         onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
+         onDragLeave={() => setDragActive(false)}
+         onDrop={onDrop}>
       <Toaster richColors position="top-right" />
+      {dragActive && (
+        <div className="fixed inset-0 z-50 bg-indigo-600/20 border-4 border-dashed border-indigo-500 rounded-xl pointer-events-none flex items-center justify-center">
+          <div className="bg-white px-6 py-4 rounded-xl shadow-xl">
+            <p className="text-lg font-semibold text-indigo-700">Drop files to upload</p>
+            <p className="text-xs text-slate-500">Any file type, up to 500 MB each, unlimited count</p>
+          </div>
+        </div>
+      )}
+      {bulkProgress.total > 0 && bulkProgress.done < bulkProgress.total && (
+        <div className="fixed bottom-6 right-6 z-40 bg-white border border-slate-200 rounded-lg shadow-lg p-4 w-80" data-testid="bulk-progress">
+          <p className="text-sm font-medium text-slate-700 mb-2">
+            Uploading {bulkProgress.done + 1} of {bulkProgress.total}
+          </p>
+          <p className="text-xs text-slate-500 truncate mb-2" title={bulkProgress.current}>{bulkProgress.current}</p>
+          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div className="h-full bg-indigo-500 transition-all"
+                 style={{ width: `${(bulkProgress.done / Math.max(1, bulkProgress.total)) * 100}%` }} />
+          </div>
+        </div>
+      )}
       <div className="max-w-7xl mx-auto space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -385,7 +455,8 @@ const AdminFileManager = () => {
               ref={fileInputRef}
               type="file"
               hidden
-              onChange={(e) => handleUpload(e.target.files[0])}
+              multiple
+              onChange={(e) => handleBulkUpload(e.target.files)}
               data-testid="upload-input"
             />
             <Button
@@ -394,7 +465,7 @@ const AdminFileManager = () => {
               data-testid="upload-btn"
             >
               {uploading ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Plus className="w-4 h-4 mr-1" />}
-              Upload file
+              Upload files
             </Button>
           </div>
         </div>

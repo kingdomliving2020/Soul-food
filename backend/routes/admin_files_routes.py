@@ -19,11 +19,16 @@ import storage_service as ss
 
 router = APIRouter(prefix="/api/admin/files", tags=["admin-files"])
 
-MAX_UPLOAD_BYTES = 50 * 1024 * 1024  # 50 MB cap per file
-ALLOWED_EXT = {
-    "pdf", "png", "jpg", "jpeg", "webp", "gif", "svg",
-    "docx", "doc", "csv", "txt", "md", "json", "mp3", "m4a", "wav",
-}
+# Per-file cap: 500 MB. Big enough for full instructor workbooks, large audio
+# masters, video clips, and zip bundles. Object Storage handles the durability;
+# this number just bounds memory in the API process.
+MAX_UPLOAD_BYTES = 500 * 1024 * 1024
+
+# Open allowlist — accept any extension. The original closed-set bias was a
+# soft-launch guardrail; the admin owns the content and shouldn't be gated by
+# the platform on file type. Empty extensions still upload (stored as 'bin').
+# If you ever want to block something, edit BLOCKED_EXT instead.
+BLOCKED_EXT: set = set()
 
 
 def _ext(filename: str) -> str:
@@ -37,11 +42,25 @@ def _content_type_for(ext: str) -> str:
         "pdf": "application/pdf",
         "png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg",
         "webp": "image/webp", "gif": "image/gif", "svg": "image/svg+xml",
+        "bmp": "image/bmp", "tif": "image/tiff", "tiff": "image/tiff", "ico": "image/x-icon",
         "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "doc": "application/msword",
+        "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "xls": "application/vnd.ms-excel",
+        "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        "ppt": "application/vnd.ms-powerpoint",
         "csv": "text/csv", "txt": "text/plain", "md": "text/markdown",
-        "json": "application/json",
+        "json": "application/json", "xml": "application/xml",
+        "yaml": "application/x-yaml", "yml": "application/x-yaml",
+        "html": "text/html", "htm": "text/html",
         "mp3": "audio/mpeg", "m4a": "audio/mp4", "wav": "audio/wav",
+        "ogg": "audio/ogg", "oga": "audio/ogg", "opus": "audio/opus", "aac": "audio/aac", "flac": "audio/flac",
+        "mp4": "video/mp4", "m4v": "video/mp4", "mov": "video/quicktime",
+        "webm": "video/webm", "avi": "video/x-msvideo", "mkv": "video/x-matroska",
+        "zip": "application/zip", "rar": "application/vnd.rar", "7z": "application/x-7z-compressed",
+        "tar": "application/x-tar", "gz": "application/gzip",
+        "epub": "application/epub+zip", "mobi": "application/x-mobipocket-ebook",
+        "ttf": "font/ttf", "otf": "font/otf", "woff": "font/woff", "woff2": "font/woff2",
     }.get(ext, "application/octet-stream")
 
 
@@ -58,10 +77,14 @@ async def upload_file(
     description: str = Form(""),
     admin: AdminUser = Depends(get_current_admin),
 ):
-    """Upload a file to durable Emergent Object Storage and record in db.files."""
+    """Upload a file to durable Emergent Object Storage and record in db.files.
+
+    No file-type or amount cap. Per-file size cap is 500 MB. Use multi-select in
+    the UI or call this endpoint repeatedly to upload in bulk.
+    """
     ext = _ext(file.filename or "")
-    if ext not in ALLOWED_EXT:
-        raise HTTPException(status_code=400, detail=f"Extension '.{ext}' not allowed. Allowed: {sorted(ALLOWED_EXT)}")
+    if ext in BLOCKED_EXT:
+        raise HTTPException(status_code=400, detail=f"Extension '.{ext}' is blocked")
     safe_category = "".join(c for c in category if c.isalnum() or c in ("-", "_")).strip("-_") or "uploads"
 
     data = await file.read()
@@ -170,14 +193,14 @@ async def replace_file(
         raise HTTPException(status_code=404, detail="File not found")
 
     ext = _ext(file.filename or "")
-    if ext not in ALLOWED_EXT:
-        raise HTTPException(status_code=400, detail=f"Extension '.{ext}' not allowed")
+    if ext in BLOCKED_EXT:
+        raise HTTPException(status_code=400, detail=f"Extension '.{ext}' is blocked")
 
     data = await file.read()
     if not data:
         raise HTTPException(status_code=400, detail="Empty file")
     if len(data) > MAX_UPLOAD_BYTES:
-        raise HTTPException(status_code=413, detail="File too large")
+        raise HTTPException(status_code=413, detail=f"File too large ({len(data)/1024/1024:.1f} MB > {MAX_UPLOAD_BYTES/1024/1024:.0f} MB)")
 
     new_path = ss.make_storage_path(record.get("category", "uploads"), ext)
     content_type = file.content_type or _content_type_for(ext)
