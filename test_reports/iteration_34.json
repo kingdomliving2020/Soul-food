@@ -1,0 +1,64 @@
+{
+  "summary": "MVP launch readiness regression for Soul Food. 23 backend tests, 20 passed / 3 failed (87%). CLEAR FAIL on MVP-1 (receipt endpoint does not resolve paid orders by order_number — returns 404). P0 LATENT storage key bug discovered: Emergent Object Storage returns 503 for expired keys, but storage_service only refreshes on 403 — all downloads silently fail until backend restart. MVP-3 truly-missing case returns 502 not 404. MVP-5 BETADOLLAR79 coupon is marked expired in DB. MVP-2/4/6/7 all pass. Tests ran against PREVIEW (https://content-durability.preview.emergentagent.com).",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "GET /api/payments/order/{order_number}",
+        "issue": "MVP-1 BLOCKER — For paid SF-2026-* orders stored in db.payment_transactions, the endpoint returns 404 'Order not found'. Code at payment_routes.py:2708-2730 only queries db.orders by order_id (free orders) OR db.payment_transactions by session_id (Stripe session id). It NEVER queries payment_transactions by order_number, so the post-checkout receipt page / MyLibrary fetch is broken for every real paid order. Verified live with SF-2026-P7DXY (status=fulfilled in DB, 8 items, 335 download_links) — API still returns 404. Free order (FREE-*) lookup works and returns expanded_items correctly.",
+        "priority": "CRITICAL"
+      },
+      {
+        "endpoint": "storage_service.get_object / head_object",
+        "issue": "P0 LATENT — Emergent Object Storage returns HTTP 503 (not 403) when the session-scoped X-Storage-Key is expired/invalid (reproduced with a bogus key). storage_service.get_object (line 81) and head_object (line 117) only refresh _storage_key on 403. When the cached key expires mid-lifetime of the backend process, every subsequent download returns 502 'Storage temporarily unavailable' and every head_object returns False — which means _verify_file_retrievable will flip fulfillment to 'pending_verification' for paid orders even though the bytes exist. Observed live: backend.out.log shows 9+ consecutive 'head_object unexpected status 503' entries immediately before the suite run. Required fix: treat 503 the same as 403 (force-refresh key + retry) in get_object/head_object/put_object. Workaround: supervisorctl restart backend every N hours.",
+        "priority": "CRITICAL"
+      },
+      {
+        "endpoint": "GET /api/downloads/file/{token}",
+        "issue": "MVP-3 — When the objstore path points to a non-existent object, storage backend returns 404 (or 500) but the endpoint surfaces 502 'Storage temporarily unavailable' regardless. Spec requires 404 for truly-missing so the frontend can show 'file not found' vs 'try again later'. Fix: in _stream_from_object_storage (download_routes.py:139-147), inspect the underlying HTTPError and map 404 storage → 404 client response; keep 5xx as 502.",
+        "priority": "HIGH"
+      }
+    ],
+    "minor": [
+      {
+        "endpoint": "POST /api/coupons/validate",
+        "issue": "MVP-5 — BETADOLLAR79 returns valid=false / message='This code has expired'. BETATEST + DEMOSOFU79 validate correctly. Either extend BETADOLLAR79 in db.coupons or drop it from the approved MVP demo list. Not a code bug — data bug."
+      },
+      {
+        "endpoint": "download_protection.record_download",
+        "issue": "download_protection.py:184 uses record['user_id'] (strict key access) — if a download_link is missing user_id (e.g. created via a backfill/legacy path), the download returns 500 AFTER the bytes are already streamed from storage. All real links in db.download_links currently have user_id so this is latent, but should be record.get('user_id')."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_mvp_launch_readiness.py",
+    "/app/test_reports/pytest/mvp_launch.xml"
+  ],
+  "action_items": [
+    "MVP-1 P0: Fix payment_routes.py get_order_details — add a third lookup branch: db.payment_transactions.find_one({'order_number': order_id}) and synthesize the same {items, expanded_items, download_links, ...} shape from that transaction. Without this, every paid customer hitting the receipt URL gets 404.",
+    "MVP-3 P0 storage key: Patch storage_service.get_object / head_object / put_object to refresh _storage_key and retry on BOTH 403 AND 503 (Emergent storage returns 503 for invalid key, not 403). Without this, production downloads will silently die every time the cached key expires, regardless of the manifest sync.",
+    "MVP-3: Map storage 404 -> HTTP 404 (not 502) in _stream_from_object_storage so the UI can differentiate 'file gone' from 'storage blip'.",
+    "MVP-5: Either extend BETADOLLAR79 expiry in db.coupons OR drop it from /app/memory/test_credentials.md and the MVP demo plan. BETATEST and DEMOSOFU79 are green.",
+    "Minor: download_protection.py:184 — use record.get('user_id') instead of record['user_id'] to avoid post-stream 500s on malformed links."
+  ],
+  "critical_code_review_comments": [
+    "payment_routes.py get_order_details is incomplete: the canonical user-facing identifier is order_number (SF-YYYY-XXXXX) — every email, receipt link and MyLibrary call uses it — yet the handler has no branch for that lookup on payment_transactions. This is the root cause of the historical 'fulfilled but receipt shows nothing' complaints.",
+    "storage_service.py: the 403-only retry is insufficient. Emergent Object Storage's current behavior is 503 for invalid X-Storage-Key (verified by sending an obviously-wrong key — got 503 'Service temporarily unavailable', not 403). This makes all downloads a ticking bomb tied to backend uptime.",
+    "download_routes._stream_from_object_storage swallows the underlying storage status code and returns 502 for every failure — including the 404 'object does not exist' case, which the MVP spec explicitly requires to surface as 404. The try/except should inspect requests.HTTPError.response.status_code.",
+    "download_protection.record_download uses dict[key] rather than .get() for optional fields — a single malformed row will 500 even after bytes were fetched, wasting the download quota and confusing the client."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_mvp_launch_readiness.py (new)"
+  ],
+  "success_rate": {"backend": "87% (20/23 tests passed — 3 real product bugs exposed)"},
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123! (via /api/auth/login {identifier, password} -> access_token). No 2FA needed for backend tests.",
+  "seed_data_creation": "Transient: inserts 1 doc into db.download_links per MVP-3 subtest (token_hash + objstore:<path>), cleaned up by autouse fixture after each test. Uploaded 1 × 60MB TEST_MVP4_big.pdf then soft-deleted it. Attached + detached a TEST_MVP4_attach_target attachment to an existing file.",
+  "retest_needed": true,
+  "main_agent_can_self_test": false,
+  "context_for_next_testing_agent": "Test file at /app/backend/tests/test_mvp_launch_readiness.py — run with REACT_APP_BACKEND_URL + MONGO_URL + DB_NAME envs. Known-good objstore path for synthetic download tests: soul-food/downloads/0f6ba57a-7979-4e9a-9508-645b2261d9db.pdf (4220881 bytes, product bonus-ae-holiday). Fulfilled order to exercise: SF-2026-P7DXY (8 items, 335 links). If storage 503 errors reappear across the suite, restart backend first — that confirms the cached-key bug and isolates it from code changes.",
+  "rca of the issue": "MVP-1: payment_routes.get_order_details has three intended lookup modes but only implements two. Line 2713 checks db.orders by order_id; line 2717 checks db.payment_transactions by session_id. No branch for db.payment_transactions.find_one({'order_number': order_id}). Since fulfilled paid orders are stored in payment_transactions with order_number (NOT session_id) as the user-visible key, every GET /api/payments/order/SF-2026-XXXXX for a paid order 404s. MVP-3 storage: Tested bogus X-Storage-Key directly against integrations.emergentagent.com — returns 503 'Service temporarily unavailable' rather than 403. storage_service.get_object only refreshes _storage_key on 403, so an expired key permanently breaks downloads for the life of the backend process. Reproduced: live backend had stale key, returned 502 for /api/downloads/file; after 'supervisorctl restart backend', first request succeeded (200, 4220881 bytes)."
+}
