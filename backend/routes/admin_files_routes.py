@@ -266,6 +266,55 @@ async def detach_file(file_id: str, attach_id: str, admin: AdminUser = Depends(g
     return {"success": True}
 
 
+@router.post("/reseed-from-embedded")
+async def reseed_from_embedded(admin: AdminUser = Depends(get_current_admin)):
+    """Restore db.files from the manifest embedded in the deploy artifact
+    (`/app/backend/seed_files_manifest.json`). Same idempotent logic as the
+    boot-time auto-seed — safe to run any time. Use this after a redeploy
+    if you ever need to force-rebuild the index without a backend restart."""
+    import json
+    seed_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "seed_files_manifest.json")
+    if not os.path.exists(seed_path):
+        raise HTTPException(status_code=404, detail=f"seed manifest not present at {seed_path}")
+    try:
+        with open(seed_path, "r") as fh:
+            seed = json.load(fh)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"failed to read seed manifest: {e}")
+    items = seed.get("items") or []
+    if not items:
+        return {"ok": True, "inserted": 0, "updated": 0, "message": "manifest empty"}
+
+    payload = ImportManifestRequest(items=items, overwrite_attachments=False)
+    return await import_manifest(payload, verify_storage=False, admin=admin)
+
+
+@router.get("/seed-manifest-info")
+async def seed_manifest_info():
+    """Public-but-light: confirm whether the embedded seed manifest shipped
+    with this deploy and how many items it contains. No auth required so
+    deploy verification works from a browser."""
+    import json
+    seed_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "seed_files_manifest.json")
+    if not os.path.exists(seed_path):
+        return {"present": False, "path": seed_path}
+    try:
+        with open(seed_path, "r") as fh:
+            seed = json.load(fh)
+    except Exception as e:
+        return {"present": True, "readable": False, "error": str(e)}
+    return {
+        "present": True,
+        "readable": True,
+        "path": seed_path,
+        "size_bytes": os.path.getsize(seed_path),
+        "schema_version": seed.get("schema_version"),
+        "generated_at": seed.get("generated_at"),
+        "source": seed.get("source"),
+        "count": seed.get("count") or len(seed.get("items") or []),
+    }
+
+
 @router.get("/export-manifest")
 async def export_manifest(admin: AdminUser = Depends(get_current_admin)):
     """Export every active db.files record as a JSON manifest. Use this to

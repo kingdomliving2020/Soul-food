@@ -1,0 +1,3854 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-05-01T04:31:21.680153Z",
+  "source": "preview-db-export",
+  "count": 102,
+  "items": [
+    {
+      "id": "0ea39d66-258d-4ae3-bd80-5cdba5592313",
+      "storage_path": "soul-food/holiday/4fe79234-0dcb-4c6f-a82f-1080275b092e.docx",
+      "category": "holiday",
+      "original_filename": "SOFU_HOL_AE_FINAL.docx",
+      "content_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 17875986,
+      "etag": "\"7cdf530bf0423ff1aa027e3378538ddd\"",
+      "description": "Migrated from /app/backend/content/holiday/SOFU_HOL_AE_FINAL.docx",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:24.826000",
+      "updated_at": "2026-04-29T00:37:24.826000",
+      "attachments": [],
+      "legacy_path": "holiday/SOFU_HOL_AE_FINAL.docx",
+      "legacy_sha256": "6406454fd0d410d0fe4f7a0c6557e67f1e3b4200b50c5fa9d51f1e1218a25757",
+      "migrated_at": "2026-04-29T00:37:24.826000"
+    },
+    {
+      "id": "c94cd9a7-e2b3-4e99-bded-a895678e9d82",
+      "storage_path": "soul-food/holiday/2eb00fea-1420-48dc-be79-8ff9f8aff096.pdf",
+      "category": "holiday",
+      "original_filename": "SOFU_HOL_AE_FINAL.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 2901299,
+      "etag": "\"b59a28baec59fe0176edc801da3ae16c\"",
+      "description": "Migrated from /app/backend/content/holiday/SOFU_HOL_AE_FINAL.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:25.055000",
+      "updated_at": "2026-04-29T00:37:25.055000",
+      "attachments": [],
+      "legacy_path": "holiday/SOFU_HOL_AE_FINAL.pdf",
+      "legacy_sha256": "74890becd801ec047f98ec1ab83a6d6d1551ed8f0dd278b456fb0be2013bdd5f",
+      "migrated_at": "2026-04-29T00:37:25.055000"
+    },
+    {
+      "id": "f0c58159-8e84-4974-bb1b-78f7db576bab",
+      "storage_path": "soul-food/holiday/f4e5bf23-b60d-4d81-aaba-6d99b906cfe3.docx",
+      "category": "holiday",
+      "original_filename": "SOFU_HOL_IE_FINAL.docx",
+      "content_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 26649883,
+      "etag": "\"e5e7526b5547de72ce2b3f5c79c82c57\"",
+      "description": "Migrated from /app/backend/content/holiday/SOFU_HOL_IE_FINAL.docx",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:26.107000",
+      "updated_at": "2026-04-29T00:37:26.107000",
+      "attachments": [],
+      "legacy_path": "holiday/SOFU_HOL_IE_FINAL.docx",
+      "legacy_sha256": "2fcb52341fd3fc0be4cd4c9fc9810a3110a0ea984351f13541d8347e8019f91c",
+      "migrated_at": "2026-04-29T00:37:26.107000"
+    },
+    {
+      "id": "d646a398-24bc-494b-9bba-a50a5b70f993",
+      "storage_path": "soul-food/holiday/ba962b92-76ac-4d6c-958f-e664183192b5.pdf",
+      "category": "holiday",
+      "original_filename": "SOFU_HOL_IE_FINAL.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 4358448,
+      "etag": "\"da98f4c057c83388731ec5880a8355ce\"",
+      "description": "Migrated from /app/backend/content/holiday/SOFU_HOL_IE_FINAL.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:26.448000",
+      "updated_at": "2026-04-29T00:37:26.448000",
+      "attachments": [],
+      "legacy_path": "holiday/SOFU_HOL_IE_FINAL.pdf",
+      "legacy_sha256": "4cbda46dda9ffa656caef785cc51b89d71be746bf37b56463ea7f2d85f509f4f",
+      "migrated_at": "2026-04-29T00:37:26.448000"
+    },
+    {
+      "id": "e82ab890-73ae-4303-88f8-86413f892019",
+      "storage_path": "soul-food/holiday/224dbf39-bcf9-46e0-b60b-e3d5576f0e2b.docx",
+      "category": "holiday",
+      "original_filename": "SOFU_HOL_YE_FINAL.docx",
+      "content_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 15989955,
+      "etag": "\"e5be3b6df3597885f037471e168f9e02\"",
+      "description": "Migrated from /app/backend/content/holiday/SOFU_HOL_YE_FINAL.docx",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:26.853000",
+      "updated_at": "2026-04-29T00:37:26.853000",
+      "attachments": [],
+      "legacy_path": "holiday/SOFU_HOL_YE_FINAL.docx",
+      "legacy_sha256": "057514bca0f8a0b7aa1ee3c056f0a8c00f03c5b10416a7820f789ddb76fa297f",
+      "migrated_at": "2026-04-29T00:37:26.853000"
+    },
+    {
+      "id": "49287f89-1f0c-40b3-96d0-ddc406d5b220",
+      "storage_path": "soul-food/holiday/42a7ecfa-37c5-4087-b10a-b4d56062c3e0.pdf",
+      "category": "holiday",
+      "original_filename": "SOFU_HOL_YE_FINAL.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1830444,
+      "etag": "\"a51774d5e0eb91210cac0a1d2c1fc235\"",
+      "description": "Migrated from /app/backend/content/holiday/SOFU_HOL_YE_FINAL.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:27.314000",
+      "updated_at": "2026-04-29T00:37:27.314000",
+      "attachments": [],
+      "legacy_path": "holiday/SOFU_HOL_YE_FINAL.pdf",
+      "legacy_sha256": "4523c16193bb03f4c59f88ed8c71a390c1f8e36fe283e71ebe5d8cba4d1f0de2",
+      "migrated_at": "2026-04-29T00:37:27.314000"
+    },
+    {
+      "id": "0a19fcba-4477-4798-aeb8-15a6c8266459",
+      "storage_path": "soul-food/downloads/088bcd37-ae68-4796-b021-e82fea295448.pdf",
+      "category": "downloads",
+      "original_filename": "TEST_replace.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 15,
+      "etag": "\"864005c900b6bde8896ce019c568ec30\"",
+      "description": "Migrated from /app/backend/content/downloads/bonus-ae-holiday.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:54.517000",
+      "updated_at": "2026-05-01T03:51:50.705000",
+      "attachments": [
+        {
+          "id": "58045ea0-87db-48f0-9396-6f3a8c27ede2",
+          "target_type": "product",
+          "target_id": "bonus-ae-holiday",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:54.517000"
+        },
+        {
+          "id": "b324c160-9bd9-433b-9338-4d725526b3bc",
+          "target_type": "product",
+          "target_id": "holiday-bonus-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:54.518000"
+        },
+        {
+          "id": "1c266c6b-9454-478e-b440-b936a20b33c9",
+          "target_type": "product",
+          "target_id": "TEST_MVP4_attach_target",
+          "role": "test",
+          "attached_by_admin": "user_4ecefa505010",
+          "attached_at": "2026-05-01T03:48:30.761000"
+        },
+        {
+          "id": "f6a86121-881e-4042-b994-8635dfe1beaf",
+          "target_type": "product",
+          "target_id": "TEST_MVP4_attach_target",
+          "role": "test",
+          "attached_by_admin": "user_4ecefa505010",
+          "attached_at": "2026-05-01T03:51:50.466000"
+        }
+      ],
+      "legacy_path": "downloads/bonus-ae-holiday.pdf",
+      "legacy_sha256": "cfc425da8d24720611339f2b80937e6e8273cb4136a24d65265a2d674388a9c2",
+      "migrated_at": "2026-04-29T00:36:54.517000",
+      "previous_storage_path": "soul-food/downloads/0f2a8004-9cf4-4ddd-ab87-045bcd18de99.pdf",
+      "replaced_at": "2026-05-01T03:51:50.705000",
+      "replaced_by_admin": "user_4ecefa505010"
+    },
+    {
+      "id": "8f873e81-81c6-4358-9fdc-120c390c134f",
+      "storage_path": "soul-food/images-maps/eb0ee7aa-1097-4fb9-8c27-c86c3de2e87b.jpg",
+      "category": "images-maps",
+      "original_filename": "abraham-offers-isaac.jpg",
+      "content_type": "image/jpeg",
+      "size_bytes": 184887,
+      "etag": "\"476703869bbf8dcbbc0062968a2599c3\"",
+      "description": "Migrated from /app/backend/content/images/maps/abraham-offers-isaac.jpg",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:27.560000",
+      "updated_at": "2026-04-29T00:37:27.560000",
+      "attachments": [],
+      "legacy_path": "images/maps/abraham-offers-isaac.jpg",
+      "legacy_sha256": "cb6b37047b481baff9160db03a32a7b500c17bad91f4ce7c57aab2f678748b29",
+      "migrated_at": "2026-04-29T00:37:27.560000"
+    },
+    {
+      "id": "0496cf6f-ea69-4523-a931-208e7c0eac52",
+      "storage_path": "soul-food/images-maps/f07608c0-4faf-409c-ba1a-d13e87e06140.jpg",
+      "category": "images-maps",
+      "original_filename": "abram-journey-promised-land.jpg",
+      "content_type": "image/jpeg",
+      "size_bytes": 188912,
+      "etag": "\"20ac359ae12b36c687bdbc80576aaef9\"",
+      "description": "Migrated from /app/backend/content/images/maps/abram-journey-promised-land.jpg",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:27.824000",
+      "updated_at": "2026-04-29T00:37:27.824000",
+      "attachments": [],
+      "legacy_path": "images/maps/abram-journey-promised-land.jpg",
+      "legacy_sha256": "f06ca51eaa380a3c3027f664834c516f3550664429a3c56f356db5f1ef72418e",
+      "migrated_at": "2026-04-29T00:37:27.824000"
+    },
+    {
+      "id": "e8f1b361-7d65-4996-8b9d-dcc4d68c53bf",
+      "storage_path": "soul-food/downloads-incoming/cb053c43-9422-4ea9-ae5e-6076fe23a6fd.pdf",
+      "category": "downloads-incoming",
+      "original_filename": "bkft-ae-part1-epub.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 960583,
+      "etag": "\"8c27a59ebae78de7410fecee7010e734\"",
+      "description": "Migrated from /app/backend/content/downloads/incoming/bkft-ae-part1-epub.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:12.297000",
+      "updated_at": "2026-04-29T00:37:12.297000",
+      "attachments": [],
+      "legacy_path": "downloads/incoming/bkft-ae-part1-epub.pdf",
+      "legacy_sha256": "fd7bf9e10b2e55748c5762a0f171e46fe1d142cffba5bb91eb8150f527a40bc5",
+      "migrated_at": "2026-04-29T00:37:12.297000"
+    },
+    {
+      "id": "4ff17fba-5b01-4d03-8c42-4007d9f3fe64",
+      "storage_path": "soul-food/downloads-incoming/38936ccd-cc89-4433-9904-730b17a02837.pdf",
+      "category": "downloads-incoming",
+      "original_filename": "bkft-ae-part1-pod.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 6449885,
+      "etag": "\"de1779e1a9b64e483818dd92ce609771\"",
+      "description": "Migrated from /app/backend/content/downloads/incoming/bkft-ae-part1-pod.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:12.635000",
+      "updated_at": "2026-04-29T00:37:12.635000",
+      "attachments": [],
+      "legacy_path": "downloads/incoming/bkft-ae-part1-pod.pdf",
+      "legacy_sha256": "3e0d2191e707e08cfacb51aeb54c0821922aaf65e4074d5c3e2d60a198a31d5a",
+      "migrated_at": "2026-04-29T00:37:12.635000"
+    },
+    {
+      "id": "c5ca6a9a-6907-4460-b8fe-3696e9dc9e38",
+      "storage_path": "soul-food/downloads-incoming/ec37fd64-6a5e-4646-8b65-e4cb2fa89a72.pdf",
+      "category": "downloads-incoming",
+      "original_filename": "bkft-ae-part2-epub.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 724594,
+      "etag": "\"562b1ee015e1f90a3b59937412f07d93\"",
+      "description": "Migrated from /app/backend/content/downloads/incoming/bkft-ae-part2-epub.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:12.824000",
+      "updated_at": "2026-04-29T00:37:12.824000",
+      "attachments": [],
+      "legacy_path": "downloads/incoming/bkft-ae-part2-epub.pdf",
+      "legacy_sha256": "3bd16703c090072049f3dd17aae1bafdaecf415b14b0d4f44ebbcb3847a18fe6",
+      "migrated_at": "2026-04-29T00:37:12.824000"
+    },
+    {
+      "id": "1822de50-49f0-41c9-a03a-67d7a7961583",
+      "storage_path": "soul-food/downloads-incoming/beeb7964-9558-4195-8cab-36c8110d2523.pdf",
+      "category": "downloads-incoming",
+      "original_filename": "bkft-ae-part2-pod.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1538957,
+      "etag": "\"44718af9e5028de7c925345519def0f3\"",
+      "description": "Migrated from /app/backend/content/downloads/incoming/bkft-ae-part2-pod.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:13.110000",
+      "updated_at": "2026-04-29T00:37:13.110000",
+      "attachments": [],
+      "legacy_path": "downloads/incoming/bkft-ae-part2-pod.pdf",
+      "legacy_sha256": "ce57bc15402f4d5d6306941b9b9eade865a772a4afb18621549301c9d92709c4",
+      "migrated_at": "2026-04-29T00:37:13.110000"
+    },
+    {
+      "id": "242096b5-c1c3-47a4-a480-5bcde9f69bfa",
+      "storage_path": "soul-food/downloads-incoming/4b25ba4c-e945-4680-99b9-7a6faea855ab.pdf",
+      "category": "downloads-incoming",
+      "original_filename": "bkft-ae-part3-epub.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1142229,
+      "etag": "\"e1c47a51085c30fb18abe66ef8cf9577\"",
+      "description": "Migrated from /app/backend/content/downloads/incoming/bkft-ae-part3-epub.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:13.452000",
+      "updated_at": "2026-04-29T00:37:13.452000",
+      "attachments": [],
+      "legacy_path": "downloads/incoming/bkft-ae-part3-epub.pdf",
+      "legacy_sha256": "ba0cef30214f0c3e7cc6985a1474d7bdd94dafd3dc8831e3bb95f5a5461519a4",
+      "migrated_at": "2026-04-29T00:37:13.452000"
+    },
+    {
+      "id": "c8a12a23-5b65-479d-b3ca-b0ba80c85021",
+      "storage_path": "soul-food/downloads-incoming/096a92d7-9e7b-4199-871d-a0f7e9dcce07.pdf",
+      "category": "downloads-incoming",
+      "original_filename": "bkft-ae-part3-pod.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 4319008,
+      "etag": "\"95cac7c57fe18de52251c9cdef69ba16\"",
+      "description": "Migrated from /app/backend/content/downloads/incoming/bkft-ae-part3-pod.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:14.122000",
+      "updated_at": "2026-04-29T00:37:14.122000",
+      "attachments": [],
+      "legacy_path": "downloads/incoming/bkft-ae-part3-pod.pdf",
+      "legacy_sha256": "b1efa93ee3b846fa530644cf2434b5677d83fc7836bf7c8316c7ff92aa9b16eb",
+      "migrated_at": "2026-04-29T00:37:14.122000"
+    },
+    {
+      "id": "7837c735-3b8f-4a50-a715-77975a9ebebe",
+      "storage_path": "soul-food/downloads-incoming/509a7d14-a60e-463a-99b7-fd184f263ad9.pdf",
+      "category": "downloads-incoming",
+      "original_filename": "bkft-ye-part1-epub.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 829894,
+      "etag": "\"8c9a697e068ef188f6e5bb8b59385a20\"",
+      "description": "Migrated from /app/backend/content/downloads/incoming/bkft-ye-part1-epub.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:14.438000",
+      "updated_at": "2026-04-29T00:37:14.438000",
+      "attachments": [],
+      "legacy_path": "downloads/incoming/bkft-ye-part1-epub.pdf",
+      "legacy_sha256": "d249e64be6726c9cf60130039b732e4551535a1a813efd476e4b3b0c7e39dc05",
+      "migrated_at": "2026-04-29T00:37:14.438000"
+    },
+    {
+      "id": "62fcad7a-dff0-4a85-b25a-d16f251df335",
+      "storage_path": "soul-food/downloads-incoming/e6ba21e5-a308-42c6-98bc-2e47c249a6d1.pdf",
+      "category": "downloads-incoming",
+      "original_filename": "bkft-ye-part2-epub.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 415314,
+      "etag": "\"57e95a097849852699980ca9eaca9d85\"",
+      "description": "Migrated from /app/backend/content/downloads/incoming/bkft-ye-part2-epub.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:14.653000",
+      "updated_at": "2026-04-29T00:37:14.653000",
+      "attachments": [],
+      "legacy_path": "downloads/incoming/bkft-ye-part2-epub.pdf",
+      "legacy_sha256": "d3de207eaaec9a5fcc1ebf624d026037095d49d6d6debc2a62acac51eed74a72",
+      "migrated_at": "2026-04-29T00:37:14.653000"
+    },
+    {
+      "id": "d80e85ba-407a-4831-82cc-4cd9547d5606",
+      "storage_path": "soul-food/downloads-incoming/fa721ffa-ea3f-47c2-b5be-f3e1272bb9e4.pdf",
+      "category": "downloads-incoming",
+      "original_filename": "bkft-ye-part3-epub.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1286292,
+      "etag": "\"fd5b79b5b96f20db7c02ad37bc142e79\"",
+      "description": "Migrated from /app/backend/content/downloads/incoming/bkft-ye-part3-epub.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:14.970000",
+      "updated_at": "2026-04-29T00:37:14.970000",
+      "attachments": [],
+      "legacy_path": "downloads/incoming/bkft-ye-part3-epub.pdf",
+      "legacy_sha256": "fb5f3fbdc13e5fa1258f7a45b554f786c7a5143379eb41c71b31dfae17b84e86",
+      "migrated_at": "2026-04-29T00:37:14.970000"
+    },
+    {
+      "id": "53906d2e-121c-4232-82b9-bfacfd83bc22",
+      "storage_path": "soul-food/downloads-incoming/754b6ed1-abd1-44a0-b3a5-4ab2be2a2e99.pdf",
+      "category": "downloads-incoming",
+      "original_filename": "bkft-ye-sp3-epub.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1284925,
+      "etag": "\"2a5d0982dc5f2ae21d9862d022c9794a\"",
+      "description": "Migrated from /app/backend/content/downloads/incoming/bkft-ye-sp3-epub.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:15.279000",
+      "updated_at": "2026-04-29T00:37:15.279000",
+      "attachments": [],
+      "legacy_path": "downloads/incoming/bkft-ye-sp3-epub.pdf",
+      "legacy_sha256": "6f90eeafdee6d286df3a78bb04f6223b33c1c14efc50c83e7ddc02c37b5f4bf9",
+      "migrated_at": "2026-04-29T00:37:15.279000"
+    },
+    {
+      "id": "aa72b9b8-f7f6-45e0-85f4-4db792a182b9",
+      "storage_path": "soul-food/bonus/20797dac-3585-42b3-8fc9-356f8edcc331.docx",
+      "category": "bonus",
+      "original_filename": "bonus-ae.docx",
+      "content_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 9826021,
+      "etag": "\"66ed4c80949cdf0461deeeb13fa4796b\"",
+      "description": "Migrated from /app/backend/content/bonus/bonus-ae.docx",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:52.002000",
+      "updated_at": "2026-04-29T00:36:52.002000",
+      "attachments": [],
+      "legacy_path": "bonus/bonus-ae.docx",
+      "legacy_sha256": "36415ef1144a0ac76a18953012300987a68b53f8e56386f278d5b61ed7d4e312",
+      "migrated_at": "2026-04-29T00:36:52.002000"
+    },
+    {
+      "id": "81955ba1-650e-42fe-9b3a-af2f73df6122",
+      "storage_path": "soul-food/bonus/9a078593-24c0-4847-bc48-619b385f86bb.pdf",
+      "category": "bonus",
+      "original_filename": "bonus-ae.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1193017,
+      "etag": "\"6dadef20f36fcd18208c86f262e5010f\"",
+      "description": "Migrated from /app/backend/content/bonus/bonus-ae.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:52.330000",
+      "updated_at": "2026-04-29T00:36:52.330000",
+      "attachments": [],
+      "legacy_path": "bonus/bonus-ae.pdf",
+      "legacy_sha256": "c73c932f90ae940ec5a6bb350c1aba890ef40e5876351ec77b0a5a5a283c201e",
+      "migrated_at": "2026-04-29T00:36:52.330000"
+    },
+    {
+      "id": "330c2aed-b46e-462f-ab7f-1e8d6087ed03",
+      "storage_path": "soul-food/downloads/a78d3b91-ed78-4344-af2f-7bfb14e4006b.pdf",
+      "category": "downloads",
+      "original_filename": "bonus-ie-holiday.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 5611651,
+      "etag": "\"f3786f76f837d4a58a62928b8fd7e951\"",
+      "description": "Migrated from /app/backend/content/downloads/bonus-ie-holiday.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:54.912000",
+      "updated_at": "2026-04-29T00:36:54.912000",
+      "attachments": [
+        {
+          "id": "cb4cf656-e674-40bc-99df-b05ae0a0ad8c",
+          "target_type": "product",
+          "target_id": "bonus-ie-holiday",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:54.913000"
+        },
+        {
+          "id": "fce1c0b6-d82d-43c5-be7b-cfab7d146244",
+          "target_type": "product",
+          "target_id": "holiday-bonus-ie",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:54.914000"
+        }
+      ],
+      "legacy_path": "downloads/bonus-ie-holiday.pdf",
+      "legacy_sha256": "6f064b5a688d6f5dd44277fe30deb7971b2e4c2a07ec3cbc8984de993984d83e",
+      "migrated_at": "2026-04-29T00:36:54.912000"
+    },
+    {
+      "id": "dd2b479f-aa09-48c8-b598-d022631eb621",
+      "storage_path": "soul-food/bonus/86579946-a2a2-40d6-afb3-6263173e2922.docx",
+      "category": "bonus",
+      "original_filename": "bonus-ie.docx",
+      "content_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 9651336,
+      "etag": "\"64c0857d1b5d1f05eddbdd59c1060997\"",
+      "description": "Migrated from /app/backend/content/bonus/bonus-ie.docx",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:52.892000",
+      "updated_at": "2026-04-29T00:36:52.892000",
+      "attachments": [],
+      "legacy_path": "bonus/bonus-ie.docx",
+      "legacy_sha256": "494d9d1cc3d1eb3c7857fd707290228a82835a2f47b5d866ca53a969a15fbbaf",
+      "migrated_at": "2026-04-29T00:36:52.892000"
+    },
+    {
+      "id": "e1fee4d8-afb4-48cb-9355-2cb04d04a23c",
+      "storage_path": "soul-food/bonus/836540a7-edde-45c0-8c8b-a759b9e9077b.pdf",
+      "category": "bonus",
+      "original_filename": "bonus-ie.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1263072,
+      "etag": "\"dadcc232044c8f6621a83143c9a295a5\"",
+      "description": "Migrated from /app/backend/content/bonus/bonus-ie.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:53.150000",
+      "updated_at": "2026-04-29T00:36:53.150000",
+      "attachments": [],
+      "legacy_path": "bonus/bonus-ie.pdf",
+      "legacy_sha256": "1be2ee90d5e274b0d4a5c3bcf14a174aeaa76b727076dd0fe021e4f858185363",
+      "migrated_at": "2026-04-29T00:36:53.150000"
+    },
+    {
+      "id": "5cda3d38-53ac-4bb5-b62b-4e5ef30f6caa",
+      "storage_path": "soul-food/downloads/e707143c-7620-4c2f-9f6c-8e09cbb580da.pdf",
+      "category": "downloads",
+      "original_filename": "bonus-ye-holiday.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 4034401,
+      "etag": "\"d87c05b82d132b7c0357efabebf4d308\"",
+      "description": "Migrated from /app/backend/content/downloads/bonus-ye-holiday.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:55.221000",
+      "updated_at": "2026-04-29T00:36:55.221000",
+      "attachments": [
+        {
+          "id": "dd64e95d-5504-4b6a-bc93-24c838fff633",
+          "target_type": "product",
+          "target_id": "bonus-ye-holiday",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:55.222000"
+        },
+        {
+          "id": "4779e653-5b53-458c-88a4-6144032b5387",
+          "target_type": "product",
+          "target_id": "holiday-bonus-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:55.223000"
+        }
+      ],
+      "legacy_path": "downloads/bonus-ye-holiday.pdf",
+      "legacy_sha256": "cdc0d4d030e51f3b6b648d3791ad1953f038c376fab9c3b353257bd28dae7cd0",
+      "migrated_at": "2026-04-29T00:36:55.221000"
+    },
+    {
+      "id": "650f871e-d892-4d14-bb70-b7fec0915b98",
+      "storage_path": "soul-food/bonus/6be04d89-6378-4a8c-bc43-50c0d26dc8d5.docx",
+      "category": "bonus",
+      "original_filename": "bonus-ye.docx",
+      "content_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 8901210,
+      "etag": "\"66447d288c6ac3be78c69db46ed2a6dd\"",
+      "description": "Migrated from /app/backend/content/bonus/bonus-ye.docx",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:53.867000",
+      "updated_at": "2026-04-29T00:36:53.867000",
+      "attachments": [],
+      "legacy_path": "bonus/bonus-ye.docx",
+      "legacy_sha256": "86f6046636f0c7678a6f29e72d7105125bb6ef0ca39e8122bd221a3ca9218f72",
+      "migrated_at": "2026-04-29T00:36:53.867000"
+    },
+    {
+      "id": "7ba2e31d-4d14-46c4-8943-f74f45e36914",
+      "storage_path": "soul-food/bonus/a868de87-6069-4b52-859c-c8acbbc49e33.pdf",
+      "category": "bonus",
+      "original_filename": "bonus-ye.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 574971,
+      "etag": "\"939f90a2e7ae69f511fb4b607fc445c8\"",
+      "description": "Migrated from /app/backend/content/bonus/bonus-ye.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:54.184000",
+      "updated_at": "2026-04-29T00:36:54.184000",
+      "attachments": [],
+      "legacy_path": "bonus/bonus-ye.pdf",
+      "legacy_sha256": "13c9a3077981453e236da05f92a693cc442bec996c1b9dc8d15ec3c769c512e5",
+      "migrated_at": "2026-04-29T00:36:54.184000"
+    },
+    {
+      "id": "b4e6bb3d-26a7-408c-b9bb-0b097136be91",
+      "storage_path": "soul-food/downloads/bd975f41-25c1-4643-b08e-3dc68d171e22.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-abigail.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1402587,
+      "etag": "\"daec81fc0ec13826e91746865e93d573\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-abigail.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:55.540000",
+      "updated_at": "2026-04-29T00:36:55.540000",
+      "attachments": [
+        {
+          "id": "1d9bc1b1-d583-4cff-aed3-aa02b8c621e4",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-1-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:56.671000"
+        },
+        {
+          "id": "4998b804-00e2-4753-8cc2-faea29676547",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-1-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:56.671000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-abigail.pdf",
+      "legacy_sha256": "ab83a7fc02969aed00a4d924ef023d87207379afb60f55606a85ba17765f86a4",
+      "migrated_at": "2026-04-29T00:36:55.540000"
+    },
+    {
+      "id": "6f0325cf-6bae-4faf-bc4d-6e6456794062",
+      "storage_path": "soul-food/downloads/c5365340-4540-4c1a-81cc-b4ccbb87a489.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-abram.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1004643,
+      "etag": "\"e0b43172c10509ebc94547c8b4bac745\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-abram.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:55.787000",
+      "updated_at": "2026-04-29T00:36:55.787000",
+      "attachments": [
+        {
+          "id": "a58875bc-3e2d-428e-b95b-dc5d2d5a1954",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-2-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.548000"
+        },
+        {
+          "id": "0d4b9db6-8652-4c98-88c5-264600f887bf",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-2-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.549000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-abram.pdf",
+      "legacy_sha256": "394ca7c95d80cf9e06a9f97117f3b14f402446af7acac94ecc81bd40557d47e2",
+      "migrated_at": "2026-04-29T00:36:55.787000"
+    },
+    {
+      "id": "ff28e3ae-9c1b-45f1-9903-dbe4c59c64fc",
+      "storage_path": "soul-food/downloads/03d68a19-d818-4c4a-8392-2fe385a45cf6.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-centurion.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1003400,
+      "etag": "\"aa323e5019a7308e170a6c92b0ebca43\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-centurion.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:56.076000",
+      "updated_at": "2026-04-29T00:36:56.076000",
+      "attachments": [
+        {
+          "id": "a9fdd7d4-55ac-493f-b659-5cbddd7e3d02",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-1-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.083000"
+        },
+        {
+          "id": "3fd8a128-8eb7-4ca9-b79f-c5d39f1b4bfa",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-1-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.084000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-centurion.pdf",
+      "legacy_sha256": "586a2c67a82ceb14451d6046a723bcb3b274d2304e433bb062aee4026cd1a26b",
+      "migrated_at": "2026-04-29T00:36:56.076000"
+    },
+    {
+      "id": "c7af2ee6-c2e1-4156-a3c1-e56a5124d3d7",
+      "storage_path": "soul-food/downloads/e67b64ab-ca1e-48c1-a916-6e8f316be1ac.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-chronic.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 968981,
+      "etag": "\"6bec9429072e79c62f87f1ce24a56273\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-chronic.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:56.390000",
+      "updated_at": "2026-04-29T00:36:56.390000",
+      "attachments": [
+        {
+          "id": "d8cccad3-64c4-40c1-be27-826ce8c78ac6",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-4-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.552000"
+        },
+        {
+          "id": "cb468f2c-3841-481c-a444-dc0353940e47",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-4-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.552000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-chronic.pdf",
+      "legacy_sha256": "81b726e68f1d7b97db700bc5f94f02b15da4caa534926d5a91546ee6820aea6a",
+      "migrated_at": "2026-04-29T00:36:56.390000"
+    },
+    {
+      "id": "fd55a5d7-a18d-489a-9a97-542a31296f99",
+      "storage_path": "soul-food/downloads/ebd37f7d-7ce7-4c8d-a28e-9d189af49835.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-esther.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 577842,
+      "etag": "\"1c762bce5aeb9173de19502c74af500d\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-esther.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:56.668000",
+      "updated_at": "2026-04-29T00:36:56.668000",
+      "attachments": [
+        {
+          "id": "ac095ab6-b681-43a5-8270-042d21286d42",
+          "target_type": "product",
+          "target_id": "nibble_ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:56.669000"
+        },
+        {
+          "id": "fef6c9b6-4027-42ae-9107-8f87e6302f5c",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:56.669000"
+        },
+        {
+          "id": "2c2a7fe6-ec7b-493e-bb48-40b573ec0a9f",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-3-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.550000"
+        },
+        {
+          "id": "48a17c31-bde0-46ee-8c30-948ead278d9e",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-3-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.550000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-esther.pdf",
+      "legacy_sha256": "83dab134e0b93693397bba1826018fcffa6237b11ccb4000b1f23a6fc749f810",
+      "migrated_at": "2026-04-29T00:36:56.668000"
+    },
+    {
+      "id": "3425e8dc-4cf5-47a0-aa62-8c41a4cd1505",
+      "storage_path": "soul-food/downloads/8b752738-acc7-44f9-be1a-e7c99be27aa4.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-faith-lesson2.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 471870,
+      "etag": "\"40745845a5e71417dd32bc2223c09d3c\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-faith-lesson2.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:56.949000",
+      "updated_at": "2026-04-29T00:36:56.949000",
+      "attachments": [
+        {
+          "id": "086603cf-cd90-4aea-9ec6-709d6ddf2cb2",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-2-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:56.950000"
+        },
+        {
+          "id": "4579d150-271b-40f1-beb6-875cc526326c",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-2-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:56.950000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-faith-lesson2.pdf",
+      "legacy_sha256": "2a0eb8e2a68c050a509c316bd53f48923232d31945dfea21ca51c71940bcad4e",
+      "migrated_at": "2026-04-29T00:36:56.949000"
+    },
+    {
+      "id": "ba6c684f-5455-47a7-a2bc-da43f07ff7d9",
+      "storage_path": "soul-food/downloads/8f19662a-52c0-4b57-b0a0-0f2ad4dac436.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-faith-lesson3.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 541390,
+      "etag": "\"22f0389a2b3d3111e4cc935074cb935b\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-faith-lesson3.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:57.240000",
+      "updated_at": "2026-04-29T00:36:57.240000",
+      "attachments": [
+        {
+          "id": "208de4bf-d892-4850-ac8a-53282bb66678",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-3-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.241000"
+        },
+        {
+          "id": "5db868a8-e674-4c4f-973a-3fbc12fb0b11",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-3-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.241000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-faith-lesson3.pdf",
+      "legacy_sha256": "c01df5441823c5355963fff55ff7d70183c97d43894090571c947069f24c86cc",
+      "migrated_at": "2026-04-29T00:36:57.240000"
+    },
+    {
+      "id": "257a8ce8-9b67-4cf0-8e38-5f98597c3f74",
+      "storage_path": "soul-food/downloads/0ce332f5-33ab-41b8-a0cc-d16977df831c.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-faith-lesson4.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 885047,
+      "etag": "\"d15a8315d571f40a4914a6f0c5245502\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-faith-lesson4.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:57.466000",
+      "updated_at": "2026-04-29T00:36:57.466000",
+      "attachments": [
+        {
+          "id": "9a5bc1e2-a17c-4336-8540-fa34bdc15dc6",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-4-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.467000"
+        },
+        {
+          "id": "e185ca66-e70a-4a32-b3a5-40207562e1f8",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-4-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.467000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-faith-lesson4.pdf",
+      "legacy_sha256": "85138bd6f37efa14e7c2565a1b60ac415752556b0bc8e781677c49ef5cd0df78",
+      "migrated_at": "2026-04-29T00:36:57.466000"
+    },
+    {
+      "id": "7e5d44a8-aec7-4fb6-8af9-356652c82008",
+      "storage_path": "soul-food/downloads/7c96f69d-f8be-4947-a4e2-6d0537388d2d.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-full.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 2660396,
+      "etag": "\"1b111356cb21b5de96ba1e9eb4680e0c\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-full.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:57.766000",
+      "updated_at": "2026-04-29T00:36:57.766000",
+      "attachments": [
+        {
+          "id": "5e4ee858-4cfb-4ea6-ab19-ee8e175e2c80",
+          "target_type": "product",
+          "target_id": "breakfast_ae_digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.766000"
+        },
+        {
+          "id": "d56bab8e-843c-4924-9037-059a4ef45447",
+          "target_type": "product",
+          "target_id": "breakfast-full-ae-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.767000"
+        },
+        {
+          "id": "f7a1ad53-4e61-47e2-9018-23543bf9a5b6",
+          "target_type": "product",
+          "target_id": "breakfast-ae-full-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.767000"
+        },
+        {
+          "id": "97f03de8-a0b7-476d-a0fb-b25dc19ddda8",
+          "target_type": "product",
+          "target_id": "breakfast-full-adult-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.768000"
+        },
+        {
+          "id": "c8696126-9750-4c76-9c2d-f25c3afb5c05",
+          "target_type": "product",
+          "target_id": "breakfast-full-ae-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.768000"
+        },
+        {
+          "id": "05826adf-1967-4130-9abf-2c52a9f178ce",
+          "target_type": "product",
+          "target_id": "breakfast-full-adult-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.768000"
+        },
+        {
+          "id": "84fbedf1-d32e-4479-b46c-e207dec3bfe5",
+          "target_type": "product",
+          "target_id": "workbooks-breakfast-ae-digital-adult-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.768000"
+        },
+        {
+          "id": "5c20ff2b-09be-4a7f-896d-1139f973cddc",
+          "target_type": "product",
+          "target_id": "workbooks-breakfast-ae-paperback-adult-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.769000"
+        },
+        {
+          "id": "9011d5b4-c7ee-4f8b-b9fb-6a9e13d4be0d",
+          "target_type": "product",
+          "target_id": "breakfast-meal-adult-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.769000"
+        },
+        {
+          "id": "68b70472-66c5-4c75-aa65-e04978655916",
+          "target_type": "product",
+          "target_id": "breakfast-meal-adult-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.769000"
+        },
+        {
+          "id": "96d91170-424c-4c91-a038-6b32b2554a1a",
+          "target_type": "product",
+          "target_id": "breakfast-ae-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.769000"
+        },
+        {
+          "id": "2ee6c419-77c4-4d06-b4b8-3d1b626925a0",
+          "target_type": "product",
+          "target_id": "breakfast-ae-paperback",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.770000"
+        },
+        {
+          "id": "9ea0ca96-dec6-4172-94dd-4f34be5b1392",
+          "target_type": "product",
+          "target_id": "breakfast-meal-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.770000"
+        },
+        {
+          "id": "f841cd92-1025-403b-a3d0-3485b74044dd",
+          "target_type": "product",
+          "target_id": "workbooks-breakfast-ae-digital-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:57.770000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-full.pdf",
+      "legacy_sha256": "8b7f3ccdd5b0f9faa0377fa1581f872f9e62801dc8e5150da9ba5e6211652a55",
+      "migrated_at": "2026-04-29T00:36:57.766000"
+    },
+    {
+      "id": "4830aca1-482b-4772-8d1b-767dbc5ec92f",
+      "storage_path": "soul-food/downloads/d6fda478-99e9-4749-bc39-c06a0c8c0af5.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-hannah.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 941757,
+      "etag": "\"08744525f53dd0bbc55068e5d7967335\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-hannah.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:57.996000",
+      "updated_at": "2026-04-29T00:36:57.996000",
+      "attachments": [
+        {
+          "id": "fd417c2d-4cf6-47d1-9718-02cb1e15fae3",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-1-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.546000"
+        },
+        {
+          "id": "3bf738c0-7b8d-4739-a516-2ac0a43b4dc4",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-1-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.547000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-hannah.pdf",
+      "legacy_sha256": "c03957cf8245a3abd40dffd62b1c6315b8dee1b1e27618619fc31aeaae10fbaf",
+      "migrated_at": "2026-04-29T00:36:57.996000"
+    },
+    {
+      "id": "d736e45b-e4e3-47b0-ab07-086f8f8f6d0c",
+      "storage_path": "soul-food/downloads/ce394a9f-0344-4287-9e8a-65c28cdc906d.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-joseph.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 432095,
+      "etag": "\"a3ffcd6dc034496dfc88dee33f8c5aff\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-joseph.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:58.384000",
+      "updated_at": "2026-04-29T00:36:58.384000",
+      "attachments": [
+        {
+          "id": "d5a8676a-042e-43bb-b243-0b6882289788",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-2-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.085000"
+        },
+        {
+          "id": "b7de2537-d5d0-4c33-afa8-bf8a2c38c2c6",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-2-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.085000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-joseph.pdf",
+      "legacy_sha256": "7df3c882424ccbaa7339420af0484a007fdd57a8a2aac6be53ad5497d2d7233b",
+      "migrated_at": "2026-04-29T00:36:58.384000"
+    },
+    {
+      "id": "79966f5c-4c3c-4617-9bb8-93af289e2c51",
+      "storage_path": "soul-food/downloads-nibbles/a6a2e60e-5bbb-402c-97bd-5db8c222f171.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l1-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 947870,
+      "etag": "\"2244e78dd52c27b7dac3d4858c8770f3\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l1-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:15.542000",
+      "updated_at": "2026-04-29T00:37:15.542000",
+      "attachments": [
+        {
+          "id": "38fd0620-f148-421a-80b0-35b4fc885d86",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l1-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:15.543000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l1-nibble.pdf",
+      "legacy_sha256": "f6d7e983fb8c09f075598c42e8b2f57152953e6d70c24194b08cebd03bd3d919",
+      "migrated_at": "2026-04-29T00:37:15.542000"
+    },
+    {
+      "id": "ee9e5e78-8591-42f0-8aeb-9a13e00ab79a",
+      "storage_path": "soul-food/downloads-nibbles/f8ff2c3f-84b1-494a-8f08-b060058e9826.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l10-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 547735,
+      "etag": "\"fbe80d988af753db7756e373b73e630f\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l10-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:15.793000",
+      "updated_at": "2026-04-29T00:37:15.793000",
+      "attachments": [
+        {
+          "id": "7770ab3a-9c78-42e2-82be-8e8c0308d1d7",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l10-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:15.794000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l10-nibble.pdf",
+      "legacy_sha256": "3e649aa06ae7409f2365ea0bb9eb05bd1a49fa95864382cc055fb7d3c9dcc01e",
+      "migrated_at": "2026-04-29T00:37:15.793000"
+    },
+    {
+      "id": "87e3e3c1-14a6-4b6e-8bea-a3c8b7f498f8",
+      "storage_path": "soul-food/downloads-nibbles/3c1c8f13-530b-491f-b0f2-f7e46055b1b5.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l11-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 512571,
+      "etag": "\"a3d5b8f46853edb3110a0d20b056cfdd\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l11-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:16.121000",
+      "updated_at": "2026-04-29T00:37:16.121000",
+      "attachments": [
+        {
+          "id": "4baccd06-7249-4d57-9c88-f0daf9c2bf6e",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l11-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:16.122000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l11-nibble.pdf",
+      "legacy_sha256": "ef361f3dd9f43e5db29e1d6576f372848603a7dfa93fbceee7009fa6ced7d34b",
+      "migrated_at": "2026-04-29T00:37:16.121000"
+    },
+    {
+      "id": "13ed7dd2-0c92-43f6-b525-d6ff62ba9be7",
+      "storage_path": "soul-food/downloads-nibbles/f3266917-78a2-4bfb-a804-b72b06a399b0.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l12-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 522856,
+      "etag": "\"e8bed07b70c72b50e17d13dae013463d\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l12-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:16.604000",
+      "updated_at": "2026-04-29T00:37:16.604000",
+      "attachments": [
+        {
+          "id": "45ab8234-9e56-4f98-bc46-03741e3f15e6",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l12-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:16.605000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l12-nibble.pdf",
+      "legacy_sha256": "7ce701778481b92c4368713a7b1026eacb21e691ca55d59b45b8fe23931a85d8",
+      "migrated_at": "2026-04-29T00:37:16.604000"
+    },
+    {
+      "id": "12a7a379-97d6-41de-a820-a5e3ff302b00",
+      "storage_path": "soul-food/downloads-nibbles/1f693315-4c78-4642-b791-85246a240d3b.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l2-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 927646,
+      "etag": "\"e5d10771899ed8b40302ecdb2c88f02b\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l2-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:17.051000",
+      "updated_at": "2026-04-29T00:37:17.051000",
+      "attachments": [
+        {
+          "id": "bf0372b1-e044-4502-83c9-f39a170ba316",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l2-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:17.052000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l2-nibble.pdf",
+      "legacy_sha256": "19abe4b1a65b9f3eb66f2bc196e4682d776b337de0d5a232ffec1e7d6f17e910",
+      "migrated_at": "2026-04-29T00:37:17.051000"
+    },
+    {
+      "id": "300a19a0-1c66-4412-bd75-ffff82e9ca1e",
+      "storage_path": "soul-food/downloads-nibbles/117af1a6-06d7-447b-9e05-131110181d93.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l3-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 927226,
+      "etag": "\"c139fb5161d95ab7f881da4168360559\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l3-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:17.430000",
+      "updated_at": "2026-04-29T00:37:17.430000",
+      "attachments": [
+        {
+          "id": "8c2f8c95-5e8e-4497-a246-5ba0017e2aca",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l3-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:17.431000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l3-nibble.pdf",
+      "legacy_sha256": "7fd33645dd41833cedaba174e9c43728bffbc7910fc0ff623cc4ca2b5ceb0d0c",
+      "migrated_at": "2026-04-29T00:37:17.430000"
+    },
+    {
+      "id": "62110c59-e819-44b2-9d0f-0a3ad0d620d3",
+      "storage_path": "soul-food/downloads-nibbles/31a37188-59e1-49e1-bfbe-1c8325d57bec.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l4-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 501757,
+      "etag": "\"8e49093f1458cc6971909e52d2022561\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l4-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:17.612000",
+      "updated_at": "2026-04-29T00:37:17.612000",
+      "attachments": [
+        {
+          "id": "b53fbfe6-8767-4635-8f31-c1d5efc4a50e",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l4-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:17.613000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l4-nibble.pdf",
+      "legacy_sha256": "243ecadcd9d21df06d9c5cc1f1467be5b724d554ad413d39e32538faec0540ef",
+      "migrated_at": "2026-04-29T00:37:17.612000"
+    },
+    {
+      "id": "8ab3dbc9-63dd-4949-90b9-e710cfc355b4",
+      "storage_path": "soul-food/downloads-nibbles/b52ec8c5-2b4d-4688-8a35-3d816ea885a4.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l5-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 484944,
+      "etag": "\"39eb03b9c23cf4bd7d1fc0a448462024\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l5-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:17.835000",
+      "updated_at": "2026-04-29T00:37:17.835000",
+      "attachments": [
+        {
+          "id": "21f0e520-ee7f-47f8-bb8c-929692b72958",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l5-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:17.836000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l5-nibble.pdf",
+      "legacy_sha256": "d50107a52f4297f345d9cc5710771254eb2201830e32ccf2ae1f9104dfb0788a",
+      "migrated_at": "2026-04-29T00:37:17.835000"
+    },
+    {
+      "id": "12932927-6537-42b5-816d-25dc2a78ebce",
+      "storage_path": "soul-food/downloads-nibbles/6d39f963-9e99-45d9-95fa-c840c16fcac9.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l6-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 425334,
+      "etag": "\"487e1eb266426c86a89dd1b1656fa8e0\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l6-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:18.060000",
+      "updated_at": "2026-04-29T00:37:18.060000",
+      "attachments": [
+        {
+          "id": "fa1043bb-ec69-4157-b00d-92b22e6d457a",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l6-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:18.061000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l6-nibble.pdf",
+      "legacy_sha256": "932c93d44fec22a395259a4436595d536965549fd3c0eb5f465c265a2cd31796",
+      "migrated_at": "2026-04-29T00:37:18.060000"
+    },
+    {
+      "id": "894d19b4-a574-4be4-b8fa-58de96343454",
+      "storage_path": "soul-food/downloads-nibbles/6ccdc840-13d2-419f-89cb-323564188610.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l7-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 428236,
+      "etag": "\"580d5fbe4c5aba9d79138580bd036a87\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l7-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:18.333000",
+      "updated_at": "2026-04-29T00:37:18.333000",
+      "attachments": [
+        {
+          "id": "adef3154-529a-4fc4-82d0-6d7ccc4e330f",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l7-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:18.333000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l7-nibble.pdf",
+      "legacy_sha256": "5944f3796c7d69f9ab053a2e54c0b7e4edeb17b21ef4b34eeb8b979c18c7a5d3",
+      "migrated_at": "2026-04-29T00:37:18.333000"
+    },
+    {
+      "id": "7df8678f-98a3-4dcf-badb-c5d71c584191",
+      "storage_path": "soul-food/downloads-nibbles/074c8511-1e74-480e-a1c3-a821125c8e3a.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l8-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 477695,
+      "etag": "\"aa28ba2eb65c43bc6c45953322a45980\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l8-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:18.550000",
+      "updated_at": "2026-04-29T00:37:18.550000",
+      "attachments": [
+        {
+          "id": "f2605a23-7bd8-4608-b6ab-bb066620b055",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l8-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:18.551000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l8-nibble.pdf",
+      "legacy_sha256": "c748bc0acc92123cbc0ed17e2a8ff45501f897db73b666412b90a7ba6e1a33e4",
+      "migrated_at": "2026-04-29T00:37:18.550000"
+    },
+    {
+      "id": "d0b027dc-3416-4195-ba87-8f75eab651b8",
+      "storage_path": "soul-food/downloads-nibbles/6dc2bcfb-b869-4b63-aa9b-edbd18e3b477.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ae-l9-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 539041,
+      "etag": "\"36095c1ea7f522d7e6431af698fb7bbb\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ae-l9-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:18.750000",
+      "updated_at": "2026-04-29T00:37:18.750000",
+      "attachments": [
+        {
+          "id": "8f68410c-a10e-4cbc-a99f-cfb0e82f72d1",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l9-ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:18.751000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ae-l9-nibble.pdf",
+      "legacy_sha256": "a3605660380cb034d0d8fa464844eeca4aebc4703759c599a24594513ef0c747",
+      "migrated_at": "2026-04-29T00:37:18.750000"
+    },
+    {
+      "id": "533b16a3-b8ae-4157-8f5f-eed86b63a288",
+      "storage_path": "soul-food/downloads/80c5756f-8712-42e9-ad5a-bc0ffa40c282.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-month1-snackpack.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1738807,
+      "etag": "\"e51f65b8c17b9db58dfe5ce9debf44a1\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-month1-snackpack.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:58.632000",
+      "updated_at": "2026-04-29T00:36:58.632000",
+      "attachments": [
+        {
+          "id": "9e580cc2-9755-4a6c-ba07-20706f4a854f",
+          "target_type": "product",
+          "target_id": "snack_pack_ae_m1",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:58.633000"
+        },
+        {
+          "id": "4ce91a07-fc2a-4549-9464-cceb733bccb8",
+          "target_type": "product",
+          "target_id": "breakfast-snack-ae-m1-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:58.633000"
+        },
+        {
+          "id": "f07ad0da-b107-458f-b736-2f56402b37b1",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-1-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:58.633000"
+        },
+        {
+          "id": "befd4f67-7a04-4a19-9863-bdfa5e95c870",
+          "target_type": "product",
+          "target_id": "breakfast-snack-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:58.634000"
+        },
+        {
+          "id": "8b9d0e03-9e98-4209-b763-75411935e0c2",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-1-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:58.634000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-month1-snackpack.pdf",
+      "legacy_sha256": "bd6c05544744de0424c9af9c7d50de801051298fd2ac8b7a9fb0990f7ca48a13",
+      "migrated_at": "2026-04-29T00:36:58.632000"
+    },
+    {
+      "id": "96145c33-6536-4b94-bb7a-13ffaec60dec",
+      "storage_path": "soul-food/downloads/91c89a4b-da95-45ca-93dd-ab7e75de532d.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-month2-snackpack.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1461561,
+      "etag": "\"2a64c5bb8ab0d84b0898fdcaa69fccf4\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-month2-snackpack.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:58.858000",
+      "updated_at": "2026-04-29T00:36:58.858000",
+      "attachments": [
+        {
+          "id": "5652f526-c099-40c2-87e4-4796728144a7",
+          "target_type": "product",
+          "target_id": "snack_pack_ae_m2",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:58.859000"
+        },
+        {
+          "id": "5f75078d-8945-4fa1-a76e-4de2f3edf006",
+          "target_type": "product",
+          "target_id": "breakfast-snack-ae-m2-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:58.859000"
+        },
+        {
+          "id": "cf54e395-f4b7-4215-83e8-4d9570e3fdc0",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-2-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:58.860000"
+        },
+        {
+          "id": "5c3aa8c2-39d3-4698-93de-ee6fb470e71a",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-2-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:58.860000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-month2-snackpack.pdf",
+      "legacy_sha256": "cade9f9c94f3fc677164998d9fbf55b54b20c6ed0cdd5f17285ff3a949a1e35a",
+      "migrated_at": "2026-04-29T00:36:58.858000"
+    },
+    {
+      "id": "c9fe8455-0e50-4a82-a656-8dd47da2de38",
+      "storage_path": "soul-food/downloads/b3f703e9-945f-481d-b68d-d96c62ac6eb6.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-month3-snackpack.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1467596,
+      "etag": "\"e88a9183e37497e1559f101e28010f0e\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-month3-snackpack.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:59.541000",
+      "updated_at": "2026-04-29T00:36:59.541000",
+      "attachments": [
+        {
+          "id": "02d9c0c1-f0ea-4698-9bfe-4db27bd05001",
+          "target_type": "product",
+          "target_id": "snack_pack_ae_m3",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.542000"
+        },
+        {
+          "id": "840ce0a0-bcda-4469-ac8a-f909e00f91eb",
+          "target_type": "product",
+          "target_id": "breakfast-snack-ae-m3-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.543000"
+        },
+        {
+          "id": "6b9421a1-753b-4929-b68f-c5f556d9a638",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-3-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.543000"
+        },
+        {
+          "id": "99101138-591a-47d8-a679-397e4126526b",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-3-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:36:59.544000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-month3-snackpack.pdf",
+      "legacy_sha256": "e6ad61d45c29815fa920f8edbd802513eb22c90d0004e60c2c4e07582731016e",
+      "migrated_at": "2026-04-29T00:36:59.541000"
+    },
+    {
+      "id": "514cbb35-62ea-44d1-8a2c-6283a16d6a72",
+      "storage_path": "soul-food/downloads/e43a8446-22d9-46bf-906e-8b2abf2cb210.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-rahab.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 490580,
+      "etag": "\"cd8f6df3df12335d6b602feb72a56393\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-rahab.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:36:59.809000",
+      "updated_at": "2026-04-29T00:36:59.809000",
+      "attachments": [
+        {
+          "id": "ac8b8de1-55eb-49e0-8550-918193158bd0",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-3-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.086000"
+        },
+        {
+          "id": "841f6405-f0a6-433c-a923-0fcc0b822ad9",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-3-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.087000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-rahab.pdf",
+      "legacy_sha256": "507dbb4805ed8835fe31ff72c7f51b4b5f1c07409764a25b3706573aebd3b21e",
+      "migrated_at": "2026-04-29T00:36:59.809000"
+    },
+    {
+      "id": "94c5c82c-4f61-471e-846b-573b322b9c16",
+      "storage_path": "soul-food/downloads/be077554-0155-44c4-bcbf-af46c301cb9f.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ae-solomon.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 777800,
+      "etag": "\"e10649722e176b695a59f84a53db6aa3\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ae-solomon.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:00.081000",
+      "updated_at": "2026-04-29T00:37:00.081000",
+      "attachments": [
+        {
+          "id": "af3f949f-1ecf-4991-bf9c-c151fec41588",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-4-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.088000"
+        },
+        {
+          "id": "87489759-ddcb-4072-8748-feaabab6e98f",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-4-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.089000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ae-solomon.pdf",
+      "legacy_sha256": "1d2e39d158ba8073ce217e870bf5941f2dab51d21480e07cbc7e109c2a119d03",
+      "migrated_at": "2026-04-29T00:37:00.081000"
+    },
+    {
+      "id": "95a99a96-2096-4686-9bb7-6d666aa842d9",
+      "storage_path": "soul-food/downloads/972127ff-a23b-4492-bc64-2a4b4e4da313.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ie-full.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 628638,
+      "etag": "\"cb3370cb66c397262576e5952ad99eb6\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ie-full.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:00.350000",
+      "updated_at": "2026-04-29T00:37:00.350000",
+      "attachments": [
+        {
+          "id": "389c713e-7989-4b10-8118-f1cd5ea3765d",
+          "target_type": "product",
+          "target_id": "breakfast_ie_digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.351000"
+        },
+        {
+          "id": "949f3cfe-cd74-421b-80c4-8fc6fe801fdd",
+          "target_type": "product",
+          "target_id": "breakfast-full-ie-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.352000"
+        },
+        {
+          "id": "00dba44d-9938-463c-8503-58d3dced72f5",
+          "target_type": "product",
+          "target_id": "breakfast-ie-full-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.352000"
+        },
+        {
+          "id": "880d7a1b-4556-4526-9630-507bc87e0d0b",
+          "target_type": "product",
+          "target_id": "breakfast-full-instructor-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.353000"
+        },
+        {
+          "id": "472c44c2-5d1a-4484-a93a-e14a56c3ea09",
+          "target_type": "product",
+          "target_id": "breakfast-full-ie-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.353000"
+        },
+        {
+          "id": "591e49ba-13a7-4751-9fdb-e1571a74eb47",
+          "target_type": "product",
+          "target_id": "breakfast-full-instructor-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.354000"
+        },
+        {
+          "id": "2d409b7f-60cc-4820-9fef-b5ef70f92a9d",
+          "target_type": "product",
+          "target_id": "instructor-breakfast-digital-instructor-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.354000"
+        },
+        {
+          "id": "ebc4826a-676f-4d4b-94d4-00dbac2116d7",
+          "target_type": "product",
+          "target_id": "instructor-breakfast-paperback-instructor-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.354000"
+        },
+        {
+          "id": "85489310-0574-4ce7-b315-b71559e808e1",
+          "target_type": "product",
+          "target_id": "breakfast-ie-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.355000"
+        },
+        {
+          "id": "dfe294ae-d682-48f3-8eda-92590242c94d",
+          "target_type": "product",
+          "target_id": "breakfast-ie-paperback",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:00.355000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ie-full.pdf",
+      "legacy_sha256": "2b65472b4119ffad3c29023da35b9aa3e17f366499f5c650a02466dd6899c4d6",
+      "migrated_at": "2026-04-29T00:37:00.350000"
+    },
+    {
+      "id": "bc5ea410-1507-4f3b-b89c-3d59066c5701",
+      "storage_path": "soul-food/downloads/e72719bf-ba9c-4577-9b6e-9da5e866d9f8.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-abigail.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 793229,
+      "etag": "\"4580a7d0fbbc817ea2c1d2d26112db1b\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-abigail.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:00.791000",
+      "updated_at": "2026-04-29T00:37:00.791000",
+      "attachments": [
+        {
+          "id": "8034387f-e052-40e4-bf0f-a2e31dffde2b",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-1-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:02.050000"
+        },
+        {
+          "id": "15a8115b-2238-4a6b-b63a-81d255b5a9df",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-1-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:02.051000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-abigail.pdf",
+      "legacy_sha256": "70db3d3473d31e6a4468c98704bb339c39a01600e79ebb35014c0d4bf671fa80",
+      "migrated_at": "2026-04-29T00:37:00.791000"
+    },
+    {
+      "id": "c960427a-a31b-47ea-ba2f-e769239ddd70",
+      "storage_path": "soul-food/downloads/0802414e-6420-4c97-8f7e-441cf6afb91a.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-abram.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1734221,
+      "etag": "\"b7dec33b3f7b88ba190a8e58a937b9da\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-abram.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:01.150000",
+      "updated_at": "2026-04-29T00:37:01.150000",
+      "attachments": [
+        {
+          "id": "88c9b8d7-c751-43bc-b761-5927435ca755",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-2-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.790000"
+        },
+        {
+          "id": "b1979dd2-cd16-4e43-a7b4-43f25a95baa0",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-2-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.791000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-abram.pdf",
+      "legacy_sha256": "b8ab0043a4d9097a31321c94cf5a347f03d409014f1c0b7117881d1ab59d6d3c",
+      "migrated_at": "2026-04-29T00:37:01.150000"
+    },
+    {
+      "id": "3f84517e-dced-4f95-8151-ee636deea3e9",
+      "storage_path": "soul-food/downloads/bc791e17-312b-4513-b288-610251e3fa0a.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-centurion.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 4368885,
+      "etag": "\"1cf7211b8ea49c8806db148e309e723a\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-centurion.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:01.539000",
+      "updated_at": "2026-04-29T00:37:01.539000",
+      "attachments": [
+        {
+          "id": "926e07a0-f5a7-4c2b-aa8b-6a70182c1433",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-1-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:06.274000"
+        },
+        {
+          "id": "4e56120c-5c8e-4537-a852-ed78f5373003",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-1-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:06.274000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-centurion.pdf",
+      "legacy_sha256": "0d6e68941e257bb6808b4ad65533bfd31e909c2b5d6b1e04c7fea5ecb3e2b08e",
+      "migrated_at": "2026-04-29T00:37:01.539000"
+    },
+    {
+      "id": "0cc00ae1-8658-4750-8c70-39424063cd25",
+      "storage_path": "soul-food/downloads/2d1fadeb-85ed-4100-a263-25485ae8efc9.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-chronic.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 741491,
+      "etag": "\"2037b61ba643454b9f85fd59f412c07c\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-chronic.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:01.812000",
+      "updated_at": "2026-04-29T00:37:01.812000",
+      "attachments": [
+        {
+          "id": "2b0c0a8e-f8de-4397-a1a9-875735ef33f2",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-4-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.793000"
+        },
+        {
+          "id": "013c0136-acf2-4458-bb7f-521cb263987d",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-4-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.793000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-chronic.pdf",
+      "legacy_sha256": "858dc290d8e81d847bcc48d08904c3290f2872ffb14e101a634d12c2dc110c9c",
+      "migrated_at": "2026-04-29T00:37:01.812000"
+    },
+    {
+      "id": "541199ce-b088-433c-8f73-2ed154db7f62",
+      "storage_path": "soul-food/downloads/1c844cf6-5362-4bc1-aaa1-a7c0f140e328.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-esther.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 587030,
+      "etag": "\"ef7bfa2d5a72d0bd0618efe385b4c7d5\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-esther.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:02.020000",
+      "updated_at": "2026-04-29T00:37:02.020000",
+      "attachments": [
+        {
+          "id": "02ab4e1d-4289-47ce-8c5c-7a372b2f2cd2",
+          "target_type": "product",
+          "target_id": "nibble_ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:02.021000"
+        },
+        {
+          "id": "5344474a-0c70-486f-845b-85a87339c688",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:02.021000"
+        },
+        {
+          "id": "fb21ab4b-f581-47ef-86d6-fceaad8e3f94",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-3-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.792000"
+        },
+        {
+          "id": "3573d59c-cf74-42c9-960b-28237db3bb06",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-3-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.792000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-esther.pdf",
+      "legacy_sha256": "1d37a1915da45fbc3b8af64dfbc4eb622b2f0c01f4e3fd02a836e0e17382492f",
+      "migrated_at": "2026-04-29T00:37:02.020000"
+    },
+    {
+      "id": "00d15a52-28e7-49a4-93dc-85d23fc3d4a6",
+      "storage_path": "soul-food/downloads/2a1d4e8d-7976-48a1-9ab0-d645d2e3780b.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-faith-lesson2.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 337459,
+      "etag": "\"cb1e39f09c105c53c16c425595074fa7\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-faith-lesson2.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:02.354000",
+      "updated_at": "2026-04-29T00:37:02.354000",
+      "attachments": [
+        {
+          "id": "e23ef53e-6bcc-4b28-a97b-9437af12790b",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-2-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:02.355000"
+        },
+        {
+          "id": "4305ae68-a72d-45af-bc11-1aaccbb53027",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-2-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:02.356000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-faith-lesson2.pdf",
+      "legacy_sha256": "944fa93d92a4103530512f01bbae7f2bcfd878723e3327e8d428693ff300fa46",
+      "migrated_at": "2026-04-29T00:37:02.354000"
+    },
+    {
+      "id": "ded5dfeb-0ad6-40ea-825d-ca5f20573e34",
+      "storage_path": "soul-food/downloads/8232e787-a18d-409b-ad22-2888397c5963.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-faith-lesson3.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 366349,
+      "etag": "\"2b74396095922c9ce13ae35fe123d2c9\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-faith-lesson3.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:02.636000",
+      "updated_at": "2026-04-29T00:37:02.636000",
+      "attachments": [
+        {
+          "id": "1c973eb4-8a87-4f0e-9fab-9deb8c8bb598",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-3-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:02.637000"
+        },
+        {
+          "id": "fedecb2f-5c0f-451d-b19d-a360e1f2db44",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-3-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:02.637000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-faith-lesson3.pdf",
+      "legacy_sha256": "787d8851239ebce4af92333d6ae0dc582190afd8f5c377dad6143d05bd702909",
+      "migrated_at": "2026-04-29T00:37:02.636000"
+    },
+    {
+      "id": "4c77fbf5-1803-4d00-b9d2-f17981011e8d",
+      "storage_path": "soul-food/downloads/55a8203e-ef90-4ff1-a9f9-da6bb8660c9c.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-faith-lesson4.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 806125,
+      "etag": "\"553fa56e834cb5cf69d2d30451afbef2\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-faith-lesson4.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:02.869000",
+      "updated_at": "2026-04-29T00:37:02.869000",
+      "attachments": [
+        {
+          "id": "d973ce49-7ca4-4109-9d1a-0cd6fafdcda1",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-4-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:02.870000"
+        },
+        {
+          "id": "dde5fa55-6940-4ba1-8bea-6bd05b5b870a",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-faith-4-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:02.871000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-faith-lesson4.pdf",
+      "legacy_sha256": "a0405c991244ea936fde4b008609e2f5f5b027d42f9b2dfa3e2bc87e1c26dddd",
+      "migrated_at": "2026-04-29T00:37:02.869000"
+    },
+    {
+      "id": "c91f7cfd-3904-41b1-bb96-5505e0238f7f",
+      "storage_path": "soul-food/downloads/546818e7-d8af-4b5e-a83e-f3b490198c9e.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-full.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 2406245,
+      "etag": "\"ac716203ab448719bac80752263a3301\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-full.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:03.142000",
+      "updated_at": "2026-04-29T00:37:03.142000",
+      "attachments": [
+        {
+          "id": "63252ee5-3223-4584-8eda-2365b44b7c92",
+          "target_type": "product",
+          "target_id": "breakfast_ye_digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.143000"
+        },
+        {
+          "id": "f604cc06-197d-487e-9dd0-3111f0d828e0",
+          "target_type": "product",
+          "target_id": "breakfast-full-ye-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.144000"
+        },
+        {
+          "id": "3b636559-207f-41b4-8216-87b7480b659a",
+          "target_type": "product",
+          "target_id": "breakfast-ye-full-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.144000"
+        },
+        {
+          "id": "5fc4fe5c-3551-4574-9b8c-eb1ba8bcde63",
+          "target_type": "product",
+          "target_id": "breakfast-full-youth-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.145000"
+        },
+        {
+          "id": "88c36c5e-deda-427b-9d86-18e69ddbe778",
+          "target_type": "product",
+          "target_id": "breakfast-full-ye-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.145000"
+        },
+        {
+          "id": "a3d98ba0-85be-4688-baaf-a3890a87be11",
+          "target_type": "product",
+          "target_id": "breakfast-full-youth-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.146000"
+        },
+        {
+          "id": "8410a6cc-166a-492d-bd26-f8831d4eed59",
+          "target_type": "product",
+          "target_id": "workbooks-breakfast-ye-digital-youth-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.146000"
+        },
+        {
+          "id": "dcd6f5b3-a77b-4761-bafc-88e24647096b",
+          "target_type": "product",
+          "target_id": "workbooks-breakfast-ye-paperback-youth-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.147000"
+        },
+        {
+          "id": "bff523a4-dcf6-48c8-94f2-d0b75d38b5c6",
+          "target_type": "product",
+          "target_id": "breakfast-meal-youth-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.148000"
+        },
+        {
+          "id": "7c2b7c62-fcb7-4ec0-933d-f4a7e0131100",
+          "target_type": "product",
+          "target_id": "breakfast-meal-youth-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.148000"
+        },
+        {
+          "id": "f9495f31-e6f5-4c95-8977-2891f265c2ee",
+          "target_type": "product",
+          "target_id": "breakfast-ye-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.149000"
+        },
+        {
+          "id": "ad25839b-67f5-4f02-a78e-03fb9f57829e",
+          "target_type": "product",
+          "target_id": "breakfast-ye-paperback",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.149000"
+        },
+        {
+          "id": "0c0dd24c-40df-4431-a251-0fb85b01f1c5",
+          "target_type": "product",
+          "target_id": "breakfast-meal-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.150000"
+        },
+        {
+          "id": "c0ad60da-4b8e-4ef5-9361-345e8d81f602",
+          "target_type": "product",
+          "target_id": "workbooks-breakfast-ye-digital-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:03.150000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-full.pdf",
+      "legacy_sha256": "0a4db840f6fff80808f4aa57ee000bd0b979fa31336a17a66785de9d9b36d61d",
+      "migrated_at": "2026-04-29T00:37:03.142000"
+    },
+    {
+      "id": "180a0a63-6352-4ebf-b796-3774d777cc0b",
+      "storage_path": "soul-food/downloads/bbc21aba-3c35-43b3-9ed9-2c21c62b180a.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-hannah.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 5241605,
+      "etag": "\"29f5793b3e346dfc9dcfea9b770e0cb4\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-hannah.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:03.898000",
+      "updated_at": "2026-04-29T00:37:03.898000",
+      "attachments": [
+        {
+          "id": "97bb852b-7505-4af7-af4f-8838348f1c6f",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-1-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.788000"
+        },
+        {
+          "id": "53bb2e02-a534-48fb-878c-dadc0e7ccf54",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-prayer-1-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.789000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-hannah.pdf",
+      "legacy_sha256": "96511cf2d2f9cf3911caa278f1d0a7caf110f8098aed11c4764baa0b939a1ed1",
+      "migrated_at": "2026-04-29T00:37:03.898000"
+    },
+    {
+      "id": "7588c4be-ffcc-413b-bf05-4359e46a4e62",
+      "storage_path": "soul-food/downloads/c0063e15-4ba6-42d5-a083-260c0a27010e.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-joseph.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 694429,
+      "etag": "\"1297ee78010c6b20185ea5fee978e4ff\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-joseph.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:04.383000",
+      "updated_at": "2026-04-29T00:37:04.383000",
+      "attachments": [
+        {
+          "id": "2c2a0433-34a6-4725-abdd-8a964236b1bd",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-2-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:06.276000"
+        },
+        {
+          "id": "85bc9176-233e-48a9-9d97-992d4955334e",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-2-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:06.276000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-joseph.pdf",
+      "legacy_sha256": "5578be79d3e91590dee6cf9e5b36ed760c01f9110205be86a3f4b8b65bff99dc",
+      "migrated_at": "2026-04-29T00:37:04.383000"
+    },
+    {
+      "id": "012e79ef-3e14-49d8-b2a8-4e6739afb700",
+      "storage_path": "soul-food/downloads-nibbles/e312cb1d-cd1b-44d6-9a0f-8db0dfd836e9.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l1-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1632917,
+      "etag": "\"f33a06067dcff2825526bdc52623eb57\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l1-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:19.172000",
+      "updated_at": "2026-04-29T00:37:19.172000",
+      "attachments": [
+        {
+          "id": "3ba33051-797c-47dc-9394-f4ab5ea5a3eb",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l1-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:19.173000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l1-nibble.pdf",
+      "legacy_sha256": "b60ef64034f71972a718815dadb34d93d320e9d158d97f44a98ac227226a8fed",
+      "migrated_at": "2026-04-29T00:37:19.172000"
+    },
+    {
+      "id": "c249e2dd-e756-41c3-a450-bed4d30ff357",
+      "storage_path": "soul-food/downloads-nibbles/6e3bb8f9-5957-485f-8d52-2001dff87671.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l10-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 777300,
+      "etag": "\"60d11313394308ddbb3c1d9034ecbb94\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l10-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:19.451000",
+      "updated_at": "2026-04-29T00:37:19.451000",
+      "attachments": [
+        {
+          "id": "1e97a8f2-086f-4e11-b978-d4958ebfdea4",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l10-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:19.452000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l10-nibble.pdf",
+      "legacy_sha256": "e7670f7688d55f1fb55c0e1177d95de10593f19bdcdd641d0c61c39146649114",
+      "migrated_at": "2026-04-29T00:37:19.451000"
+    },
+    {
+      "id": "90c362be-7813-44af-8270-9d76e1f59f2a",
+      "storage_path": "soul-food/downloads-nibbles/2209d72c-1089-4503-8227-925529730053.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l11-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 769694,
+      "etag": "\"ce0fd6f13b5684b2d2864a0aed26ecd5\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l11-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:19.816000",
+      "updated_at": "2026-04-29T00:37:19.816000",
+      "attachments": [
+        {
+          "id": "fe18e080-95d0-49cf-b501-641a95dde3eb",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l11-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:19.816000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l11-nibble.pdf",
+      "legacy_sha256": "a71355e50d74bc2ca05df60656082a62d621e966325158f3ee2ad37e9619f276",
+      "migrated_at": "2026-04-29T00:37:19.816000"
+    },
+    {
+      "id": "0f9a26d8-87ac-48c6-b072-0d9b35033156",
+      "storage_path": "soul-food/downloads-nibbles/b2554cae-badf-440c-8149-217fd614d747.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l12-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 773197,
+      "etag": "\"3fd698aaafacdd58d717b67997993612\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l12-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:20.084000",
+      "updated_at": "2026-04-29T00:37:20.084000",
+      "attachments": [
+        {
+          "id": "a68e490b-c59d-4b7d-939d-deba05003d3f",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l12-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:20.085000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l12-nibble.pdf",
+      "legacy_sha256": "0e501a383a6c5e142911cbc4d8509dd07142bff909d8d47fbb4ac92064726a30",
+      "migrated_at": "2026-04-29T00:37:20.084000"
+    },
+    {
+      "id": "af6c4c8b-621d-4910-9372-11ff4f8c635c",
+      "storage_path": "soul-food/downloads-nibbles/f9638e27-cf62-47d2-907d-2bb0c9801ada.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l2-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 441648,
+      "etag": "\"b19aa4d1cf36957501170462989a0990\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l2-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:20.602000",
+      "updated_at": "2026-04-29T00:37:20.602000",
+      "attachments": [
+        {
+          "id": "ad37d687-f89d-4920-b3d5-7f612256bdb1",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l2-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:20.603000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l2-nibble.pdf",
+      "legacy_sha256": "d6ea19ea8da33f5227492147e6bb12281bd774338338546dc890b6e1066d08c0",
+      "migrated_at": "2026-04-29T00:37:20.602000"
+    },
+    {
+      "id": "2d27a0fd-e317-4874-97ed-17442c145eef",
+      "storage_path": "soul-food/downloads-nibbles/8c5319cb-ba80-484b-bf0f-1968327e97d8.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l3-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 551550,
+      "etag": "\"4e49b6a56ebec9ebf9af6f814ae2fe3b\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l3-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:20.845000",
+      "updated_at": "2026-04-29T00:37:20.845000",
+      "attachments": [
+        {
+          "id": "7f99b37e-d7fa-4ede-bbf0-5a708abe0229",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l3-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:20.846000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l3-nibble.pdf",
+      "legacy_sha256": "0520b3c2c9c22d01ea8c3f83c1a2e4e536f72121868be0256c7d676a3a9ff49c",
+      "migrated_at": "2026-04-29T00:37:20.845000"
+    },
+    {
+      "id": "31d725f5-1112-45f6-b721-56839a1c8927",
+      "storage_path": "soul-food/downloads-nibbles/47fbe231-ac35-42db-9e1b-b2b723f0a9bc.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l4-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 544132,
+      "etag": "\"07a77e734b4f37e316b19beca9848091\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l4-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:21.224000",
+      "updated_at": "2026-04-29T00:37:21.224000",
+      "attachments": [
+        {
+          "id": "df1af3fe-fbea-47da-a855-d20ab2b6029c",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l4-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:21.225000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l4-nibble.pdf",
+      "legacy_sha256": "fe690a4943e2eb63e1f573de5c797a2e5ad6a021719d0a3cfa9f031405b3b4fe",
+      "migrated_at": "2026-04-29T00:37:21.224000"
+    },
+    {
+      "id": "0599386c-5d4b-4512-922c-c3168b1cdae8",
+      "storage_path": "soul-food/downloads-nibbles/2951a5f3-d2d6-40fb-a0f2-74cb069dfd73.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l5-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1226436,
+      "etag": "\"f9da9d853cef885ffd9918722fc208e8\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l5-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:21.480000",
+      "updated_at": "2026-04-29T00:37:21.480000",
+      "attachments": [
+        {
+          "id": "af274220-a92b-4743-838b-c741eb84387c",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l5-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:21.481000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l5-nibble.pdf",
+      "legacy_sha256": "63b17e3a4a323c43a26228f92b3e269397765faedef4db6b4c66731b83f1f134",
+      "migrated_at": "2026-04-29T00:37:21.480000"
+    },
+    {
+      "id": "a511cadf-f4c5-4d67-9e75-67e7c25980d3",
+      "storage_path": "soul-food/downloads-nibbles/d418f075-b344-4041-a58d-881b12b5f6b9.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l6-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 696363,
+      "etag": "\"964a44e96f6fb0f5bd2e3c43cf4e1edd\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l6-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:21.695000",
+      "updated_at": "2026-04-29T00:37:21.695000",
+      "attachments": [
+        {
+          "id": "1e107b9a-9422-4008-a8e3-44802a76699b",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l6-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:21.695000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l6-nibble.pdf",
+      "legacy_sha256": "881b86114f544265e2da4aa8bafa41b81ee84f0f98d07679779800650120e09d",
+      "migrated_at": "2026-04-29T00:37:21.695000"
+    },
+    {
+      "id": "7223aae5-3c20-4286-83bd-b7e980d3354f",
+      "storage_path": "soul-food/downloads-nibbles/7f53dcc0-2824-47d7-bb18-f4b4d540f33f.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l7-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 657432,
+      "etag": "\"963340ab3c401ab04be0d5d7b08e51be\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l7-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:22.010000",
+      "updated_at": "2026-04-29T00:37:22.010000",
+      "attachments": [
+        {
+          "id": "1b9c1af0-5f70-41cb-9818-3a82a2e3f954",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l7-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:22.011000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l7-nibble.pdf",
+      "legacy_sha256": "45bc4fe8e19379d98e6f743e60bc6a2dbe4a982e18c75150fc94317e17a8c197",
+      "migrated_at": "2026-04-29T00:37:22.010000"
+    },
+    {
+      "id": "0273c670-e01a-4e0d-b8c8-dfa1f157b974",
+      "storage_path": "soul-food/downloads-nibbles/cae3ba5b-a130-494a-b3b1-18f64f52ab87.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l8-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 680413,
+      "etag": "\"6616d8792143029190fa7bf9bef5fd7f\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l8-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:22.498000",
+      "updated_at": "2026-04-29T00:37:22.498000",
+      "attachments": [
+        {
+          "id": "096f7ebf-186b-432d-a3ae-b85adf1d0377",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l8-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:22.499000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l8-nibble.pdf",
+      "legacy_sha256": "60b6317fa0ff453837ebb08c7a630c7f1247020523f7b81fc8913bac0383d90d",
+      "migrated_at": "2026-04-29T00:37:22.498000"
+    },
+    {
+      "id": "1bc01ff1-d3a8-450f-935c-4278d57e5f4f",
+      "storage_path": "soul-food/downloads-nibbles/3f5a29ba-3daf-4f9d-9dc3-2d6207f1bd57.pdf",
+      "category": "downloads-nibbles",
+      "original_filename": "breakfast-ye-l9-nibble.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 783575,
+      "etag": "\"3a900abee1e4a6dfedfb27dca38bd9a4\"",
+      "description": "Migrated from /app/backend/content/downloads/nibbles/breakfast-ye-l9-nibble.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:22.758000",
+      "updated_at": "2026-04-29T00:37:22.758000",
+      "attachments": [
+        {
+          "id": "a04c6647-d074-4590-851d-205e7ca38e84",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-l9-ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:22.759000"
+        }
+      ],
+      "legacy_path": "downloads/nibbles/breakfast-ye-l9-nibble.pdf",
+      "legacy_sha256": "15576e2b70415ef94b74a0ced2fedfd279e45c6c25dd78d61329971e298ab50b",
+      "migrated_at": "2026-04-29T00:37:22.758000"
+    },
+    {
+      "id": "9ef900e2-b0c6-45ef-b48a-6d8c401a662d",
+      "storage_path": "soul-food/downloads/8467a748-4d5a-47f9-a1e3-a8f01bc5dbf1.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-month1-snackpack.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 5400763,
+      "etag": "\"138cd6e27eff25de012ef5be9820f4f0\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-month1-snackpack.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:04.839000",
+      "updated_at": "2026-04-29T00:37:04.839000",
+      "attachments": [
+        {
+          "id": "9f9c8105-4d81-4ccf-89e9-7f2495f4fba5",
+          "target_type": "product",
+          "target_id": "snack_pack_ye_m1",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:04.840000"
+        },
+        {
+          "id": "5d7b3e52-f70e-449c-8178-0572c767b147",
+          "target_type": "product",
+          "target_id": "breakfast-snack-ye-m1-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:04.841000"
+        },
+        {
+          "id": "369481a3-6972-48be-ac2d-9e3d9d59f5fa",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-1-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:04.841000"
+        },
+        {
+          "id": "6e4937ed-546f-4838-8f84-384b5ac229ca",
+          "target_type": "product",
+          "target_id": "breakfast-snack-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:04.841000"
+        },
+        {
+          "id": "c2eb4d24-a4d0-4df6-9853-e7698b9a5064",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-1-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:04.842000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-month1-snackpack.pdf",
+      "legacy_sha256": "9014a2419a8619abb34f0824df7bc840db3364e86b92ca3339f24b1ab65b67db",
+      "migrated_at": "2026-04-29T00:37:04.839000"
+    },
+    {
+      "id": "e6bcf9fe-d329-4ee0-bfef-3bda56879f23",
+      "storage_path": "soul-food/downloads/845c7780-cd07-4aa3-af06-9271283dea30.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-month2-snackpack.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 4639832,
+      "etag": "\"a625290f87532ce7048d086863f966b0\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-month2-snackpack.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:05.418000",
+      "updated_at": "2026-04-29T00:37:05.418000",
+      "attachments": [
+        {
+          "id": "4f5258a4-2156-4eab-a79a-e43bea3a3a3f",
+          "target_type": "product",
+          "target_id": "snack_pack_ye_m2",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.419000"
+        },
+        {
+          "id": "6c5bd040-e5c4-4fbe-8509-8152e3a0ed45",
+          "target_type": "product",
+          "target_id": "breakfast-snack-ye-m2-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.420000"
+        },
+        {
+          "id": "69914343-0024-4f69-8c33-58fd055207fe",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-2-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.420000"
+        },
+        {
+          "id": "8ff5bfd7-f938-40c6-be14-9d0f155e3a9a",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-2-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.420000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-month2-snackpack.pdf",
+      "legacy_sha256": "db6ab934d064d3b374f7d6c9ce017e6d3f1463cb5f634b89a938c034fb758035",
+      "migrated_at": "2026-04-29T00:37:05.418000"
+    },
+    {
+      "id": "86eba808-f286-49cf-a55c-08704cb48adc",
+      "storage_path": "soul-food/downloads/842dc6e1-c76c-4310-bb16-188cff96b12d.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-month3-snackpack.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1284909,
+      "etag": "\"57d3d693f7878c7c266120cdf72efdb7\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-month3-snackpack.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:05.781000",
+      "updated_at": "2026-04-29T00:37:05.781000",
+      "attachments": [
+        {
+          "id": "bb8e911c-93a6-45d6-9b92-4f0fb1234f7d",
+          "target_type": "product",
+          "target_id": "snack_pack_ye_m3",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.782000"
+        },
+        {
+          "id": "fdb29529-ad15-4795-a8a8-050dfe66a355",
+          "target_type": "product",
+          "target_id": "breakfast-snack-ye-m3-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.783000"
+        },
+        {
+          "id": "4e03f16e-9363-4065-a66f-ba494acf7dfb",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-3-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.783000"
+        },
+        {
+          "id": "25fe2d7b-9e8f-4314-9b03-b34f38f37481",
+          "target_type": "product",
+          "target_id": "breakfast-snack-month-3-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:05.783000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-month3-snackpack.pdf",
+      "legacy_sha256": "662e2dfaa3dea1ad7210430186e3f8acdadc630903d4cdaefcfd53f82931a316",
+      "migrated_at": "2026-04-29T00:37:05.781000"
+    },
+    {
+      "id": "873d57dc-01fc-4b00-a3bf-1f033d6fff41",
+      "storage_path": "soul-food/downloads/c1f74b1e-073f-48da-aa27-687afe80891b.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-rahab.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 877679,
+      "etag": "\"228ecdbdea2e84fcc4d5e4a90f53e9e3\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-rahab.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:06.039000",
+      "updated_at": "2026-04-29T00:37:06.039000",
+      "attachments": [
+        {
+          "id": "ab149e59-0133-4789-829c-b13212ceb490",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-3-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:06.277000"
+        },
+        {
+          "id": "9e588068-db5d-4ee0-a0b4-4c1d1e4242dc",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-3-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:06.278000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-rahab.pdf",
+      "legacy_sha256": "ff84a230690bbf9ff0a799bbf2d9421feb99afe4efa4b9ffb83ca38496b59e55",
+      "migrated_at": "2026-04-29T00:37:06.039000"
+    },
+    {
+      "id": "dadcbac8-8d28-4d60-bd63-8f843e5294f3",
+      "storage_path": "soul-food/downloads/2c0405b4-b9c8-45a8-89e8-90a7f5618691.pdf",
+      "category": "downloads",
+      "original_filename": "breakfast-ye-solomon.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 596988,
+      "etag": "\"4f4eb1139adaba1117d96472bf509ad4\"",
+      "description": "Migrated from /app/backend/content/downloads/breakfast-ye-solomon.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:06.270000",
+      "updated_at": "2026-04-29T00:37:06.270000",
+      "attachments": [
+        {
+          "id": "b1de6025-3765-4b28-a9d9-1a9982b9f6c4",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-4-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:06.279000"
+        },
+        {
+          "id": "16a802a2-5da5-433d-a700-7ac0b838dc6c",
+          "target_type": "product",
+          "target_id": "breakfast-nibble-through-4-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:06.279000"
+        }
+      ],
+      "legacy_path": "downloads/breakfast-ye-solomon.pdf",
+      "legacy_sha256": "a4532092ce581ece9daa4455d47b401cd433c24f19664b5ccf90c62d75333920",
+      "migrated_at": "2026-04-29T00:37:06.270000"
+    },
+    {
+      "id": "bb03d3dc-80f1-4e04-8808-c0500fba3c7e",
+      "storage_path": "soul-food/downloads/4968bdb3-57b4-493c-b5e0-63aa72256f9c.pdf",
+      "category": "downloads",
+      "original_filename": "holiday-ae-bce.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 2222603,
+      "etag": "\"3dbc48be0c5c5bd029a6d964096dfebb\"",
+      "description": "Migrated from /app/backend/content/downloads/holiday-ae-bce.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:07.956000",
+      "updated_at": "2026-04-29T00:37:07.956000",
+      "attachments": [],
+      "legacy_path": "downloads/holiday-ae-bce.pdf",
+      "legacy_sha256": "6e23d39157b12e6887d07bef6abb77785f4577ddee9177696232d02d64539919",
+      "migrated_at": "2026-04-29T00:37:07.956000"
+    },
+    {
+      "id": "fd5e0219-2651-4bbf-bc54-b26d09440a95",
+      "storage_path": "soul-food/downloads/a4826cae-777a-47f4-a0d2-e4a314d1adc6.pdf",
+      "category": "downloads",
+      "original_filename": "holiday-ae-full.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 13308933,
+      "etag": "\"2f4f57ff457d4957f716282e94403747\"",
+      "description": "Migrated from /app/backend/content/downloads/holiday-ae-full.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:08.390000",
+      "updated_at": "2026-04-29T00:37:08.390000",
+      "attachments": [
+        {
+          "id": "66e294d4-7afc-4c4e-99e2-1ae7a1ea78dd",
+          "target_type": "product",
+          "target_id": "holiday_ae",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.390000"
+        },
+        {
+          "id": "a91bee48-f153-4437-9cbb-72342a300515",
+          "target_type": "product",
+          "target_id": "holiday-full-ae-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.391000"
+        },
+        {
+          "id": "4f12af30-6521-4d5e-9f46-92f76365b17d",
+          "target_type": "product",
+          "target_id": "holiday-ae-full-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.391000"
+        },
+        {
+          "id": "91f76971-84b6-4396-b196-9d1e9fec9342",
+          "target_type": "product",
+          "target_id": "holiday-full-adult-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.392000"
+        },
+        {
+          "id": "1fe21e84-a968-44cf-8730-9dee9147ca10",
+          "target_type": "product",
+          "target_id": "holiday-full-ae-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.392000"
+        },
+        {
+          "id": "a5dc74f7-e7bf-4241-85dd-8236c7fe356b",
+          "target_type": "product",
+          "target_id": "holiday-full-adult-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.392000"
+        },
+        {
+          "id": "baf1ad42-aa87-4a3b-9222-05becdb046d3",
+          "target_type": "product",
+          "target_id": "holiday-nibble-ae-covenant-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.392000"
+        },
+        {
+          "id": "9c5339af-1357-4efa-8264-9f0d313a9217",
+          "target_type": "product",
+          "target_id": "holiday-nibble-ae-cradle-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.393000"
+        },
+        {
+          "id": "5cfe5f77-aede-4556-80b7-cf93c4d482cf",
+          "target_type": "product",
+          "target_id": "holiday-nibble-ae-cross-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.393000"
+        },
+        {
+          "id": "50c93504-66ea-41d4-97e3-9e4f27e0ee27",
+          "target_type": "product",
+          "target_id": "holiday-nibble-ae-comforter-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.393000"
+        },
+        {
+          "id": "91a6fe11-2bb9-4be3-a9c6-78eedfafcd6d",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ae-covenant-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.393000"
+        },
+        {
+          "id": "e26141dc-bbf7-4556-9a53-feeb7b8a8380",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ae-cradle-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.394000"
+        },
+        {
+          "id": "84589ed9-b127-4902-8c44-edfb1f9ab027",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ae-cross-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.394000"
+        },
+        {
+          "id": "bcdf4cca-bf18-433a-bb9e-9b57ef67f667",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ae-comforter-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.394000"
+        },
+        {
+          "id": "c59e295f-93de-4dc1-8778-e11436ef8f4a",
+          "target_type": "product",
+          "target_id": "holiday-ae-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.395000"
+        },
+        {
+          "id": "27eb785d-2e6b-4f2d-bba0-9974cdf3bb9b",
+          "target_type": "product",
+          "target_id": "holiday-ae-paperback",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.395000"
+        },
+        {
+          "id": "2cfc00ae-0af2-4283-8800-b8d1491e180a",
+          "target_type": "product",
+          "target_id": "holiday-table-bundle",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.395000"
+        },
+        {
+          "id": "ad78e222-1be7-4dff-9374-22a40ae9369d",
+          "target_type": "product",
+          "target_id": "full-table-experience",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.395000"
+        },
+        {
+          "id": "bd53234f-4c48-4df7-80ca-0a3597151cf6",
+          "target_type": "product",
+          "target_id": "workbooks-holiday-ae-digital-adult-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.396000"
+        },
+        {
+          "id": "fddbc71e-8f25-47db-87f5-86071f635734",
+          "target_type": "product",
+          "target_id": "workbooks-holiday-ae-paperback-adult-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.396000"
+        },
+        {
+          "id": "abe49c8c-3f65-451b-ad82-a0166cf85385",
+          "target_type": "product",
+          "target_id": "holiday-nibble-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.396000"
+        },
+        {
+          "id": "9a037053-e7d9-4956-8cd6-60f637d4ec05",
+          "target_type": "product",
+          "target_id": "holiday-full-adult-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.396000"
+        },
+        {
+          "id": "2243e9c0-afe5-4460-a4bf-15085e08fc6d",
+          "target_type": "product",
+          "target_id": "lunch-workbook-adult-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.397000"
+        },
+        {
+          "id": "0a053e94-6a32-4e0f-b5f7-060163e07bba",
+          "target_type": "product",
+          "target_id": "gaming-pass-30-adult-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.397000"
+        },
+        {
+          "id": "a4b85353-4c44-4be5-9e1c-ec400e5bfe83",
+          "target_type": "product",
+          "target_id": "gaming-pass-90-adult-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.397000"
+        },
+        {
+          "id": "5b5d4d9d-4416-45c2-aecd-a0a2cbcfbc68",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ae-covenant-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.397000"
+        },
+        {
+          "id": "22427f73-8b18-461c-9384-c6e42015aae1",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ae-cradle-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.398000"
+        },
+        {
+          "id": "ec612bc6-ec4b-4864-8aab-89dc673121b3",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ae-cross-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.398000"
+        },
+        {
+          "id": "8dffcbeb-2952-4b25-b350-43c3d7e0b413",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ae-comforter-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.398000"
+        },
+        {
+          "id": "de7b68ea-9a6b-4e82-9319-f5fa6486f8a0",
+          "target_type": "product",
+          "target_id": "holiday-full-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.398000"
+        },
+        {
+          "id": "b20eaa11-6206-43e9-be5f-6833183a91fc",
+          "target_type": "product",
+          "target_id": "workbooks-holiday-ae-digital-adult-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:08.399000"
+        }
+      ],
+      "legacy_path": "downloads/holiday-ae-full.pdf",
+      "legacy_sha256": "218072e05c212fcef05e1dba6acf14923f7622d2e380a0fbf46a4dac44f4b0f8",
+      "migrated_at": "2026-04-29T00:37:08.390000"
+    },
+    {
+      "id": "319fa5e2-9ebf-41ce-881e-9459d5516d2f",
+      "storage_path": "soul-food/downloads/7c499430-a112-468b-ba31-cd91c4f3d042.pdf",
+      "category": "downloads",
+      "original_filename": "holiday-ie-full.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 25061430,
+      "etag": "\"deb10be0b7925e084b77d4977a555bee\"",
+      "description": "Migrated from /app/backend/content/downloads/holiday-ie-full.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:09.069000",
+      "updated_at": "2026-04-29T00:37:09.069000",
+      "attachments": [
+        {
+          "id": "ef5bfd4f-3d6c-465f-b35e-49b4c0a06e9e",
+          "target_type": "product",
+          "target_id": "holiday_ie",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.070000"
+        },
+        {
+          "id": "0e3d62bb-5860-412d-a6ec-b7644a415b56",
+          "target_type": "product",
+          "target_id": "holiday-full-ie-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.070000"
+        },
+        {
+          "id": "a35c3112-39f2-4a43-8f76-e12ac28eeb89",
+          "target_type": "product",
+          "target_id": "holiday-ie-full-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.071000"
+        },
+        {
+          "id": "799ca3cd-5bbc-48f4-b6d1-1015969755eb",
+          "target_type": "product",
+          "target_id": "holiday-full-instructor-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.071000"
+        },
+        {
+          "id": "0062dbbb-75f7-4a27-8b32-0b231a9ae24f",
+          "target_type": "product",
+          "target_id": "holiday-full-ie-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.071000"
+        },
+        {
+          "id": "c452ff2c-d1f9-47a4-8715-a142c50b4c5f",
+          "target_type": "product",
+          "target_id": "holiday-full-instructor-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.071000"
+        },
+        {
+          "id": "c6cffede-91aa-48bb-90d9-0d3afdd5204a",
+          "target_type": "product",
+          "target_id": "holiday-ie-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.072000"
+        },
+        {
+          "id": "2993bbf9-894e-4138-bdba-1e336a3cdc23",
+          "target_type": "product",
+          "target_id": "holiday-ie-paperback",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.072000"
+        },
+        {
+          "id": "fb585731-c02a-450e-97cd-5f5e5e86ad1c",
+          "target_type": "product",
+          "target_id": "workbooks-holiday-ie-digital-instructor-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.072000"
+        },
+        {
+          "id": "83f55050-f04e-4e3a-a6bc-effdf8b03f41",
+          "target_type": "product",
+          "target_id": "workbooks-holiday-ie-paperback-instructor-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.072000"
+        },
+        {
+          "id": "4302b3d1-b23a-41d1-bac2-d572b6d9e58b",
+          "target_type": "product",
+          "target_id": "holiday-full-instructor-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.073000"
+        },
+        {
+          "id": "703494db-20a9-40a6-8c43-49aa05bc4da0",
+          "target_type": "product",
+          "target_id": "lunch-workbook-instructor-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.073000"
+        },
+        {
+          "id": "f9b53884-dd7a-45bb-abf0-afa2ed9ccb00",
+          "target_type": "product",
+          "target_id": "instructor-holiday-ie-instructor-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.073000"
+        },
+        {
+          "id": "6bfcbcc7-abc2-4fe0-b3c4-8a848e37fd89",
+          "target_type": "product",
+          "target_id": "instructor-lunch-ie-preorder-instructor-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.074000"
+        },
+        {
+          "id": "471e60c5-849c-4ce5-a0b3-b1a18adbc1d0",
+          "target_type": "product",
+          "target_id": "gaming-pass-90-instructor-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.074000"
+        },
+        {
+          "id": "5f30667f-1e68-4d53-b1f8-4a42c046333a",
+          "target_type": "product",
+          "target_id": "holiday-full-instructor-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.074000"
+        },
+        {
+          "id": "04e11f64-d1f3-4c9a-b601-bcceb70456ae",
+          "target_type": "product",
+          "target_id": "workbooks-holiday-ie-digital-instructor-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.074000"
+        }
+      ],
+      "legacy_path": "downloads/holiday-ie-full.pdf",
+      "legacy_sha256": "fef4e0b5b3f1b81d68beb1cac72448c9afdeb006e843af3872ae41b8d206cfa7",
+      "migrated_at": "2026-04-29T00:37:09.069000"
+    },
+    {
+      "id": "331c667b-619e-4d27-b4c0-119ae09594a6",
+      "storage_path": "soul-food/downloads/ace45ae9-97fd-417e-ba9e-82d9b78a8568.pdf",
+      "category": "downloads",
+      "original_filename": "holiday-ye-full.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 12067235,
+      "etag": "\"50f9516809ac36be0dd5448d607cd09a\"",
+      "description": "Migrated from /app/backend/content/downloads/holiday-ye-full.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:09.645000",
+      "updated_at": "2026-04-29T00:37:09.645000",
+      "attachments": [
+        {
+          "id": "23ae5dbf-d4c6-4ce0-acdb-5c3ea623d8b6",
+          "target_type": "product",
+          "target_id": "holiday_ye",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.646000"
+        },
+        {
+          "id": "f9b64da6-cb00-4f39-a76e-3e9150ba35c6",
+          "target_type": "product",
+          "target_id": "holiday-full-ye-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.646000"
+        },
+        {
+          "id": "4e83166b-84f7-4785-becb-7295ddd9b402",
+          "target_type": "product",
+          "target_id": "holiday-ye-full-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.647000"
+        },
+        {
+          "id": "98f89201-8664-4c0a-a4f7-cbb0a4e12c7c",
+          "target_type": "product",
+          "target_id": "holiday-full-youth-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.647000"
+        },
+        {
+          "id": "aba2ae40-87f6-491d-9a21-8704afed0709",
+          "target_type": "product",
+          "target_id": "holiday-full-ye-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.647000"
+        },
+        {
+          "id": "9f1ad82c-2122-43b3-b280-857986293109",
+          "target_type": "product",
+          "target_id": "holiday-full-youth-print",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.648000"
+        },
+        {
+          "id": "db0fd44c-d4be-479e-aed7-a5b068545b64",
+          "target_type": "product",
+          "target_id": "holiday-nibble-ye-covenant-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.648000"
+        },
+        {
+          "id": "8f731c70-af10-468e-ab07-65cfc91fd286",
+          "target_type": "product",
+          "target_id": "holiday-nibble-ye-cradle-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.649000"
+        },
+        {
+          "id": "232e2f2c-2c31-41f6-a514-1b4ecbf63fe8",
+          "target_type": "product",
+          "target_id": "holiday-nibble-ye-cross-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.649000"
+        },
+        {
+          "id": "c0bc125f-b609-4cd9-8843-95d156e4f3bb",
+          "target_type": "product",
+          "target_id": "holiday-nibble-ye-comforter-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.649000"
+        },
+        {
+          "id": "03c85ef3-0514-4f3e-ae19-b6aa6a61dd7c",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ye-covenant-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.650000"
+        },
+        {
+          "id": "276d694f-def1-4c2b-8911-4460f1611ea3",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ye-cradle-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.650000"
+        },
+        {
+          "id": "2e6705cf-85e5-40ca-88ce-9c603c0f69bb",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ye-cross-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.650000"
+        },
+        {
+          "id": "2145dd85-41bf-4789-9e1c-6897629132ee",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ye-comforter-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.650000"
+        },
+        {
+          "id": "23ae46b2-04db-4b92-9792-faef8cfb2c71",
+          "target_type": "product",
+          "target_id": "holiday-ye-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.651000"
+        },
+        {
+          "id": "429fdad8-9977-4b79-8632-654df705fcc0",
+          "target_type": "product",
+          "target_id": "holiday-ye-paperback",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.651000"
+        },
+        {
+          "id": "12886430-8b19-4349-8f63-bc2f602c0bc7",
+          "target_type": "product",
+          "target_id": "workbooks-holiday-ye-digital-youth-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.651000"
+        },
+        {
+          "id": "191fcb3a-2714-4f4e-bfec-0169b1accc95",
+          "target_type": "product",
+          "target_id": "workbooks-holiday-ye-paperback-youth-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.652000"
+        },
+        {
+          "id": "80159240-3df1-4b74-abfb-a9e4e1136b23",
+          "target_type": "product",
+          "target_id": "holiday-nibble-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.652000"
+        },
+        {
+          "id": "98742ada-c55a-437e-9ebd-4e1e8dd6b567",
+          "target_type": "product",
+          "target_id": "holiday-full-youth-interactive",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.652000"
+        },
+        {
+          "id": "3ebbd480-b542-4b11-93e4-fac9e728c554",
+          "target_type": "product",
+          "target_id": "lunch-workbook-youth-physical",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.652000"
+        },
+        {
+          "id": "03aa4b26-46c6-4396-a66a-445cee1e77d8",
+          "target_type": "product",
+          "target_id": "gaming-pass-30-youth-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.653000"
+        },
+        {
+          "id": "31c19891-3df0-44eb-8ad7-376cf923dee0",
+          "target_type": "product",
+          "target_id": "gaming-pass-90-youth-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.653000"
+        },
+        {
+          "id": "7f0f95c9-7a40-4655-bfea-c7b0102fbdd1",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ye-covenant-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.653000"
+        },
+        {
+          "id": "0720373b-a795-47b8-b5c6-9bd81b7b9442",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ye-cradle-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.654000"
+        },
+        {
+          "id": "1acddcf1-3753-4af5-a98e-8dbccb61424e",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ye-cross-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.654000"
+        },
+        {
+          "id": "cd085a60-f427-42e1-aa85-03cf7a3d56ae",
+          "target_type": "product",
+          "target_id": "holiday-nibble-holiday-ye-comforter-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.654000"
+        },
+        {
+          "id": "c42a2ad4-d41c-4f2f-8d0b-2658d9d19e81",
+          "target_type": "product",
+          "target_id": "holiday-full-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.654000"
+        },
+        {
+          "id": "f3b3dd2d-6d57-42ce-bf8c-a29daba6f328",
+          "target_type": "product",
+          "target_id": "workbooks-holiday-ye-digital-youth-epub",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:09.655000"
+        }
+      ],
+      "legacy_path": "downloads/holiday-ye-full.pdf",
+      "legacy_sha256": "9684de872e1d920abf928a7e69f6ad2a99fb98e5f90b7c4e04e40701b5096026",
+      "migrated_at": "2026-04-29T00:37:09.645000"
+    },
+    {
+      "id": "f2347664-7b8c-45db-b83b-02ee3a049a0c",
+      "storage_path": "soul-food/downloads-games/dbebcb7b-67e3-4c5a-a5d5-e201739027b3.pdf",
+      "category": "downloads-games",
+      "original_filename": "ie-grinch-bingo-card-pk.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 545649,
+      "etag": "\"26b78386db416359636cd73b7a5c4b1d\"",
+      "description": "Migrated from /app/backend/content/downloads/games/ie-grinch-bingo-card-pk.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:06.522000",
+      "updated_at": "2026-04-29T00:37:06.522000",
+      "attachments": [],
+      "legacy_path": "downloads/games/ie-grinch-bingo-card-pk.pdf",
+      "legacy_sha256": "aa67ab436abda41d595717445157ffa06b361c7f755e0b0ea3800641c189e9a3",
+      "migrated_at": "2026-04-29T00:37:06.522000"
+    },
+    {
+      "id": "8ebde365-ae84-4d5a-8114-d37194960766",
+      "storage_path": "soul-food/downloads-games/f5c8ab58-dfec-4fd6-bdcf-a2bf05cae9b2.pdf",
+      "category": "downloads-games",
+      "original_filename": "ie-grinch-bingo-game-pk.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1086850,
+      "etag": "\"78742aaf5f2350501df13b04c6d4002f\"",
+      "description": "Migrated from /app/backend/content/downloads/games/ie-grinch-bingo-game-pk.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:06.880000",
+      "updated_at": "2026-04-29T00:37:06.880000",
+      "attachments": [],
+      "legacy_path": "downloads/games/ie-grinch-bingo-game-pk.pdf",
+      "legacy_sha256": "33173141b759e458a1ab1c43f2072497058d6e2851dfed4dd1b485dfe566f47e",
+      "migrated_at": "2026-04-29T00:37:06.880000"
+    },
+    {
+      "id": "a541ec72-5ac7-408d-9781-bc2b65245a02",
+      "storage_path": "soul-food/downloads-games/17bea808-21f7-4f7a-beaf-ceeb32e431a0.pdf",
+      "category": "downloads-games",
+      "original_filename": "ie-passport-trek-game.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1639010,
+      "etag": "\"8a9d1eb2102877def2842c93e15ebb97\"",
+      "description": "Migrated from /app/backend/content/downloads/games/ie-passport-trek-game.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:07.246000",
+      "updated_at": "2026-04-29T00:37:07.246000",
+      "attachments": [],
+      "legacy_path": "downloads/games/ie-passport-trek-game.pdf",
+      "legacy_sha256": "708377ac356599040af117fdbe36321f3d3c178fe3769a6668713ce1b93db9fb",
+      "migrated_at": "2026-04-29T00:37:07.246000"
+    },
+    {
+      "id": "91060708-192e-47bd-8a54-6c3bf94dd7cc",
+      "storage_path": "soul-food/downloads/a9aeb6dd-bfc6-4360-bb95-8e0e43556aae.pdf",
+      "category": "downloads",
+      "original_filename": "in-his-image-1.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 11758,
+      "etag": "\"56ee6f37562423f44cb21188df9d9c1e\"",
+      "description": "Migrated from /app/backend/content/downloads/in-his-image-1.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:09.895000",
+      "updated_at": "2026-04-29T00:37:09.895000",
+      "attachments": [],
+      "legacy_path": "downloads/in-his-image-1.pdf",
+      "legacy_sha256": "20c5b0da3443e86688d2e3550ef4fae894fb72ed6d1505da29b1c842691aac5a",
+      "migrated_at": "2026-04-29T00:37:09.895000"
+    },
+    {
+      "id": "fecf1289-abe4-45d3-aed6-fbec67437edb",
+      "storage_path": "soul-food/downloads/661ccb4a-0378-4689-8246-8b694e91c6c7.pdf",
+      "category": "downloads",
+      "original_filename": "in-his-image-adult-full.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 4360656,
+      "etag": "\"e2a0021568864ddfafab09910a4acd6c\"",
+      "description": "Migrated from /app/backend/content/downloads/in-his-image-adult-full.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:11.585000",
+      "updated_at": "2026-04-29T00:37:11.585000",
+      "attachments": [
+        {
+          "id": "739178ec-e5ef-43a5-a85e-34a31cdd5dd4",
+          "target_type": "product",
+          "target_id": "bonus_in_his_image",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:11.586000"
+        },
+        {
+          "id": "612bd7ca-d69c-4489-8f55-002f4247dc59",
+          "target_type": "product",
+          "target_id": "in-his-image-full-ae-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:11.586000"
+        },
+        {
+          "id": "997dad37-c711-4888-aad2-fead929e2479",
+          "target_type": "product",
+          "target_id": "in-his-image-ae-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:11.587000"
+        }
+      ],
+      "legacy_path": "downloads/in-his-image-adult-full.pdf",
+      "legacy_sha256": "be2d05820e7bdc558476bae19035ae85cb753d97953f6b904a533bc89d946954",
+      "migrated_at": "2026-04-29T00:37:11.585000"
+    },
+    {
+      "id": "8b6316b4-f3fe-4b82-97c8-14d7c24aa145",
+      "storage_path": "soul-food/downloads/208d882f-808c-4e3a-966a-0d3e94b3ff90.pdf",
+      "category": "downloads",
+      "original_filename": "in-his-image-youth-full.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 3459601,
+      "etag": "\"b25804d8ae84a818c90e5a86c549192f\"",
+      "description": "Migrated from /app/backend/content/downloads/in-his-image-youth-full.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:11.862000",
+      "updated_at": "2026-04-29T00:37:11.862000",
+      "attachments": [
+        {
+          "id": "25b09a47-5a53-4698-9d0b-603f0dac7cb6",
+          "target_type": "product",
+          "target_id": "in-his-image-full-ye-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:11.863000"
+        },
+        {
+          "id": "21624763-5b4f-4513-b949-3890e51e0536",
+          "target_type": "product",
+          "target_id": "in-his-image-ye-digital",
+          "role": "legacy",
+          "attached_by_admin": "system-migration",
+          "attached_at": "2026-04-29T00:37:11.863000"
+        }
+      ],
+      "legacy_path": "downloads/in-his-image-youth-full.pdf",
+      "legacy_sha256": "1aa09990ba621f374698900e13eaf24a8a6c844ee7476fc502f7e670f73a65c3",
+      "migrated_at": "2026-04-29T00:37:11.862000"
+    },
+    {
+      "id": "43f5f0f0-f57c-4337-b810-55c6b7ced38e",
+      "storage_path": "soul-food/images-maps/abad7d3d-e748-40af-b1e9-dc2fdf7e4cd1.jpg",
+      "category": "images-maps",
+      "original_filename": "joseph-sold-into-egypt.jpg",
+      "content_type": "image/jpeg",
+      "size_bytes": 152212,
+      "etag": "\"f64adbc256f38b7b5040515a958b0643\"",
+      "description": "Migrated from /app/backend/content/images/maps/joseph-sold-into-egypt.jpg",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:28.271000",
+      "updated_at": "2026-04-29T00:37:28.271000",
+      "attachments": [],
+      "legacy_path": "images/maps/joseph-sold-into-egypt.jpg",
+      "legacy_sha256": "251c75c21cfd3f7afa2403c1776c5545eca15f3e982e3e0bd58fcd4c6a749eda",
+      "migrated_at": "2026-04-29T00:37:28.271000"
+    },
+    {
+      "id": "8665dccc-7f26-4e9e-a723-bf4b1a5ce18c",
+      "storage_path": "soul-food/images-maps/7760e549-d1f6-4160-90ea-4271925d1d69.jpg",
+      "category": "images-maps",
+      "original_filename": "josephs-brothers-to-egypt.jpg",
+      "content_type": "image/jpeg",
+      "size_bytes": 161423,
+      "etag": "\"028a0126aae178d6a43f5733dc31b543\"",
+      "description": "Migrated from /app/backend/content/images/maps/josephs-brothers-to-egypt.jpg",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:28.628000",
+      "updated_at": "2026-04-29T00:37:28.628000",
+      "attachments": [],
+      "legacy_path": "images/maps/josephs-brothers-to-egypt.jpg",
+      "legacy_sha256": "ea161c428cfa30aff5b3c4ebbb5e0010821749254cb82652af0d23ab720bdb1a",
+      "migrated_at": "2026-04-29T00:37:28.628000"
+    },
+    {
+      "id": "cdfcdbc2-0245-4363-8aed-3b03cfea7999",
+      "storage_path": "soul-food/downloads-games/81fb0bf1-c9b5-470b-b2a3-2a31d4e3b61b.docx",
+      "category": "downloads-games",
+      "original_filename": "map-journey-reference-index.docx",
+      "content_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "size_bytes": 2928132,
+      "etag": "\"67838ec654e332bcc5d3856861874874\"",
+      "description": "Migrated from /app/backend/content/downloads/games/map-journey-reference-index.docx",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:07.542000",
+      "updated_at": "2026-04-29T00:37:07.542000",
+      "attachments": [],
+      "legacy_path": "downloads/games/map-journey-reference-index.docx",
+      "legacy_sha256": "2e40b1418a09e7c7f9aa13d2bb4d89594b52c4f4aa9ca7d12a24dac52bb65d1b",
+      "migrated_at": "2026-04-29T00:37:07.542000"
+    },
+    {
+      "id": "d6e2c749-5ece-4d2d-96ea-ed101f8711c7",
+      "storage_path": "soul-food/images-maps/5772d3da-f06b-4f36-8267-08e469f02653.jpg",
+      "category": "images-maps",
+      "original_filename": "mary-joseph-bethlehem.jpg",
+      "content_type": "image/jpeg",
+      "size_bytes": 152721,
+      "etag": "\"577847578e110a4156671edac2296404\"",
+      "description": "Migrated from /app/backend/content/images/maps/mary-joseph-bethlehem.jpg",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:29.040000",
+      "updated_at": "2026-04-29T00:37:29.040000",
+      "attachments": [],
+      "legacy_path": "images/maps/mary-joseph-bethlehem.jpg",
+      "legacy_sha256": "e4d3d1bc21be643fb3d42f70f7a91360458699d7c6eced88c79d90a775b195a0",
+      "migrated_at": "2026-04-29T00:37:29.040000"
+    },
+    {
+      "id": "8a7120ed-31ff-4c1a-b725-7da7408389db",
+      "storage_path": "soul-food/images/3ea2dd2e-25ed-41d9-91ee-ee0597296a1f.png",
+      "category": "images",
+      "original_filename": "passion-week-jesus.png",
+      "content_type": "image/png",
+      "size_bytes": 4481852,
+      "etag": "\"6547758fb60902afa0f953a4e64871fc\"",
+      "description": "Migrated from /app/backend/content/images/passion-week-jesus.png",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:29.459000",
+      "updated_at": "2026-04-29T00:37:29.459000",
+      "attachments": [],
+      "legacy_path": "images/passion-week-jesus.png",
+      "legacy_sha256": "bcac2e3f024967492e1820b37e07e4d399e5a65e18dcbdb8a94513a3f42591fb",
+      "migrated_at": "2026-04-29T00:37:29.459000"
+    },
+    {
+      "id": "4e98f55a-ffb2-4c86-acb8-c97c69ddc699",
+      "storage_path": "soul-food/uploads/852f1c2b-dbe4-4a73-aed2-8eb22fd0dd51.csv",
+      "category": "uploads",
+      "original_filename": "product_catalog.csv",
+      "content_type": "text/csv",
+      "size_bytes": 6290,
+      "etag": "\"56b21750154d651fbdb4e6ffa68db2db\"",
+      "description": "Migrated from /app/backend/content/product_catalog.csv",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:29.637000",
+      "updated_at": "2026-04-29T00:37:29.637000",
+      "attachments": [],
+      "legacy_path": "product_catalog.csv",
+      "legacy_sha256": "86bfa5716d30e07a7f6dc8dd1f2f7298f302a3d78d32e6d8fd02d09f3c2c0c9b",
+      "migrated_at": "2026-04-29T00:37:29.637000"
+    },
+    {
+      "id": "5a8de2d2-81fa-4fff-beb8-7087583a0ad6",
+      "storage_path": "soul-food/downloads/e74be0c1-87b2-4993-8cd4-9293848d37f4.pdf",
+      "category": "downloads",
+      "original_filename": "sofu-credits.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 2256686,
+      "etag": "\"f0fed341fa49f22deacf3a1aebc9fba4\"",
+      "description": "Migrated from /app/backend/content/downloads/sofu-credits.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:23.212000",
+      "updated_at": "2026-04-29T00:37:23.212000",
+      "attachments": [],
+      "legacy_path": "downloads/sofu-credits.pdf",
+      "legacy_sha256": "ace4a75563e82f70b56bd4fa706b6d94e77e4a4e197775e6e8cbd9c892b139e4",
+      "migrated_at": "2026-04-29T00:37:23.212000"
+    },
+    {
+      "id": "0cd4b5d1-0acc-481f-ab5f-64f11bc92a39",
+      "storage_path": "soul-food/downloads/7a808824-a16b-484d-93ab-932876280da9.pdf",
+      "category": "downloads",
+      "original_filename": "sofu-ie-bkft.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 8598740,
+      "etag": "\"2cd17e83d519a7cbc858dd375aa66ab0\"",
+      "description": "Migrated from /app/backend/content/downloads/sofu-ie-bkft.pdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "system-migration",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-04-29T00:37:23.990000",
+      "updated_at": "2026-04-29T00:37:23.990000",
+      "attachments": [],
+      "legacy_path": "downloads/sofu-ie-bkft.pdf",
+      "legacy_sha256": "737426e7a5e07928c8492ec1db56086e1bf4740b135c919718ca7f15c4eab6b1",
+      "migrated_at": "2026-04-29T00:37:23.990000"
+    }
+  ]
+}

@@ -593,6 +593,108 @@ async def shutdown_db_client():
 
 # Initialize Soul Food curriculum
 @app.on_event("startup")
+async def autoseed_files_from_manifest():
+    """Auto-restore db.files from the embedded manifest on every boot.
+
+    Production deploys can drop /app/backend/content/ (artifact size limits),
+    leaving production with no db.files index even though the bytes live in
+    Emergent Object Storage. This hook ships the manifest WITH the deploy
+    artifact (162 KB JSON in /app/backend/seed_files_manifest.json) and
+    re-creates db.files records on every boot. Idempotent — dedup is by
+    storage_path. Existing attachments are preserved (merge, never overwrite).
+
+    To bypass on a particular boot, set env AUTOSEED_FILES_DISABLED=1.
+    """
+    import json
+    if os.environ.get("AUTOSEED_FILES_DISABLED") == "1":
+        logger.info("[autoseed] disabled via AUTOSEED_FILES_DISABLED=1")
+        return
+    seed_path = os.path.join(os.path.dirname(__file__), "seed_files_manifest.json")
+    if not os.path.exists(seed_path):
+        logger.info("[autoseed] no seed manifest at %s — skipping", seed_path)
+        return
+    try:
+        with open(seed_path, "r") as fh:
+            seed = json.load(fh)
+    except Exception as e:
+        logger.warning("[autoseed] failed to read manifest: %s", e)
+        return
+    items = seed.get("items") or []
+    if not items:
+        logger.info("[autoseed] manifest empty — skipping")
+        return
+
+    # Run the import via the existing admin route logic, in-process
+    try:
+        from routes.admin_files_routes import import_manifest as _import_route, ImportManifestRequest
+
+        # The route depends on AdminUser via Depends(); call the underlying
+        # implementation directly with a synthetic admin context.
+        class _SystemAdmin:
+            id = "system-autoseed"
+            email = "system-autoseed@boot"
+        # The route's body is wrapped — easier path: replicate the dedup logic here.
+        # We import the helpers and run with verify_storage=False so a slow boot
+        # doesn't HEAD 102 blobs (verify is available on demand via the admin UI).
+        from routes.admin_files_routes import _to_dt
+        import uuid
+        from datetime import datetime, timezone
+        now = datetime.now(timezone.utc)
+        inserted = updated = skipped = 0
+        for raw in items:
+            if not isinstance(raw, dict):
+                continue
+            storage_path = (raw.get("storage_path") or "").strip()
+            if not storage_path:
+                skipped += 1
+                continue
+            existing = await db.files.find_one({"storage_path": storage_path}, {"_id": 0, "id": 1, "attachments": 1})
+            record = {
+                "id": existing.get("id") if existing else (raw.get("id") or str(uuid.uuid4())),
+                "storage_path": storage_path,
+                "category": raw.get("category", "uploads"),
+                "original_filename": raw.get("original_filename") or "manifest-import",
+                "content_type": raw.get("content_type") or "application/octet-stream",
+                "size_bytes": int(raw.get("size_bytes") or 0),
+                "etag": raw.get("etag"),
+                "description": raw.get("description") or "Restored from embedded seed manifest",
+                "is_deleted": False,
+                "uploaded_by_admin": raw.get("uploaded_by_admin") or "system-autoseed",
+                "uploaded_by_email": raw.get("uploaded_by_email") or "system-autoseed@boot",
+                "created_at": _to_dt(raw.get("created_at")) or now,
+                "updated_at": now,
+                "manifest_imported_at": now,
+                "manifest_imported_by": "system-autoseed",
+                "legacy_path": raw.get("legacy_path"),
+                "legacy_sha256": raw.get("legacy_sha256"),
+            }
+            incoming = list(raw.get("attachments") or [])
+            for a in incoming:
+                if isinstance(a.get("attached_at"), str):
+                    a["attached_at"] = _to_dt(a["attached_at"]) or now
+            if existing:
+                existing_keys = {(a.get("target_type"), a.get("target_id")) for a in (existing.get("attachments") or [])}
+                merged = list(existing.get("attachments") or [])
+                for a in incoming:
+                    key = (a.get("target_type"), a.get("target_id"))
+                    if key not in existing_keys:
+                        merged.append({**a, "id": a.get("id") or str(uuid.uuid4())})
+                record["attachments"] = merged
+                await db.files.update_one({"storage_path": storage_path}, {"$set": record})
+                updated += 1
+            else:
+                record["attachments"] = [{**a, "id": a.get("id") or str(uuid.uuid4())} for a in incoming]
+                await db.files.insert_one(record)
+                inserted += 1
+        logger.info("[autoseed] db.files restored from seed: inserted=%d updated=%d skipped=%d (manifest count=%d)",
+                    inserted, updated, skipped, len(items))
+    except Exception as e:
+        import traceback
+        logger.warning("[autoseed] failed: %s\n%s", e, traceback.format_exc())
+
+
+# Initialize Soul Food curriculum
+@app.on_event("startup")
 async def initialize_data():
     # Check if lessons exist
     lesson_count = await db.lessons.count_documents({})
