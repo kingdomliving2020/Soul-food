@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import {
   Upload, RefreshCw, Trash2, Download, Link2, Unlink, Search,
   ArrowLeft, Loader2, Plus, FileText, Image as ImageIcon,
-  Music, FileType, AlertCircle, CheckCircle, History
+  Music, FileType, AlertCircle, CheckCircle, History,
+  FileDown, FileUp, ShieldCheck
 } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
@@ -52,6 +53,10 @@ const AdminFileManager = () => {
   const [migrateOpen, setMigrateOpen] = useState(false);
   const [migrateBusy, setMigrateBusy] = useState(false);
   const [migrateSummary, setMigrateSummary] = useState(null);
+  const [syncOpen, setSyncOpen] = useState(false);
+  const [syncBusy, setSyncBusy] = useState(false);
+  const [syncSummary, setSyncSummary] = useState(null);
+  const importInputRef = useRef(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -269,6 +274,79 @@ const AdminFileManager = () => {
     }
   };
 
+  const exportManifest = async () => {
+    setSyncBusy(true);
+    try {
+      const res = await fetch(`${API}/api/admin/files/export-manifest`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Export failed');
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `soul-food-files-manifest-${stamp}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      toast.success(`Exported manifest: ${data.count} file(s)`);
+    } catch (e) {
+      toast.error(e.message);
+    } finally {
+      setSyncBusy(false);
+    }
+  };
+
+  const handleImportManifest = async (file) => {
+    if (!file) return;
+    setSyncBusy(true);
+    setSyncSummary(null);
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      const items = Array.isArray(parsed) ? parsed : (parsed.items || []);
+      if (!items.length) throw new Error('Manifest contains no items');
+      const res = await fetch(`${API}/api/admin/files/import-manifest?verify_storage=true`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Import failed');
+      setSyncSummary(data);
+      toast.success(`Import complete: ${data.inserted} new, ${data.updated} updated`);
+      load();
+    } catch (e) {
+      toast.error(e.message);
+    } finally {
+      setSyncBusy(false);
+      if (importInputRef.current) importInputRef.current.value = '';
+    }
+  };
+
+  const verifyStorage = async () => {
+    setSyncBusy(true);
+    try {
+      const res = await fetch(`${API}/api/admin/files/verify-storage?limit=1000`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Verify failed');
+      setSyncSummary({ ...data, _verify: true });
+      if (data.unreachable_count === 0) {
+        toast.success(`All ${data.reachable} blob(s) reachable in Object Storage`);
+      } else {
+        toast.warning(`${data.unreachable_count} of ${data.checked} blob(s) unreachable`);
+      }
+    } catch (e) {
+      toast.error(e.message);
+    } finally {
+      setSyncBusy(false);
+    }
+  };
+
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
@@ -294,6 +372,14 @@ const AdminFileManager = () => {
               data-testid="migrate-legacy-btn"
             >
               <History className="w-4 h-4 mr-1" /> Migrate legacy
+            </Button>
+            <Button
+              onClick={() => { setSyncSummary(null); setSyncOpen(true); }}
+              variant="outline"
+              size="sm"
+              data-testid="sync-prod-btn"
+            >
+              <FileDown className="w-4 h-4 mr-1" /> Sync prod
             </Button>
             <input
               ref={fileInputRef}
@@ -611,6 +697,80 @@ const AdminFileManager = () => {
             >
               {migrateBusy ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : null} Apply
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* Sync prod dialog */}
+      <Dialog open={syncOpen} onOpenChange={(o) => !syncBusy && setSyncOpen(o)}>
+        <DialogContent className="bg-white max-w-2xl" data-testid="sync-dialog">
+          <DialogHeader><DialogTitle>Sync to production (manifest)</DialogTitle></DialogHeader>
+          <div className="space-y-3 text-sm text-slate-600">
+            <p>
+              Use this when production's File Manager is missing files that exist in preview.
+              Emergent Object Storage is keyed by your <code className="bg-slate-100 px-1 rounded">EMERGENT_LLM_KEY</code> —
+              your blobs typically reach both environments. What's missing in prod is the <code>db.files</code> index.
+            </p>
+            <ol className="list-decimal pl-5 space-y-1 text-xs text-slate-600">
+              <li><b>In preview</b>: click <b>Export manifest</b> to download the JSON.</li>
+              <li><b>In production</b> (kingdom-soul.com /admin/files): click <b>Import manifest</b> and select that JSON.</li>
+              <li>Click <b>Verify storage</b> to confirm every blob is readable. Any unreachable blobs will be listed.</li>
+            </ol>
+            <input
+              ref={importInputRef}
+              type="file"
+              accept="application/json,.json"
+              hidden
+              onChange={(e) => handleImportManifest(e.target.files[0])}
+              data-testid="import-manifest-input"
+            />
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={exportManifest} disabled={syncBusy} variant="outline" size="sm" data-testid="export-manifest-btn">
+                {syncBusy ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <FileDown className="w-4 h-4 mr-1" />} Export manifest
+              </Button>
+              <Button onClick={() => importInputRef.current?.click()} disabled={syncBusy} size="sm" data-testid="import-manifest-btn">
+                {syncBusy ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <FileUp className="w-4 h-4 mr-1" />} Import manifest
+              </Button>
+              <Button onClick={verifyStorage} disabled={syncBusy} variant="outline" size="sm" data-testid="verify-storage-btn">
+                {syncBusy ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <ShieldCheck className="w-4 h-4 mr-1" />} Verify storage
+              </Button>
+            </div>
+            {syncSummary && (
+              <div className="border rounded p-3 bg-slate-50 text-xs space-y-1" data-testid="sync-summary">
+                {syncSummary._verify ? (
+                  <>
+                    <div><b>Verify result:</b></div>
+                    <div>Checked: {syncSummary.checked}</div>
+                    <div>Reachable: {syncSummary.reachable}</div>
+                    <div className={syncSummary.unreachable_count > 0 ? 'text-red-600' : ''}>
+                      Unreachable: {syncSummary.unreachable_count}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div><b>Import result:</b></div>
+                    <div>Inserted: {syncSummary.inserted}</div>
+                    <div>Updated: {syncSummary.updated}</div>
+                    <div>Skipped: {syncSummary.skipped}</div>
+                    <div className={syncSummary.unreachable_count > 0 ? 'text-amber-600' : ''}>
+                      Unreachable blobs: {syncSummary.unreachable_count}
+                    </div>
+                    <div className={(syncSummary.errors || []).length > 0 ? 'text-red-600' : ''}>
+                      Errors: {(syncSummary.errors || []).length}
+                    </div>
+                  </>
+                )}
+                {(syncSummary.unreachable || []).length > 0 && (
+                  <ul className="mt-2 list-disc pl-5 text-amber-700 max-h-40 overflow-auto">
+                    {(syncSummary.unreachable || []).slice(0, 30).map((u, i) => (
+                      <li key={i}>{u.original_filename || u.storage_path}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSyncOpen(false)} disabled={syncBusy}>Close</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

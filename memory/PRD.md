@@ -222,6 +222,17 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 ### Lifelines for Tricky Testaments (clarification needed)
 - TrickyTestamentGame is a Jeopardy-style game and has never had Millionaire-style lifelines (50/50, ask audience, etc.). Lifelines belong to MixUpGame (the Trivia Mix-up game). Asked user to confirm whether they wanted lifelines added as a new feature or if they were looking at the wrong game.
 
+### Production deploy bundle drops `/app/backend/content/` — manifest sync fix (May 1, 2026)
+- [x] **Root cause confirmed**: production's deploy bundle excludes `/app/backend/content/` (300 MB across 129 files). All files ARE committed to git (verified via `git ls-files`), so this is an Emergent platform-side artifact size limit. Production's filesystem only contains code + the 8 manually-uploaded files via Admin UI. Migration scripts walking the local filesystem find nothing.
+- [x] **Object Storage is shared across environments** (keyed by `EMERGENT_LLM_KEY`). The 102 unique blobs uploaded from preview ARE accessible from production. What's missing in production is the `db.files` index that points to them.
+- [x] **New endpoints** in `/app/backend/routes/admin_files_routes.py`:
+  - `GET /api/admin/files/export-manifest` — exports every active `db.files` record (id, storage_path, attachments, metadata) as a JSON manifest.
+  - `POST /api/admin/files/import-manifest` — accepts that JSON, idempotently re-creates `db.files` records (dedup by storage_path), merges or overwrites attachments. Each blob's reachability is HEAD-checked via `head_object`; unreachable blobs are surfaced in the response.
+  - `POST /api/admin/files/verify-storage` — HEADs every active `db.files.storage_path` and reports unreachable blobs.
+- [x] **UI** in `AdminFileManager.js`: "Sync prod" button opens a dialog with Export manifest / Import manifest / Verify storage actions. The dialog shows preview→prod sync instructions inline.
+- [x] **Verified end-to-end on preview**: export returns 102 items, verify-storage returns checked=102/reachable=102/unreachable=0. Sync UI dialog renders results correctly (toast: "All 102 blob(s) reachable in Object Storage").
+- [x] **Inventory report** generated at `/app/MANUSCRIPT_INVENTORY.md` — full file → product → bundle mapping for the 102 blobs + all 10 BUNDLE_EXPANSIONS.
+
 ### Fulfillment gated on retrievability verification (Apr 30, 2026)
 - [x] **Bytes-level verification before `status='fulfilled'`**: new helper `_verify_file_retrievable()` in `payment_routes.py` — for `objstore:<path>` it calls `storage_service.head_object()` (HEAD with range-GET fallback); for local paths it calls `os.path.exists`. Never raises, returns False on any error.
 - [x] **New `storage_service.head_object(path)`** — lightweight existence probe against Emergent Object Storage. Tries HEAD first; falls back to a 1-byte `Range: bytes=0-0` GET if HEAD is unsupported (405/501). 403 triggers a single key refresh + retry. Never raises.
