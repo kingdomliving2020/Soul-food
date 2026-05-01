@@ -2243,8 +2243,17 @@ async def get_checkout_status(session_id: str):
 
 
 @router.post("/webhook/stripe")
+@router.post("/webhook")
+@router.post("/webhook/")
 async def stripe_webhook(request: Request):
-    """Handle Stripe webhook events"""
+    """Handle Stripe webhook events.
+
+    Registered at three paths for backward compat with earlier Stripe
+    dashboard configs:
+      * /api/payments/webhook/stripe  (canonical)
+      * /api/payments/webhook
+      * /api/payments/webhook/        (trailing slash — what Stripe sometimes sends)
+    All three delegate to this single handler."""
     from download_protection import create_download_link
     import logging
     logger = logging.getLogger(__name__)
