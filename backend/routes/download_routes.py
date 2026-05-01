@@ -140,7 +140,23 @@ async def _stream_from_object_storage(
         import storage_service as ss
         data, fetched_ct = ss.get_object(storage_path)
     except Exception as storage_err:
-        print(f"[Download] Object Storage read failed for {storage_path}: {storage_err}")
+        # If the storage backend reported a missing object, surface 404 so the
+        # frontend can show "file not found" rather than "try again later".
+        # 5xx (timeouts, key issues, etc.) stay as 502.
+        status_code = 502
+        try:
+            import requests
+            if isinstance(storage_err, requests.HTTPError) and storage_err.response is not None:
+                if storage_err.response.status_code == 404:
+                    status_code = 404
+        except Exception:
+            pass
+        print(f"[Download] Object Storage read failed for {storage_path}: {storage_err} (returning {status_code})")
+        if status_code == 404:
+            raise HTTPException(
+                status_code=404,
+                detail="File no longer available. Please contact support@kingdom-soul.com to have it re-uploaded."
+            )
         raise HTTPException(
             status_code=502,
             detail="Storage temporarily unavailable. Please try again or contact support@kingdom-soul.com."

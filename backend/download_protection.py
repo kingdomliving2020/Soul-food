@@ -180,11 +180,11 @@ async def record_download(token: str, ip_address: str, user_agent: str = "") -> 
         if record:
             await log_download_event(
                 event_type="file_downloaded",
-                order_id=record["order_id"],
-                user_id=record["user_id"],
-                product_id=record["product_id"],
+                order_id=record.get("order_id", ""),
+                user_id=record.get("user_id", ""),
+                product_id=record.get("product_id", ""),
                 details={
-                    "download_number": record["download_count"] + 1,
+                    "download_number": record.get("download_count", 0) + 1,
                     "ip_address": ip_address
                 }
             )

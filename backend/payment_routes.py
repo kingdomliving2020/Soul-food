@@ -2707,37 +2707,63 @@ async def notify_large_order(request: Request):
 
 @router.get("/order/{order_id}")
 async def get_order_details(order_id: str):
-    """Get order details including download links for the confirmation page"""
-    
-    # First check orders collection
+    """Get order details including download links for the confirmation page.
+
+    The path param ``order_id`` may be any of:
+      * SF-2026-XXXXX  (real paid order_number stored in payment_transactions)
+      * a Stripe Checkout Session id (cs_test_…)
+      * a free order id from db.orders
+
+    We try all three lookup paths in order so the post-checkout receipt
+    works for every kind of order.
+    """
+    # 1. Free orders collection
     order = await db.orders.find_one({"order_id": order_id}, {"_id": 0})
-    
+
+    transaction = None
     if not order:
-        # Also check payment_transactions for paid orders
+        # 2. Paid order by order_number (the value the buyer actually sees)
         transaction = await db.payment_transactions.find_one(
-            {"session_id": order_id},
+            {"order_number": order_id},
             {"_id": 0}
         )
+        if not transaction:
+            # 3. Paid order by Stripe session_id
+            transaction = await db.payment_transactions.find_one(
+                {"session_id": order_id},
+                {"_id": 0}
+            )
         if transaction:
             order = {
-                "order_id": order_id,
+                "order_id": transaction.get("order_number") or order_id,
                 "items": transaction.get("items", []),
                 "payment_status": transaction.get("payment_status", "unknown"),
+                "status": transaction.get("status"),
+                "fulfillment_status": transaction.get("fulfillment_status"),
                 "order_type": "paid",
-                "created_at": transaction.get("created_at")
+                "created_at": transaction.get("created_at"),
+                "coupon_code": transaction.get("coupon_code"),
+                "discount_percent": transaction.get("discount_percent", 0),
+                "fulfillment_verification_failures": transaction.get("fulfillment_verification_failures") or [],
             }
         else:
             raise HTTPException(status_code=404, detail="Order not found")
-    
-    # Get download links for this order
+
+    # Get download links — query by both the lookup id AND the resolved order_number
+    canonical_order_number = order.get("order_id", order_id)
     download_links = await db.download_links.find(
-        {"order_id": order_id, "revoked": False},
+        {"order_id": {"$in": [order_id, canonical_order_number]}, "revoked": False},
         {"_id": 0, "token_hash": 0}
-    ).to_list(100)
-    
-    # Format download links for frontend
+    ).to_list(500)
+
+    # Dedup by product_id+token (in case the same link was matched twice)
+    seen = set()
     formatted_links = []
     for link in download_links:
+        key = (link.get("product_id"), link.get("created_at"))
+        if key in seen:
+            continue
+        seen.add(key)
         formatted_links.append({
             "product_id": link.get("product_id"),
             "product_name": link.get("product_name"),
@@ -2745,16 +2771,19 @@ async def get_order_details(order_id: str):
             "max_downloads": link.get("max_downloads", 3),
             "expires_at": link.get("expires_at").isoformat() if hasattr(link.get("expires_at"), 'isoformat') else str(link.get("expires_at", "")),
         })
-    
+
     return {
-        "order_id": order.get("order_id", order_id),
+        "order_id": canonical_order_number,
         "items": order.get("items", []),
         "expanded_items": expand_items_for_receipt(order.get("items", [])),
         "payment_status": order.get("payment_status", "unknown"),
+        "status": order.get("status"),
+        "fulfillment_status": order.get("fulfillment_status"),
         "order_type": order.get("order_type", "unknown"),
         "coupon_code": order.get("coupon_code"),
         "discount_percent": order.get("discount_percent", 0),
         "download_links": formatted_links,
+        "fulfillment_verification_failures": order.get("fulfillment_verification_failures") or [],
         "created_at": order.get("created_at").isoformat() if hasattr(order.get("created_at"), 'isoformat') else str(order.get("created_at", ""))
     }
 

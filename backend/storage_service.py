@@ -51,7 +51,7 @@ def _refresh_key() -> str:
 
 def put_object(path: str, data: bytes, content_type: str) -> dict:
     """Upload bytes. Returns the storage response dict (includes 'path', 'size', 'etag').
-    Auto-retries once on a 403 (key expired)."""
+    Auto-retries once on a 403/503 (key expired or backend rejecting current key)."""
     key = init_storage()
     for attempt in range(2):
         resp = requests.put(
@@ -60,7 +60,7 @@ def put_object(path: str, data: bytes, content_type: str) -> dict:
             data=data,
             timeout=120,
         )
-        if resp.status_code == 403 and attempt == 0:
+        if resp.status_code in (403, 503) and attempt == 0:
             key = _refresh_key()
             continue
         resp.raise_for_status()
@@ -78,7 +78,7 @@ def get_object(path: str) -> Tuple[bytes, str]:
             headers={"X-Storage-Key": key},
             timeout=120,
         )
-        if resp.status_code == 403 and attempt == 0:
+        if resp.status_code in (403, 503) and attempt == 0:
             key = _refresh_key()
             continue
         resp.raise_for_status()
@@ -114,7 +114,7 @@ def head_object(path: str) -> bool:
             return True
         if resp.status_code == 404:
             return False
-        if resp.status_code == 403 and attempt == 0:
+        if resp.status_code in (403, 503) and attempt == 0:
             try:
                 key = _refresh_key()
             except Exception as e:
