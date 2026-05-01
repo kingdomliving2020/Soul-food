@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/orders", tags=["orders"])
 # MongoDB
 from motor.motor_asyncio import AsyncIOMotorClient
 mongo_client = AsyncIOMotorClient(os.environ.get("MONGO_URL"))
-db = mongo_client[os.environ.get("DB_NAME")]
+db = mongo_client[os.environ["DB_NAME"]]
 
 # Rate limit constants for public resend
 RESEND_RATE_LIMIT = 3        # max requests

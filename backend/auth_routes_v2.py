@@ -54,7 +54,7 @@ SESSION_TIMEOUT_MINUTES = 60  # Default session timeout
 # Database
 MONGO_URL = os.getenv('MONGO_URL')
 client = AsyncIOMotorClient(MONGO_URL)
-db = client[os.environ.get('DB_NAME', 'soul_food_db')]
+db = client[os.environ['DB_NAME']]
 
 # Email service (Resend)
 RESEND_API_KEY = os.getenv("RESEND_API_KEY")

@@ -15,7 +15,7 @@ router = APIRouter(prefix="/trivia", tags=["trivia"])
 # MongoDB connection for trivia
 MONGO_URL = os.environ.get('MONGO_URL')
 _trivia_client = AsyncIOMotorClient(MONGO_URL)
-_trivia_db = _trivia_client[os.environ.get('DB_NAME', 'soul_food_db')]
+_trivia_db = _trivia_client[os.environ['DB_NAME']]
 
 # Game Access Tiers
 ACCESS_TIERS = {

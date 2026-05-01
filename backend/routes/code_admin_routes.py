@@ -51,7 +51,7 @@ router = APIRouter(prefix="/api/admin/codes-redemptions", tags=["admin", "codes"
 
 MONGO_URL = os.getenv("MONGO_URL")
 client = AsyncIOMotorClient(MONGO_URL)
-db = client[os.environ.get("DB_NAME", "soul_food_db")]
+db = client[os.environ["DB_NAME"]]
 
 
 # ---------------------------------------------------------------------------

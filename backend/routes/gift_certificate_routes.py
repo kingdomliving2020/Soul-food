@@ -19,7 +19,7 @@ import string
 # Database
 from motor.motor_asyncio import AsyncIOMotorClient
 client = AsyncIOMotorClient(os.environ.get('MONGO_URL', 'mongodb://localhost:27017'))
-db = client[os.environ.get('DB_NAME', 'soul_food')]
+db = client[os.environ['DB_NAME']]
 
 router = APIRouter(prefix="/api/gift-certificates", tags=["gift-certificates"])
 

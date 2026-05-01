@@ -20,7 +20,7 @@ router = APIRouter(prefix="/api/payments", tags=["payments"])
 # Database connection
 MONGO_URL = os.getenv('MONGO_URL')
 client = AsyncIOMotorClient(MONGO_URL)
-db = client[os.environ.get('DB_NAME', 'soul_food_db')]
+db = client[os.environ['DB_NAME']]
 
 # PDF files directory
 PDF_DIR = "/app/backend/content/downloads"

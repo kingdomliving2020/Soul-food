@@ -22,7 +22,7 @@ router = APIRouter(prefix="/api/coupons", tags=["coupons"])
 # Database connection
 MONGO_URL = os.getenv('MONGO_URL')
 client = AsyncIOMotorClient(MONGO_URL)
-db = client[os.environ.get('DB_NAME', 'soul_food_db')]
+db = client[os.environ['DB_NAME']]
 
 # JWT Settings
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")

@@ -17,7 +17,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 
 # Database
 client = AsyncIOMotorClient(os.environ.get('MONGO_URL', 'mongodb://localhost:27017'))
-db = client[os.environ.get('DB_NAME', 'soul_food_db')]
+db = client[os.environ['DB_NAME']]
 
 router = APIRouter(prefix="/api/orders", tags=["orders"])
 

@@ -514,5 +514,5 @@ async def verify_download_token_raw(token_hash: str):
     from motor.motor_asyncio import AsyncIOMotorClient
     MONGO_URL = os.getenv('MONGO_URL')
     client = AsyncIOMotorClient(MONGO_URL)
-    db = client[os.environ.get('DB_NAME', 'soul_food_db')]
+    db = client[os.environ['DB_NAME']]
     return await db.download_links.find_one({"token_hash": token_hash}, {"_id": 0})

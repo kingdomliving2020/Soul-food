@@ -19,7 +19,7 @@ router = APIRouter(prefix="/api/referrals", tags=["referrals"])
 # Database connection
 MONGO_URL = os.getenv('MONGO_URL')
 client = AsyncIOMotorClient(MONGO_URL)
-db = client[os.environ.get('DB_NAME', 'soul_food_db')]
+db = client[os.environ['DB_NAME']]
 
 # Referral configuration
 REFERRAL_DISCOUNT_PERCENT = 15
