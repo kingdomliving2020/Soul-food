@@ -680,7 +680,7 @@ async def autoseed_files_from_manifest():
         except Exception:
             ss = None
         now = datetime.now(timezone.utc)
-        inserted = updated = skipped = stale = 0
+        inserted = skipped = stale = 0
         for raw in items:
             if not isinstance(raw, dict):
                 continue
@@ -688,13 +688,20 @@ async def autoseed_files_from_manifest():
             if not storage_path:
                 skipped += 1
                 continue
-            existing = await db.files.find_one({"storage_path": storage_path}, {"_id": 0, "id": 1, "attachments": 1})
+            existing = await db.files.find_one({"storage_path": storage_path}, {"_id": 0, "id": 1, "attachments": 1, "is_deleted": 1})
+            if existing:
+                # Production already has a row at this storage_path. Leave it
+                # alone — admin's soft-deletes, attachment edits, replaces, etc.
+                # are all the source of truth in the running environment. The
+                # autoseed is a recovery tool for MISSING records only.
+                skipped += 1
+                continue
             # Skip stale seed entries: if the storage_path is NOT already in
             # db.files AND the blob is not retrievable, the bytes are gone
             # (admin replaced/deleted the file in this environment after the
             # seed was generated). Don't re-insert phantom records that point
             # at vanished blobs.
-            if not existing and ss is not None:
+            if ss is not None:
                 try:
                     if not ss.head_object(storage_path):
                         stale += 1
@@ -705,7 +712,7 @@ async def autoseed_files_from_manifest():
                     # endpoint can reconcile later.
                     pass
             record = {
-                "id": existing.get("id") if existing else (raw.get("id") or str(uuid.uuid4())),
+                "id": raw.get("id") or str(uuid.uuid4()),
                 "storage_path": storage_path,
                 "category": raw.get("category", "uploads"),
                 "original_filename": raw.get("original_filename") or "manifest-import",
@@ -727,22 +734,11 @@ async def autoseed_files_from_manifest():
             for a in incoming:
                 if isinstance(a.get("attached_at"), str):
                     a["attached_at"] = _to_dt(a["attached_at"]) or now
-            if existing:
-                existing_keys = {(a.get("target_type"), a.get("target_id")) for a in (existing.get("attachments") or [])}
-                merged = list(existing.get("attachments") or [])
-                for a in incoming:
-                    key = (a.get("target_type"), a.get("target_id"))
-                    if key not in existing_keys:
-                        merged.append({**a, "id": a.get("id") or str(uuid.uuid4())})
-                record["attachments"] = merged
-                await db.files.update_one({"storage_path": storage_path}, {"$set": record})
-                updated += 1
-            else:
-                record["attachments"] = [{**a, "id": a.get("id") or str(uuid.uuid4())} for a in incoming]
-                await db.files.insert_one(record)
-                inserted += 1
-        logger.info("[autoseed] db.files restored from seed: inserted=%d updated=%d skipped=%d stale_skipped=%d (manifest count=%d)",
-                    inserted, updated, skipped, stale, len(items))
+            record["attachments"] = [{**a, "id": a.get("id") or str(uuid.uuid4())} for a in incoming]
+            await db.files.insert_one(record)
+            inserted += 1
+        logger.info("[autoseed] db.files restored from seed: inserted=%d skipped_existing=%d stale_skipped=%d (manifest count=%d) — existing rows are NEVER overwritten",
+                    inserted, skipped, stale, len(items))
     except Exception as e:
         import traceback
         logger.warning("[autoseed] failed: %s\n%s", e, traceback.format_exc())
