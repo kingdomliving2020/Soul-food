@@ -4,7 +4,7 @@ import {
   Upload, RefreshCw, Trash2, Download, Link2, Unlink, Search,
   ArrowLeft, Loader2, Plus, FileText, Image as ImageIcon,
   Music, FileType, AlertCircle, CheckCircle, History,
-  FileDown, FileUp, ShieldCheck
+  FileDown, FileUp, ShieldCheck, Repeat2, X, RotateCcw
 } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
@@ -181,11 +181,11 @@ const AdminFileManager = () => {
     }
   };
 
-  const handleDelete = async (fileId) => {
-    if (!window.confirm('Soft-delete this file? It can be restored later.')) return;
-    setActionId(`del-${fileId}`);
+  const handleDelete = async (file) => {
+    if (!window.confirm(`Soft-delete "${file.original_filename}"? You can undo from the toast or use the Restore button.`)) return;
+    setActionId(`del-${file.id}`);
     try {
-      const res = await fetch(`${API}/api/admin/files/${fileId}`, {
+      const res = await fetch(`${API}/api/admin/files/${file.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${getToken()}` },
       });
@@ -193,7 +193,10 @@ const AdminFileManager = () => {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.detail || 'Delete failed');
       }
-      toast.success('Deleted');
+      toast.success(`Deleted "${file.original_filename}"`, {
+        action: { label: 'Undo', onClick: () => undoDelete(file.id, file.original_filename) },
+        duration: 12000,
+      });
       load();
     } catch (e) {
       toast.error(e.message);
@@ -277,10 +280,38 @@ const AdminFileManager = () => {
     }
   };
 
-  const detach = async (fileId, attachId) => {
-    setActionId(`det-${attachId}`);
+  const reattach = async (fileId, attachment) => {
     try {
-      const res = await fetch(`${API}/api/admin/files/${fileId}/attach/${attachId}`, {
+      const res = await fetch(`${API}/api/admin/files/${fileId}/attach`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          target_type: attachment.target_type,
+          target_id: attachment.target_id,
+          role: attachment.role || null,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || 'Re-attach failed');
+      }
+      toast.success(`Re-attached ${attachment.target_type}:${attachment.target_id}`);
+      load();
+    } catch (e) {
+      toast.error(`Undo failed: ${e.message}`);
+    }
+  };
+
+  const detach = async (fileId, attachment) => {
+    const ok = window.confirm(
+      `Detach this file from ${attachment.target_type}:${attachment.target_id}?\n\n` +
+      `Buyers attached to this product will no longer get this file. ` +
+      `You can undo this from the toast that appears.`
+    );
+    if (!ok) return;
+    setActionId(`det-${attachment.id}`);
+    try {
+      const res = await fetch(`${API}/api/admin/files/${fileId}/attach/${attachment.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${getToken()}` },
       });
@@ -288,12 +319,35 @@ const AdminFileManager = () => {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.detail || 'Detach failed');
       }
-      toast.success('Detached');
+      toast.success(`Detached from ${attachment.target_type}:${attachment.target_id}`, {
+        action: {
+          label: 'Undo',
+          onClick: () => reattach(fileId, attachment),
+        },
+        duration: 12000,
+      });
       load();
     } catch (e) {
       toast.error(e.message);
     } finally {
       setActionId('');
+    }
+  };
+
+  const undoDelete = async (fileId, originalName) => {
+    try {
+      const res = await fetch(`${API}/api/admin/files/${fileId}/restore`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || 'Restore failed');
+      }
+      toast.success(`Restored "${originalName}"`);
+      load();
+    } catch (e) {
+      toast.error(`Undo failed: ${e.message}`);
     }
   };
 
@@ -548,19 +602,27 @@ const AdminFileManager = () => {
                           {(f.attachments || []).length === 0 ? (
                             <span className="text-xs text-slate-400">—</span>
                           ) : (
-                            <div className="flex flex-wrap gap-1 max-w-[220px]">
+                            <div className="flex flex-wrap gap-1 max-w-[260px]">
                               {(f.attachments || []).map((a) => (
-                                <button
+                                <span
                                   key={a.id}
-                                  onClick={() => detach(f.id, a.id)}
-                                  className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] bg-blue-50 text-blue-700 hover:bg-red-50 hover:text-red-600 border border-blue-100"
-                                  title={`Click to detach from ${a.target_type}:${a.target_id}`}
-                                  data-testid={`detach-${a.id}`}
+                                  className="inline-flex items-center gap-1 pl-1.5 pr-0.5 py-0.5 rounded text-[10px] bg-blue-50 text-blue-700 border border-blue-100"
+                                  title={`${a.target_type}:${a.target_id}${a.role ? ' (' + a.role + ')' : ''} — click × to detach`}
+                                  data-testid={`chip-${a.id}`}
                                 >
-                                  <Link2 className="w-3 h-3" />
+                                  <Link2 className="w-3 h-3" aria-hidden />
                                   <span className="font-mono">{a.target_type}:{a.target_id.slice(0, 12)}</span>
-                                  <Unlink className="w-2.5 h-2.5 opacity-0 hover:opacity-100" />
-                                </button>
+                                  <button
+                                    onClick={() => detach(f.id, a)}
+                                    disabled={actionId === `det-${a.id}`}
+                                    className="ml-0.5 w-4 h-4 flex items-center justify-center rounded hover:bg-red-100 hover:text-red-600 disabled:opacity-40"
+                                    aria-label={`Detach ${a.target_type}:${a.target_id}`}
+                                    title={`Detach from ${a.target_type}:${a.target_id}`}
+                                    data-testid={`detach-${a.id}`}
+                                  >
+                                    {actionId === `det-${a.id}` ? <Loader2 className="w-3 h-3 animate-spin" /> : <X className="w-3 h-3" />}
+                                  </button>
+                                </span>
                               ))}
                             </div>
                           )}
@@ -569,42 +631,46 @@ const AdminFileManager = () => {
                           {f.created_at ? new Date(f.created_at).toLocaleDateString() : '—'}
                         </td>
                         <td className="px-4 py-3">
-                          <div className="flex items-center justify-end gap-1">
+                          <div className="flex items-center justify-end gap-1 flex-wrap">
                             {!isDeleted && (
                               <>
                                 <button
                                   onClick={() => handleDownload(f)}
                                   disabled={actionId === `dl-${f.id}`}
-                                  className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-blue-600 disabled:opacity-40"
-                                  title="Download"
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs hover:bg-blue-50 text-slate-600 hover:text-blue-700 border border-slate-200 disabled:opacity-40"
+                                  title="Download a copy of this file"
                                   data-testid={`dl-${f.id}`}
                                 >
-                                  {actionId === `dl-${f.id}` ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                                  {actionId === `dl-${f.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                                  <span>Download</span>
                                 </button>
                                 <button
                                   onClick={() => setAttachFor(f)}
-                                  className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-indigo-600"
-                                  title="Attach to product/order"
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200"
+                                  title="Attach this file to a product or order so buyers can download it"
                                   data-testid={`attach-${f.id}`}
                                 >
-                                  <Link2 className="w-4 h-4" />
+                                  <Link2 className="w-3.5 h-3.5" />
+                                  <span>Attach</span>
                                 </button>
                                 <button
                                   onClick={() => setReplaceFor(f)}
-                                  className="p-1.5 rounded hover:bg-slate-200 text-slate-500 hover:text-amber-600"
-                                  title="Replace"
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs hover:bg-amber-50 text-slate-600 hover:text-amber-700 border border-slate-200"
+                                  title="Upload a new version — keeps existing attachments and download links"
                                   data-testid={`replace-${f.id}`}
                                 >
-                                  <Upload className="w-4 h-4" />
+                                  <Repeat2 className="w-3.5 h-3.5" />
+                                  <span>Replace</span>
                                 </button>
                                 <button
-                                  onClick={() => handleDelete(f.id)}
+                                  onClick={() => handleDelete(f)}
                                   disabled={actionId === `del-${f.id}`}
-                                  className="p-1.5 rounded hover:bg-red-50 text-slate-500 hover:text-red-600 disabled:opacity-40"
-                                  title="Delete"
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs hover:bg-red-50 text-slate-600 hover:text-red-700 border border-slate-200 disabled:opacity-40"
+                                  title="Soft-delete this file (you can restore it from the toast)"
                                   data-testid={`del-${f.id}`}
                                 >
-                                  {actionId === `del-${f.id}` ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                                  {actionId === `del-${f.id}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                                  <span>Delete</span>
                                 </button>
                               </>
                             )}
