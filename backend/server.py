@@ -675,8 +675,12 @@ async def autoseed_files_from_manifest():
         from routes.admin_files_routes import _to_dt
         import uuid
         from datetime import datetime, timezone
+        try:
+            import storage_service as ss
+        except Exception:
+            ss = None
         now = datetime.now(timezone.utc)
-        inserted = updated = skipped = 0
+        inserted = updated = skipped = stale = 0
         for raw in items:
             if not isinstance(raw, dict):
                 continue
@@ -685,6 +689,21 @@ async def autoseed_files_from_manifest():
                 skipped += 1
                 continue
             existing = await db.files.find_one({"storage_path": storage_path}, {"_id": 0, "id": 1, "attachments": 1})
+            # Skip stale seed entries: if the storage_path is NOT already in
+            # db.files AND the blob is not retrievable, the bytes are gone
+            # (admin replaced/deleted the file in this environment after the
+            # seed was generated). Don't re-insert phantom records that point
+            # at vanished blobs.
+            if not existing and ss is not None:
+                try:
+                    if not ss.head_object(storage_path):
+                        stale += 1
+                        continue
+                except Exception:
+                    # If HEAD fails for transient reasons, fall through and
+                    # still attempt the insert — the verify-storage admin
+                    # endpoint can reconcile later.
+                    pass
             record = {
                 "id": existing.get("id") if existing else (raw.get("id") or str(uuid.uuid4())),
                 "storage_path": storage_path,
@@ -722,8 +741,8 @@ async def autoseed_files_from_manifest():
                 record["attachments"] = [{**a, "id": a.get("id") or str(uuid.uuid4())} for a in incoming]
                 await db.files.insert_one(record)
                 inserted += 1
-        logger.info("[autoseed] db.files restored from seed: inserted=%d updated=%d skipped=%d (manifest count=%d)",
-                    inserted, updated, skipped, len(items))
+        logger.info("[autoseed] db.files restored from seed: inserted=%d updated=%d skipped=%d stale_skipped=%d (manifest count=%d)",
+                    inserted, updated, skipped, stale, len(items))
     except Exception as e:
         import traceback
         logger.warning("[autoseed] failed: %s\n%s", e, traceback.format_exc())
