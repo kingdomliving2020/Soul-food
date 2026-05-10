@@ -1,0 +1,42 @@
+{
+  "summary": "Iter 35 — Customer self-serve auto-fulfill, abuse protection, rate limit, admin resend-email refulfill, /api/health/db-diagnostic, and /my-library mobile responsiveness. 6/6 backend pytest cases PASSED on PREVIEW URL. Frontend mobile (390x844) and desktop (1024x768) layouts of /my-library verified visually + via DOM measurements. No regressions found.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_resend_autofulfill_iter35.py",
+    "/app/test_reports/pytest/iter35_resend_autofulfill.xml"
+  ],
+  "test_results_detail": {
+    "TestAutoFulfillStuckOrder.test_stuck_order_auto_fulfills_on_resend": "PASS — SF-2026-9PX7Q reset to stuck (0 download_links rows, flags cleared); POST /api/downloads/resend-links with correct email returned HTTP 200 with success=true, auto_fulfilled=true, links_count=2. DB now shows 2 active links, fulfillment_status='fulfilled', download_links_generated=true, downloads_count=2.",
+    "TestAbuseProtection.test_wrong_email_does_not_refulfill": "PASS — With order again forced stuck, POST with attacker@evil.com returned HTTP 404 with support-pointing detail. db.download_links count for SF-2026-9PX7Q remained 0 — no refulfill ran.",
+    "TestRateLimit.test_rate_limit_after_three_calls": "PASS — 3 successive resends within window for SF-2026-9PX7Q + moonlite79@ymail.com succeeded (statuses 200/200/200); 4th call returned HTTP 429 with 'too many resend requests' detail.",
+    "TestAdminResendEmailRefulfill.test_admin_resend_does_not_silently_500": "PASS — Admin login (overflowharvest@gmail.com) issued JWT; POST /api/admin/orders/SF-2026-7QQ54/resend-email returned HTTP 409 with clear file-not-attached/support detail (file is genuinely unattached for that product). No 500 and no silent success — confirms the prior TypeError-swallowed bug is fixed and the new _do_refulfill_order path is invoked.",
+    "TestHealthDbDiagnostic.test_schema_and_no_secret_leak": "PASS — /api/health/db-diagnostic returns status=ok, connected_db_name='soul_food_db', mongo_host masked, collection_counts has all required keys (payment_transactions, files, users, orders, interactive_lessons), all_databases_on_cluster is a dict-of-dicts, git_sha + ISO now present. No mongodb://user:pass@ pattern, no 'Admin123!' string in body.",
+    "TestBackwardCompatRevokedLinks.test_revoked_links_resend_no_auto_fulfill": "PASS — Picked a third paid order with active links, revoked them, hit resend; got HTTP 200 with auto_fulfilled=false and fresh active links created from the revoked templates. Confirms the historical revoked-links path is untouched and the auto-fulfill branch is only entered when 'No download links found' is the message.",
+    "Frontend mobile (390x844)": "PASS — document.documentElement.scrollWidth == clientWidth (390/390), no horizontal overflow. 'Get my download link' element rect x=58 right=332 fully inside viewport 390. Long titles wrap naturally (e.g., 'Holiday Series - The Covenant - ADULT (99% off)'). Layout is stacked: image+title on top, Download/Resend button row below at full-row width. Processing status correctly uses 'Get my download link' label.",
+    "Frontend desktop (1024x768)": "PASS — Screenshot confirms horizontal row layout (image+title on left, 'Download PDF'/'Get my download link' on the right). No layout regression."
+  },
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Iter 34 P0 findings (storage 503-vs-403 cached-key refresh in storage_service.get_object/head_object/put_object; payment_routes.get_order_details missing payment_transactions.order_number lookup; download_routes._stream_from_object_storage swallows storage 404 → 502) are NOT covered by this iter's scope but remain unresolved per iter_34.json — recommend keeping those tracked.",
+    "download_routes.py:372-373 creates a brand-new AsyncIOMotorClient per request inside the resend handler instead of reusing the shared `db` import. Low impact (one extra connection per stuck-order resend) but creates connection-pool churn under abuse. Suggest replacing the inline _Cli(...) with `from database import db` (or the equivalent module-level handle) and dropping the local _Cli import.",
+    "The customer-facing resend uses `data.order_id.strip().upper()` only when looking up the transaction (line 375) but passes the original `data.order_id` (un-normalized) to `resend_download_links` on lines 362 and 388. Today the rate-limit and lookup both happen to work because the test order_id is already uppercase, but a lower-case payload could split rate-limit counters or miss links. Normalize once at the top."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_resend_autofulfill_iter35.py (new)"
+  ],
+  "success_rate": {"backend": "100% (6/6)", "frontend": "100% (mobile + desktop layout checks)"},
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123! (skip 2FA via /2fa-setup → 'Continue without 2FA'). Public resend endpoint accepts email in body — no session required.",
+  "seed_data_creation": "Mutates SF-2026-9PX7Q three times during the suite (delete download_links, clear flags, re-run via auto-fulfill). A module-scope fixture restores it to a healthy 2-active-links / fulfillment_status='fulfilled' state at teardown. Verified post-run: SF-2026-9PX7Q has 2 active links again; SF-2026-7QQ54 remains in its native pending_verification state (the admin test only revokes — does not delete — and only succeeds at refulfill if a file is attached).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Resend rate limit is 3/hour per (email, order_id) and is enforced via db.download_link_requests. The new test file clears db.download_link_requests for the orders it touches before exercising the limit. If you need to rerun TestRateLimit immediately, first: db.download_link_requests.delete_many({order_id:'SF-2026-9PX7Q'}). The teardown fixture restores SF-2026-9PX7Q to a healthy state automatically. Auto-fulfill helper _do_refulfill_order is in payment_routes.py (no-auth; HTTP wrappers do auth) and is invoked from BOTH the customer endpoint (download_routes.py:383) and the admin resend-email endpoint (admin_routes.py:1092). The admin /api/admin/refulfill/{order_number} endpoint is the third caller. SF-2026-7QQ54 has no attached file — admin resend will return 409 (clear message) until product files are linked; this is correct behavior, not a bug.",
+  "rca of the issue": "Verified both production bugs from the prompt are fixed: (1) The customer-facing /api/downloads/resend-links now detects 'No download links found' and, after verifying the requester email == payment_transactions.customer_email AND payment_status == 'paid', invokes the shared _do_refulfill_order() helper to create fresh links; abuse path (wrong email) does NOT call the helper and the endpoint returns 404. (2) The admin /api/admin/orders/{order_number}/resend-email previously called admin_refulfill_order(order_number, admin=admin) but that function signature requires (order_number, request: Request), causing a swallowed TypeError. Now it calls _do_refulfill_order(order_number) directly, so the auto-refulfill actually runs; when files are genuinely unattached the admin gets a 409 with a clear message instead of a silent empty email."
+}

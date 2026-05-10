@@ -1089,8 +1089,8 @@ async def admin_resend_order_email(
         # Try to auto-fulfill before emailing — otherwise we'd send a useless
         # empty receipt to the buyer.
         try:
-            from payment_routes import admin_refulfill_order
-            await admin_refulfill_order(order_number, admin=admin)
+            from payment_routes import _do_refulfill_order
+            await _do_refulfill_order(order_number)
             auto_refulfilled = True
             # Re-query download links after refulfill attempt
             download_links = await db.download_links.find(

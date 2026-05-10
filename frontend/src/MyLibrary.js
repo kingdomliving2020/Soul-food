@@ -218,7 +218,13 @@ const MyLibrary = () => {
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
         setResentItems(prev => ({ ...prev, [idx]: true }));
-        toast.success(data.message || 'Download link sent to your email!');
+        if (data.auto_fulfilled) {
+          toast.success('Your order was finalized — a fresh download link is on its way to your inbox.');
+        } else {
+          toast.success(data.message || 'Download link sent to your email!');
+        }
+        // Refresh purchases so status flips from "Processing" to "Available"
+        try { fetchPurchases && fetchPurchases(); } catch {}
       } else {
         toast.error(data.detail || 'Failed to resend link. Please try again later.');
       }
@@ -421,18 +427,18 @@ const MyLibrary = () => {
                       return (
                         <div
                           key={purchase.product_id || purchase.order_id || `purchase-${idx}`}
-                          className="flex items-center justify-between p-4 border border-slate-200 rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-all"
+                          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-4 border border-slate-200 rounded-lg hover:border-purple-300 hover:bg-purple-50/50 transition-all"
                         >
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
                             <img 
                               src={getThumbnail()} 
                               alt={purchase.product_name}
-                              className="w-16 h-20 object-contain rounded-lg border border-slate-200 bg-white shadow-sm"
+                              className="w-16 h-20 object-contain rounded-lg border border-slate-200 bg-white shadow-sm flex-shrink-0"
                             />
-                            <div>
-                              <div className="flex items-center gap-2 mb-0.5">
-                                <h4 className="font-semibold text-slate-800">{purchase.product_name}</h4>
-                                <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${st.bg} ${st.text}`} data-testid={`status-badge-${idx}`}>
+                            <div className="min-w-0 flex-1">
+                              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 mb-1">
+                                <h4 className="font-semibold text-slate-800 break-words">{purchase.product_name}</h4>
+                                <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${st.bg} ${st.text} flex-shrink-0`} data-testid={`status-badge-${idx}`}>
                                   <StIcon className="w-3 h-3" />
                                   {st.label}
                                 </span>
@@ -440,15 +446,15 @@ const MyLibrary = () => {
                               <p className="text-sm text-slate-500">
                                 Purchased: {new Date(purchase.purchased_at).toLocaleDateString()}
                               </p>
-                              <p className="text-xs text-slate-400">Order: {purchase.order_id}</p>
+                              <p className="text-xs text-slate-400 break-all">Order: {purchase.order_id}</p>
                             </div>
                           </div>
-                          <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                          <div className="flex flex-col items-stretch sm:items-end gap-2 w-full sm:w-auto sm:flex-shrink-0">
                             {status === 'available' ? (
                               <>
                                 <Button
                                   onClick={() => window.open(purchase.download_url, '_blank')}
-                                  className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white"
+                                  className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white w-full sm:w-auto"
                                   data-testid={`download-btn-${idx}`}
                                 >
                                   <Download className="w-4 h-4 mr-2" />
@@ -457,7 +463,7 @@ const MyLibrary = () => {
                                 <button
                                   onClick={() => handleResendLink(idx, purchase.order_id)}
                                   disabled={resendingItems[idx] || resentItems[idx]}
-                                  className="text-xs text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors disabled:opacity-50"
+                                  className="text-xs text-slate-400 hover:text-indigo-600 flex items-center justify-center sm:justify-end gap-1 transition-colors disabled:opacity-50"
                                   data-testid={`resend-link-btn-${idx}`}
                                 >
                                   {resendingItems[idx] ? <Loader2 className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
@@ -466,34 +472,34 @@ const MyLibrary = () => {
                               </>
                             ) : status === 'processing' || status === 'pending_verification' ? (
                               <>
-                                <Button variant="outline" disabled className="border-slate-300 text-slate-400" data-testid={`download-btn-disabled-${idx}`}>
+                                <Button variant="outline" disabled className="border-slate-300 text-slate-400 w-full sm:w-auto" data-testid={`download-btn-disabled-${idx}`}>
                                   <Clock className="w-4 h-4 mr-2" />
                                   Download PDF
                                 </Button>
                                 {status === 'pending_verification' ? (
-                                  <span className="text-[11px] text-amber-700 max-w-[220px] text-right" data-testid={`pending-verification-msg-${idx}`}>
+                                  <span className="text-[11px] text-amber-700 sm:max-w-[220px] sm:text-right" data-testid={`pending-verification-msg-${idx}`}>
                                     We're finalizing your order. You'll get an email when it's ready — usually within minutes.
                                   </span>
                                 ) : (
                                   <button
                                     onClick={() => handleResendLink(idx, purchase.order_id)}
                                     disabled={resendingItems[idx] || resentItems[idx]}
-                                    className="text-xs text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors disabled:opacity-50"
+                                    className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center justify-center sm:justify-end gap-1 transition-colors disabled:opacity-50 font-medium"
                                     data-testid={`resend-link-btn-${idx}`}
                                   >
                                     {resendingItems[idx] ? <Loader2 className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
-                                    {resentItems[idx] ? 'Link resent!' : 'Resend download link'}
+                                    {resentItems[idx] ? 'Link sent — check your email' : 'Get my download link'}
                                   </button>
                                 )}
                               </>
                             ) : (
-                              <Button variant="outline" disabled className="border-red-200 text-red-400" data-testid={`download-btn-locked-${idx}`}>
+                              <Button variant="outline" disabled className="border-red-200 text-red-400 w-full sm:w-auto" data-testid={`download-btn-locked-${idx}`}>
                                 <Lock className="w-4 h-4 mr-2" />
                                 Locked
                               </Button>
                             )}
                             {resentItems[idx] && (
-                              <span className="text-xs text-green-600" data-testid={`resend-confirmation-${idx}`}>
+                              <span className="text-xs text-green-600 sm:text-right" data-testid={`resend-confirmation-${idx}`}>
                                 Check your email for a new link.
                               </span>
                             )}

@@ -347,24 +347,67 @@ async def get_download_info(token: str):
 async def resend_download_link(data: ResendLinkRequest, request: Request):
     """
     Request new download links for an order.
-    
+
     Rate limited: 3 requests per hour per order.
     Old links are invalidated.
+
+    Auto-fulfillment: if no download links exist yet (order is stuck in
+    "Processing"), we attempt to fulfill the order on demand using the
+    same logic the admin Refulfill button uses. The order email + identity
+    are verified against the payment_transactions record to prevent abuse.
     """
     ip_address = request.client.host if request.client else "unknown"
-    
+
     success, new_links, message = await resend_download_links(
         order_id=data.order_id,
         user_email=data.email,
         ip_address=ip_address
     )
-    
+
+    auto_fulfilled = False
+    if not success and "No download links found" in message:
+        # Stuck-order recovery: verify the order belongs to this email AND is paid,
+        # then run the SAME refulfill logic the admin uses. After that, retry the
+        # resend. This is the customer self-serve path for "Processing" forever orders.
+        from motor.motor_asyncio import AsyncIOMotorClient as _Cli
+        _db = _Cli(os.environ['MONGO_URL'])[os.environ['DB_NAME']]
+        tx = await _db.payment_transactions.find_one(
+            {"order_number": data.order_id.strip().upper()},
+            {"_id": 0, "customer_email": 1, "payment_status": 1}
+        )
+        if tx and tx.get("payment_status") == "paid":
+            tx_email = (tx.get("customer_email") or "").lower().strip()
+            req_email = (data.email or "").lower().strip()
+            if tx_email and tx_email == req_email:
+                try:
+                    from payment_routes import _do_refulfill_order
+                    refulfill_result = await _do_refulfill_order(data.order_id.strip().upper())
+                    if refulfill_result.get("downloads_created", 0) > 0:
+                        auto_fulfilled = True
+                        # Retry the resend now that links exist
+                        success, new_links, message = await resend_download_links(
+                            order_id=data.order_id,
+                            user_email=data.email,
+                            ip_address=ip_address
+                        )
+                except HTTPException:
+                    # Order not paid / not found — fall through to the original error
+                    pass
+                except Exception as e:
+                    print(f"[Resend self-serve refulfill] failed for {data.order_id}: {e}")
+
     if not success:
-        # Distinguish between "no links exist" (fulfillment never ran) vs rate limit
+        # Distinguish between "no links exist" (fulfillment never ran AND auto-refulfill
+        # couldn't produce any either, e.g., file missing/unattached) vs rate limit
         if "No download links found" in message:
             raise HTTPException(
-                status_code=404, 
-                detail="No download links exist for this order yet. The order may still be processing. An admin can trigger re-fulfillment from the Admin dashboard."
+                status_code=404,
+                detail=(
+                    "We couldn't generate a download link for this order. The file "
+                    "may not be attached to the product yet. Please contact "
+                    "support@kingdom-soul.com with your order number and we'll fix "
+                    "it within one business day."
+                )
             )
         raise HTTPException(status_code=429, detail=message)
     
@@ -409,7 +452,8 @@ async def resend_download_link(data: ResendLinkRequest, request: Request):
         "message": message,
         "links_count": len(new_links),
         "expiry_hours": DOWNLOAD_LINK_EXPIRY_HOURS,
-        "max_downloads_per_file": MAX_DOWNLOADS_PER_ORDER
+        "max_downloads_per_file": MAX_DOWNLOADS_PER_ORDER,
+        "auto_fulfilled": auto_fulfilled,
     }
 
 

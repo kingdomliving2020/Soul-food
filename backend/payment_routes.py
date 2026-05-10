@@ -3127,13 +3127,11 @@ async def _grant_game_pass_for_items(items: list, user_id: str, customer_email: 
 async def admin_refulfill_order(order_number: str, request: Request):
     """Re-run fulfillment for a stuck order. Creates download links + audio access.
     Useful for orders that were paid but fulfillment failed (wrong product IDs, etc.)."""
-    from download_protection import create_download_link
-    
     # Auth check
     auth_header = request.headers.get("Authorization", "")
     if not auth_header.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Authentication required")
-    
+
     try:
         from jose import jwt
         SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
@@ -3142,9 +3140,26 @@ async def admin_refulfill_order(order_number: str, request: Request):
         user = await db.users.find_one({"id": uid}, {"_id": 0, "role": 1})
         if not user or user.get("role") != "admin":
             raise HTTPException(status_code=403, detail="Admin access required")
+    except HTTPException:
+        raise
     except Exception:
         raise HTTPException(status_code=401, detail="Invalid token")
-    
+
+    return await _do_refulfill_order(order_number)
+
+
+async def _do_refulfill_order(order_number: str) -> dict:
+    """Core refulfillment logic — re-runs fulfillment for a paid-but-stuck order.
+
+    Safe to call from any caller (admin endpoints OR customer-facing resend) because
+    it operates ONLY on orders that are already paid. Creates download links, grants
+    audio access, and updates fulfillment status. Returns a dict summary.
+
+    Raises HTTPException if order is missing or not paid — callers should catch
+    or propagate as appropriate.
+    """
+    from download_protection import create_download_link
+
     # Find the transaction
     txn = await db.payment_transactions.find_one(
         {"order_number": order_number},
@@ -3152,20 +3167,20 @@ async def admin_refulfill_order(order_number: str, request: Request):
     )
     if not txn:
         raise HTTPException(status_code=404, detail=f"Order {order_number} not found")
-    
+
     if txn.get("payment_status") != "paid":
         raise HTTPException(status_code=400, detail=f"Order is not paid (status: {txn.get('payment_status')})")
-    
+
     items = txn.get("items", [])
     customer_email = txn.get("customer_email", "")
     user_id = txn.get("user_id") or txn.get("claimed_by_user_id") or ""
-    
+
     # Revoke old download links for this order
     await db.download_links.update_many(
         {"order_id": order_number},
         {"$set": {"revoked": True, "revoked_at": datetime.utcnow().isoformat()}}
     )
-    
+
     # Re-create download links using the improved resolver
     download_links_created = []
     verification_failures: list = []
@@ -3204,7 +3219,7 @@ async def admin_refulfill_order(order_number: str, request: Request):
                     "error": str(e)
                 })
                 verification_failures.append({**entry, "reason": "link_creation_error", "error": str(e)})
-    
+
     # Update transaction
     successful_count = len([d for d in download_links_created if "token" in d])
     update_fields = {
@@ -3218,14 +3233,15 @@ async def admin_refulfill_order(order_number: str, request: Request):
     }
     if successful_count > 0:
         update_fields["status"] = "fulfilled"
+        update_fields["fulfillment_status"] = "fulfilled"
     else:
         update_fields["fulfillment_status"] = "pending_verification"
-    
+
     await db.payment_transactions.update_one(
         {"order_number": order_number},
         {"$set": update_fields}
     )
-    
+
     # Grant audio access
     await _grant_audio_access_for_items(items, customer_email)
     # Grant game-pass entitlement (1hr/3hr cumulative)
@@ -3238,7 +3254,7 @@ async def admin_refulfill_order(order_number: str, request: Request):
         )
     except Exception as gp_err:
         print(f"[Refulfill] Error granting game pass: {gp_err}")
-    
+
     return {
         "order_number": order_number,
         "customer_email": customer_email,
