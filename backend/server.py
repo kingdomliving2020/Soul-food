@@ -515,6 +515,62 @@ async def health_seed_manifest():
     }
 
 
+@api_router.get("/health/db-diagnostic")
+async def health_db_diagnostic():
+    """SAFE production diagnostic — no secrets, no PII.
+
+    Reveals which database the running app instance is actually connected to
+    and the size of the key collections. Use this when production data appears
+    "missing" after a redeploy to instantly distinguish between:
+      • app reading a DIFFERENT DB than where the data lives (DB_NAME mismatch)
+      • app reading a DIFFERENT cluster (MONGO_URL mismatch)
+      • code-level filter regression (counts here are non-zero but UI is empty)
+
+    Returns only metadata (db name, collection counts, masked mongo host).
+    """
+    from urllib.parse import urlparse
+    mongo_url_raw = os.environ.get("MONGO_URL", "")
+    mongo_host = "unknown"
+    try:
+        parsed = urlparse(mongo_url_raw)
+        # Mask credentials — return only scheme + host (no user/pass/db)
+        mongo_host = f"{parsed.scheme}://{parsed.hostname or 'unknown'}"
+        if parsed.port:
+            mongo_host += f":{parsed.port}"
+    except Exception:
+        pass
+
+    db_name = os.environ.get("DB_NAME", "<UNSET>")
+
+    # Snapshot counts on the key collections
+    counts: Dict[str, Any] = {}
+    for coll in ("payment_transactions", "files", "users", "orders", "interactive_lessons"):
+        try:
+            counts[coll] = await db[coll].count_documents({})
+        except Exception as e:
+            counts[coll] = f"error: {type(e).__name__}"
+
+    # List all visible databases on the connected cluster (helps spot data
+    # sitting in a sibling DB like "soul_food" while app is reading "soul_food_db")
+    visible_dbs: List[str] = []
+    try:
+        names = await client.list_database_names()
+        # Exclude internal admin/local/config noise
+        visible_dbs = [n for n in names if n not in ("admin", "local", "config")]
+    except Exception as e:
+        visible_dbs = [f"error: {type(e).__name__}"]
+
+    return {
+        "status": "ok",
+        "connected_db_name": db_name,
+        "mongo_host": mongo_host,
+        "collection_counts": counts,
+        "visible_app_databases": visible_dbs,
+        "git_sha": _git_sha,
+        "now": datetime.now(timezone.utc).isoformat(),
+    }
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
