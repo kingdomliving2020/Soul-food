@@ -2960,7 +2960,9 @@ async def get_my_purchases(request: Request):
                 "product_name": item_name,
                 "purchased_at": txn.get("created_at"),
                 "download_url": f"/api/downloads/file/{download_token}" if download_token else None,
-                "has_download": bool(download_token)
+                "has_download": bool(download_token),
+                "fulfillment_status": txn.get("fulfillment_status") or ("fulfilled" if txn.get("status") == "fulfilled" else None),
+                "order_status": txn.get("status"),
             })
     
     return {"purchases": purchases}

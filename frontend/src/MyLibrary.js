@@ -402,12 +402,18 @@ const MyLibrary = () => {
                         return '/soul-food-logo.png';
                       };
                       
-                      const status = purchase.download_url ? 'available' : (purchase.order_id ? 'processing' : 'locked');
+                      const isPendingVerification = purchase.fulfillment_status === 'pending_verification';
+                      const status = purchase.download_url
+                        ? 'available'
+                        : (purchase.order_id
+                            ? (isPendingVerification ? 'pending_verification' : 'processing')
+                            : 'locked');
 
                       const statusConfig = {
-                        available:  { label: 'Available',  bg: 'bg-green-100', text: 'text-green-700', icon: Download },
-                        processing: { label: 'Processing', bg: 'bg-slate-100', text: 'text-slate-500',  icon: Clock },
-                        locked:     { label: 'Locked',     bg: 'bg-red-100',   text: 'text-red-600',   icon: Lock },
+                        available:            { label: 'Available',            bg: 'bg-green-100',  text: 'text-green-700', icon: Download },
+                        processing:           { label: 'Processing',           bg: 'bg-slate-100',  text: 'text-slate-500', icon: Clock },
+                        pending_verification: { label: 'Awaiting fulfillment', bg: 'bg-amber-100',  text: 'text-amber-800', icon: Clock },
+                        locked:               { label: 'Locked',               bg: 'bg-red-100',    text: 'text-red-600',   icon: Lock },
                       };
                       const st = statusConfig[status];
                       const StIcon = st.icon;
@@ -458,21 +464,27 @@ const MyLibrary = () => {
                                   {resentItems[idx] ? 'Link resent!' : 'Resend Download Link'}
                                 </button>
                               </>
-                            ) : status === 'processing' ? (
+                            ) : status === 'processing' || status === 'pending_verification' ? (
                               <>
                                 <Button variant="outline" disabled className="border-slate-300 text-slate-400" data-testid={`download-btn-disabled-${idx}`}>
                                   <Clock className="w-4 h-4 mr-2" />
                                   Download PDF
                                 </Button>
-                                <button
-                                  onClick={() => handleResendLink(idx, purchase.order_id)}
-                                  disabled={resendingItems[idx] || resentItems[idx]}
-                                  className="text-xs text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors disabled:opacity-50"
-                                  data-testid={`resend-link-btn-${idx}`}
-                                >
-                                  {resendingItems[idx] ? <Loader2 className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
-                                  {resentItems[idx] ? 'Link resent!' : 'Link expired \u2013 click to resend'}
-                                </button>
+                                {status === 'pending_verification' ? (
+                                  <span className="text-[11px] text-amber-700 max-w-[220px] text-right" data-testid={`pending-verification-msg-${idx}`}>
+                                    We're finalizing your order. You'll get an email when it's ready — usually within minutes.
+                                  </span>
+                                ) : (
+                                  <button
+                                    onClick={() => handleResendLink(idx, purchase.order_id)}
+                                    disabled={resendingItems[idx] || resentItems[idx]}
+                                    className="text-xs text-slate-400 hover:text-indigo-600 flex items-center gap-1 transition-colors disabled:opacity-50"
+                                    data-testid={`resend-link-btn-${idx}`}
+                                  >
+                                    {resendingItems[idx] ? <Loader2 className="w-3 h-3 animate-spin" /> : <RotateCcw className="w-3 h-3" />}
+                                    {resentItems[idx] ? 'Link resent!' : 'Resend download link'}
+                                  </button>
+                                )}
                               </>
                             ) : (
                               <Button variant="outline" disabled className="border-red-200 text-red-400" data-testid={`download-btn-locked-${idx}`}>
