@@ -1,0 +1,35 @@
+{
+  "summary": "Iter36 narrow-scope validation of claim/redeem 'claimed_by_me' fix passed end-to-end. Backend verify-claim now returns claimed_by_me=true when the authenticated Bearer JWT matches claimed_by_user_id; frontend RedeemCode shows the green/indigo 'already in your library' card with Go-to-My-Library CTA for the claimer and the red 'claimed by another account' error for anonymous viewers. Download flow regression also passed (HEAD 405, GET 200 application/pdf, X-Downloads-Remaining decremented, download_count incremented 0->1).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_redeem_claim_iter36.py",
+    "/app/test_reports/pytest/iter36_redeem_claim.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "redeem_routes.py creates a module-level AsyncIOMotorClient on import; acceptable but consider centralising DB client to avoid multiple event-loop-bound clients across route modules.",
+    "get_current_user_optional is duplicated in redeem_routes.py vs the global auth dependency; refactor into shared util to avoid drift in JWT decoding logic.",
+    "verify-claim returns raw customer_name without masking; consider trimming/masking last name for privacy parity with email."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_redeem_claim_iter36.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100% (3 verify-claim assertions + download regression via curl all passing; 4th pytest skipped only because admin download-link discovery endpoint was unknown, the same flow was validated via direct token from Mongo)",
+    "frontend": "100% (logged-in shows already-in-library card + Go to My Library btn + order number SF-2026-P7DXY; incognito shows red claimed-by-another-account error)"
+  },
+  "test_credentials": "Admin overflowharvest@gmail.com / Admin123! (login via POST /api/auth/login with {identifier,password}; access_token returned). 2FA skip link 'Continue without 2FA' works.",
+  "seed_data_creation": "None. Read-only validation against existing preview-DB orders SF-2026-P7DXY (claimed) and SF-2026-9PX7Q (unclaimed).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iter36 fix is verified. Side-effect of test_download_flow_regression: download_count on token n50mK1h5...HNi for order SF-2026-9PX7Q incremented from 0 to 1 (2 remaining); harmless. Other active token CXY8Y6M3... already had count=1 before the run.",
+  "rca of the issue": "RCA confirmed exactly as described in the request — the order-confirmation email contains a 'Redeem Your Purchase' button pointing to /redeem?code={order_number} which exercises the order-claim flow, not the per-PDF download token. After the first successful claim, payment_transactions.claimed_by_user_id is set; re-clicking the button hit verify-claim which previously returned already_claimed=true uniformly, regardless of who was looking. The frontend then surfaced that as a red 'already claimed by another account' error, misleading the legitimate claimer. The download tokens themselves were never being reused or burned (HEAD returns 405, confirming email scanners cannot prefetch and burn the count). Fix lands in two places: (1) backend verify-claim is now Authorization-aware via get_current_user_optional and emits claimed_by_me=true when the caller's user_id matches claimed_by_user_id; (2) frontend RedeemCode passes Authorization when a token is in localStorage and renders a friendly 'Already in your library — Go to My Library' card with data-testid='already-in-library' when claimed_by_me is true, suppressing both the red error and the order-number input form. The genuine cross-account conflict case (logged-in user_B viewing user_A's order) still produces the red error because claimed_by_me stays false."
+}

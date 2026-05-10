@@ -39,7 +39,11 @@ const RedeemCode = () => {
     setError('');
     setOrderInfo(null);
     try {
-      const res = await fetch(`${BACKEND_URL}/api/orders/verify-claim?code=${encodeURIComponent(c)}`);
+      // Pass auth so the backend can tell us if THIS user already claimed
+      // the order — that flips the UX from "already redeemed" error to a
+      // friendly "Already in your library" CTA.
+      const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+      const res = await fetch(`${BACKEND_URL}/api/orders/verify-claim?code=${encodeURIComponent(c)}`, { headers });
       let data;
       try {
         data = await res.json();
@@ -57,9 +61,12 @@ const RedeemCode = () => {
       }
       if (!res.ok) throw new Error(data.detail || 'Order not found');
       setOrderInfo(data);
-      if (data.already_claimed) {
-        setError('This order has already been claimed.');
+      if (data.already_claimed && !data.claimed_by_me) {
+        // Claimed by SOMEONE ELSE — that's a real conflict, surface as error.
+        setError('This order has already been claimed by another account. If this is your order, please contact support@kingdom-soul.com.');
       }
+      // If claimed_by_me === true, no error — the render path below will show
+      // a friendly "Already in your library — Go to My Library" CTA.
     } catch (err) {
       setError(err.message);
     } finally {
@@ -165,8 +172,37 @@ const RedeemCode = () => {
           </Card>
         )}
 
+        {/* Already in YOUR library — friendly CTA, not an error.
+            This handles the refulfill-email re-click case: the customer already
+            claimed the order, refulfill sends a fresh email, they click Redeem
+            again — we just route them to their library. */}
+        {!claimed && orderInfo && orderInfo.claimed_by_me && (
+          <Card className="border-2 border-indigo-300 mb-6" data-testid="already-in-library">
+            <CardContent className="p-6 text-center">
+              <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-indigo-600" />
+              </div>
+              <h2 className="text-xl font-bold text-slate-800 mb-2">This order is already in your library</h2>
+              <p className="text-slate-600 mb-5">
+                Order <span className="font-mono font-semibold">{orderInfo.order_number}</span> is linked to your account.
+                Open My Library to download your files — if a link looks stale, click "Get my download link" to refresh it instantly.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button
+                  onClick={() => navigate('/my-library')}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold px-8 py-3"
+                  data-testid="go-to-library-claimed-by-me"
+                >
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  Go to My Library
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Code Input */}
-        {!claimed && (
+        {!claimed && !(orderInfo && orderInfo.claimed_by_me) && (
           <>
             <div className="mb-6">
               <label className="block text-sm font-semibold text-slate-700 mb-2">Order Number</label>

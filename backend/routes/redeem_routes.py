@@ -49,35 +49,52 @@ async def get_current_user_optional(request: Request):
 
 
 @router.get("/verify-claim")
-async def verify_claim(code: str):
-    """Check if an order exists and is claimable"""
+async def verify_claim(code: str, request: Request):
+    """Check if an order exists and is claimable.
+
+    If the caller is authenticated AND happens to be the user who already
+    claimed this order, we surface ``claimed_by_me: true`` so the frontend
+    can show a friendly "Already in your library → Go to My Library" CTA
+    instead of a misleading "already redeemed" error. This is critical for
+    the post-refulfillment email flow where the customer is sent a fresh
+    email that still includes the redeem button — clicking it a second time
+    must not feel like an error.
+    """
     order_number = code.strip().upper()
-    
+
     tx = await db.payment_transactions.find_one(
         {"order_number": order_number},
         {"_id": 0, "order_number": 1, "customer_email": 1, "customer_name": 1,
          "payment_status": 1, "items": 1, "total_amount": 1, "claimed_by_user_id": 1}
     )
-    
+
     if not tx:
         raise HTTPException(status_code=404, detail="Order not found. Please check your order number.")
-    
+
     if tx.get("payment_status") not in ("paid", "completed"):
         raise HTTPException(status_code=400, detail="This order has not been paid.")
-    
+
     already_claimed = bool(tx.get("claimed_by_user_id"))
-    
+
+    # If the caller is logged in, check whether THEY are the one who claimed
+    # this order — that's the case where we want to silently redirect to
+    # My Library rather than showing an "already claimed" error.
+    claimed_by_me = False
+    user = await get_current_user_optional(request)
+    if user and already_claimed:
+        claimed_by_me = (tx.get("claimed_by_user_id") == user.get("id"))
+
     # Mask email for privacy (show first 2 chars + domain)
     email = tx.get("customer_email", "")
     masked = email[:2] + "***@" + email.split("@")[-1] if "@" in email else "***"
-    
+
     items = []
     for item in tx.get("items", []):
         items.append({
             "name": item.get("name", item.get("product_id", "Unknown")),
             "quantity": item.get("quantity", 1)
         })
-    
+
     return {
         "order_number": order_number,
         "masked_email": masked,
@@ -85,7 +102,8 @@ async def verify_claim(code: str):
         "items": items,
         "total": tx.get("total_amount", 0),
         "already_claimed": already_claimed,
-        "claimable": not already_claimed
+        "claimed_by_me": claimed_by_me,
+        "claimable": not already_claimed,
     }
 
 
