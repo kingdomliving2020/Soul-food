@@ -358,8 +358,12 @@ async def resend_download_link(data: ResendLinkRequest, request: Request):
     """
     ip_address = request.client.host if request.client else "unknown"
 
+    # Normalize order_id once so rate-limit counters and DB lookups align
+    # regardless of payload casing/whitespace.
+    normalized_order_id = (data.order_id or "").strip().upper()
+
     success, new_links, message = await resend_download_links(
-        order_id=data.order_id,
+        order_id=normalized_order_id,
         user_email=data.email,
         ip_address=ip_address
     )
@@ -372,7 +376,7 @@ async def resend_download_link(data: ResendLinkRequest, request: Request):
         from motor.motor_asyncio import AsyncIOMotorClient as _Cli
         _db = _Cli(os.environ['MONGO_URL'])[os.environ['DB_NAME']]
         tx = await _db.payment_transactions.find_one(
-            {"order_number": data.order_id.strip().upper()},
+            {"order_number": normalized_order_id},
             {"_id": 0, "customer_email": 1, "payment_status": 1}
         )
         if tx and tx.get("payment_status") == "paid":
@@ -381,12 +385,12 @@ async def resend_download_link(data: ResendLinkRequest, request: Request):
             if tx_email and tx_email == req_email:
                 try:
                     from payment_routes import _do_refulfill_order
-                    refulfill_result = await _do_refulfill_order(data.order_id.strip().upper())
+                    refulfill_result = await _do_refulfill_order(normalized_order_id)
                     if refulfill_result.get("downloads_created", 0) > 0:
                         auto_fulfilled = True
                         # Retry the resend now that links exist
                         success, new_links, message = await resend_download_links(
-                            order_id=data.order_id,
+                            order_id=normalized_order_id,
                             user_email=data.email,
                             ip_address=ip_address
                         )
@@ -394,7 +398,7 @@ async def resend_download_link(data: ResendLinkRequest, request: Request):
                     # Order not paid / not found — fall through to the original error
                     pass
                 except Exception as e:
-                    print(f"[Resend self-serve refulfill] failed for {data.order_id}: {e}")
+                    print(f"[Resend self-serve refulfill] failed for {normalized_order_id}: {e}")
 
     if not success:
         # Distinguish between "no links exist" (fulfillment never ran AND auto-refulfill
