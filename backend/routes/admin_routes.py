@@ -1056,8 +1056,17 @@ async def get_order_detail(order_number: str, admin: AdminUser = Depends(get_cur
 
 
 @router.post("/orders/{order_number}/resend-email")
-async def admin_resend_order_email(order_number: str, admin: AdminUser = Depends(get_current_admin)):
-    """Resend order confirmation email with download links and redeem link"""
+async def admin_resend_order_email(
+    order_number: str,
+    skip_auto_refulfill: bool = False,
+    admin: AdminUser = Depends(get_current_admin)
+):
+    """Resend order confirmation email with download links and redeem link.
+
+    Auto-refulfills first if no active download links exist — prevents the
+    silent-failure mode where Resend logs success but the buyer gets an
+    empty email. Pass ``?skip_auto_refulfill=true`` to disable that
+    behavior (e.g., for diagnostic resends where you only want the receipt)."""
     from email_service import send_order_confirmation
     order_number = order_number.strip().upper()
 
@@ -1075,6 +1084,44 @@ async def admin_resend_order_email(order_number: str, admin: AdminUser = Depends
         {"_id": 0, "token_hash": 0},
     ).to_list(100)
 
+    auto_refulfilled = False
+    if not download_links and not skip_auto_refulfill and tx.get("payment_status") == "paid":
+        # Try to auto-fulfill before emailing — otherwise we'd send a useless
+        # empty receipt to the buyer.
+        try:
+            from payment_routes import admin_refulfill_order
+            await admin_refulfill_order(order_number, admin=admin)
+            auto_refulfilled = True
+            # Re-query download links after refulfill attempt
+            download_links = await db.download_links.find(
+                {"order_id": order_number, "revoked": {"$ne": True}},
+                {"_id": 0, "token_hash": 0},
+            ).to_list(100)
+        except Exception as e:
+            print(f"[Resend] Auto-refulfill failed for {order_number}: {e}")
+
+    # If still no links after the auto-refulfill attempt, surface a CLEAR error
+    # to the admin instead of silently sending an empty email.
+    if not download_links and not skip_auto_refulfill:
+        await db.delivery_logs.insert_one({
+            "id": secrets.token_hex(8),
+            "order_id": order_number,
+            "type": "admin_resend_email",
+            "recipient": email,
+            "status": "blocked_no_links",
+            "details": "Refulfill attempt produced 0 download links — file likely not attached/retrievable for an item. Fix in File Manager, then retry.",
+            "triggered_by": admin.id,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        })
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "No active download links for this order, and auto-refulfill produced none either. "
+                "An item's file is not attached or not retrievable in Object Storage. "
+                "Open Admin → File Manager, attach/fix the file for the failing product, then click Refulfill on this order before resending."
+            ),
+        )
+
     result = await send_order_confirmation(
         to_email=email,
         order_id=order_number,
@@ -1090,13 +1137,20 @@ async def admin_resend_order_email(order_number: str, admin: AdminUser = Depends
         "type": "admin_resend_email",
         "recipient": email,
         "status": "success" if result.get("success") else "failed",
+        "details": {
+            "links_sent": len(download_links),
+            "auto_refulfilled": auto_refulfilled,
+        },
         "triggered_by": admin.id,
         "timestamp": datetime.now(timezone.utc).isoformat(),
     })
     await log_admin_action("resend_order_email", admin.id, "order", order_number)
 
     if result.get("success"):
-        return {"success": True, "message": f"Email resent to {email}"}
+        msg = f"Email resent to {email} with {len(download_links)} download link(s)"
+        if auto_refulfilled:
+            msg += " (auto-refulfilled first)"
+        return {"success": True, "message": msg, "links_sent": len(download_links), "auto_refulfilled": auto_refulfilled}
     raise HTTPException(status_code=500, detail=result.get("error", "Email send failed"))
 
 
