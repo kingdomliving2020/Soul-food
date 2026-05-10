@@ -550,22 +550,34 @@ async def health_db_diagnostic():
         except Exception as e:
             counts[coll] = f"error: {type(e).__name__}"
 
-    # List all visible databases on the connected cluster (helps spot data
-    # sitting in a sibling DB like "soul_food" while app is reading "soul_food_db")
-    visible_dbs: List[str] = []
+    # List all visible databases on the connected cluster AND probe each one's
+    # key collections — this is what lets us spot data sitting in a sibling DB
+    # like "soul_food" while the app is reading "soul_food_db".
+    sibling_db_counts: Dict[str, Any] = {}
     try:
         names = await client.list_database_names()
-        # Exclude internal admin/local/config noise
-        visible_dbs = [n for n in names if n not in ("admin", "local", "config")]
+        for n in names:
+            if n in ("admin", "local", "config"):
+                continue
+            try:
+                sibling = client[n]
+                sibling_db_counts[n] = {
+                    "payment_transactions": await sibling.payment_transactions.count_documents({}),
+                    "files": await sibling.files.count_documents({}),
+                    "users": await sibling.users.count_documents({}),
+                    "orders": await sibling.orders.count_documents({}),
+                }
+            except Exception as e:
+                sibling_db_counts[n] = f"error: {type(e).__name__}"
     except Exception as e:
-        visible_dbs = [f"error: {type(e).__name__}"]
+        sibling_db_counts = {"_error": f"{type(e).__name__}: {e}"}
 
     return {
         "status": "ok",
         "connected_db_name": db_name,
         "mongo_host": mongo_host,
         "collection_counts": counts,
-        "visible_app_databases": visible_dbs,
+        "all_databases_on_cluster": sibling_db_counts,
         "git_sha": _git_sha,
         "now": datetime.now(timezone.utc).isoformat(),
     }
