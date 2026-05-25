@@ -38,27 +38,21 @@ The resolver only speaks in `product_id` strings.
 > The customer receives a packing slip / shipping confirmation, **not** a download
 > link. Even if a matching attached file exists, the digital file is suppressed.
 
-## Bundle expansion
+## Format-specific rules (May 2026 clarification)
 
-Bundles (`BUNDLE_EXPANSIONS` in `payment_routes.py`) expand to per-edition sub-items.
-For each sub-item:
-- POD-suffixed sub-items are skipped (logged).
-- Sub-items with a `db.files` attachment are included.
-- Sub-items without an attachment fall back to legacy `PRODUCT_FILES`.
+| Product type            | Delivery format                                          |
+|-------------------------|----------------------------------------------------------|
+| Full workbook — POD     | Print only. No digital file in email.                    |
+| Full workbook — Digital | Single full-PDF download. ✓ ALLOWED                      |
+| Snack Pack (SP) — Digital | Per-month PDF.                                         |
+| Snack Pack — Print bundle | Included with POD; no separate digital file.           |
+| Nibble (single lesson)  | Falls back to the full workbook PDF for MVP. Per-lesson IPDF splitting is **not required** at this stage. |
+| Game Pass / Subscription | No file. Entitlement only.                              |
+| Gift Certificate        | Generates a code; no file.                              |
 
-Bundles **never** merge files across editions. AE/YE/IE remain separate downloads
-inside a bundle.
-
-## Format-specific rules (May 2026 spec)
-
-| Product type           | Delivery format                                         |
-|------------------------|----------------------------------------------------------|
-| Full workbook (POD)    | Print only. No digital file in email.                    |
-| Full workbook (digital)| Single full-PDF download. (Existing entitlements honored.) |
-| Snack Pack (SP)        | Digital PDF default. Print only if bundled with POD.     |
-| Nibble (single lesson) | Segmented per-lesson PDF only. **Never** the full book.  |
-| Game Pass / Subscription| No file. Entitlement only.                              |
-| Gift Certificate       | Generates a code; no file.                              |
+**IPDF / per-lesson splitting is deferred** — at MVP, digital Nibble SKUs deliver
+the full workbook PDF. The framework remains in place (per-lesson product_ids,
+attachment slots) for later activation without code change.
 
 ## Holiday Nibbles (4C framework)
 
@@ -66,13 +60,13 @@ Holiday is the SOFU **brand**; HOL (Covenant / Cradle / Cross / Comforter) is th
 **framework**. Do not flatten or rename in product IDs or files.
 
 Per-chapter Nibble SKUs (e.g. `holiday-nibble-ae-covenant-digital`):
-- **Today**: legacy mapping points the chapter to the full Holiday PDF — that
-  violates the no-substitution rule, so the legacy resolver gates these via
-  `is_deliverable()` returning `gated_no_substitution_holiday_nibble`.
-- **Required**: 12 per-chapter PDFs (AE/YE/IE × Covenant/Cradle/Cross/Comforter)
-  uploaded to Object Storage and attached to the corresponding SKUs.
-- Once attached, the new resolver will deliver them automatically with no code
-  change.
+- **Current MVP behavior**: legacy mapping points each chapter to the full
+  Holiday PDF, and `is_deliverable()` allows it. Customer receives the full
+  Holiday workbook regardless of which chapter they bought.
+- **Future (post-MVP)**: when you upload 12 per-chapter PDFs (AE/YE/IE ×
+  Covenant/Cradle/Cross/Comforter) and attach them in File Manager, the resolver
+  will pick those up automatically (attachment beats legacy PRODUCT_FILES).
+  No code deploy required.
 
 ## How to add a new file (admin workflow)
 

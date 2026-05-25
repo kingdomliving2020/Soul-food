@@ -555,34 +555,29 @@ _GATED_FULL_BREAKFAST_PATTERN = _re_deliv.compile(
 def is_deliverable(product_id: str) -> tuple:
     """Return (deliverable: bool, reason: str).
 
-    A product is deliverable only if:
-      1. It is not on the explicit gate list (full Breakfast / holiday nibble),
-      2. It maps to a known file in PRODUCT_FILES, and
-      3. The mapped file physically exists on disk.
-    Substitution across editions is never allowed.
+    A product is deliverable if it has a known file mapping in PRODUCT_FILES
+    AND the mapped file physically exists on disk. Substitution across editions
+    is never allowed (the resolver already enforces per-edition handling).
+
+    Notes (May 2026 clarification):
+      * Full workbooks ARE deliverable as a single PDF for digital SKUs.
+        POD/physical SKUs are blocked separately by ``_is_physical_format``
+        in the async resolver — not here.
+      * Per-chapter Holiday Nibbles are allowed to fall back to the Holiday
+        full PDF for MVP scope; per-lesson splitting (IPDF) is not required
+        at this stage.
     """
     if not product_id:
         return (False, "empty_product_id")
 
     normalized = normalize_product_id(product_id)
 
-    # Rule 1: Full Breakfast workbooks are personal-study, always gated.
-    if normalized in _GATED_FULL_BREAKFAST_IDS:
-        return (False, "gated_full_breakfast_personal_study")
-    if _GATED_FULL_BREAKFAST_PATTERN.match(normalized):
-        return (False, "gated_full_breakfast_personal_study")
-
-    # Rule 2: Holiday per-chapter nibbles historically substituted the full
-    # workbook. Substitution across editions/scopes is not allowed.
-    if normalized.startswith("holiday-nibble-"):
-        return (False, "gated_no_substitution_holiday_nibble")
-
-    # Rule 3: Must have a file mapping.
+    # Must have a file mapping.
     filename = PRODUCT_FILES.get(normalized)
     if not filename:
         return (False, "no_file_mapping")
 
-    # Rule 4: File must physically exist.
+    # File must physically exist.
     if not os.path.exists(os.path.join(PDF_DIR, filename)):
         return (False, "file_missing_on_disk")
 
