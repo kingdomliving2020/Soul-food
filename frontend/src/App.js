@@ -677,7 +677,7 @@ const LandingPage = () => {
           </h3>
           <p className="text-center text-slate-600 mb-12 sm:mb-16 max-w-2xl mx-auto">
             Get instant access to interactive lessons, eBooks, and community features. 
-            Physical workbooks available with 2-3 week shipping.
+            Physical workbooks available with 1-2 weeks (free) · expedited $7.99.
           </p>
           
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
@@ -696,7 +696,7 @@ const LandingPage = () => {
                 </div>
                 <CardTitle className="text-2xl text-slate-800">Print Workbook</CardTitle>
                 <div className="text-3xl sm:text-4xl font-bold mb-2 text-slate-700">$39.99</div>
-                <p className="text-sm text-emerald-600 font-medium">Order now • Ships in 2-3 weeks</p>
+                <p className="text-sm text-emerald-600 font-medium">Order now • Ships in 1-2 weeks (free) · expedited $7.99</p>
               </CardHeader>
               <CardContent className="p-6 sm:p-8 pt-0">
                 <ul className="space-y-3 mb-8">

@@ -121,7 +121,7 @@ const PalmSundayBanner = () => {
           <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4 text-center min-w-[180px]">
             <p className="text-xs text-purple-200 uppercase tracking-wide mb-1">Lunch Series</p>
             <p className="font-bold text-lg">Pre-Order Savings Active</p>
-            <p className="text-xs text-purple-200 mt-1">Ships May-June 2026</p>
+            <p className="text-xs text-purple-200 mt-1">Ships in 1-2 weeks · expedited $7.99 available</p>
           </div>
         </div>
 
@@ -153,7 +153,7 @@ const PalmSundayBanner = () => {
           <div className="inline-flex items-center gap-3 bg-white/10 rounded-full px-4 py-2">
             <span className="text-green-300 font-medium text-sm">Instant digital downloads</span>
             <span className="w-1 h-1 bg-white/50 rounded-full"></span>
-            <span className="text-purple-200 text-sm">Physical books: Ships within 2-3 weeks</span>
+            <span className="text-purple-200 text-sm">Physical books: Ships within 1-2 weeks (free) · expedited $7.99</span>
           </div>
         </div>
       </div>
@@ -415,7 +415,7 @@ const QuickOrder = () => {
       description: 'Deeper lessons exploring relationships through Scripture',
       available: true,
       preOrder: true,
-      comingSoon: 'May-Jun 2026',
+      comingSoon: '1-2 wks',
       editions: ['adult', 'youth', 'instructor'],
       formats: ['physical'],
       packages: [
@@ -457,17 +457,17 @@ const QuickOrder = () => {
       id: 'workbooks',
       name: 'Full Workbooks',
       tagline: 'Complete Study Workbooks',
-      description: 'Holiday available now! Break*fast pre-order savings live. Physical books ship 2-3 weeks.',
+      description: 'Holiday available now! Break*fast pre-order savings live. Physical books ship in 1-2 weeks (free) · expedited $7.99.',
       available: true,
       editions: ['adult', 'youth'],
       formats: ['digital', 'physical'],
       packages: [
         { id: 'holiday-ae-digital', name: 'Holiday Digital (Adult)', price: 9.99, edition: 'adult', format: 'digital', available: true },
-        { id: 'holiday-ae-paperback', name: 'Holiday Paperback (Adult)', price: 19.99, edition: 'adult', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'holiday-ae-paperback', name: 'Holiday Paperback (Adult)', price: 19.99, edition: 'adult', format: 'physical', available: true, note: 'Ships 1-2 wk · expedited $7.99' },
         { id: 'holiday-ye-digital', name: 'Holiday Digital (Youth)', price: 9.99, edition: 'youth', format: 'digital', available: true },
-        { id: 'holiday-ye-paperback', name: 'Holiday Paperback (Youth)', price: 19.99, edition: 'youth', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'holiday-ye-paperback', name: 'Holiday Paperback (Youth)', price: 19.99, edition: 'youth', format: 'physical', available: true, note: 'Ships 1-2 wk · expedited $7.99' },
         { id: 'holiday-ie-digital', name: 'Holiday Digital (Instructor)', price: 34.99, edition: 'instructor', format: 'digital', available: true },
-        { id: 'holiday-ie-paperback', name: 'Holiday Paperback (Instructor)', price: 34.99, edition: 'instructor', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'holiday-ie-paperback', name: 'Holiday Paperback (Instructor)', price: 34.99, edition: 'instructor', format: 'physical', available: true, note: 'Ships 1-2 wk · expedited $7.99' },
         { id: 'breakfast-ae-digital', name: 'Break*fast Digital (Adult) — $5 Off', price: 14.99, edition: 'adult', format: 'digital', available: true, preOrder: true },
         { id: 'breakfast-ae-paperback', name: 'Break*fast Paperback (Adult) — $5 Off', price: 29.99, edition: 'adult', format: 'physical', available: true, preOrder: true, note: 'Pre-Order' },
         { id: 'breakfast-ye-digital', name: 'Break*fast Digital (Youth) — $5 Off', price: 14.99, edition: 'youth', format: 'digital', available: true, preOrder: true },
@@ -495,7 +495,7 @@ const QuickOrder = () => {
       id: 'bookclub',
       name: '📚 Book Club Bundles',
       tagline: 'Bulk Orders for Groups & Ministries',
-      description: 'Save $15/set! A set = 1 Instructor + 2 Student books. Paperbacks ship within 2-3 weeks.',
+      description: 'Save $15/set! A set = 1 Instructor + 2 Student books. Paperbacks ship within 1-2 weeks (free shipping · expedited $7.99 available).',
       available: true,
       editions: ['bundle'],
       formats: ['physical'],
@@ -522,12 +522,12 @@ const QuickOrder = () => {
       formats: ['physical'],
       packages: [
         // Individual Medallions - $9.99 each
-        { id: 'medallion-grinch-ae', name: 'GRinCH Champion (Adult)', price: 9.99, edition: 'adult', game: 'grinch', image: '/medallions/grinch-ae.png', available: true, note: 'Ships 2-3 wks' },
-        { id: 'medallion-grinch-ye', name: 'GRinCH Champion (Youth)', price: 9.99, edition: 'youth', game: 'grinch', image: '/medallions/grinch-ye.png', available: true, note: 'Ships 2-3 wks' },
-        { id: 'medallion-grinch-ie', name: 'GRinCH Iron vs Iron (Instructor)', price: 9.99, edition: 'instructor', game: 'grinch', image: '/medallions/grinch-ie.png', available: true, note: 'Ships 2-3 wks' },
-        { id: 'medallion-passport-ae', name: 'Passport Trek (Adult)', price: 9.99, edition: 'adult', game: 'passport', image: '/medallions/passport-ae.png', available: true, note: 'Ships 2-3 wks' },
-        { id: 'medallion-passport-ye', name: 'Passport Trek (Youth)', price: 9.99, edition: 'youth', game: 'passport', image: '/medallions/passport-ye.png', available: true, note: 'Ships 2-3 wks' },
-        { id: 'medallion-passport-ie', name: 'Passport Trek (Instructor)', price: 9.99, edition: 'instructor', game: 'passport', image: '/medallions/passport-ie.png', available: true, note: 'Ships 2-3 wks' },
+        { id: 'medallion-grinch-ae', name: 'GRinCH Champion (Adult)', price: 9.99, edition: 'adult', game: 'grinch', image: '/medallions/grinch-ae.png', available: true, note: 'Ships 1-2 wks · expedited $7.99' },
+        { id: 'medallion-grinch-ye', name: 'GRinCH Champion (Youth)', price: 9.99, edition: 'youth', game: 'grinch', image: '/medallions/grinch-ye.png', available: true, note: 'Ships 1-2 wks · expedited $7.99' },
+        { id: 'medallion-grinch-ie', name: 'GRinCH Iron vs Iron (Instructor)', price: 9.99, edition: 'instructor', game: 'grinch', image: '/medallions/grinch-ie.png', available: true, note: 'Ships 1-2 wks · expedited $7.99' },
+        { id: 'medallion-passport-ae', name: 'Passport Trek (Adult)', price: 9.99, edition: 'adult', game: 'passport', image: '/medallions/passport-ae.png', available: true, note: 'Ships 1-2 wks · expedited $7.99' },
+        { id: 'medallion-passport-ye', name: 'Passport Trek (Youth)', price: 9.99, edition: 'youth', game: 'passport', image: '/medallions/passport-ye.png', available: true, note: 'Ships 1-2 wks · expedited $7.99' },
+        { id: 'medallion-passport-ie', name: 'Passport Trek (Instructor)', price: 9.99, edition: 'instructor', game: 'passport', image: '/medallions/passport-ie.png', available: true, note: 'Ships 1-2 wks · expedited $7.99' },
         // Bulk Packs
         { id: 'medallion-teacher-pack', name: 'Teacher Pack (3 Medallions)', price: 24.99, note: 'Any 3 - Save $5', available: true, bulk: 3 },
         { id: 'medallion-ministry-pack', name: 'Ministry Pack (10 Medallions)', price: 69.99, note: 'Any 10 - Save $30', available: true, bulk: 10 },
@@ -638,7 +638,7 @@ const QuickOrder = () => {
       edition: 'adult',
       description: 'Complete offline game kit for adult groups',
       preOrder: true,
-      note: 'Physical kit ships 2-3 weeks'
+      note: 'Physical kit ships 1-2 weeks (free) · expedited $7.99'
     },
     {
       id: 'game-pack-gridiron-ye',

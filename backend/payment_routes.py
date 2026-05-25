@@ -1744,6 +1744,8 @@ class CartCheckoutRequest(BaseModel):
     customer_email: Optional[str] = None
     customer_name: Optional[str] = None
     shipping_address: Optional[dict] = None
+    shipping_method: Optional[str] = None  # 'standard' (free) or 'expedited' ($7.99)
+    shipping_cost: float = 0
 
 
 @router.post("/checkout/session")
@@ -1932,7 +1934,30 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
                 },
                 'quantity': item_qty,
             })
-    
+
+    # Append expedited-shipping line item ($7.99) when the customer chose it
+    # AND the cart actually has a physical item. Standard shipping is free —
+    # nothing to add. Cost is server-validated so the client cannot tamper.
+    if request.shipping_method == "expedited" and request.shipping_address:
+        cart_has_physical = any(
+            (str(it.get("format") or it.get("type") or "").lower() in {"physical", "paperback", "print", "pod", "hardcopy"})
+            or any(suf in str(it.get("id") or it.get("product_id") or "").lower()
+                   for suf in ("-paperback", "-print", "-physical", "-pod", "-hardcopy"))
+            for it in request.items
+        )
+        if cart_has_physical:
+            line_items.append({
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': 'Expedited Shipping',
+                        'description': 'Prioritized fulfillment for physical book orders.',
+                    },
+                    'unit_amount': 799,  # $7.99 — server-locked, ignores client shipping_cost
+                },
+                'quantity': 1,
+            })
+
     # Build URLs
     origin_url = request.origin_url.rstrip('/')
     success_url = f"{origin_url}/payment-success?session_id={{CHECKOUT_SESSION_ID}}"
@@ -2024,6 +2049,8 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
             "user_id": logged_in_user_id,
             "claimed_by_user_id": logged_in_user_id,
             "shipping_address": request.shipping_address,
+            "shipping_method": request.shipping_method or ("standard" if request.shipping_address else None),
+            "shipping_cost": 7.99 if request.shipping_method == "expedited" and request.shipping_address else 0,
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
         }

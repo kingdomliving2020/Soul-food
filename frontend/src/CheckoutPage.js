@@ -687,6 +687,10 @@ const CheckoutPage = () => {
     zipCode: '',
     country: 'USA'
   });
+
+  // Shipping method ('standard' free | 'expedited' $7.99). Only applies when cart has physical items.
+  const [shippingMethod, setShippingMethod] = useState('standard');
+  const EXPEDITED_SHIPPING_COST = 7.99;
   
   // Gift options
   const [isGift, setIsGift] = useState(false);
@@ -883,7 +887,9 @@ const CheckoutPage = () => {
             customer_email: customerEmail || null,
             customer_name: customerName || null,
             customer_phone: customerPhone || null,
-            shipping_address: hasPhysicalItems ? shippingAddress : null
+            shipping_address: hasPhysicalItems ? shippingAddress : null,
+            shipping_method: hasPhysicalItems ? shippingMethod : null,
+            shipping_cost: hasPhysicalItems && shippingMethod === 'expedited' ? EXPEDITED_SHIPPING_COST : 0
           }),
         });
 
@@ -940,7 +946,9 @@ const CheckoutPage = () => {
           customer_email: customerEmail || null,
           customer_name: customerName || null,
           customer_phone: customerPhone || null,
-          shipping_address: hasPhysicalItems ? shippingAddress : null
+          shipping_address: hasPhysicalItems ? shippingAddress : null,
+          shipping_method: hasPhysicalItems ? shippingMethod : null,
+          shipping_cost: hasPhysicalItems && shippingMethod === 'expedited' ? EXPEDITED_SHIPPING_COST : 0
         }),
       });
 
@@ -1436,7 +1444,7 @@ const CheckoutPage = () => {
                       <span className="text-emerald-500 font-bold">✓</span>
                       <div>
                         <span className="font-semibold text-indigo-900">Physical Books</span>
-                        <span className="text-indigo-700"> — Ships within 2-3 weeks</span>
+                        <span className="text-indigo-700"> — Ships within 1-2 weeks (free) · expedited $7.99</span>
                         <p className="text-xs text-indigo-600">US, APO/FPO, Canada. International available — contact us for estimates.</p>
                       </div>
                     </div>
@@ -1447,6 +1455,49 @@ const CheckoutPage = () => {
                         <p className="text-xs text-indigo-600">Contact us for custom fulfillment: orders@kingdom-soul.com</p>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                {/* Shipping Method Selector — Standard FREE / Expedited $7.99 */}
+                <div className="mb-4 p-4 bg-white rounded-lg border-2 border-indigo-200" data-testid="shipping-method-section">
+                  <h4 className="font-bold text-indigo-800 mb-3 text-sm">Choose Shipping Speed</h4>
+                  <div className="space-y-2">
+                    <label className={`flex items-start gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'standard' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 bg-white hover:border-indigo-300'}`} data-testid="shipping-standard-option">
+                      <input
+                        type="radio"
+                        name="shipping_method"
+                        value="standard"
+                        checked={shippingMethod === 'standard'}
+                        onChange={() => setShippingMethod('standard')}
+                        className="mt-1"
+                        data-testid="shipping-standard-radio"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-slate-800">Standard Shipping</span>
+                          <span className="font-bold text-emerald-600">FREE</span>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">Arrives in 1-2 weeks · US, APO/FPO, Canada</p>
+                      </div>
+                    </label>
+                    <label className={`flex items-start gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'expedited' ? 'border-amber-500 bg-amber-50' : 'border-slate-200 bg-white hover:border-amber-300'}`} data-testid="shipping-expedited-option">
+                      <input
+                        type="radio"
+                        name="shipping_method"
+                        value="expedited"
+                        checked={shippingMethod === 'expedited'}
+                        onChange={() => setShippingMethod('expedited')}
+                        className="mt-1"
+                        data-testid="shipping-expedited-radio"
+                      />
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-slate-800">Expedited Shipping</span>
+                          <span className="font-bold text-amber-700">+$7.99</span>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-0.5">Faster fulfillment, prioritized in shipping queue</p>
+                      </div>
+                    </label>
                   </div>
                 </div>
 

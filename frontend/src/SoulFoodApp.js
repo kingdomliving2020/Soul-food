@@ -66,7 +66,7 @@ const SOUL_FOOD_SERIES = [
     bgColor: "bg-gradient-to-br from-blue-50 to-cyan-50",
     bgImage: "https://images.pexels.com/photos/8513088/pexels-photo-8513088.jpeg?w=800&h=400&fit=crop&crop=center",
     available: false,
-    unlockDate: "Pre-Order Savings (Ships May-Jun 2026)",
+    unlockDate: "Pre-Order Savings (Ships in 1-2 weeks)",
     description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity.",
     themes: [
       {
@@ -1098,10 +1098,10 @@ const SoulFoodLanding = () => {
                 <div className="bg-blue-50 border-2 border-blue-300 rounded-lg p-4">
                   <p className="text-blue-900 font-semibold flex items-center">
                     <span className="text-xl mr-2">📦</span>
-                    <span>Paperback Delivery: Ships in 2-3 weeks</span>
+                    <span>Paperback Delivery: Ships in 1-2 weeks (free) · expedited $7.99</span>
                   </p>
                   <p className="text-sm text-blue-700 mt-1 ml-8">
-                    US delivery typically 2-3 weeks from order (timing depends on shipping option selected)
+                    US delivery typically 1-2 weeks from order (timing depends on shipping option selected)
                   </p>
                 </div>
               </div>
@@ -1679,7 +1679,7 @@ const SoulFoodLanding = () => {
               Start Your Journey Today
             </h3>
             <p className="text-xl text-slate-700 max-w-2xl mx-auto">
-              Interactive lessons, eBooks & digital downloads available now. Print workbooks ship within 2-3 weeks!
+              Interactive lessons, eBooks & digital downloads available now. Print workbooks ship within 1-2 weeks — expedited $7.99 available!
             </p>
           </div>
 
@@ -1937,9 +1937,9 @@ const SoulFoodLanding = () => {
                 <div className="text-left">
                   <h4 className="font-bold text-slate-800 mb-2">✝️ Soul Food Is LIVE!</h4>
                   <div className="text-sm text-slate-700 space-y-2">
-                    <p><strong>Holiday Series:</strong> All editions available now — digital downloads + physical books (ships 2-3 weeks).</p>
+                    <p><strong>Holiday Series:</strong> All editions available now — digital downloads + physical books (ships 1-2 weeks (free) · expedited $7.99).</p>
                     <p><strong>Break*fast Pre-Order ($5 off student / $10 off Instructor):</strong> Month 1 "Prayer the First Resort" nibbles & snack packs available now. Full workbooks ship soon!</p>
-                    <p><strong>Lunch Pre-Order (early-bird savings until Juneteenth):</strong> Ships May-June 2026.</p>
+                    <p><strong>Lunch Pre-Order (early-bird savings until Juneteenth):</strong> Ships in 1-2 weeks (free shipping · expedited $7.99 available).</p>
                     <p><strong>🎮 Game Passes 20% Off — No Coupon Needed!</strong> Early Bird savings through Juneteenth (June 19, 2026).</p>
                     <p className="font-semibold text-emerald-700 bg-emerald-100 px-3 py-2 rounded-lg mt-3">Get started today — Holiday digital downloads available instantly!</p>
                   </div>
