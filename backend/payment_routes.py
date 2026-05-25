@@ -690,31 +690,114 @@ def expand_items_for_receipt(items: list) -> list:
 
 
 def resolve_item_to_file_entries(item: dict) -> list:
-    """Given a cart/transaction item, return a list of (product_id, file_key) tuples
-    that should get download links. Handles bundles, display names, and internal IDs.
+    """DEPRECATED — sync wrapper retained only for code that hasn't been
+    migrated to the async resolver yet. Prefer ``resolve_item_to_file_entries_async``.
 
-    Applies the deliverability gate (is_deliverable) so that:
-      - Full Breakfast workbooks are never auto-delivered (personal-study).
-      - Holiday per-chapter nibbles never substitute the full workbook PDF.
-      - Missing files (e.g., Breakfast IE SP1) are skipped, not substituted.
-    Skipped items are logged with a clear reason for admin visibility.
-
-    Returns: list of dicts with {product_id, name, file_key}
+    This sync version does NOT consult db.files and skips POD detection that
+    requires item context. New fulfillment paths must use the async version.
     """
     raw_id = (item.get("normalized_product_id") or item.get("product_id")
               or item.get("id") or item.get("uniqueKey", ""))
     item_name = item.get("name", raw_id)
-
-    # 1. Try direct normalize (handles internal IDs and cart-generated IDs)
     resolved = normalize_product_id(raw_id)
 
-    # 2. If raw_id didn't resolve, try the display name
-    if resolved not in PRODUCT_FILES and resolved == raw_id:
-        name_resolved = resolve_display_name_to_product_id(item_name)
-        if name_resolved and name_resolved in PRODUCT_FILES:
-            resolved = name_resolved
+    bundle_key = raw_id.lower().strip()
+    if bundle_key not in BUNDLE_EXPANSIONS and resolved.lower() in BUNDLE_EXPANSIONS:
+        bundle_key = resolved.lower()
+    if bundle_key in BUNDLE_EXPANSIONS:
+        entries = []
+        for sub_id in BUNDLE_EXPANSIONS[bundle_key]:
+            ok, _r = is_deliverable(sub_id)
+            if ok:
+                entries.append({"product_id": sub_id, "name": f"{item_name} ({sub_id})", "file_key": sub_id})
+        return entries
+    if resolved in PRODUCT_FILES:
+        ok, _r = is_deliverable(resolved)
+        if ok:
+            return [{"product_id": resolved, "name": item_name, "file_key": resolved}]
+    return []
 
-    # 3. Bundle expansion (raw_id or resolved id)
+
+# =============================================================================
+# POD / PHYSICAL-FORMAT DETECTION (per May 2026 spec)
+# =============================================================================
+# Rule: Physical orders deliver NO digital file. The full workbook is POD-only;
+# the customer receives a shipped book and zero download links. SP/Nibbles are
+# digital-only and never appear on a physical-format SKU.
+_PHYSICAL_FORMAT_TOKENS = ("physical", "paperback", "print", "pod", "hardcopy")
+_PHYSICAL_ID_SUFFIXES = ("-paperback", "-print", "-physical", "-pod", "-hardcopy")
+
+
+def _is_physical_format(item: dict) -> bool:
+    """True when the cart item is a POD / physical-only purchase. Such items
+    must not generate any download links — fulfillment is the print/ship pipeline.
+    Detection is intentionally conservative: explicit ``format`` field OR an id
+    suffix. Bundles set their own per-sub-item format; this only inspects the
+    parent item passed in."""
+    if not item:
+        return False
+    fmt = str(item.get("format") or item.get("type") or "").strip().lower()
+    if fmt in _PHYSICAL_FORMAT_TOKENS:
+        return True
+    raw_id = str(
+        item.get("product_id") or item.get("id") or item.get("uniqueKey") or ""
+    ).strip().lower()
+    if any(raw_id.endswith(suf) or suf + "-" in raw_id or raw_id == suf[1:] for suf in _PHYSICAL_ID_SUFFIXES):
+        return True
+    return False
+
+
+async def _has_product_attachment(product_id: str) -> bool:
+    """True iff db.files has any non-deleted file attached to product_id."""
+    if not product_id:
+        return False
+    normalized = normalize_product_id(product_id)
+    doc = await db.files.find_one(
+        {
+            "is_deleted": False,
+            "attachments": {
+                "$elemMatch": {
+                    "target_type": "product",
+                    "target_id": {"$in": [product_id, normalized]},
+                }
+            },
+        },
+        {"_id": 0, "id": 1},
+    )
+    return doc is not None
+
+
+async def resolve_item_to_file_entries_async(item: dict) -> list:
+    """Attachment-first resolver — the May 2026 spec.
+
+    Rules (in order):
+      1. POD / physical-format items → ZERO entries. No digital delivery ever.
+      2. Bundle items → expand via BUNDLE_EXPANSIONS, then per sub-id keep only
+         those that have a db.files attachment OR a legacy PRODUCT_FILES mapping
+         that is deliverable. Per sub-id POD detection applies if the sub-id
+         carries a physical suffix.
+      3. Single item → if db.files has an attachment, return one entry (the
+         download endpoint will pick the latest attached file). If no
+         attachment but the legacy PRODUCT_FILES mapping is deliverable,
+         return the legacy entry. Otherwise, return [] (order falls to
+         pending_verification — admin must attach the file via File Manager).
+
+    No filename heuristics, no display-name regex matching. The resolver only
+    speaks in product_ids and ATTACHMENT/MAPPING booleans. New SKUs become
+    deliverable the instant they are attached in db.files — no code deploy
+    required.
+    """
+    if _is_physical_format(item):
+        raw = (item.get("product_id") or item.get("id") or item.get("uniqueKey") or "")
+        print(f"[Fulfillment] POD/physical item '{raw}': no digital delivery (by policy)")
+        return []
+
+    raw_id = (item.get("normalized_product_id") or item.get("product_id")
+              or item.get("id") or item.get("uniqueKey", ""))
+    item_name = item.get("name", raw_id)
+    resolved = normalize_product_id(raw_id)
+
+    # Bundle expansion
     bundle_key = raw_id.lower().strip()
     if bundle_key not in BUNDLE_EXPANSIONS and resolved.lower() in BUNDLE_EXPANSIONS:
         bundle_key = resolved.lower()
@@ -722,26 +805,36 @@ def resolve_item_to_file_entries(item: dict) -> list:
     if bundle_key in BUNDLE_EXPANSIONS:
         entries = []
         for sub_id in BUNDLE_EXPANSIONS[bundle_key]:
+            # Per-sub POD gate (e.g., a bundle could include a paperback item)
+            if any(sub_id.lower().endswith(suf) for suf in _PHYSICAL_ID_SUFFIXES):
+                print(f"[Fulfillment] Bundle '{bundle_key}': skipping POD sub-item '{sub_id}'")
+                continue
+            if await _has_product_attachment(sub_id):
+                entries.append({"product_id": sub_id, "name": f"{item_name} ({sub_id})", "file_key": sub_id})
+                continue
+            # Legacy fallback while admin attaches the rest
             ok, reason = is_deliverable(sub_id)
             if ok:
-                entries.append({
-                    "product_id": sub_id,
-                    "name": f"{item_name} ({sub_id})",
-                    "file_key": sub_id,
-                })
+                entries.append({"product_id": sub_id, "name": f"{item_name} ({sub_id})", "file_key": sub_id})
             else:
-                print(f"[Fulfillment] Bundle '{bundle_key}': skipping sub-item '{sub_id}' (gated: {reason})")
+                print(f"[Fulfillment] Bundle '{bundle_key}': skipping '{sub_id}' (no attachment + legacy gate: {reason})")
         return entries
 
-    # 4. Single product — apply deliverability gate
+    # Single item — attachment first
+    if await _has_product_attachment(resolved):
+        return [{"product_id": resolved, "name": item_name, "file_key": resolved}]
+    if resolved != raw_id and await _has_product_attachment(raw_id):
+        return [{"product_id": raw_id, "name": item_name, "file_key": raw_id}]
+
+    # Legacy fallback for SKUs that haven't been attached yet
     if resolved in PRODUCT_FILES:
         ok, reason = is_deliverable(resolved)
         if ok:
+            print(f"[Fulfillment] '{raw_id}' resolved via LEGACY PRODUCT_FILES — attach in File Manager to migrate")
             return [{"product_id": resolved, "name": item_name, "file_key": resolved}]
-        print(f"[Fulfillment] Item '{raw_id}' (resolved={resolved}) gated: {reason}")
+        print(f"[Fulfillment] '{raw_id}' (resolved={resolved}) gated: {reason}")
         return []
 
-    # 5. No resolution — log and return empty (game passes, subscriptions, etc.)
     print(f"[Fulfillment] Could not resolve to file: raw_id={raw_id}, name={item_name}, resolved={resolved}")
     return []
 
@@ -2082,8 +2175,8 @@ async def get_checkout_status(session_id: str):
                         print(f"[StatusCheck] Error creating gift certificate: {gc_error}")
                     continue
                 
-                # Resolve item to file entries (handles display names, bundles, normalization)
-                file_entries = resolve_item_to_file_entries(item)
+                # Resolve item to file entries (attachment-first, POD-aware)
+                file_entries = await resolve_item_to_file_entries_async(item)
                 
                 print(f"[StatusCheck] Resolved to {len(file_entries)} file entries: {[e['file_key'] for e in file_entries]}")
                 
@@ -2345,8 +2438,8 @@ async def stripe_webhook(request: Request):
                     
                     print(f"[Webhook] Item: raw_id={raw_id}, name={item_name[:60]}")
                     
-                    # Resolve item to file entries (handles display names, bundles, normalization)
-                    file_entries = resolve_item_to_file_entries(item)
+                    # Resolve item to file entries (attachment-first, POD-aware)
+                    file_entries = await resolve_item_to_file_entries_async(item)
                     
                     print(f"[Webhook] Resolved to {len(file_entries)} file entries: {[e['file_key'] for e in file_entries]}")
                     
@@ -2617,8 +2710,8 @@ async def admin_generate_downloads(order_number: str, request: Request):
     download_links_created = []
     
     for item in items:
-        # Resolve item to file entries (handles display names, bundles, normalization)
-        file_entries = resolve_item_to_file_entries(item)
+        # Resolve item to file entries (attachment-first, POD-aware)
+        file_entries = await resolve_item_to_file_entries_async(item)
         
         if not file_entries:
             raw_id = item.get("product_id") or item.get("id", "")
@@ -2983,7 +3076,7 @@ async def _grant_audio_access_for_items(items: list, customer_email: str):
     specific_lessons = []
     
     for item in items:
-        file_entries = resolve_item_to_file_entries(item)
+        file_entries = await resolve_item_to_file_entries_async(item)
         for entry in file_entries:
             key = entry.get("file_key", "").lower()
             # Full holiday workbook → all 4C audio
@@ -3181,11 +3274,11 @@ async def _do_refulfill_order(order_number: str) -> dict:
         {"$set": {"revoked": True, "revoked_at": datetime.utcnow().isoformat()}}
     )
 
-    # Re-create download links using the improved resolver
+    # Re-create download links using the attachment-first resolver
     download_links_created = []
     verification_failures: list = []
     for item in items:
-        file_entries = resolve_item_to_file_entries(item)
+        file_entries = await resolve_item_to_file_entries_async(item)
         if not file_entries:
             continue
 
