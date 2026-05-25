@@ -38,15 +38,15 @@ const useCountdown = (targetDate) => {
   return timeLeft;
 };
 
-// Pentecost countdown hook for early bird deals
+// Juneteenth countdown hook for early bird deals (sale extended)
 const usePentecostCountdown = () => {
-  const pentecostDate = new Date('2026-05-24T23:59:59');
+  const saleEndDate = new Date('2026-06-19T23:59:59');
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, expired: false });
   
   useEffect(() => {
     const update = () => {
       const now = new Date();
-      const diff = pentecostDate - now;
+      const diff = saleEndDate - now;
       if (diff <= 0) {
         setTimeLeft({ days: 0, hours: 0, minutes: 0, expired: true });
         return;
@@ -129,7 +129,7 @@ const PalmSundayBanner = () => {
         {!pentecost.expired && (
           <div className="mt-5 flex justify-center">
             <div className="bg-white/15 backdrop-blur-sm rounded-xl px-6 py-3 flex items-center gap-4">
-              <span className="text-amber-300 font-semibold text-sm">Early Bird ends Pentecost:</span>
+              <span className="text-amber-300 font-semibold text-sm">Early Bird ends Juneteenth:</span>
               <div className="flex gap-2">
                 <div className="bg-white/25 rounded-lg px-3 py-1 text-center">
                   <span className="text-lg font-bold">{pentecost.days}</span>
@@ -419,7 +419,7 @@ const QuickOrder = () => {
       editions: ['adult', 'youth', 'instructor'],
       formats: ['physical'],
       packages: [
-        { id: 'workbook', name: 'Full Workbook', lessons: 12, available: true, preOrder: true, note: 'Pre-Order — $3 Off until Pentecost!' }
+        { id: 'workbook', name: 'Full Workbook', lessons: 12, available: true, preOrder: true, note: 'Pre-Order — $3 Off until Juneteenth!' }
       ],
       pricing: {
         workbook: {
@@ -586,8 +586,8 @@ const QuickOrder = () => {
     }
   ];
 
-  // Gaming passes - 20% OFF until Pentecost (May 24, 2026) - NO COUPON REQUIRED
-  const PENTECOST_DATE = new Date('2026-05-24T23:59:59');
+  // Gaming passes - 20% OFF until Juneteenth (June 19, 2026) - NO COUPON REQUIRED (Early Bird extended)
+  const PENTECOST_DATE = new Date('2026-06-19T23:59:59');
   const isGameSaleActive = new Date() < PENTECOST_DATE;
   
   const gamingPasses = [
@@ -1876,7 +1876,7 @@ const QuickOrder = () => {
           {/* Pentecost deadline */}
           {isGameSaleActive && (
             <div className="mt-4 text-center">
-              <p className="text-sm text-slate-500">20% off game passes — no coupon required. Sale ends Pentecost (May 24, 2026).</p>
+              <p className="text-sm text-slate-500">20% off game passes — no coupon required. Sale ends Juneteenth (June 19, 2026).</p>
             </div>
           )}
         </section>

@@ -1111,7 +1111,7 @@ PRODUCTS = {
         "preorder": True
     },
     
-    # ==================== LUNCH WORKBOOKS (PRE-ORDER — $3 off until Pentecost) ====================
+    # ==================== LUNCH WORKBOOKS (PRE-ORDER — $3 off until Juneteenth) ====================
     "lunch_ie_paperback": {
         "name": "Lunch Instructor Edition (WBK) — Pre-Order",
         "sku": "LNCH-IE-PB",
@@ -1203,7 +1203,7 @@ PRODUCTS = {
         "edition": "YE"
     },
     
-    # ==================== GAME PASSES (20% OFF until Pentecost May 24, 2026 — no coupon needed) ====================
+    # ==================== GAME PASSES (20% OFF Early Bird — extended through Juneteenth June 19, 2026) ====================
     "game_pass_30": {
         "name": "Digital Games Subscription (30-Day)",
         "sku": "GAMEPASS-30D",
@@ -1213,7 +1213,7 @@ PRODUCTS = {
         "sale_price": 7.99,
         "currency": "usd",
         "promo_sale_price": 6.39,
-        "promo_until": "2026-05-24"
+        "promo_until": "2026-06-19"
     },
     "game_pass_90": {
         "name": "Game Pass (90-Day Access)",
@@ -1224,7 +1224,7 @@ PRODUCTS = {
         "sale_price": 24.99,
         "currency": "usd",
         "promo_sale_price": 19.99,
-        "promo_until": "2026-05-24"
+        "promo_until": "2026-06-19"
     },
     
     # ==================== SUBSCRIPTIONS ====================

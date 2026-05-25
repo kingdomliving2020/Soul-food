@@ -71,8 +71,8 @@ class TestGamePassPromo:
         data = response.json()
         gp30 = data['products'].get('game_pass_30', {})
         gp90 = data['products'].get('game_pass_90', {})
-        assert gp30.get('promo_until') == '2026-05-24', f"Expected 2026-05-24, got {gp30.get('promo_until')}"
-        assert gp90.get('promo_until') == '2026-05-24', f"Expected 2026-05-24, got {gp90.get('promo_until')}"
+        assert gp30.get('promo_until') == '2026-06-19', f"Expected 2026-06-19, got {gp30.get('promo_until')}"
+        assert gp90.get('promo_until') == '2026-06-19', f"Expected 2026-06-19, got {gp90.get('promo_until')}"
 
 
 class TestHolidayLessons:

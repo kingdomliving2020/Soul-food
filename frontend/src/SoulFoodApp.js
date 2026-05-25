@@ -220,17 +220,17 @@ const GameAddToCartButton = () => {
   );
 };
 
-// Pentecost Sale Countdown Component
+// Juneteenth Sale Countdown Component (Early Bird savings ends Juneteenth)
 const ResurrectionCountdown = () => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   
   useEffect(() => {
-    // Pentecost 2026 is May 24, 2026 — sale/promo end date
-    const pentecostDate = new Date('2026-05-24T23:59:59');
+    // Juneteenth 2026 — June 19, 2026 (Early Bird savings extended)
+    const saleEndDate = new Date('2026-06-19T23:59:59');
     
     const updateCountdown = () => {
       const now = new Date();
-      const diff = pentecostDate - now;
+      const diff = saleEndDate - now;
       
       if (diff > 0) {
         setTimeLeft({
@@ -609,13 +609,14 @@ const SoulFoodLanding = () => {
                 </Button>
               </div>
               
-              <p className="text-purple-300/90 text-sm italic" data-testid="hero-denomination-note">
-                Non-denominational and designed for all Christian backgrounds
+              <p className="text-purple-300/90 text-sm italic max-w-xl" data-testid="hero-denomination-note">
+                Non-denominational Christian curriculum — built for the Body of Christ to start conversations
+                that deepen faith and grow a healthy curiosity &amp; passion for Christ.
               </p>
               
               {/* Sale Countdown */}
               <div className="mt-5 inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
-                <span className="text-amber-400 text-xs font-semibold">Early Bird Sale ends Pentecost</span>
+                <span className="text-amber-400 text-xs font-semibold">Early Bird Sale ends Juneteenth</span>
                 <ResurrectionCountdown />
               </div>
             </div>
@@ -1915,8 +1916,8 @@ const SoulFoodLanding = () => {
                   <div className="text-sm text-slate-700 space-y-2">
                     <p><strong>Holiday Series:</strong> All editions available now — digital downloads + physical books (ships 2-3 weeks).</p>
                     <p><strong>Break*fast Pre-Order ($3 off full workbooks):</strong> Month 1 "Prayer the First Resort" nibbles & snack packs available now. Full workbooks ship soon!</p>
-                    <p><strong>Lunch Pre-Order ($3 off until Pentecost):</strong> Ships May-June 2026.</p>
-                    <p><strong>🎮 Game Passes 20% Off — No Coupon Needed!</strong> Through Pentecost (May 24, 2026).</p>
+                    <p><strong>Lunch Pre-Order ($3 off until Juneteenth):</strong> Ships May-June 2026.</p>
+                    <p><strong>🎮 Game Passes 20% Off — No Coupon Needed!</strong> Early Bird savings through Juneteenth (June 19, 2026).</p>
                     <p className="font-semibold text-emerald-700 bg-emerald-100 px-3 py-2 rounded-lg mt-3">Get started today — Holiday digital downloads available instantly!</p>
                   </div>
                 </div>
