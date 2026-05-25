@@ -743,17 +743,35 @@ def _is_physical_format(item: dict) -> bool:
 
 
 async def _has_product_attachment(product_id: str) -> bool:
-    """True iff db.files has any non-deleted file attached to product_id."""
+    """True iff db.files has any non-deleted file attached to product_id OR any of its aliases.
+
+    A product can have multiple equivalent product_ids (e.g. ``snack_pack_ye_m1`` and
+    ``breakfast-snack-month-1-youth-interactive`` both refer to the same Snack Pack).
+    Bundles use one form; the storefront uses another. Admin should be able to attach
+    a file to ONE canonical id and have it satisfy every alias automatically.
+
+    Aliases are derived from ``PRODUCT_FILES``: any two keys that map to the same
+    filename are aliases of each other.
+    """
     if not product_id:
         return False
-    normalized = normalize_product_id(product_id)
+
+    candidates = {product_id, normalize_product_id(product_id)}
+
+    # Walk PRODUCT_FILES once to find aliases (keys sharing the same filename).
+    target_filename = PRODUCT_FILES.get(product_id) or PRODUCT_FILES.get(normalize_product_id(product_id))
+    if target_filename:
+        for k, v in PRODUCT_FILES.items():
+            if v == target_filename:
+                candidates.add(k)
+
     doc = await db.files.find_one(
         {
             "is_deleted": False,
             "attachments": {
                 "$elemMatch": {
                     "target_type": "product",
-                    "target_id": {"$in": [product_id, normalized]},
+                    "target_id": {"$in": list(candidates)},
                 }
             },
         },
@@ -885,6 +903,17 @@ async def get_pdf_path_async(product_id: str) -> Optional[str]:
     """
     normalized_id = normalize_product_id(product_id)
 
+    # Build alias set — any product_id pointing to the same legacy filename is
+    # considered an alias. This lets a single attachment satisfy every SKU that
+    # historically delivered the same PDF (e.g. snack_pack_ye_m1 ↔ breakfast-
+    # snack-month-1-youth-interactive).
+    candidates = {product_id, normalized_id}
+    target_filename = PRODUCT_FILES.get(product_id) or PRODUCT_FILES.get(normalized_id)
+    if target_filename:
+        for k, v in PRODUCT_FILES.items():
+            if v == target_filename:
+                candidates.add(k)
+
     # 1. Object Storage via db.files attachment (single source of truth)
     obj = await db.files.find_one(
         {
@@ -892,7 +921,7 @@ async def get_pdf_path_async(product_id: str) -> Optional[str]:
             "attachments": {
                 "$elemMatch": {
                     "target_type": "product",
-                    "target_id": {"$in": [product_id, normalized_id]},
+                    "target_id": {"$in": list(candidates)},
                 }
             },
         },
