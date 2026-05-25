@@ -867,7 +867,7 @@ const LandingPage = () => {
               <span className="text-2xl">✝️</span>
               <div className="text-left">
                 <p className="font-bold text-slate-800">Soul Food Is LIVE! He Is Risen!</p>
-                <p className="text-sm text-slate-600">Holiday Series available now. Break*fast & Lunch pre-orders open — save $3 on full workbooks!</p>
+                <p className="text-sm text-slate-600">Holiday Series available now. Break*fast & Lunch pre-orders open — save up to $10 on workbooks!</p>
               </div>
             </div>
             <div className="inline-flex items-center gap-3 bg-purple-50/80 backdrop-blur-sm px-6 py-3 rounded-2xl shadow-md border border-purple-200">

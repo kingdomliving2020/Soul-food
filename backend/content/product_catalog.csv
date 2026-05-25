@@ -5,18 +5,18 @@ snack_pack_ae_m3,Break*fast Snack Pack AE M3,BKFT-SP-AE-M3,prod_Tl6zPmnPaSE4iQ,8
 snack_pack_ye_m1,Break*fast Snack Pack YE M1,BKFT-SP-YE-M1,prod_Tl5jzNmDkKJnth,8.99,8.99,,,usd,YE,,,False,False,False,False
 snack_pack_ye_m2,Break*fast Snack Pack YE M2,BKFT-SP-YE-M2,prod_Tl5oCtBvc2kGHX,8.99,8.99,,,usd,YE,,,False,False,False,False
 snack_pack_ye_m3,Break*fast Snack Pack YE M3,BKFT-SP-YE-M3,prod_Tl5vC3AqFX0CBp,8.99,8.99,,,usd,YE,,,False,False,False,False
-breakfast_ie_digital,Break*fast IE (Digital) — Pre-Order,BKFT-IE-DIG,prod_Tl5P17AYZd8eAR,19.99,16.99,,,usd,IE,digital,,True,False,False,False
-breakfast_ie_paperback,Break*fast Instructor Edition (WBK) — Pre-Order,BKFT-IE-PB,prod_Tl5DmbgIRsGRbR,29.99,26.99,,,usd,IE,paperback,,True,False,False,False
-breakfast_ae_digital,Break*fast AE (Digital) — Pre-Order,BKFT-AE-DIG,prod_Tl5TzIALgCR5AX,14.99,11.99,,,usd,AE,digital,,True,False,False,False
-breakfast_ae_paperback,Break*fast Adult Edition (WBK) — Pre-Order,BKFT-AE-PB,prod_Tl5GHVPeUEeqRH,27.99,24.99,,,usd,AE,paperback,,True,False,False,False
-breakfast_ye_digital,Break*fast YE (Digital) — Pre-Order,BKFT-YE-DIG,prod_Tl5WM3aZcWrBB1,12.99,9.99,,,usd,YE,digital,,True,False,False,False
-breakfast_ye_paperback,Break*fast Youth Edition (WBK) — Pre-Order,BKFT-YE-PB,prod_Tl5KYUQVq7fgKd,24.99,21.99,,,usd,YE,paperback,,True,False,False,False
+breakfast_ie_digital,Break*fast IE (Digital) — Pre-Order,BKFT-IE-DIG,prod_Tl5P17AYZd8eAR,59.99,49.99,,,usd,IE,digital,,True,False,False,False
+breakfast_ie_paperback,Break*fast Instructor Edition (WBK) — Pre-Order,BKFT-IE-PB,prod_Tl5DmbgIRsGRbR,59.99,49.99,,,usd,IE,paperback,,True,False,False,False
+breakfast_ae_digital,Break*fast AE (Digital) — Pre-Order,BKFT-AE-DIG,prod_Tl5TzIALgCR5AX,19.99,14.99,,,usd,AE,digital,,True,False,False,False
+breakfast_ae_paperback,Break*fast Adult Edition (WBK) — Pre-Order,BKFT-AE-PB,prod_Tl5GHVPeUEeqRH,34.99,29.99,,,usd,AE,paperback,,True,False,False,False
+breakfast_ye_digital,Break*fast YE (Digital) — Pre-Order,BKFT-YE-DIG,prod_Tl5WM3aZcWrBB1,19.99,14.99,,,usd,YE,digital,,True,False,False,False
+breakfast_ye_paperback,Break*fast Youth Edition (WBK) — Pre-Order,BKFT-YE-PB,prod_Tl5KYUQVq7fgKd,34.99,29.99,,,usd,YE,paperback,,True,False,False,False
 lunch_ie_paperback,Lunch Instructor Edition (WBK) — Pre-Order,LNCH-IE-PB,prod_Tl5bF463nMytFx,29.99,26.99,,,usd,IE,paperback,,True,False,False,False
 lunch_ae_paperback,Lunch Adult Edition (WBK) — Pre-Order,LNCH-AE-PB,prod_Tl5dMEyGFDitEf,27.99,24.99,,,usd,AE,paperback,,True,False,False,False
 lunch_ye_paperback,Lunch Youth Edition (WBK) — Pre-Order,LNCH-YE-PB,prod_Tl5hAx8RL8Vvjh,24.99,21.99,,,usd,YE,paperback,,True,False,False,False
-holiday_ie,Holiday Instructor Edition (WBK),HOL-IE-WBK,prod_Tl6IOtuiMAgrwC,19.99,19.99,,,usd,IE,,,False,False,False,False
-holiday_ae,Holiday Adult Edition (WBK),HOL-AE-WBK,prod_Tl6LmJkJxDrzLA,16.99,16.99,,,usd,AE,,,False,False,False,False
-holiday_ye,Holiday Youth Edition (WBK),HOL-YE-WBK,prod_Tl6WIl0O7XFFgg,16.99,16.99,,,usd,YE,,,False,False,False,False
+holiday_ie,Holiday Instructor Edition (WBK),HOL-IE-WBK,prod_Tl6IOtuiMAgrwC,44.99,34.99,,,usd,IE,,,False,False,False,False
+holiday_ae,Holiday Adult Edition (WBK),HOL-AE-WBK,prod_Tl6LmJkJxDrzLA,14.99,9.99,,,usd,AE,,,False,False,False,False
+holiday_ye,Holiday Youth Edition (WBK),HOL-YE-WBK,prod_Tl6WIl0O7XFFgg,14.99,9.99,,,usd,YE,,,False,False,False,False
 nibble_ae,Break*fast Nibble AE,BKFT-NIB-AE-DIG,prod_Tl6dXzvc89fzpU,3.99,3.99,,,usd,AE,,,False,False,False,False
 nibble_ye,Break*fast Nibble YE,BKFT-NIB-YE-DIG,prod_Tl6hePoHzLo5pi,3.99,3.99,,,usd,YE,,,False,False,False,False
 game_pass_30,Digital Games Subscription (30-Day),GAMEPASS-30D,prod_Tl7ZEakAImOyVc,7.99,7.99,6.39,2026-06-19,usd,,,,False,False,False,False

@@ -66,7 +66,7 @@ const SOUL_FOOD_SERIES = [
     bgColor: "bg-gradient-to-br from-blue-50 to-cyan-50",
     bgImage: "https://images.pexels.com/photos/8513088/pexels-photo-8513088.jpeg?w=800&h=400&fit=crop&crop=center",
     available: false,
-    unlockDate: "Pre-Order — $3 Off (Ships May-Jun 2026)",
+    unlockDate: "Pre-Order Savings (Ships May-Jun 2026)",
     description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity.",
     themes: [
       {
@@ -1337,7 +1337,7 @@ const SoulFoodLanding = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-10">
             <img 
-              src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/k75fu34t_Gaming%20Central%20Test%20Your%20Knowledge%20Logo.png"
+              src="/game-logos/gaming-central.png"
               alt="Gaming Central"
               className="h-24 mx-auto mb-6"
             />
@@ -1373,7 +1373,7 @@ const SoulFoodLanding = () => {
                 <CardHeader className="p-0">
                   <div className="h-44 bg-white/90 flex items-center justify-center p-4">
                     <img 
-                      src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/4jh8a4ad_Soul%20Food%20Trivia%20Mix-up%20Logo.png"
+                      src="/game-logos/trivia-mixup-youth.png"
                       alt="Trivia Mix-up Youth"
                       className="h-32 w-auto object-contain"
                     />
@@ -1412,7 +1412,7 @@ const SoulFoodLanding = () => {
                 <CardHeader className="p-0">
                   <div className="h-44 bg-white/90 flex items-center justify-center p-4">
                     <img 
-                      src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/dgncbaxl_Soul%20Food%27s%20Tricky%20Testaments%20-%20Bold%20Modern%20%281%29.png"
+                      src="/game-logos/tricky-testaments-youth.png"
                       alt="Tricky Testaments Youth"
                       className="h-36 w-auto object-contain"
                     />
@@ -1464,7 +1464,7 @@ const SoulFoodLanding = () => {
               <CardHeader className="p-0">
                 <div className="h-44 bg-white/90 flex items-center justify-center p-4">
                   <img 
-                    src="https://customer-assets.emergentagent.com/job_soul-cuisine/artifacts/bovn8pyf_Soul%20Food%20Trivia%20Logo%20-%20Vintage%20Style%20%282%29.png"
+                    src="/game-logos/trivia-mixup-adult.png"
                     alt="Trivia Mix-up"
                     className="h-32 w-auto object-contain"
                   />
@@ -1503,7 +1503,7 @@ const SoulFoodLanding = () => {
               <CardHeader className="p-0">
                 <div className="h-44 bg-white/90 flex items-center justify-center p-4">
                   <img 
-                    src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/29d8ivo6_Soul%20Food%27s%20Tricky%20Testaments%20Logo%20%281%29.png"
+                    src="/game-logos/tricky-testaments-adult.png"
                     alt="Tricky Testaments Adult"
                     className="h-36 w-auto object-contain"
                   />
@@ -1590,7 +1590,7 @@ const SoulFoodLanding = () => {
             {/* Header */}
             <div className="text-center mb-8">
               <img 
-                src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/k75fu34t_Gaming%20Central%20Test%20Your%20Knowledge%20Logo.png"
+                src="/game-logos/gaming-central.png"
                 alt="Gaming Central"
                 className="w-24 h-24 mx-auto mb-4 rounded-2xl"
               />
@@ -1708,7 +1708,7 @@ const SoulFoodLanding = () => {
                     </div>
                   </div>
                   <Badge className="bg-emerald-500 text-white text-xs px-3 py-1 mt-2">
-                    {selectedSeries?.available ? 'Instant Download Available' : 'Pre-Order — $3 Off'}
+                    {selectedSeries?.available ? "Instant Download Available" : "Pre-Order Savings Active"}
                   </Badge>
                 </div>
 
@@ -1915,8 +1915,8 @@ const SoulFoodLanding = () => {
                   <h4 className="font-bold text-slate-800 mb-2">✝️ Soul Food Is LIVE!</h4>
                   <div className="text-sm text-slate-700 space-y-2">
                     <p><strong>Holiday Series:</strong> All editions available now — digital downloads + physical books (ships 2-3 weeks).</p>
-                    <p><strong>Break*fast Pre-Order ($3 off full workbooks):</strong> Month 1 "Prayer the First Resort" nibbles & snack packs available now. Full workbooks ship soon!</p>
-                    <p><strong>Lunch Pre-Order ($3 off until Juneteenth):</strong> Ships May-June 2026.</p>
+                    <p><strong>Break*fast Pre-Order ($5 off student / $10 off Instructor):</strong> Month 1 "Prayer the First Resort" nibbles & snack packs available now. Full workbooks ship soon!</p>
+                    <p><strong>Lunch Pre-Order (early-bird savings until Juneteenth):</strong> Ships May-June 2026.</p>
                     <p><strong>🎮 Game Passes 20% Off — No Coupon Needed!</strong> Early Bird savings through Juneteenth (June 19, 2026).</p>
                     <p className="font-semibold text-emerald-700 bg-emerald-100 px-3 py-2 rounded-lg mt-3">Get started today — Holiday digital downloads available instantly!</p>
                   </div>

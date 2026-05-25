@@ -398,7 +398,7 @@ const GamingCentral = () => {
               ← Back to Home
             </Button>
             <img 
-              src="https://customer-assets.emergentagent.com/job_book-website-help/artifacts/k75fu34t_Gaming%20Central%20Test%20Your%20Knowledge%20Logo.png"
+              src="/game-logos/gaming-central.png"
               alt="Gaming Central"
               className="h-14 w-14 rounded-xl"
             />

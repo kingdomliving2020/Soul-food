@@ -88,7 +88,7 @@ const PalmSundayBanner = () => {
             <span className="text-3xl">✝️</span>
           </div>
           <p className="text-purple-100 text-sm md:text-base">
-            <strong>Holiday Series</strong> available now! <strong>Break*fast</strong> & <strong>Lunch</strong> pre-orders open — save $3 on full workbooks!
+            <strong>Holiday Series</strong> available now! <strong>Break*fast</strong> & <strong>Lunch</strong> pre-orders open — save up to $10 on workbooks!
           </p>
         </div>
 
@@ -109,7 +109,7 @@ const PalmSundayBanner = () => {
           {/* Breakfast - PRE-ORDER */}
           <div className="bg-amber-400 text-purple-900 rounded-xl px-5 py-4 text-center min-w-[180px] shadow-lg">
             <p className="text-xs uppercase tracking-wide font-medium mb-1">Break*fast Series</p>
-            <p className="font-bold text-lg">Pre-Order — $3 Off</p>
+            <p className="font-bold text-lg">Pre-Order Savings Active</p>
             <p className="text-xs mt-1">Snack Packs + Nibbles available now!</p>
           </div>
 
@@ -120,7 +120,7 @@ const PalmSundayBanner = () => {
           {/* Lunch - PRE-ORDER */}
           <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4 text-center min-w-[180px]">
             <p className="text-xs text-purple-200 uppercase tracking-wide mb-1">Lunch Series</p>
-            <p className="font-bold text-lg">Pre-Order — $3 Off</p>
+            <p className="font-bold text-lg">Pre-Order Savings Active</p>
             <p className="text-xs text-purple-200 mt-1">Ships May-June 2026</p>
           </div>
         </div>
@@ -363,14 +363,14 @@ const QuickOrder = () => {
         },
         full: {
           listPrices: { 
-            adult: { physical: 16.99, interactive: 14.99, epub: 14.99 }, 
-            youth: { physical: 16.99, interactive: 14.99, epub: 14.99 },
-            instructor: { physical: 19.99, interactive: 17.99, epub: 17.99 }
+            adult: { physical: 24.99, interactive: 14.99, epub: 14.99 }, 
+            youth: { physical: 24.99, interactive: 14.99, epub: 14.99 },
+            instructor: { physical: 44.99, interactive: 44.99, epub: 44.99 }
           },
           prices: { 
-            adult: { physical: 16.99, interactive: 14.99, epub: 14.99 }, 
-            youth: { physical: 16.99, interactive: 14.99, epub: 14.99 },
-            instructor: { physical: 19.99, interactive: 17.99, epub: 17.99 }
+            adult: { physical: 19.99, interactive: 9.99, epub: 9.99 }, 
+            youth: { physical: 19.99, interactive: 9.99, epub: 9.99 },
+            instructor: { physical: 34.99, interactive: 34.99, epub: 34.99 }
           }
         }
       },
@@ -388,7 +388,7 @@ const QuickOrder = () => {
       packages: [
         { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, selectLesson: true, available: true },
         { id: 'snack', name: 'Snack Pack (4 Lessons)', lessons: 4, selectMonth: true, available: true, note: 'Includes Prayer Month 1 (available now). Additional content in future updates.' },
-        { id: 'meal', name: 'Meal Bundle (12 Lessons) — $3 Off Pre-Order', lessons: 12, available: true, preOrder: true, note: 'Ready Jan 2026' }
+        { id: 'meal', name: 'Meal Bundle (12 Lessons) — Pre-Order Savings', lessons: 12, available: true, preOrder: true, note: 'Ready Jan 2026' }
       ],
       pricing: {
         nibble: {
@@ -400,8 +400,8 @@ const QuickOrder = () => {
           prices: { adult: { interactive: 8.99, epub: 8.99 }, youth: { interactive: 8.99, epub: 8.99 } }
         },
         meal: {
-          listPrices: { adult: { interactive: 26.97, epub: 26.97 }, youth: { interactive: 26.97, epub: 26.97 } },
-          prices: { adult: { interactive: 18.99, epub: 18.99 }, youth: { interactive: 18.99, epub: 18.99 } }
+          listPrices: { adult: { interactive: 19.99, epub: 19.99 }, youth: { interactive: 19.99, epub: 19.99 } },
+          prices: { adult: { interactive: 14.99, epub: 14.99 }, youth: { interactive: 14.99, epub: 14.99 } }
         }
       },
       monthOptions: breakfastMonths,
@@ -419,7 +419,7 @@ const QuickOrder = () => {
       editions: ['adult', 'youth', 'instructor'],
       formats: ['physical'],
       packages: [
-        { id: 'workbook', name: 'Full Workbook', lessons: 12, available: true, preOrder: true, note: 'Pre-Order — $3 Off until Juneteenth!' }
+        { id: 'workbook', name: 'Full Workbook', lessons: 12, available: true, preOrder: true, note: 'Pre-Order Savings until Juneteenth!' }
       ],
       pricing: {
         workbook: {
@@ -446,10 +446,10 @@ const QuickOrder = () => {
       editions: ['instructor'],
       formats: ['digital', 'physical'],
       packages: [
-        { id: 'holiday-ie', name: 'Holiday IE (Workbook)', price: 19.99, format: 'physical', available: true },
-        { id: 'breakfast-digital', name: 'Break*fast IE (Digital) — $3 Off', price: 16.99, format: 'digital', available: true, preOrder: true },
-        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback) — $3 Off', price: 26.99, format: 'physical', available: true, preOrder: true },
-        { id: 'lunch-ie-preorder', name: 'Lunch IE — $3 Off', price: 26.99, format: 'physical', available: true, preOrder: true }
+        { id: 'holiday-ie', name: 'Holiday IE (Workbook)', price: 34.99, format: 'physical', available: true },
+        { id: 'breakfast-digital', name: 'Break*fast IE (Digital) — $10 Off', price: 49.99, format: 'digital', available: true, preOrder: true },
+        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback) — $10 Off', price: 49.99, format: 'physical', available: true, preOrder: true },
+        { id: 'lunch-ie-preorder', name: 'Lunch IE — Pre-Order', price: 26.99, format: 'physical', available: true, preOrder: true }
       ],
       salePercent: 0
     },
@@ -457,21 +457,21 @@ const QuickOrder = () => {
       id: 'workbooks',
       name: 'Full Workbooks',
       tagline: 'Complete Study Workbooks',
-      description: 'Holiday available now! Break*fast pre-order with $3 off. Physical books ship 2-3 weeks.',
+      description: 'Holiday available now! Break*fast pre-order savings live. Physical books ship 2-3 weeks.',
       available: true,
       editions: ['adult', 'youth'],
       formats: ['digital', 'physical'],
       packages: [
-        { id: 'holiday-ae-digital', name: 'Holiday Digital (Adult)', price: 14.99, edition: 'adult', format: 'digital', available: true },
-        { id: 'holiday-ae-paperback', name: 'Holiday Paperback (Adult)', price: 16.99, edition: 'adult', format: 'physical', available: true, note: '2-3 wk ship' },
-        { id: 'holiday-ye-digital', name: 'Holiday Digital (Youth)', price: 12.99, edition: 'youth', format: 'digital', available: true },
-        { id: 'holiday-ye-paperback', name: 'Holiday Paperback (Youth)', price: 16.99, edition: 'youth', format: 'physical', available: true, note: '2-3 wk ship' },
-        { id: 'holiday-ie-digital', name: 'Holiday Digital (Instructor)', price: 19.99, edition: 'instructor', format: 'digital', available: true },
-        { id: 'holiday-ie-paperback', name: 'Holiday Paperback (Instructor)', price: 24.99, edition: 'instructor', format: 'physical', available: true, note: '2-3 wk ship' },
-        { id: 'breakfast-ae-digital', name: 'Break*fast Digital (Adult) — $3 Off', price: 11.99, edition: 'adult', format: 'digital', available: true, preOrder: true },
-        { id: 'breakfast-ae-paperback', name: 'Break*fast Paperback (Adult) — $3 Off', price: 24.99, edition: 'adult', format: 'physical', available: true, preOrder: true, note: 'Pre-Order' },
-        { id: 'breakfast-ye-digital', name: 'Break*fast Digital (Youth) — $3 Off', price: 9.99, edition: 'youth', format: 'digital', available: true, preOrder: true },
-        { id: 'breakfast-ye-paperback', name: 'Break*fast Paperback (Youth) — $3 Off', price: 21.99, edition: 'youth', format: 'physical', available: true, preOrder: true, note: 'Pre-Order' }
+        { id: 'holiday-ae-digital', name: 'Holiday Digital (Adult)', price: 9.99, edition: 'adult', format: 'digital', available: true },
+        { id: 'holiday-ae-paperback', name: 'Holiday Paperback (Adult)', price: 19.99, edition: 'adult', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'holiday-ye-digital', name: 'Holiday Digital (Youth)', price: 9.99, edition: 'youth', format: 'digital', available: true },
+        { id: 'holiday-ye-paperback', name: 'Holiday Paperback (Youth)', price: 19.99, edition: 'youth', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'holiday-ie-digital', name: 'Holiday Digital (Instructor)', price: 34.99, edition: 'instructor', format: 'digital', available: true },
+        { id: 'holiday-ie-paperback', name: 'Holiday Paperback (Instructor)', price: 34.99, edition: 'instructor', format: 'physical', available: true, note: '2-3 wk ship' },
+        { id: 'breakfast-ae-digital', name: 'Break*fast Digital (Adult) — $5 Off', price: 14.99, edition: 'adult', format: 'digital', available: true, preOrder: true },
+        { id: 'breakfast-ae-paperback', name: 'Break*fast Paperback (Adult) — $5 Off', price: 29.99, edition: 'adult', format: 'physical', available: true, preOrder: true, note: 'Pre-Order' },
+        { id: 'breakfast-ye-digital', name: 'Break*fast Digital (Youth) — $5 Off', price: 14.99, edition: 'youth', format: 'digital', available: true, preOrder: true },
+        { id: 'breakfast-ye-paperback', name: 'Break*fast Paperback (Youth) — $5 Off', price: 29.99, edition: 'youth', format: 'physical', available: true, preOrder: true, note: 'Pre-Order' }
       ],
       salePercent: 0
     },
@@ -1149,7 +1149,7 @@ const QuickOrder = () => {
                 <p className="text-xs text-slate-500 mb-4">Download instantly after purchase</p>
                 <Button
                   onClick={() => {
-                    addToCart({ id: 'holiday-ae-digital', name: 'Holiday AE (ePub)', price: 14.99, quantity: 1 });
+                    addToCart({ id: 'holiday-ae-digital', name: 'Holiday AE (ePub)', price: 9.99, quantity: 1 });
                     toast.success('Holiday AE ePub added!');
                   }}
                   className="w-full bg-emerald-600 hover:bg-emerald-700"
@@ -1888,7 +1888,7 @@ const QuickOrder = () => {
             <Badge className="bg-amber-100 text-amber-700 text-xs px-2 py-0.5">Ships Soon</Badge>
           </div>
           <p className="text-sm text-slate-500 mb-2">
-            Pre-order now and save $3 on full workbooks! Includes 2 months of complimentary digital access while you wait.
+            Pre-order now and save up to $10 on workbooks! Includes 2 months of complimentary digital access while you wait.
           </p>
           <p className="text-xs text-amber-700 bg-amber-50 rounded-lg px-4 py-2 inline-block border border-amber-200">
             Preorder items will ship in their estimated delivery window. You&apos;ll receive courtesy digital access immediately after purchase.
