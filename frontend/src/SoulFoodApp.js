@@ -248,16 +248,16 @@ const ResurrectionCountdown = () => {
   }, []);
   
   return (
-    <div className="flex gap-2 sm:gap-3 justify-center lg:justify-end">
+    <div className="flex gap-2 sm:gap-3 justify-start" data-testid="hero-countdown">
       {[
         { value: timeLeft.days, label: 'Days' },
         { value: timeLeft.hours, label: 'Hrs' },
         { value: timeLeft.minutes, label: 'Min' },
         { value: timeLeft.seconds, label: 'Sec' }
-      ].map((item, idx) => (
-        <div key={item.label} className="bg-white/10 backdrop-blur-sm rounded-lg p-2 sm:p-3 min-w-[50px] sm:min-w-[60px] border border-purple-400/30">
-          <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-amber-300">{String(item.value).padStart(2, '0')}</div>
-          <div className="text-[10px] sm:text-xs text-purple-300 uppercase tracking-wide">{item.label}</div>
+      ].map((item) => (
+        <div key={item.label} className="bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 sm:px-3.5 sm:py-2.5 min-w-[56px] sm:min-w-[64px] text-center border border-purple-400/30">
+          <div className="text-2xl sm:text-3xl font-bold text-amber-300 leading-none">{String(item.value).padStart(2, '0')}</div>
+          <div className="text-[10px] sm:text-xs text-purple-300 uppercase tracking-wider mt-1">{item.label}</div>
         </div>
       ))}
     </div>
@@ -610,13 +610,36 @@ const SoulFoodLanding = () => {
               </div>
               
               <p className="text-purple-300/90 text-sm italic max-w-xl" data-testid="hero-denomination-note">
-                Non-denominational Christian curriculum — built for the Body of Christ to start conversations
-                that deepen faith and grow a healthy curiosity &amp; passion for Christ.
+                Non-denominational Christian curriculum welcoming Catholic, Protestant, Orthodox, Evangelical
+                and Independent traditions — built for the whole Body of Christ to start conversations that
+                deepen faith and grow a healthy curiosity &amp; passion for Christ.
               </p>
-              
-              {/* Sale Countdown */}
-              <div className="mt-5 inline-flex items-center gap-3 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
-                <span className="text-amber-400 text-xs font-semibold">Early Bird Sale ends Juneteenth</span>
+
+              {/* Inclusion chips — visual signal that Catholic, Protestant, Orthodox traditions are all welcome */}
+              <div className="mt-3 flex flex-wrap items-center gap-2" data-testid="hero-inclusion-chips">
+                <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20 text-[11px] text-white/90">
+                  <span aria-hidden="true">✝️</span> Catholic
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20 text-[11px] text-white/90">
+                  <span aria-hidden="true">⛪</span> Protestant
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20 text-[11px] text-white/90">
+                  <span aria-hidden="true">☦️</span> Orthodox
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20 text-[11px] text-white/90">
+                  <span aria-hidden="true">📖</span> Evangelical
+                </span>
+                <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-red-700/40 via-black/40 to-emerald-700/40 backdrop-blur-sm px-2.5 py-1 rounded-full border border-amber-400/40 text-[11px] text-amber-100" title="Honoring Juneteenth — Early Bird savings extended through June 19">
+                  <span aria-hidden="true">✊🏿</span> Honoring Juneteenth
+                </span>
+              </div>
+
+              {/* Sale Countdown — label on its own row at all breakpoints so it's readable */}
+              <div className="mt-5 flex flex-col items-center sm:items-start gap-2 bg-white/10 backdrop-blur-sm px-4 py-3 rounded-2xl border border-white/20 max-w-md">
+                <div className="flex flex-col leading-tight">
+                  <span className="text-amber-400 text-sm font-semibold">Early Bird Sale</span>
+                  <span className="text-amber-300/90 text-xs">ends Juneteenth · June 19</span>
+                </div>
                 <ResurrectionCountdown />
               </div>
             </div>
