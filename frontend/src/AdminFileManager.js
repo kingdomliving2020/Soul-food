@@ -757,13 +757,71 @@ const AdminFileManager = () => {
               </div>
               <div>
                 <label className="text-xs text-slate-500 block mb-1">
-                  {attachForm.target_type === 'product' ? 'Product ID (e.g. holiday_ae)' : 'Order Number (e.g. SF-2026-XXXXX)'}
+                  {attachForm.target_type === 'product' ? 'Product ID (pick from list or type)' : 'Order Number (e.g. SF-2026-XXXXX)'}
                 </label>
                 <Input
                   value={attachForm.target_id}
                   onChange={(e) => setAttachForm({ ...attachForm, target_id: e.target.value })}
                   data-testid="attach-target-id"
+                  list={attachForm.target_type === 'product' ? 'canonical-product-ids' : undefined}
+                  placeholder={attachForm.target_type === 'product' ? 'Start typing — breakfast_ie_digital, holiday_ae…' : 'SF-2026-XXXXX'}
                 />
+                {attachForm.target_type === 'product' && (
+                  <datalist id="canonical-product-ids">
+                    {/* Breakfast (Foundation in Christ) */}
+                    <option value="breakfast_ae_digital">Break*fast AE — Digital (Adult Full Workbook)</option>
+                    <option value="breakfast_ae_paperback">Break*fast AE — Paperback (Adult Full Workbook)</option>
+                    <option value="breakfast_ye_digital">Break*fast YE — Digital (Youth Full Workbook)</option>
+                    <option value="breakfast_ye_paperback">Break*fast YE — Paperback (Youth Full Workbook)</option>
+                    <option value="breakfast_ie_digital">Break*fast IE — Digital (Instructor Edition)</option>
+                    <option value="breakfast_ie_paperback">Break*fast IE — Paperback (Instructor Edition)</option>
+                    {/* Breakfast Snack Packs (4-lesson month bundles) */}
+                    <option value="snack_pack_ae_m1">Break*fast AE — Snack Pack Month 1</option>
+                    <option value="snack_pack_ae_m2">Break*fast AE — Snack Pack Month 2</option>
+                    <option value="snack_pack_ae_m3">Break*fast AE — Snack Pack Month 3</option>
+                    <option value="snack_pack_ye_m1">Break*fast YE — Snack Pack Month 1</option>
+                    <option value="snack_pack_ye_m2">Break*fast YE — Snack Pack Month 2</option>
+                    <option value="snack_pack_ye_m3">Break*fast YE — Snack Pack Month 3</option>
+                    <option value="snack_pack_ie_m1">Break*fast IE — Snack Pack Month 1</option>
+                    <option value="snack_pack_ie_m2">Break*fast IE — Snack Pack Month 2</option>
+                    <option value="snack_pack_ie_m3">Break*fast IE — Snack Pack Month 3</option>
+                    {/* Holiday (SOFU brand · HOL 4C framework) */}
+                    <option value="holiday_ae">Holiday AE — Full Workbook (Adult Edition)</option>
+                    <option value="holiday_ye">Holiday YE — Full Workbook (Youth Edition)</option>
+                    <option value="holiday_ie">Holiday IE — Full Workbook (Instructor Edition)</option>
+                    <option value="holiday-ae-paperback">Holiday AE — Paperback</option>
+                    <option value="holiday-ye-paperback">Holiday YE — Paperback</option>
+                    <option value="holiday-ie-paperback">Holiday IE — Paperback</option>
+                    {/* Holiday Nibbles (per-4C chapter) */}
+                    <option value="holiday-nibble-ae-covenant-digital">Holiday Nibble AE — Covenant</option>
+                    <option value="holiday-nibble-ae-cradle-digital">Holiday Nibble AE — Cradle</option>
+                    <option value="holiday-nibble-ae-cross-digital">Holiday Nibble AE — Cross</option>
+                    <option value="holiday-nibble-ae-comforter-digital">Holiday Nibble AE — Comforter</option>
+                    <option value="holiday-nibble-ye-covenant-digital">Holiday Nibble YE — Covenant</option>
+                    <option value="holiday-nibble-ye-cradle-digital">Holiday Nibble YE — Cradle</option>
+                    <option value="holiday-nibble-ye-cross-digital">Holiday Nibble YE — Cross</option>
+                    <option value="holiday-nibble-ye-comforter-digital">Holiday Nibble YE — Comforter</option>
+                    <option value="holiday-nibble-ie-covenant-digital">Holiday Nibble IE — Covenant</option>
+                    <option value="holiday-nibble-ie-cradle-digital">Holiday Nibble IE — Cradle</option>
+                    <option value="holiday-nibble-ie-cross-digital">Holiday Nibble IE — Cross</option>
+                    <option value="holiday-nibble-ie-comforter-digital">Holiday Nibble IE — Comforter</option>
+                    {/* Game packs */}
+                    <option value="game-pack-gridiron-ae">Game Pack — Gridiron AE</option>
+                    <option value="game-pack-gridiron-ye">Game Pack — Gridiron YE</option>
+                    <option value="game-pack-bundle-adult">Game Pack Bundle — Adult</option>
+                    <option value="game-pack-bundle-youth">Game Pack Bundle — Youth</option>
+                  </datalist>
+                )}
+                {attachForm.target_type === 'product' && attachFor && /BKFT.*IE|breakfast.*ie/i.test(attachFor.original_filename || '') && (
+                  <p className="text-[11px] text-indigo-700 bg-indigo-50 border border-indigo-200 rounded px-2 py-1 mt-2">
+                    💡 This looks like a Break*fast IE file. Common attachments: <code className="bg-white px-1 rounded">breakfast_ie_digital</code> and <code className="bg-white px-1 rounded">breakfast_ie_paperback</code> (attach to both so digital + POD customers both receive it).
+                  </p>
+                )}
+                {attachForm.target_type === 'product' && attachFor && /BKFT.*YE.*SP|YE.*snack/i.test(attachFor.original_filename || '') && (
+                  <p className="text-[11px] text-indigo-700 bg-indigo-50 border border-indigo-200 rounded px-2 py-1 mt-2">
+                    💡 This looks like a YE Snack Pack file. Common attachments: <code className="bg-white px-1 rounded">snack_pack_ye_m1</code>, <code className="bg-white px-1 rounded">snack_pack_ye_m2</code>, or <code className="bg-white px-1 rounded">snack_pack_ye_m3</code> depending on which month.
+                  </p>
+                )}
               </div>
               <div>
                 <label className="text-xs text-slate-500 block mb-1">Role (optional, e.g. primary, preview, bonus)</label>

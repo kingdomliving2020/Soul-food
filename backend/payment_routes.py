@@ -1772,7 +1772,12 @@ SHIPPING_TIER_NON_CONTINENTAL = 15.99
 WEST_COAST_STATES = {"CA", "OR", "WA"}
 NON_CONTINENTAL_STATES = {"HI", "AK"}
 APO_FPO_TOKENS = {"AA", "AE", "AP", "APO", "FPO", "DPO"}
-LOCAL_DELIVERY_ZIPS: set[str] = set()  # populate via admin tool later
+LOCAL_DELIVERY_ZIPS: set[str] = {
+    # SOFU primary origin — Moncks Corner, SC area
+    "29461",
+    # SOFU secondary — Springfield, MA area
+    "01109",
+}
 
 
 def _normalize_state(state: Optional[str]) -> str:
