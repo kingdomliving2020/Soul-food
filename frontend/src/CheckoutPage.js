@@ -688,9 +688,11 @@ const CheckoutPage = () => {
     country: 'USA'
   });
 
-  // Shipping method ('standard' free | 'expedited' $7.99). Only applies when cart has physical items.
-  const [shippingMethod, setShippingMethod] = useState('standard');
-  const EXPEDITED_SHIPPING_COST = 7.99;
+  // SOFU canonical shipping quote — fetched from backend (single source of truth).
+  // Reacts whenever address state/country/zip OR cart contents change.
+  // Possible tiers: digital_only, pending_address, local_delivery, continental_us,
+  // west_coast_canada, non_continental, free_promo_over_55, international_custom.
+  const [shippingQuote, setShippingQuote] = useState({ tier: 'pending_address', cost: 0, label: 'Enter shipping address to calculate', requires_custom_invoice: false });
   
   // Gift options
   const [isGift, setIsGift] = useState(false);
@@ -767,6 +769,38 @@ const CheckoutPage = () => {
       setCheckoutStep('checkout');
     }
   }, [location]);
+
+  // Live shipping quote — recompute whenever address inputs OR cart contents change.
+  // The backend is the authoritative calculator; we just preview here.
+  useEffect(() => {
+    if (!hasPhysicalItems) {
+      setShippingQuote({ tier: 'digital_only', cost: 0, label: 'No shipping required (digital delivery)', requires_custom_invoice: false });
+      return;
+    }
+    // Don't quote until address has at minimum state + country (continental tier needs state)
+    if (!shippingAddress.country || (!shippingAddress.state && !shippingAddress.zipCode)) {
+      setShippingQuote({ tier: 'pending_address', cost: 0, label: 'Enter shipping address to calculate', requires_custom_invoice: false });
+      return;
+    }
+    const controller = new AbortController();
+    const t = setTimeout(async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/payments/shipping-quote`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: cartItems, shipping_address: shippingAddress }),
+          signal: controller.signal,
+        });
+        if (res.ok) {
+          const q = await res.json();
+          setShippingQuote(q);
+        }
+      } catch (e) {
+        if (e.name !== 'AbortError') console.warn('shipping quote err', e);
+      }
+    }, 350); // debounce so we don't hammer on every keystroke
+    return () => { clearTimeout(t); controller.abort(); };
+  }, [cartItems, hasPhysicalItems, shippingAddress.country, shippingAddress.state, shippingAddress.zipCode, shippingAddress.city]);
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) {
@@ -888,8 +922,8 @@ const CheckoutPage = () => {
             customer_name: customerName || null,
             customer_phone: customerPhone || null,
             shipping_address: hasPhysicalItems ? shippingAddress : null,
-            shipping_method: hasPhysicalItems ? shippingMethod : null,
-            shipping_cost: hasPhysicalItems && shippingMethod === 'expedited' ? EXPEDITED_SHIPPING_COST : 0
+            shipping_method: hasPhysicalItems ? shippingQuote.tier : null,
+            shipping_cost: hasPhysicalItems ? shippingQuote.cost : 0
           }),
         });
 
@@ -947,8 +981,8 @@ const CheckoutPage = () => {
           customer_name: customerName || null,
           customer_phone: customerPhone || null,
           shipping_address: hasPhysicalItems ? shippingAddress : null,
-          shipping_method: hasPhysicalItems ? shippingMethod : null,
-          shipping_cost: hasPhysicalItems && shippingMethod === 'expedited' ? EXPEDITED_SHIPPING_COST : 0
+          shipping_method: hasPhysicalItems ? shippingQuote.tier : null,
+          shipping_cost: hasPhysicalItems ? shippingQuote.cost : 0
         }),
       });
 
@@ -1444,7 +1478,7 @@ const CheckoutPage = () => {
                       <span className="text-emerald-500 font-bold">✓</span>
                       <div>
                         <span className="font-semibold text-indigo-900">Physical Books</span>
-                        <span className="text-indigo-700"> — Ships within 1-2 weeks (free) · expedited $7.99</span>
+                        <span className="text-indigo-700"> — Ships within 5–10 business days · rates vary by region</span>
                         <p className="text-xs text-indigo-600">US, APO/FPO, Canada. International available — contact us for estimates.</p>
                       </div>
                     </div>
@@ -1458,47 +1492,36 @@ const CheckoutPage = () => {
                   </div>
                 </div>
 
-                {/* Shipping Method Selector — Standard FREE / Expedited $7.99 */}
-                <div className="mb-4 p-4 bg-white rounded-lg border-2 border-indigo-200" data-testid="shipping-method-section">
-                  <h4 className="font-bold text-indigo-800 mb-3 text-sm">Choose Shipping Speed</h4>
-                  <div className="space-y-2">
-                    <label className={`flex items-start gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'standard' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 bg-white hover:border-indigo-300'}`} data-testid="shipping-standard-option">
-                      <input
-                        type="radio"
-                        name="shipping_method"
-                        value="standard"
-                        checked={shippingMethod === 'standard'}
-                        onChange={() => setShippingMethod('standard')}
-                        className="mt-1"
-                        data-testid="shipping-standard-radio"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <span className="font-semibold text-slate-800">Standard Shipping</span>
-                          <span className="font-bold text-emerald-600">FREE</span>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-0.5">Arrives in 1-2 weeks · US, APO/FPO, Canada</p>
-                      </div>
-                    </label>
-                    <label className={`flex items-start gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${shippingMethod === 'expedited' ? 'border-amber-500 bg-amber-50' : 'border-slate-200 bg-white hover:border-amber-300'}`} data-testid="shipping-expedited-option">
-                      <input
-                        type="radio"
-                        name="shipping_method"
-                        value="expedited"
-                        checked={shippingMethod === 'expedited'}
-                        onChange={() => setShippingMethod('expedited')}
-                        className="mt-1"
-                        data-testid="shipping-expedited-radio"
-                      />
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <span className="font-semibold text-slate-800">Expedited Shipping</span>
-                          <span className="font-bold text-amber-700">+$7.99</span>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-0.5">Faster fulfillment, prioritized in shipping queue</p>
-                      </div>
-                    </label>
+                {/* SOFU Shipping — Dynamic tier display based on shipping address.
+                    Backend calc is authoritative; this just shows the customer what's being applied. */}
+                <div className="mb-4 p-4 bg-white rounded-lg border-2 border-indigo-200" data-testid="shipping-tier-section">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-indigo-800 text-sm mb-1">Shipping</h4>
+                      <p className={`text-sm font-medium ${shippingQuote.requires_custom_invoice ? 'text-rose-700' : shippingQuote.cost === 0 ? 'text-emerald-700' : 'text-slate-800'}`} data-testid="shipping-quote-label">
+                        {shippingQuote.label}
+                      </p>
+                      <p className="text-[11px] text-slate-500 mt-1">Most physical orders ship within 5–10 business days. Pre-orders and specialty print items may require additional processing time.</p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      {shippingQuote.cost === 0 ? (
+                        <span className="text-lg font-bold text-emerald-600" data-testid="shipping-quote-amount">FREE</span>
+                      ) : (
+                        <span className="text-lg font-bold text-slate-800" data-testid="shipping-quote-amount">${shippingQuote.cost.toFixed(2)}</span>
+                      )}
+                    </div>
                   </div>
+                  {/* Free-over-$55 hint when applicable */}
+                  {hasPhysicalItems && shippingQuote.tier !== 'free_promo_over_55' && shippingQuote.tier !== 'local_delivery' && shippingQuote.tier !== 'non_continental' && shippingQuote.tier !== 'international_custom' && !shippingQuote.requires_custom_invoice && (
+                    <p className="mt-3 text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1.5" data-testid="free-shipping-hint">
+                      💡 Add $55+ of physical items to qualify for FREE standard shipping
+                    </p>
+                  )}
+                  {shippingQuote.requires_custom_invoice && (
+                    <p className="mt-3 text-[11px] text-rose-700 bg-rose-50 border border-rose-200 rounded px-2 py-1.5" data-testid="custom-invoice-hint">
+                      International orders outside the U.S. and Canada require a custom invoice. Email <a href="mailto:support@kingdom-soul.com" className="underline font-semibold">support@kingdom-soul.com</a> with your order details.
+                    </p>
+                  )}
                 </div>
 
                 {/* Audio Bonus Note */}

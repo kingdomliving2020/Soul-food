@@ -1744,8 +1744,190 @@ class CartCheckoutRequest(BaseModel):
     customer_email: Optional[str] = None
     customer_name: Optional[str] = None
     shipping_address: Optional[dict] = None
-    shipping_method: Optional[str] = None  # 'standard' (free) or 'expedited' ($7.99)
-    shipping_cost: float = 0
+    shipping_method: Optional[str] = None  # auto-resolved from address; legacy field
+    shipping_cost: float = 0  # client value is ADVISORY — backend recomputes via _calculate_shipping
+
+
+# =============================================================================
+# SHIPPING POLICY (SOFU canonical tiers — server-side source of truth)
+# =============================================================================
+# All amounts in dollars. The backend is the AUTHORITATIVE calculator — any
+# client-sent shipping_cost is recomputed server-side before adding to Stripe.
+#
+# Tiers:
+#   • Local Delivery (select areas, by zip): FREE
+#   • Continental US: $5.99
+#   • West Coast (CA, OR, WA) & Canada: $7.99
+#   • Hawaii, Alaska, APO/FPO: starting at $15.99
+#   • International (outside USA/Canada): requires custom invoicing
+#
+# Free-shipping promo: cart subtotal of physical items >= $55 → standard ship free
+# (does NOT apply to items flagged ministry_bulk: True)
+
+SHIPPING_FREE_THRESHOLD = 55.00
+SHIPPING_TIER_CONTINENTAL_US = 5.99
+SHIPPING_TIER_WEST_COAST_CA = 7.99
+SHIPPING_TIER_NON_CONTINENTAL = 15.99
+
+WEST_COAST_STATES = {"CA", "OR", "WA"}
+NON_CONTINENTAL_STATES = {"HI", "AK"}
+APO_FPO_TOKENS = {"AA", "AE", "AP", "APO", "FPO", "DPO"}
+LOCAL_DELIVERY_ZIPS: set[str] = set()  # populate via admin tool later
+
+
+def _normalize_state(state: Optional[str]) -> str:
+    return (state or "").strip().upper()
+
+
+def _normalize_country(country: Optional[str]) -> str:
+    c = (country or "").strip().upper()
+    if c in ("USA", "US", "U.S.", "U.S.A.", "UNITED STATES", "UNITED STATES OF AMERICA"):
+        return "USA"
+    if c in ("CA", "CAN", "CANADA"):
+        return "CANADA"
+    return c or "USA"
+
+
+def _is_apo_fpo(address: dict) -> bool:
+    st = _normalize_state(address.get("state"))
+    city = (address.get("city") or "").strip().upper()
+    if st in APO_FPO_TOKENS:
+        return True
+    if any(tok in city for tok in ("APO", "FPO", "DPO")):
+        return True
+    return False
+
+
+def _has_physical_item(items: list) -> bool:
+    for it in items:
+        fmt = str(it.get("format") or it.get("type") or "").lower()
+        if fmt in {"physical", "paperback", "print", "pod", "hardcopy"}:
+            return True
+        rid = str(it.get("id") or it.get("product_id") or it.get("uniqueKey") or "").lower()
+        if any(suf in rid for suf in ("-paperback", "-print", "-physical", "-pod", "-hardcopy")):
+            return True
+    return False
+
+
+def _physical_subtotal(items: list) -> float:
+    total = 0.0
+    for it in items:
+        fmt = str(it.get("format") or it.get("type") or "").lower()
+        rid = str(it.get("id") or it.get("product_id") or it.get("uniqueKey") or "").lower()
+        is_physical = fmt in {"physical", "paperback", "print", "pod", "hardcopy"} or any(
+            suf in rid for suf in ("-paperback", "-print", "-physical", "-pod", "-hardcopy")
+        )
+        if is_physical:
+            try:
+                price = float(it.get("price") or it.get("amount") or 0)
+                qty = int(it.get("quantity") or 1)
+                total += price * qty
+            except (TypeError, ValueError):
+                pass
+    return total
+
+
+def _has_ministry_bulk_flag(items: list) -> bool:
+    return any(bool(it.get("ministry_bulk")) for it in items)
+
+
+def calculate_shipping(items: list, address: Optional[dict]) -> dict:
+    """Return shipping quote {tier, cost, label, free_over_55_applied, requires_custom_invoice}.
+
+    The single authoritative calculator. Frontend uses /api/payments/shipping-quote
+    to preview; backend always recomputes before billing — never trusts client.
+    """
+    if not _has_physical_item(items):
+        return {
+            "tier": "digital_only",
+            "cost": 0.0,
+            "label": "No shipping required (digital delivery)",
+            "free_over_55_applied": False,
+            "requires_custom_invoice": False,
+        }
+
+    if not address:
+        return {
+            "tier": "pending_address",
+            "cost": 0.0,
+            "label": "Enter shipping address to calculate",
+            "free_over_55_applied": False,
+            "requires_custom_invoice": False,
+        }
+
+    country = _normalize_country(address.get("country"))
+    state = _normalize_state(address.get("state"))
+    zip_code = (address.get("zipCode") or address.get("zip") or address.get("postal_code") or "").strip().upper()
+
+    # International outside USA/Canada — block, route to custom invoice
+    if country not in ("USA", "CANADA"):
+        return {
+            "tier": "international_custom",
+            "cost": 0.0,
+            "label": f"International shipping to {country} requires custom invoicing — contact support@kingdom-soul.com",
+            "free_over_55_applied": False,
+            "requires_custom_invoice": True,
+        }
+
+    # Local delivery (zip match)
+    if zip_code and zip_code in LOCAL_DELIVERY_ZIPS:
+        return {
+            "tier": "local_delivery",
+            "cost": 0.0,
+            "label": "Local Delivery — FREE",
+            "free_over_55_applied": False,
+            "requires_custom_invoice": False,
+        }
+
+    # APO/FPO + Hawaii/Alaska — non-continental
+    if _is_apo_fpo(address) or state in NON_CONTINENTAL_STATES:
+        # Free-over-$55 does NOT apply to non-continental (real shipping cost is much higher)
+        return {
+            "tier": "non_continental",
+            "cost": SHIPPING_TIER_NON_CONTINENTAL,
+            "label": "Hawaii, Alaska, or APO/FPO — starting at $15.99",
+            "free_over_55_applied": False,
+            "requires_custom_invoice": False,
+        }
+
+    # Free-over-$55 check (continental + west-coast + Canada all qualify)
+    subtotal = _physical_subtotal(items)
+    if subtotal >= SHIPPING_FREE_THRESHOLD and not _has_ministry_bulk_flag(items):
+        return {
+            "tier": "free_promo_over_55",
+            "cost": 0.0,
+            "label": f"FREE Standard Shipping (subtotal ${subtotal:.2f} ≥ ${SHIPPING_FREE_THRESHOLD:.0f})",
+            "free_over_55_applied": True,
+            "requires_custom_invoice": False,
+        }
+
+    # West Coast (CA, OR, WA) + Canada — $7.99
+    if country == "CANADA" or state in WEST_COAST_STATES:
+        return {
+            "tier": "west_coast_canada",
+            "cost": SHIPPING_TIER_WEST_COAST_CA,
+            "label": ("Canada — $7.99" if country == "CANADA" else "West Coast (CA/OR/WA) — $7.99"),
+            "free_over_55_applied": False,
+            "requires_custom_invoice": False,
+        }
+
+    # Continental US — $5.99
+    return {
+        "tier": "continental_us",
+        "cost": SHIPPING_TIER_CONTINENTAL_US,
+        "label": "Continental U.S. — $5.99",
+        "free_over_55_applied": False,
+        "requires_custom_invoice": False,
+    }
+
+
+@router.post("/shipping-quote")
+async def shipping_quote(body: dict):
+    """Live shipping preview for the checkout page. Pass items + shipping_address.
+    Returns the SAME calculation the backend will charge — single source of truth."""
+    items = body.get("items") or []
+    address = body.get("shipping_address")
+    return calculate_shipping(items, address)
 
 
 @router.post("/checkout/session")
@@ -1935,28 +2117,28 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
                 'quantity': item_qty,
             })
 
-    # Append expedited-shipping line item ($7.99) when the customer chose it
-    # AND the cart actually has a physical item. Standard shipping is free —
-    # nothing to add. Cost is server-validated so the client cannot tamper.
-    if request.shipping_method == "expedited" and request.shipping_address:
-        cart_has_physical = any(
-            (str(it.get("format") or it.get("type") or "").lower() in {"physical", "paperback", "print", "pod", "hardcopy"})
-            or any(suf in str(it.get("id") or it.get("product_id") or "").lower()
-                   for suf in ("-paperback", "-print", "-physical", "-pod", "-hardcopy"))
-            for it in request.items
+    # SOFU SHIPPING — server-locked calculation (client value ignored).
+    # Adds a single line item with the regional rate or zeros it if free.
+    shipping_quote_result = calculate_shipping(request.items, request.shipping_address)
+    if shipping_quote_result.get("requires_custom_invoice"):
+        raise HTTPException(
+            status_code=400,
+            detail=shipping_quote_result["label"],
         )
-        if cart_has_physical:
-            line_items.append({
-                'price_data': {
-                    'currency': 'usd',
-                    'product_data': {
-                        'name': 'Expedited Shipping',
-                        'description': 'Prioritized fulfillment for physical book orders.',
-                    },
-                    'unit_amount': 799,  # $7.99 — server-locked, ignores client shipping_cost
+    server_shipping_cost = float(shipping_quote_result.get("cost") or 0)
+    server_shipping_tier = shipping_quote_result.get("tier") or "n/a"
+    if server_shipping_cost > 0:
+        line_items.append({
+            'price_data': {
+                'currency': 'usd',
+                'product_data': {
+                    'name': 'Shipping',
+                    'description': shipping_quote_result.get("label") or "Standard shipping",
                 },
-                'quantity': 1,
-            })
+                'unit_amount': int(round(server_shipping_cost * 100)),
+            },
+            'quantity': 1,
+        })
 
     # Build URLs
     origin_url = request.origin_url.rstrip('/')
@@ -2049,8 +2231,8 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
             "user_id": logged_in_user_id,
             "claimed_by_user_id": logged_in_user_id,
             "shipping_address": request.shipping_address,
-            "shipping_method": request.shipping_method or ("standard" if request.shipping_address else None),
-            "shipping_cost": 7.99 if request.shipping_method == "expedited" and request.shipping_address else 0,
+            "shipping_method": server_shipping_tier,
+            "shipping_cost": server_shipping_cost,
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
         }

@@ -677,7 +677,7 @@ const LandingPage = () => {
           </h3>
           <p className="text-center text-slate-600 mb-12 sm:mb-16 max-w-2xl mx-auto">
             Get instant access to interactive lessons, eBooks, and community features. 
-            Physical workbooks available with 1-2 weeks (free) · expedited $7.99.
+            Physical workbooks available with 5–10 business days · rates vary by region.
           </p>
           
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
@@ -696,7 +696,7 @@ const LandingPage = () => {
                 </div>
                 <CardTitle className="text-2xl text-slate-800">Print Workbook</CardTitle>
                 <div className="text-3xl sm:text-4xl font-bold mb-2 text-slate-700">$39.99</div>
-                <p className="text-sm text-emerald-600 font-medium">Order now • Ships in 1-2 weeks (free) · expedited $7.99</p>
+                <p className="text-sm text-emerald-600 font-medium">Order now • Ships in 5–10 business days · rates vary by region</p>
               </CardHeader>
               <CardContent className="p-6 sm:p-8 pt-0">
                 <ul className="space-y-3 mb-8">
@@ -901,6 +901,10 @@ const LandingPage = () => {
           <div className="flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-6 text-sm mb-4">
             <a href="/privacy-policy" className="text-slate-400 hover:text-white transition-colors duration-200">
               Privacy Policy
+            </a>
+            <span className="hidden sm:inline text-slate-600">|</span>
+            <a href="/shipping-policy" className="text-slate-400 hover:text-white transition-colors duration-200" data-testid="footer-shipping-policy-link">
+              Shipping &amp; Delivery
             </a>
             <a href="/terms-of-service" className="text-slate-400 hover:text-white transition-colors duration-200">
               Terms of Service
@@ -2007,6 +2011,7 @@ import RedeemCode from './RedeemCode';
 import GamingCentral from './GamingCentral';
 import OrderLookup from './OrderLookup';
 import RefundPolicy from './RefundPolicy';
+import ShippingPolicy from './ShippingPolicy';
 import AdminOrders from './AdminOrders';
 import AdminFileManager from './AdminFileManager';
 import InstructorToolbox from './InstructorToolbox';
@@ -2038,6 +2043,7 @@ function App() {
             <Route path="/redeem-gift" element={<RedeemGift />} />
             <Route path="/orders/lookup" element={<OrderLookup />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
+            <Route path="/shipping-policy" element={<ShippingPolicy />} />
             <Route path="/admin/orders" element={<AdminOrders />} />
             <Route path="/admin/files" element={<AdminFileManager />} />
             <Route path="/instructor-toolbox" element={<InstructorToolbox />} />
