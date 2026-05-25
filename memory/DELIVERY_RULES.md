@@ -1,5 +1,33 @@
 # Soul Food — Delivery Rules (May 2026 Spec)
 
+## Product positioning (PRIORITY 0)
+
+**We are not selling files or formats — we are selling outcomes and usage value.**
+
+Customers are buying:
+- Lessons, guided experiences, structured learning
+- Convenience and accessibility
+- Targeted access to content
+
+Customers are **not** buying PDFs, IPDFs, file fragments, or storage units.
+
+### Implementation implications
+
+1. **Nibbles / SP / Bundles** feel like *targeted access*, not file fragments.
+2. **Full workbook delivery** is just one form of access — not the product itself.
+3. **Product structure** must prioritize:
+   - Ease of use
+   - Clarity at purchase (cart copy, receipt language, library labels)
+   - Correct content delivery
+   - NOT file-level complexity (IPDF vs PDF vs naming convention)
+4. **Fulfillment logic serves experience first**, storage structure second.
+
+> When in doubt: ask "what does the customer expect to receive, how quickly and
+> clearly do they get it, and how is the product understood in the cart + library?"
+> Optimize for that. Do not optimize file mechanics.
+
+---
+
 This document is the **canonical product → file delivery contract**. The fulfillment
 code (`/app/backend/payment_routes.py:resolve_item_to_file_entries_async`) implements
 exactly these rules. Anything not in this doc is undefined behavior — fix the code
