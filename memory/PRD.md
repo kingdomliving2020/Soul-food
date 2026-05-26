@@ -18,6 +18,16 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 
 ## What's Implemented
 
+### Pre-Launch P0 Hardening (May 26, 2026)
+- [x] **Coupon hardening** — `/app/backend/coupon_routes.py`. New `harden_test_coupons()` runs at startup (idempotent) and via `POST /api/coupons/admin/harden-test-coupons`. Disables 9 leaked test/beta codes (`Beta1!2!3!`, `Beta123abc`, `Beta123abcd`, `BETATEST`, `TESTII`, `DOLLARTEST`, `test123`, `test1234`, `test12345`) by setting `active=False` + `hidden=True` (reversible, audit-preserved — no deletes). Ensures ONE hidden internal `OFH_INTERNAL_$1` coupon (override_total=$1, max_uses=20, hidden=True, internal_only=True) for safe live Stripe checkout verification.
+- [x] **Coupon admin toggle endpoint** — `POST /api/coupons/admin/{code}/toggle` with body `{active: bool}` for reversible enable/disable. Never deletes.
+- [x] **Spend cap support** — `CouponCreate`/`CouponUpdate` now accept `spend_cap` (max dollar discount ceiling). `validate_coupon` converts percentage to fixed-dollar at the cap when the implied dollars exceed it.
+- [x] **Regex escape fix** — All coupon lookups use new `_code_match()` helper with `re.escape()` so codes containing regex meta-chars (e.g. `$` in `OFH_INTERNAL_$1`) are matched correctly.
+- [x] **Single-coupon-per-order** already enforced at frontend (`CheckoutPage.js` stores one `couponApplied` state) + backend (`CartCheckoutRequest.coupon_code: Optional[str]` is singular).
+- [x] **Redeem Your Purchase button contrast fix** — `email_service.py` order-confirmation template: replaced low-contrast purple gradient with a solid indigo `#4338ca` button + `#312e81` border + white text + bold + box-shadow + explicit `background-color` fallback for email clients that strip gradients. Includes `color: #ffffff !important` so dark-mode clients can't override. Container background now white with solid indigo border (was tinted lavender with dashed purple). `OrderSuccess.js` "Redeem Now →" link upgraded from text-link to a proper indigo button with focus ring + mobile-friendly stacked layout.
+- [x] **Lightweight PWA** — `/app/frontend/public/manifest.json` (name="Soul Food", short_name="SOFU", display="standalone", theme #4338ca, 6 icons sourced from existing `quick-order-rounded-*.png`). `/app/frontend/public/service-worker.js` is intentionally minimal: network-first for HTML (with cached shell fallback), cache-first for static assets, and never caches `/api/*`, `/downloads/*`, or `/auth/*` (security-sensitive). `index.html` adds `<link rel="manifest">` plus apple-mobile-web-app meta tags. `index.js` registers the SW on `window.load` (no-op if unsupported).
+- [x] **Tested**: iteration_37.json — 20/20 backend pytest pass, 100% success. PWA assets serve 200 OK with correct mime types. No regressions on existing coupons (WELCOME10, SoulX1079, BOOK10 min_quantity). Hardening is idempotent on re-runs.
+
 ### Question Structure Refinement — P0 Complete (Apr 11, 2026)
 - [x] Tricky Testaments: recall-only self-scoring (Reveal Answer → Got it!/Missed it!) — NO multiple choice
 - [x] Trivia Mix-Up: MCQ-only with generated distractors for questions lacking options
