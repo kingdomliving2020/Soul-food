@@ -19,6 +19,17 @@ window.fetch = (input, init) => {
   return _origFetch(input, init);
 };
 
+// PWA: register lightweight service worker for installability + app-shell
+// offline fallback. Never caches /api/, downloads, or auth — those stay
+// network-only. Safe to no-op if the browser doesn't support it.
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js").catch(() => {
+      /* swallow — non-fatal if SW registration fails */
+    });
+  });
+}
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>

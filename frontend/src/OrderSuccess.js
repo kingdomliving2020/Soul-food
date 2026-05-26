@@ -461,14 +461,14 @@ const OrderSuccess = () => {
               </div>
             )}
 
-            <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-3">
-              <Gift className="w-5 h-5 text-indigo-500 flex-shrink-0" />
-              <div className="flex-1">
-                <p className="text-sm text-gray-700">Have an account? <strong>Redeem this order</strong> to save it to your library permanently.</p>
+            <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex items-start sm:items-center gap-3 flex-1">
+                <Gift className="w-5 h-5 text-indigo-600 flex-shrink-0 mt-0.5 sm:mt-0" />
+                <p className="text-sm text-gray-800">Have an account? <strong>Redeem this order</strong> to save it to your library permanently.</p>
               </div>
               <button
                 onClick={() => navigate(`/redeem?code=${orderId}`)}
-                className="text-indigo-600 hover:text-indigo-800 text-sm font-semibold whitespace-nowrap"
+                className="inline-flex items-center justify-center px-5 py-2.5 bg-indigo-700 hover:bg-indigo-800 active:bg-indigo-900 text-white text-sm font-bold rounded-lg shadow-sm hover:shadow-md transition-all whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 data-testid="redeem-from-success-btn"
               >
                 Redeem Now &rarr;

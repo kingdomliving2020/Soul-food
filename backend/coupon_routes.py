@@ -15,6 +15,7 @@ from typing import Optional, List
 from datetime import datetime, timezone
 from jose import JWTError, jwt
 import os
+import re
 import secrets
 
 router = APIRouter(prefix="/api/coupons", tags=["coupons"])
@@ -29,6 +30,13 @@ SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-product
 ALGORITHM = "HS256"
 
 security = HTTPBearer(auto_error=False)
+
+
+def _code_match(code: str) -> dict:
+    """Return a case-insensitive exact-match Mongo filter for a coupon code,
+    safely escaping regex meta-characters (e.g. $ in OFH_INTERNAL_$1)."""
+    return {"$regex": "^" + re.escape(code) + "$", "$options": "i"}
+
 
 # =============================================================================
 # Models
@@ -62,6 +70,8 @@ class CouponCreate(BaseModel):
     valid_from: Optional[datetime] = None
     valid_until: Optional[datetime] = None
     active: bool = True
+    spend_cap: Optional[float] = None  # max dollar discount cap (e.g. $50 ceiling on % discounts)
+    hidden: bool = False  # if true, hide from public-facing UI listings (internal-only)
 
 class CouponUpdate(BaseModel):
     discount_percent: Optional[int] = Field(default=None, ge=0, le=100)
@@ -70,6 +80,11 @@ class CouponUpdate(BaseModel):
     conditions: Optional[str] = None
     active: Optional[bool] = None
     valid_until: Optional[datetime] = None
+    spend_cap: Optional[float] = None
+    hidden: Optional[bool] = None
+
+class CouponToggleRequest(BaseModel):
+    active: bool
 
 # =============================================================================
 # Default Coupons (for seeding)
@@ -159,7 +174,7 @@ async def _validate_redemption_code_as_coupon(input_code: str, request) -> Optio
     coupons. Returns a CouponValidateResponse if the code matches a redemption
     code, else None to let the caller continue with its existing fallthrough."""
     rc = await db.redemption_codes.find_one(
-        {"code": {"$regex": f"^{input_code}$", "$options": "i"},
+        {"code": _code_match(input_code),
          "code_type": {"$in": ["demo", "test"]}},
         {"_id": 0}
     )
@@ -298,9 +313,9 @@ async def validate_coupon(request: CouponValidateRequest):
                 code=input_code
             )
     
-    # SECOND: Check MongoDB coupons collection (case-insensitive)
+    # SECOND: Check MongoDB coupons collection (case-insensitive, exact match)
     coupon = await db.coupons.find_one({
-        "code": {"$regex": f"^{input_code}$", "$options": "i"},
+        "code": {"$regex": "^" + re.escape(input_code) + "$", "$options": "i"},
         "active": True
     })
     
@@ -375,11 +390,24 @@ async def validate_coupon(request: CouponValidateRequest):
     override_total = coupon.get("override_total")  # For $1 test coupon
     discount_amount = coupon.get("discount_amount", 0)  # Fixed dollar discount
     discount_type = coupon.get("discount_type", "percent")
-    
+    spend_cap = coupon.get("spend_cap")  # max dollar discount cap
+
     # Calculate discount_dollars for fixed amount coupons
     discount_dollars = 0.0
     if discount_type == "fixed_cart" and discount_amount > 0:
         discount_dollars = min(discount_amount, request.cart_total)  # Don't exceed cart
+
+    # Enforce spend cap: ceiling on % discount converted to dollars
+    if spend_cap is not None and spend_cap > 0:
+        if discount_percent > 0 and request.cart_total > 0:
+            implied_dollars = request.cart_total * discount_percent / 100
+            if implied_dollars > spend_cap:
+                # Convert to a fixed-dollar discount at the cap
+                discount_dollars = spend_cap
+                discount_percent = 0
+                discount_type = "fixed_cart"
+        elif discount_dollars > spend_cap:
+            discount_dollars = spend_cap
     
     # Build response message
     if override_total is not None:
@@ -403,7 +431,7 @@ async def record_coupon_use(code: str, order_id: Optional[str] = None):
     """Record that a coupon was used (increment usage counter)"""
     
     result = await db.coupons.update_one(
-        {"code": {"$regex": f"^{code}$", "$options": "i"}},
+        {"code": _code_match(code)},
         {
             "$inc": {"times_used": 1},
             "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
@@ -414,7 +442,7 @@ async def record_coupon_use(code: str, order_id: Optional[str] = None):
         # Coupon might not exist in coupons collection — try redemption_codes
         # (DEMOSOFU* / BETADOLLAR* live there)
         rc_result = await db.redemption_codes.update_one(
-            {"code": {"$regex": f"^{code}$", "$options": "i"},
+            {"code": _code_match(code),
              "code_type": {"$in": ["demo", "test"]}},
             {
                 "$inc": {"uses_used": 1},
@@ -450,7 +478,7 @@ async def get_coupon_details(code: str, admin = Depends(get_current_admin)):
     """Get details for a specific coupon (admin only)"""
     
     coupon = await db.coupons.find_one(
-        {"code": {"$regex": f"^{code}$", "$options": "i"}},
+        {"code": _code_match(code)},
         {"_id": 0}
     )
     
@@ -459,7 +487,7 @@ async def get_coupon_details(code: str, admin = Depends(get_current_admin)):
     
     # Get usage history
     usage = await db.coupon_usage.find(
-        {"code": {"$regex": f"^{code}$", "$options": "i"}},
+        {"code": _code_match(code)},
         {"_id": 0}
     ).to_list(100)
     
@@ -471,7 +499,7 @@ async def create_coupon(coupon: CouponCreate, admin = Depends(get_current_admin)
     
     # Check if coupon already exists
     existing = await db.coupons.find_one({
-        "code": {"$regex": f"^{coupon.code}$", "$options": "i"}
+        "code": _code_match(coupon.code)
     })
     
     if existing:
@@ -501,7 +529,7 @@ async def update_coupon(code: str, update: CouponUpdate, admin = Depends(get_cur
     update_fields["updated_at"] = datetime.now(timezone.utc).isoformat()
     
     result = await db.coupons.update_one(
-        {"code": {"$regex": f"^{code}$", "$options": "i"}},
+        {"code": _code_match(code)},
         {"$set": update_fields}
     )
     
@@ -515,7 +543,7 @@ async def delete_coupon(code: str, admin = Depends(get_current_admin)):
     """Delete a coupon (admin only) - actually just deactivates it"""
     
     result = await db.coupons.update_one(
-        {"code": {"$regex": f"^{code}$", "$options": "i"}},
+        {"code": _code_match(code)},
         {"$set": {"active": False, "updated_at": datetime.now(timezone.utc).isoformat()}}
     )
     
@@ -535,10 +563,125 @@ async def seed_default_coupons(admin = Depends(get_current_admin)):
     else:
         return {"message": "Coupons collection already has data, no seeding performed"}
 
+
+@router.post("/admin/{code}/toggle")
+async def toggle_coupon_active(code: str, req: CouponToggleRequest, admin = Depends(get_current_admin)):
+    """Enable or disable a coupon by code (admin only). Reversible — never deletes."""
+
+    result = await db.coupons.update_one(
+        {"code": _code_match(code)},
+        {"$set": {"active": req.active, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Coupon not found")
+
+    return {"message": "Coupon updated", "code": code, "active": req.active}
+
+
+@router.post("/admin/harden-test-coupons")
+async def harden_test_coupons_endpoint(admin = Depends(get_current_admin)):
+    """Admin trigger to re-apply pre-launch coupon hardening (disable leaked test
+    codes, ensure single hidden internal $1 test coupon exists)."""
+    summary = await harden_test_coupons()
+    return {"message": "Hardening applied", "summary": summary}
+
+
+# =============================================================================
+# Pre-Launch Coupon Hardening
+# =============================================================================
+# Disable any publicly leaked test/beta codes and ensure exactly one HIDDEN
+# internal $1 test coupon is available for live Stripe verification.
+
+DISABLED_TEST_COUPON_CODES = [
+    "Beta1!2!3!",
+    "Beta123abc",
+    "Beta123abcd",
+    "BETATEST",
+    "TESTII",
+    "DOLLARTEST",
+    "test12345",
+    "test1234",
+    "test123",
+]
+
+INTERNAL_TEST_COUPON_CODE = "OFH_INTERNAL_$1"
+
+
+async def harden_test_coupons():
+    """Idempotent pre-launch hardening:
+    1) Set active=False on every leaked test/beta coupon (preserves audit trail).
+    2) Ensure ONE hidden internal $1-override coupon exists, low usage cap.
+    Returns a summary dict for logging/admin response.
+    """
+    now_iso = datetime.now(timezone.utc).isoformat()
+
+    disabled = []
+    for code in DISABLED_TEST_COUPON_CODES:
+        escaped = re.escape(code)
+        result = await db.coupons.update_one(
+            {"code": {"$regex": "^" + escaped + "$", "$options": "i"}},
+            {"$set": {
+                "active": False,
+                "hidden": True,
+                "disabled_reason": "pre-launch hardening (leaked test code)",
+                "disabled_at": now_iso,
+                "updated_at": now_iso,
+            }}
+        )
+        if result.matched_count > 0:
+            disabled.append(code)
+
+    # Ensure internal test coupon exists, hidden, low cap, $1 override
+    existing = await db.coupons.find_one({"code": INTERNAL_TEST_COUPON_CODE})
+    if not existing:
+        await db.coupons.insert_one({
+            "code": INTERNAL_TEST_COUPON_CODE,
+            "discount_percent": 0,
+            "discount_type": "fixed_cart",
+            "discount_amount": 0,
+            "override_total": 1.0,
+            "max_uses": 20,
+            "times_used": 0,
+            "active": True,
+            "hidden": True,
+            "internal_only": True,
+            "conditions": "Internal-only live Stripe test coupon — overrides cart to $1.00",
+            "created_at": now_iso,
+            "updated_at": now_iso,
+        })
+        internal_created = True
+    else:
+        # Make sure it stays hidden + active + capped
+        await db.coupons.update_one(
+            {"code": INTERNAL_TEST_COUPON_CODE},
+            {"$set": {
+                "active": True,
+                "hidden": True,
+                "internal_only": True,
+                "override_total": 1.0,
+                "updated_at": now_iso,
+            }}
+        )
+        internal_created = False
+
+    return {
+        "disabled_count": len(disabled),
+        "disabled_codes": disabled,
+        "internal_test_coupon_created": internal_created,
+        "internal_test_coupon_code": INTERNAL_TEST_COUPON_CODE,
+    }
+
+
 # =============================================================================
 # Startup Event - Seed coupons on first load
 # =============================================================================
 
 async def initialize_coupons():
-    """Called on app startup to ensure coupons are seeded"""
+    """Called on app startup to ensure coupons are seeded + hardened"""
     await seed_coupons_if_empty()
+    try:
+        summary = await harden_test_coupons()
+        print(f"[Coupon Hardening] {summary}")
+    except Exception as e:
+        print(f"[Coupon Hardening] Skipped on startup: {e}")

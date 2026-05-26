@@ -247,13 +247,13 @@ def get_order_confirmation_template(
     
     {audio_codes_html}
     
-    <div style="margin-top: 30px; padding: 20px; background-color: #faf5ff; border-radius: 8px; border: 2px dashed #8b5cf6; text-align: center;">
-        <h3 style="margin: 0 0 10px 0; color: #6b21a8; font-size: 18px;">Save Your Purchase to Your Account</h3>
-        <p style="margin: 0 0 5px 0; color: #7c3aed; font-size: 14px;">Create a free account and redeem your order to access content anytime from <strong>My Library</strong>.</p>
-        <p style="margin: 0 0 15px 0; color: #6b7280; font-size: 13px;">Your order number: <strong style="font-family: monospace; font-size: 15px; color: #1f2937;">{order_id}</strong></p>
-        <a href="{SITE_URL}/redeem?code={order_id}" 
-           style="display: inline-block; padding: 14px 30px; background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
-            Redeem Your Purchase
+    <div style="margin-top: 30px; padding: 24px; background-color: #ffffff; border-radius: 10px; border: 2px solid #4338ca; text-align: center;">
+        <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 18px; font-weight: 700;">Save Your Purchase to Your Account</h3>
+        <p style="margin: 0 0 6px 0; color: #374151; font-size: 14px;">Create a free account and redeem your order to access content anytime from <strong>My Library</strong>.</p>
+        <p style="margin: 0 0 18px 0; color: #4b5563; font-size: 13px;">Your order number: <strong style="font-family: monospace; font-size: 15px; color: #111827;">{order_id}</strong></p>
+        <a href="{SITE_URL}/redeem?code={order_id}"
+           style="display: inline-block; padding: 16px 36px; background-color: #4338ca; background-image: linear-gradient(135deg, #4338ca 0%, #3730a3 100%); color: #ffffff !important; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 16px; letter-spacing: 0.3px; border: 2px solid #312e81; box-shadow: 0 2px 6px rgba(67,56,202,0.35);">
+            Redeem Your Purchase &rarr;
         </a>
     </div>
 
