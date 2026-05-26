@@ -18,6 +18,25 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 
 ## What's Implemented
 
+### Add-to-Home-Screen Prompt — Non-Intrusive PWA Nudge (May 26, 2026)
+- [x] **New component** `/app/frontend/src/InstallPrompt.js` mounted inside `App.js` Router so it sees route changes. Bottom-sheet style: rounded card, indigo accent, fade/slide-in animation, dismissible.
+- [x] **Gates (all must pass before rendering)**:
+  1. Mobile only — UA regex (`/Android|iPhone|iPad|iPod|BlackBerry|webOS|IEMobile|Opera Mini/i`) OR viewport width ≤ 820px.
+  2. Not already installed — `display-mode: standalone` and iOS `navigator.standalone` both checked.
+  3. Repeat visitor — session count tracked in `localStorage` (`sofu_session_count`); a new session counts when 30+ min has passed since `sofu_last_session_at`. Prompt only fires when `count >= 2`.
+  4. Not on a friction-sensitive route — suppressed on `/checkout`, `/auth`, `/login`, `/2fa-*`, `/forgot-password`, `/reset-password`, `/payment-*`, `/redeem`, `/admin*`, `/lesson*`, `/interactive-lesson*`, `/game*`, `/instructor-toolbox`.
+  5. Not dismissed recently — `sofu_install_prompt_dismissed_until` (14-day snooze) or `sofu_install_prompt_disabled` (permanent never-show).
+- [x] **Trigger**: 30-second delay after page load. Either:
+  - Chrome/Android: listens for `beforeinstallprompt`, prevents default, then prompts via `event.prompt()` on user click.
+  - iOS Safari (no `beforeinstallprompt`): shows manual two-step Share → Add to Home Screen instructions inline.
+- [x] **Dismissal**:
+  - Close (X) or "Maybe later" → 14-day snooze.
+  - "Don't show again" → permanent.
+  - Successful install (`appinstalled` event) → permanent (no further nudges).
+- [x] **UX**: Mobile-only bottom-sheet (max-w-md), white card with indigo border, `Smartphone` icon, friendly copy: *"Welcome back — add Soul Food to your home screen?"*, secondary *"Faster return access for lessons, games, and your library — no app store, no extra space."*
+- [x] **Test IDs**: `install-prompt`, `install-prompt-install`, `install-prompt-later`, `install-prompt-close`, `install-prompt-never`.
+- [x] **Verified**: Lint clean (ESLint), webpack compiled successfully, component bundled into production JS (confirmed via `bundle.js` grep). Cannot visually verify in headless playwright (preview screenshot URL serves a cached static backup, not live dev build); real iOS/Android browsers will fire standard PWA paths.
+
 ### Pre-Launch P0 Hardening (May 26, 2026)
 - [x] **Coupon hardening** — `/app/backend/coupon_routes.py`. New `harden_test_coupons()` runs at startup (idempotent) and via `POST /api/coupons/admin/harden-test-coupons`. Disables 9 leaked test/beta codes (`Beta1!2!3!`, `Beta123abc`, `Beta123abcd`, `BETATEST`, `TESTII`, `DOLLARTEST`, `test123`, `test1234`, `test12345`) by setting `active=False` + `hidden=True` (reversible, audit-preserved — no deletes). Ensures ONE hidden internal `OFH_INTERNAL_$1` coupon (override_total=$1, max_uses=20, hidden=True, internal_only=True) for safe live Stripe checkout verification.
 - [x] **Coupon admin toggle endpoint** — `POST /api/coupons/admin/{code}/toggle` with body `{active: bool}` for reversible enable/disable. Never deletes.

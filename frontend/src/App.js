@@ -2018,6 +2018,7 @@ import InstructorToolbox from './InstructorToolbox';
 import MultimediaPage from './MultimediaPage';
 import RefundRequest from './RefundRequest';
 import MillionairePresenter from './MillionairePresenter';
+import InstallPrompt from './InstallPrompt';
 
 function App() {
   return (
@@ -2069,6 +2070,7 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
           </Routes>
+          <InstallPrompt />
         </BrowserRouter>
       </CartProvider>
     </div>
