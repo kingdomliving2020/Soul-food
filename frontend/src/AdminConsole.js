@@ -314,7 +314,7 @@ const ContentHealthTile = ({ token }) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setRefreshing(true);
     try {
       const res = await fetch(`${API_URL}/api/admin/content-health`, {
@@ -327,9 +327,9 @@ const ContentHealthTile = ({ token }) => {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [token]);
 
-  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [token]);
+  useEffect(() => { load(); }, [load]);
 
   if (loading) {
     return (

@@ -57,7 +57,10 @@ const AdminCodesRedemptions = () => {
   const loadBatches = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/admin/codes-redemptions/batches`, { headers });
+      const token = typeof window !== 'undefined' ? localStorage.getItem('soul_food_token') : '';
+      const res = await fetch(`${API_URL}/api/admin/codes-redemptions/batches`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
       setBatches(data.batches || []);
     } catch (e) {
@@ -65,12 +68,15 @@ const AdminCodesRedemptions = () => {
     } finally {
       setLoading(false);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const loadFlatList = useCallback(async (codeType) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/admin/codes-redemptions/list?code_type=${codeType}`, { headers });
+      const token = typeof window !== 'undefined' ? localStorage.getItem('soul_food_token') : '';
+      const res = await fetch(`${API_URL}/api/admin/codes-redemptions/list?code_type=${codeType}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
       if (codeType === 'demo') setDemoCodes(data.codes || []);
       if (codeType === 'test') setTestCodes(data.codes || []);
@@ -79,7 +85,7 @@ const AdminCodesRedemptions = () => {
     } finally {
       setLoading(false);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (tab === 'batches') loadBatches();
