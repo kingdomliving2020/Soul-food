@@ -396,7 +396,8 @@ async def get_current_user(request: Request):
                     "role": user.get("role", "member"),
                     "access_level": user.get("access_level", "free"),
                     "rewards_points": user.get("rewards_points", 0),
-                    "tfa_enabled": user.get("tfa_enabled", False)
+                    "tfa_enabled": user.get("tfa_enabled", False),
+                    "email_verified": bool(user.get("email_verified", False)),
                 }
         except JWTError:
             pass
@@ -431,7 +432,8 @@ async def get_current_user(request: Request):
         "rewards_points": user.get("rewards_points", 0),
         "tfa_enabled": user.get("tfa_enabled", False),
         "google_linked": user.get("google_linked", False),
-        "subscription_status": user.get("subscription_status", "none")
+        "subscription_status": user.get("subscription_status", "none"),
+        "email_verified": bool(user.get("email_verified", False)),
     }
 
 @router.post("/logout")
@@ -445,6 +447,141 @@ async def logout(request: Request, response: Response):
     response.delete_cookie(key="session_token", path="/")
     
     return {"message": "Logged out successfully"}
+
+
+# =============================================================================
+# Email Verification (P1 hard-gate at checkout)
+# =============================================================================
+
+@router.get("/verify-email/{token}")
+@router.post("/verify-email/{token}")
+async def verify_email(token: str):
+    """Flip email_verified=True for the user holding this token. Idempotent —
+    re-verifying an already-verified email returns success."""
+    if not token or len(token) < 16:
+        raise HTTPException(status_code=400, detail="Invalid verification token")
+
+    user = await db.users.find_one(
+        {"email_verification_token": token},
+        {"_id": 0, "password_hash": 0, "password_history": 0}
+    )
+    if not user:
+        # Token unknown — could already be consumed. If we can find by recently-
+        # verified token in audit log, be friendly. For MVP, return 400.
+        raise HTTPException(status_code=400, detail="Verification link is invalid or already used")
+
+    # Expiry check
+    expires_at = user.get("email_verification_expires_at")
+    if expires_at and isinstance(expires_at, str):
+        try:
+            exp_dt = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+            if exp_dt.tzinfo is None:
+                exp_dt = exp_dt.replace(tzinfo=timezone.utc)
+            if exp_dt < datetime.now(timezone.utc):
+                raise HTTPException(
+                    status_code=400,
+                    detail="Verification link has expired. Please request a new one.",
+                )
+        except ValueError:
+            pass
+
+    now = datetime.now(timezone.utc)
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": {
+            "email_verified": True,
+            "email_verified_at": now.isoformat(),
+            "updated_at": now.isoformat(),
+        },
+         "$unset": {"email_verification_token": ""}}
+    )
+
+    return {
+        "success": True,
+        "message": "Email verified — you can now make purchases and access your library.",
+        "email": user.get("email"),
+    }
+
+
+class ResendVerificationRequest(BaseModel):
+    email: Optional[EmailStr] = None
+
+
+@router.post("/resend-verification")
+async def resend_verification(payload: ResendVerificationRequest, request: Request):
+    """Resend the email verification link. Accepts either an authenticated
+    request (looks up current user) or an unauthenticated request with an
+    email in the body. Rate-limited at 1 send per 60s per user."""
+    target_email = None
+
+    # Try authenticated user first
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        try:
+            token = auth_header.split(" ", 1)[1]
+            decoded = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            current_uid = decoded.get("sub")
+            if current_uid:
+                u = await db.users.find_one({"id": current_uid}, {"_id": 0})
+                if u:
+                    target_email = u.get("email")
+        except JWTError:
+            pass
+
+    if not target_email and payload.email:
+        target_email = str(payload.email).lower()
+
+    if not target_email:
+        # Always respond 200 to avoid enumeration
+        return {"success": True, "message": "If an account exists, a verification email has been sent."}
+
+    user = await db.users.find_one({"email": target_email.lower()}, {"_id": 0})
+    if not user:
+        return {"success": True, "message": "If an account exists, a verification email has been sent."}
+
+    if user.get("email_verified"):
+        return {"success": True, "message": "Email is already verified.", "already_verified": True}
+
+    # Rate-limit: 1 send per 60 seconds
+    last_sent = user.get("email_verification_sent_at")
+    if last_sent and isinstance(last_sent, str):
+        try:
+            last_dt = datetime.fromisoformat(last_sent.replace("Z", "+00:00"))
+            if last_dt.tzinfo is None:
+                last_dt = last_dt.replace(tzinfo=timezone.utc)
+            if (datetime.now(timezone.utc) - last_dt).total_seconds() < 60:
+                raise HTTPException(
+                    status_code=429,
+                    detail="Please wait a minute before requesting another verification email."
+                )
+        except ValueError:
+            pass
+
+    # Mint a fresh token + extend expiry
+    now = datetime.now(timezone.utc)
+    new_token = secrets.token_urlsafe(32)
+    new_expiry = now + timedelta(days=7)
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": {
+            "email_verification_token": new_token,
+            "email_verification_sent_at": now.isoformat(),
+            "email_verification_expires_at": new_expiry.isoformat(),
+        }}
+    )
+
+    try:
+        from email_service import send_email_verification
+        await send_email_verification(
+            to_email=user["email"],
+            name=user.get("name") or user.get("username") or "there",
+            token=new_token,
+        )
+    except Exception as e:
+        print(f"[resend-verification] send failed: {e}")
+        raise HTTPException(status_code=500, detail="Could not send verification email — please try again shortly.")
+
+    return {"success": True, "message": f"Verification email sent to {user['email']}."}
 
 # =============================================================================
 # 2FA Routes
@@ -901,7 +1038,11 @@ async def register(user_data: UserRegister):
     user_id = f"user_{uuid.uuid4().hex[:12]}"
     now = datetime.now(timezone.utc)
     password_hash = get_password_hash(user_data.password)
-    
+
+    # Email verification token (used in /verify-email link)
+    email_verification_token = secrets.token_urlsafe(32)
+    email_verification_expires = now + timedelta(days=7)
+
     user = {
         "id": user_id,
         "email": user_data.email.lower(),
@@ -922,10 +1063,26 @@ async def register(user_data: UserRegister):
         "subscription_status": "none",
         "rewards_points": 0,
         "tfa_enabled": False,
-        "tfa_method": None
+        "tfa_method": None,
+        # Email verification (P1: hard-gate at checkout for unverified users)
+        "email_verified": False,
+        "email_verification_token": email_verification_token,
+        "email_verification_sent_at": now.isoformat(),
+        "email_verification_expires_at": email_verification_expires.isoformat(),
     }
-    
+
     await db.users.insert_one(user)
+
+    # Send verification email (non-blocking — log on failure, don't break signup)
+    try:
+        from email_service import send_email_verification
+        await send_email_verification(
+            to_email=user["email"],
+            name=user_data.name,
+            token=email_verification_token,
+        )
+    except Exception as e:
+        print(f"[register] verification email send failed: {e}")
     
     # Create access token
     access_token = create_access_token(
@@ -944,12 +1101,15 @@ async def register(user_data: UserRegister):
             "role": "member",
             "access_level": "free",
             "rewards_points": 0,
-            "tfa_enabled": False
+            "tfa_enabled": False,
+            "email_verified": False,
         },
         "session_config": {
             "timeout_mins": SESSION_TIMEOUT_MINUTES,
             "message": f"Welcome to Soul Food, {user_data.name}!"
-        }
+        },
+        "verification_required": True,
+        "verification_sent_to": user["email"],
     }
 
 @router.post("/login")

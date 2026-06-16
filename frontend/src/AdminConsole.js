@@ -12,6 +12,7 @@ import { Input } from './components/ui/input';
 import { Toaster, toast } from 'sonner';
 import { safeJson } from './lib/safeFetch';
 import AdminCodesRedemptions from './AdminCodesRedemptions';
+import AdminProductsManager from './AdminProductsManager';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
@@ -1934,7 +1935,7 @@ const AdminConsole = () => {
                 <Route path="content/*" element={<ContentManager />} />
                 <Route path="instructor-content/*" element={<InstructorContentManager />} />
                 <Route path="media/*" element={<MediaLibrary />} />
-                <Route path="products/*" element={<ProductsManager />} />
+                <Route path="products/*" element={<AdminProductsManager />} />
                 <Route path="orders/*" element={<OrdersManager />} />
                 <Route path="users/*" element={<UsersManager />} />
                 <Route path="logs/*" element={<AuditLogs />} />

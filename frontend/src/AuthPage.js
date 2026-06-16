@@ -263,11 +263,16 @@ const AuthPage = () => {
       localStorage.setItem('soul_food_token', data.access_token);
       localStorage.setItem('soul_food_user', JSON.stringify(data.user));
       window.dispatchEvent(new Event('auth-changed'));
-      
-      toast.success(data.session_config?.message || `Welcome to Soul Food, ${data.user.name}!`);
-      
-      // Redirect to My Library for new users
-      setTimeout(() => navigate('/my-library'), 1000);
+
+      if (data.verification_required) {
+        toast.success(`Welcome, ${data.user.name}! Check your inbox to verify your email.`);
+        // Send them to My Library with a verification banner; they can still
+        // browse the site freely — only checkout is gated.
+        setTimeout(() => navigate('/my-library?welcome=1&verify=pending'), 1200);
+      } else {
+        toast.success(data.session_config?.message || `Welcome to Soul Food, ${data.user.name}!`);
+        setTimeout(() => navigate('/my-library'), 1000);
+      }
       
     } catch (err) {
       console.error('Registration error:', err);

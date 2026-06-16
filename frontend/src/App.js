@@ -2019,6 +2019,7 @@ import MultimediaPage from './MultimediaPage';
 import RefundRequest from './RefundRequest';
 import MillionairePresenter from './MillionairePresenter';
 import InstallPrompt from './InstallPrompt';
+import VerifyEmail from './VerifyEmail';
 
 function App() {
   return (
@@ -2064,6 +2065,7 @@ function App() {
             <Route path="/payment-cancel" element={<PaymentCancel />} />
             <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/redeem" element={<RedeemCode />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/refund-request" element={<RefundRequest />} />
             <Route path="/returns" element={<RefundRequest />} />
             <Route path="/admin/*" element={<AdminConsole />} />

@@ -749,7 +749,7 @@ const CheckoutPage = () => {
     // Check current token key only (legacy keys should be cleared on logout)
     const token = localStorage.getItem('soul_food_token');
     const savedUser = localStorage.getItem('soul_food_user');
-    
+
     if (token && savedUser) {
       try {
         const userData = JSON.parse(savedUser);
@@ -758,11 +758,33 @@ const CheckoutPage = () => {
         setCustomerEmail(userData.email || '');
         setCustomerName(userData.name || userData.full_name || '');
         setCheckoutStep('checkout'); // Skip guest prompt if logged in
+
+        // Refresh email_verified status from server (saved user may be stale)
+        fetch(`${BACKEND_URL}/api/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+          .then((r) => (r.ok ? r.json() : null))
+          .then((freshUser) => {
+            if (freshUser && typeof freshUser.email_verified !== 'undefined') {
+              setUser((prev) => ({ ...(prev || {}), ...freshUser }));
+              try {
+                localStorage.setItem(
+                  'soul_food_user',
+                  JSON.stringify({ ...(userData || {}), ...freshUser })
+                );
+              } catch (_) {
+                /* no-op */
+              }
+            }
+          })
+          .catch(() => {
+            /* no-op: we already have cached user */
+          });
       } catch (e) {
         console.error('Error parsing user data:', e);
       }
     }
-    
+
     // Check if returning from login
     const params = new URLSearchParams(location.search);
     if (params.get('returning') === 'true') {
@@ -867,6 +889,16 @@ const CheckoutPage = () => {
   const handleCheckout = async () => {
     setLoading(true);
     setError(null);
+
+    // P1 hard-gate: logged-in users must have a verified email before purchase.
+    // Guests proceed normally (email collected at the field below).
+    if (isLoggedIn && user && user.email_verified === false) {
+      setError(
+        'Please verify your email before purchasing. Check your inbox for the verification link or tap "Resend verification" below.'
+      );
+      setLoading(false);
+      return;
+    }
 
     // Validate email is provided
     if (!customerEmail.trim()) {
@@ -1767,9 +1799,51 @@ const CheckoutPage = () => {
               </div>
             )}
 
+            {/* P1: Email verification hard-gate banner for logged-in unverified users */}
+            {isLoggedIn && user && user.email_verified === false && (
+              <div
+                className="mb-4 p-4 bg-amber-50 border-2 border-amber-300 rounded-lg"
+                data-testid="checkout-verify-email-banner"
+              >
+                <div className="flex items-start gap-3">
+                  <Mail className="w-5 h-5 text-amber-700 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <h4 className="font-bold text-amber-900 mb-1">Verify your email to complete checkout</h4>
+                    <p className="text-sm text-amber-800 mb-2">
+                      We sent a verification link to <strong>{user.email}</strong> when you signed up. Tap the link in that email, then come back to finish your order.
+                    </p>
+                    <button
+                      type="button"
+                      data-testid="checkout-resend-verification-btn"
+                      onClick={async () => {
+                        try {
+                          const tok = localStorage.getItem('soul_food_token');
+                          const res = await fetch(`${BACKEND_URL}/api/auth/resend-verification`, {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              ...(tok ? { Authorization: `Bearer ${tok}` } : {}),
+                            },
+                            body: JSON.stringify({}),
+                          });
+                          const data = await res.json().catch(() => ({}));
+                          alert(data.message || (res.ok ? 'Verification email sent.' : 'Could not resend right now.'));
+                        } catch (e) {
+                          alert(`Network error: ${e.message}`);
+                        }
+                      }}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-semibold rounded-lg transition-colors"
+                    >
+                      <Mail className="w-4 h-4" /> Resend verification email
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <button
               onClick={handleCheckout}
-              disabled={loading || (!customerEmail && !isLoggedIn)}
+              disabled={loading || (!customerEmail && !isLoggedIn) || (isLoggedIn && user && user.email_verified === false)}
               data-testid="checkout-submit-btn"
               className="w-full bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
             >

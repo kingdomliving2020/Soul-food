@@ -1567,16 +1567,27 @@ BULK_COUPONS = {
 
 @router.get("/catalog")
 async def get_product_catalog():
-    """Public endpoint: returns the full product catalog with current prices"""
+    """Public endpoint: returns the full product catalog with current prices.
+
+    Merges:
+      1. Hardcoded PRODUCTS dict (canonical SOFU catalog defined in code)
+      2. db.products with status='active' (admin-created products from File Manager)
+
+    DB products override hardcoded entries by SKU when both exist (so admins can
+    re-price live without code changes). New DB-only products are appended.
+    """
     from datetime import date
     today = date.today().isoformat()
     catalog = []
+    # Track which SKUs already came from code so DB can override by SKU
+    seen_skus = {}
+
     for pid, p in PRODUCTS.items():
         effective_price = p.get("sale_price", p.get("list_price", 0))
         promo_until = p.get("promo_until")
         if promo_until and today <= promo_until and p.get("promo_sale_price") is not None:
             effective_price = p["promo_sale_price"]
-        catalog.append({
+        entry = {
             "product_id": pid,
             "name": p.get("name", ""),
             "sku": p.get("sku", ""),
@@ -1593,7 +1604,50 @@ async def get_product_catalog():
             "physical": p.get("physical", False),
             "is_bundle": p.get("is_bundle", False),
             "description": p.get("description", ""),
-        })
+            "source": "code",
+        }
+        catalog.append(entry)
+        if entry["sku"]:
+            seen_skus[entry["sku"]] = len(catalog) - 1
+
+    # Merge DB-created active products (admin can publish without dev help)
+    try:
+        async for doc in db.products.find(
+            {"status": "active"},
+            {"_id": 0, "id": 1, "sku": 1, "name": 1, "description": 1,
+             "price": 1, "compare_price": 1, "type": 1, "edition": 1,
+             "series": 1, "metadata": 1}
+        ):
+            db_entry = {
+                "product_id": doc.get("id") or doc.get("sku"),
+                "name": doc.get("name", ""),
+                "sku": doc.get("sku", ""),
+                "list_price": float(doc.get("compare_price") or doc.get("price") or 0),
+                "sale_price": float(doc.get("price") or 0),
+                "effective_price": float(doc.get("price") or 0),
+                "promo_sale_price": None,
+                "promo_until": None,
+                "edition": doc.get("edition", "") or "",
+                "medium": "",
+                "type": doc.get("type", "") or "digital",
+                "preorder": False,
+                "free": False,
+                "physical": (doc.get("type") == "physical"),
+                "is_bundle": False,
+                "description": doc.get("description", "") or "",
+                "source": "db",
+            }
+            sku = db_entry["sku"]
+            if sku and sku in seen_skus:
+                # Override existing entry in place (DB wins for active SKUs)
+                catalog[seen_skus[sku]] = db_entry
+            else:
+                catalog.append(db_entry)
+                if sku:
+                    seen_skus[sku] = len(catalog) - 1
+    except Exception as e:
+        print(f"[catalog] db.products merge skipped: {e}")
+
     return {"products": catalog, "total": len(catalog)}
 
 
@@ -2054,6 +2108,7 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
     # ============================================================
     logged_in_user_id = None
     logged_in_user_email = None
+    logged_in_user_verified = True  # default true for guests
     auth_header = http_request.headers.get("Authorization", "")
     if auth_header.startswith("Bearer "):
         token_str = auth_header.split(" ", 1)[1]
@@ -2062,14 +2117,34 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
             payload = jwt.decode(token_str, SECRET_KEY, algorithms=["HS256"])
             uid = payload.get("sub")
             if uid:
-                user = await db.users.find_one({"id": uid}, {"_id": 0, "id": 1, "email": 1})
+                user = await db.users.find_one(
+                    {"id": uid},
+                    {"_id": 0, "id": 1, "email": 1, "email_verified": 1, "role": 1}
+                )
                 if user:
                     logged_in_user_id = user.get("id")
                     logged_in_user_email = user.get("email")
-                    print(f"[Checkout] Authenticated user: {logged_in_user_id} ({logged_in_user_email})")
+                    # Admin / instructor / owner / instructor_tester accounts bypass
+                    # the verification gate (treat their work emails as trusted).
+                    privileged_roles = {"admin", "owner", "instructor", "instructor_tester", "beta_tester"}
+                    is_privileged = (user.get("role") or "").lower() in privileged_roles
+                    logged_in_user_verified = bool(user.get("email_verified", False)) or is_privileged
+                    print(f"[Checkout] Authenticated user: {logged_in_user_id} ({logged_in_user_email}) verified={logged_in_user_verified}")
         except (JWTError, Exception) as e:
             print(f"[Checkout] JWT decode failed (guest checkout): {e}")
-    
+
+    # P1 HARD-GATE: a logged-in user with unverified email cannot complete checkout.
+    # Guests proceed normally — they verify implicitly via the order receipt email.
+    if logged_in_user_id and not logged_in_user_verified:
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "error": "email_not_verified",
+                "message": "Please verify your email address before completing a purchase. We sent a verification link when you signed up — check your inbox or request a new one from your account.",
+                "email": logged_in_user_email,
+            },
+        )
+
     # Resolve the customer email: prefer form input, fall back to logged-in user
     resolved_email = request.customer_email or logged_in_user_email
     

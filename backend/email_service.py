@@ -591,6 +591,43 @@ def get_game_pass_template(
 # EMAIL SENDING FUNCTIONS
 # =============================================================================
 
+async def send_email_verification(to_email: str, name: str, token: str) -> Dict:
+    """Send a single-link email verification message."""
+    site = SITE_URL.rstrip("/")
+    verify_url = f"{site}/verify-email?token={token}"
+    subject = "Verify your Soul Food email to start shopping"
+
+    content = f"""
+    <h2 style="margin:0 0 18px 0;color:#1f2937;font-size:24px;">Welcome, {name}!</h2>
+    <p style="margin:0 0 18px 0;color:#374151;font-size:16px;line-height:1.6;">
+        Thanks for creating your Soul Food account. To unlock checkout and access your
+        library, please confirm this email address by tapping the button below.
+    </p>
+
+    <div style="margin:24px 0;padding:24px;background:#ffffff;border-radius:10px;border:2px solid #4338ca;text-align:center;">
+        <a href="{verify_url}"
+           style="display:inline-block;padding:16px 36px;background-color:#4338ca;background-image:linear-gradient(135deg,#4338ca 0%,#3730a3 100%);color:#ffffff !important;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px;letter-spacing:0.3px;border:2px solid #312e81;box-shadow:0 2px 6px rgba(67,56,202,0.35);">
+            Verify my email &rarr;
+        </a>
+        <p style="margin:14px 0 0 0;color:#6b7280;font-size:13px;">
+            This link is good for 7 days. If it expires, sign in and request a new one.
+        </p>
+    </div>
+
+    <p style="margin:18px 0 0 0;color:#6b7280;font-size:13px;line-height:1.6;">
+        Button not working? Copy and paste this URL into your browser:<br>
+        <span style="font-family:monospace;color:#374151;word-break:break-all;">{verify_url}</span>
+    </p>
+
+    <p style="margin:24px 0 0 0;color:#9ca3af;font-size:12px;">
+        Didn&rsquo;t create an account? You can safely ignore this email.
+    </p>
+    """
+    preheader = "Confirm your email to unlock checkout and your library."
+    html = get_base_template(content, preheader)
+    return await send_email(to_email, subject, html)
+
+
 async def send_email(
     to: str,
     subject: str,

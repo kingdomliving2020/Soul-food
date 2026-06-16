@@ -18,6 +18,40 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 
 ## What's Implemented
 
+### P1 Revenue Hardening + P2 Publishing Independence (May 26, 2026)
+
+#### P1 — Email Verification Hard-Gate at Checkout
+- [x] **Backend** (`auth_routes_v2.py`): `POST /api/auth/register` now stamps `email_verified=False`, mints a 7-day `email_verification_token`, and triggers `send_email_verification()` (non-blocking — register still succeeds if email send fails). Response includes `verification_required=true` and `verification_sent_to`.
+- [x] **New endpoints**: `GET|POST /api/auth/verify-email/{token}` (idempotent, expiry-aware, unsets token on success) and `POST /api/auth/resend-verification` (auth-optional, 60s rate-limit, anti-enumeration).
+- [x] **`/api/auth/me`** now returns `email_verified` in both session-cookie and JWT-fallback branches.
+- [x] **New email template** `send_email_verification()` — solid indigo button matching the new "Redeem Your Purchase" style (no fragile gradients).
+- [x] **Hard-gate at checkout** (`payment_routes.py`): `POST /api/payments/checkout/cart` returns **403 `{error:'email_not_verified'}`** for logged-in users with `email_verified=false`. Admin/owner/instructor/instructor_tester/beta_tester roles bypass. **Guests still purchase normally** (they verify implicitly via the order receipt email).
+- [x] **Frontend**:
+  - New `/verify-email` page (`VerifyEmail.js`) handles `?token=` — shows spinner → success/failure state with "Continue to Soul Food" / "Go to My Library" CTAs and a built-in resend form.
+  - `AuthPage.js` register success now toasts *"Check your inbox to verify your email"* and routes to `/my-library?welcome=1&verify=pending`.
+  - `CheckoutPage.js` refreshes `email_verified` from `/api/auth/me` on mount (defeats stale cache). When unverified: amber banner with "Resend verification email" button + submit button disabled. Hard-gate redundantly enforced in `handleCheckout`.
+- [x] **Tested end-to-end**: registered new user → checkout returns 403 unverified → POST verify-email/{token} → `/me` returns `email_verified:true` → checkout returns 200 Stripe URL.
+
+#### P2 — Admin Products Manager (Dee's Publishing Console)
+- [x] **New frontend page** `AdminProductsManager.js` mounted at `/admin/products` (replaces the read-only `ProductsManager` previously living inline in `AdminConsole.js`).
+- [x] **Features**:
+  - Paginated table with SKU, name, type pill, price, inventory, status pill, edit action.
+  - Status + Type filters (Active/Inactive/Sold out/Draft × Digital/Physical/Subscription).
+  - **Create new product** dialog: SKU (locked after create), name, description, price + compare-at, type, status, inventory, low-stock threshold, series, edition. Inline helper text reminds Dee to attach files via File Manager next.
+  - **Edit** existing product (same dialog, SKU read-only).
+  - **Seed from catalog** button — one-click idempotent import of the hardcoded 48-product `PRODUCTS` dict into `db.products`. Shows summary (created/updated/unchanged).
+  - **Refresh** button.
+- [x] **Storefront merge** (`payment_routes.py`): `GET /api/payments/catalog` now merges `db.products` with `status='active'` into the public catalog. DB entries override hardcoded entries by SKU; new DB-only products are appended. Each entry carries a `source: "code"|"db"` flag for debugging. Admin can re-price live without code changes.
+- [x] **Tested end-to-end**:
+  - Admin login → seed catalog → 48 products in db.products
+  - Create `DEE-TEST-{ts}` via UI flow → instantly visible in `/api/payments/catalog` with `source:"db"` and correct price.
+  - Deactivate → disappears from storefront.
+  - Smoke screenshot of `/admin/products` confirms 25 rows render with all CTAs.
+- [x] **Build**: `yarn build` compiled successfully (296 kB main, 23 kB CSS).
+
+#### Deferred for follow-up (P2.5)
+- File Manager → Product attach flow already exists, but **lessons & games publishing UIs are still backed by code-defined catalogs** (interactive nibbles, trivia banks). Dee can attach PDFs to lessons today but creating a brand-new interactive lesson or game-question bank from scratch still needs developer touch.
+
 ### Add-to-Home-Screen Prompt — Non-Intrusive PWA Nudge (May 26, 2026)
 - [x] **New component** `/app/frontend/src/InstallPrompt.js` mounted inside `App.js` Router so it sees route changes. Bottom-sheet style: rounded card, indigo accent, fade/slide-in animation, dismissible.
 - [x] **Gates (all must pass before rendering)**:
