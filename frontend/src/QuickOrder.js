@@ -88,7 +88,7 @@ const PalmSundayBanner = () => {
             <span className="text-3xl">✝️</span>
           </div>
           <p className="text-purple-100 text-sm md:text-base">
-            <strong>Holiday Series</strong> available now! <strong>Break*fast</strong> & <strong>Lunch</strong> pre-orders open — save up to $10 on workbooks!
+            <strong>Holiday Series</strong> & <strong>Break*fast</strong> available now! <strong>Lunch</strong> pre-orders open through July — ships August 2026.
           </p>
         </div>
 
@@ -106,22 +106,22 @@ const PalmSundayBanner = () => {
           <div className="hidden lg:block h-16 w-px bg-white/30"></div>
           <div className="lg:hidden w-full h-px bg-white/30"></div>
 
-          {/* Breakfast - PRE-ORDER */}
-          <div className="bg-amber-400 text-purple-900 rounded-xl px-5 py-4 text-center min-w-[180px] shadow-lg">
-            <p className="text-xs uppercase tracking-wide font-medium mb-1">Break*fast Series</p>
-            <p className="font-bold text-lg">Pre-Order Savings Active</p>
-            <p className="text-xs mt-1">Snack Packs + Nibbles available now!</p>
+          {/* Breakfast - AVAILABLE NOW */}
+          <div className="bg-emerald-500/30 backdrop-blur-sm rounded-xl px-5 py-4 text-center min-w-[180px]">
+            <p className="text-xs text-emerald-200 uppercase tracking-wide mb-1">Break*fast Series</p>
+            <p className="font-bold text-lg">Available Now</p>
+            <p className="text-xs text-emerald-200 mt-1">Digital + Print · Snack Packs &amp; Nibbles</p>
           </div>
 
           {/* Divider */}
           <div className="hidden lg:block h-16 w-px bg-white/30"></div>
           <div className="lg:hidden w-full h-px bg-white/30"></div>
 
-          {/* Lunch - PRE-ORDER */}
-          <div className="bg-white/20 backdrop-blur-sm rounded-xl px-5 py-4 text-center min-w-[180px]">
-            <p className="text-xs text-purple-200 uppercase tracking-wide mb-1">Lunch Series</p>
-            <p className="font-bold text-lg">Pre-Order Savings Active</p>
-            <p className="text-xs text-purple-200 mt-1">Ships in 5–10 business days · regional rates apply</p>
+          {/* Lunch - PRE-ORDER (Aug 2026) */}
+          <div className="bg-amber-400 text-purple-900 rounded-xl px-5 py-4 text-center min-w-[180px] shadow-lg">
+            <p className="text-xs uppercase tracking-wide font-medium mb-1">Lunch Series</p>
+            <p className="font-bold text-lg">Pre-Order — Aug 2026</p>
+            <p className="text-xs mt-1">Pre-orders open through July · ships August</p>
           </div>
         </div>
 
@@ -388,7 +388,7 @@ const QuickOrder = () => {
       packages: [
         { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, selectLesson: true, available: true },
         { id: 'snack', name: 'Snack Pack (4 Lessons)', lessons: 4, selectMonth: true, available: true, note: 'Includes Prayer Month 1 (available now). Additional content in future updates.' },
-        { id: 'meal', name: 'Meal Bundle (12 Lessons) — Pre-Order Savings', lessons: 12, available: true, preOrder: true, note: 'Ready Jan 2026' }
+        { id: 'meal', name: 'Meal Bundle (12 Lessons)', lessons: 12, available: true, note: 'Full 12-lesson Break*fast set' }
       ],
       pricing: {
         nibble: {
@@ -412,14 +412,14 @@ const QuickOrder = () => {
       id: 'lunch',
       name: 'Lunch Series',
       tagline: 'Kingdom Relationships',
-      description: 'Deeper lessons exploring relationships through Scripture',
+      description: 'Deeper lessons exploring relationships through Scripture. Pre-order through July — ships August 2026.',
       available: true,
       preOrder: true,
-      comingSoon: '5–10 days',
+      comingSoon: 'Aug 2026',
       editions: ['adult', 'youth', 'instructor'],
       formats: ['physical'],
       packages: [
-        { id: 'workbook', name: 'Full Workbook', lessons: 12, available: true, preOrder: true, note: 'Pre-Order Savings until Juneteenth!' }
+        { id: 'workbook', name: 'Full Workbook', lessons: 12, available: true, preOrder: true, note: 'Pre-order — Available Aug 2026' }
       ],
       pricing: {
         workbook: {
@@ -447,9 +447,9 @@ const QuickOrder = () => {
       formats: ['digital', 'physical'],
       packages: [
         { id: 'holiday-ie', name: 'Holiday IE (Workbook)', price: 34.99, format: 'physical', available: true },
-        { id: 'breakfast-digital', name: 'Break*fast IE (Digital) — $10 Off', price: 49.99, format: 'digital', available: true, preOrder: true },
-        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback) — $10 Off', price: 49.99, format: 'physical', available: true, preOrder: true },
-        { id: 'lunch-ie-preorder', name: 'Lunch IE — Pre-Order', price: 26.99, format: 'physical', available: true, preOrder: true }
+        { id: 'breakfast-digital', name: 'Break*fast IE (Digital)', price: 49.99, format: 'digital', available: true },
+        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback)', price: 49.99, format: 'physical', available: true },
+        { id: 'lunch-ie-preorder', name: 'Lunch IE — Pre-order — Available Aug 2026', price: 26.99, format: 'physical', available: true, preOrder: true }
       ],
       salePercent: 0
     },
@@ -457,7 +457,7 @@ const QuickOrder = () => {
       id: 'workbooks',
       name: 'Full Workbooks',
       tagline: 'Complete Study Workbooks',
-      description: 'Holiday available now! Break*fast pre-order savings live. Physical books ship in 5–10 business days · rates vary by region.',
+      description: 'Holiday & Break*fast available now! Physical books ship in 5–10 business days · rates vary by region. Lunch available for pre-order — ships Aug 2026.',
       available: true,
       editions: ['adult', 'youth'],
       formats: ['digital', 'physical'],
@@ -468,10 +468,10 @@ const QuickOrder = () => {
         { id: 'holiday-ye-paperback', name: 'Holiday Paperback (Youth)', price: 19.99, edition: 'youth', format: 'physical', available: true, note: 'Ships 5–10 business days' },
         { id: 'holiday-ie-digital', name: 'Holiday Digital (Instructor)', price: 34.99, edition: 'instructor', format: 'digital', available: true },
         { id: 'holiday-ie-paperback', name: 'Holiday Paperback (Instructor)', price: 34.99, edition: 'instructor', format: 'physical', available: true, note: 'Ships 5–10 business days' },
-        { id: 'breakfast-ae-digital', name: 'Break*fast Digital (Adult) — $5 Off', price: 14.99, edition: 'adult', format: 'digital', available: true, preOrder: true },
-        { id: 'breakfast-ae-paperback', name: 'Break*fast Paperback (Adult) — $5 Off', price: 29.99, edition: 'adult', format: 'physical', available: true, preOrder: true, note: 'Pre-Order' },
-        { id: 'breakfast-ye-digital', name: 'Break*fast Digital (Youth) — $5 Off', price: 14.99, edition: 'youth', format: 'digital', available: true, preOrder: true },
-        { id: 'breakfast-ye-paperback', name: 'Break*fast Paperback (Youth) — $5 Off', price: 29.99, edition: 'youth', format: 'physical', available: true, preOrder: true, note: 'Pre-Order' }
+        { id: 'breakfast-ae-digital', name: 'Break*fast Digital (Adult)', price: 14.99, edition: 'adult', format: 'digital', available: true },
+        { id: 'breakfast-ae-paperback', name: 'Break*fast Paperback (Adult)', price: 29.99, edition: 'adult', format: 'physical', available: true, note: 'Ships 5–10 business days' },
+        { id: 'breakfast-ye-digital', name: 'Break*fast Digital (Youth)', price: 14.99, edition: 'youth', format: 'digital', available: true },
+        { id: 'breakfast-ye-paperback', name: 'Break*fast Paperback (Youth)', price: 29.99, edition: 'youth', format: 'physical', available: true, note: 'Ships 5–10 business days' }
       ],
       salePercent: 0
     },

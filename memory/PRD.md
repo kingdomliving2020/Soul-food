@@ -18,6 +18,28 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 
 ## What's Implemented
 
+### Pre-Launch Catalog Cleanup + Product Tiering (June 16, 2026)
+- [x] **All BKFT (Break*fast)** workbooks + snack packs + nibbles: `preorder=False`, names cleaned of "Pre-Order" suffixes. Storefront banner now reads *"Holiday Series & Break*fast available now! Lunch pre-orders open through July — ships August 2026."*
+- [x] **All HOL (Holiday)**: already `preorder=False`, copy unchanged.
+- [x] **LNCH (Lunch)** AE/YE/IE: stay `preorder=True`, new `preorder_label="Pre-order — Available Aug 2026"` + `preorder_available_on="2026-08-01"`. Storefront tile + product copy updated.
+- [x] **BKFT-EXP-GAME** (new): Break*fast Expansion Offline Game Pack, `preorder=True`, `preorder_label="Coming This Month"`.
+- [x] **IHI-GM-AE / IHI-GM-YE** (new): In-His-Image GM Pack physical-only, `no_digital_fulfillment=True`, `physical=True`. Available now. Print-order only.
+- [x] **IHI-AE / IHI-YE Core** (new): Core lesson only, `no_digital_fulfillment=True`, free. Pair with IHI-AE-PRO.
+- [x] **IHI-AE-PRO** (new): Digital Enhancement Pack (worksheets / activities / answer key / Kingdom TTT bank). `shared_with=["AE","YE"]` — NOT tied to AE alone, NOT an IE-lite.
+- [x] **COMP bundles** (IHI-AE-COMP / IHI-YE-COMP): **NOT created** per spec.
+- [x] **Free iPDF layer**: untouched (still separate from checkout).
+- [x] **Fulfillment guardrail (`is_deliverable`)**: hard-blocks digital fulfillment on any product flagged `no_digital_fulfillment=True` or `physical=True` without a digital twin.
+- [x] **Catalog merge**: `GET /api/payments/catalog` now exposes `preorder_label`, `preorder_available_on`, `no_digital_fulfillment`, `shared_with`, `physical`, `promo_until`, `promo_sale_price` from both code and db.
+- [x] **New admin endpoints**:
+  - `POST /api/admin/products/refresh-dates` — one-click idempotent sync of name/description/preorder/labels/promo fields from canonical `PRODUCTS` dict to `db.products`. Lets Dee push date copy changes without redeploy.
+  - `GET /api/admin/products/attachment-health` — flags every active product as `missing_file_attachment` (digital, no file), `warn_physical_has_files` (physical, file attached → ignored), or `ok_no_digital`. Prevents misconfigured products from going live unnoticed.
+- [x] **Admin UI** (`AdminProductsManager.js`):
+  - New **Refresh dates** button next to Seed from catalog.
+  - Inline status badges on each row: amber **"no file"** for digital products missing attachments, orange **"file ignored"** for physical with files, slate **"physical only"** for no_digital_fulfillment products, indigo preorder label badge with date copy.
+  - Already-built: paginated table, create/edit dialog, filters.
+- [x] **Tested**: end-to-end. Refresh-dates: 48 → 54 (after new SKUs seeded). Catalog correctly merges and reports `preorder_label` on Lunch + BKFT-EXP-GAME. Attachment-health surfaced 30 active digital SKUs missing files (Dee's next attachment to-do list).
+- [x] **Build**: `yarn build` compiled successfully. Smoke screenshot confirms all 3 new buttons + all 4 new badge types render on `/admin/products`.
+
 ### P1 Revenue Hardening + P2 Publishing Independence (May 26, 2026)
 
 #### P1 — Email Verification Hard-Gate at Checkout

@@ -873,6 +873,133 @@ async def seed_products_from_catalog_endpoint(admin: AdminUser = Depends(get_cur
     )
     return {"message": "Catalog seeded into db.products", **summary}
 
+
+@router.post("/products/refresh-dates")
+async def refresh_product_dates(admin: AdminUser = Depends(get_current_admin)):
+    """One-click: re-sync date / pre-order / name fields from the canonical
+    PRODUCTS dict into db.products. Idempotent. Use this when copy on the
+    storefront looks stale ("Pre-order Jan 2026" etc.) without requiring a
+    full code redeploy.
+
+    Updated fields per SKU match:
+      name, description, preorder, preorder_label, preorder_available_on,
+      promo_until, promo_sale_price, status (active vs inactive flags untouched).
+    """
+    from payment_routes import PRODUCTS
+    now = datetime.now(timezone.utc).isoformat()
+    updated_skus = []
+    not_found_skus = []
+    for pid, p in PRODUCTS.items():
+        sku = p.get("sku")
+        if not sku:
+            continue
+        update_doc = {
+            "name": p.get("name", ""),
+            "description": p.get("description", ""),
+            "preorder": bool(p.get("preorder", False)),
+            "preorder_label": p.get("preorder_label"),
+            "preorder_available_on": p.get("preorder_available_on"),
+            "promo_until": p.get("promo_until"),
+            "promo_sale_price": p.get("promo_sale_price"),
+            "no_digital_fulfillment": bool(p.get("no_digital_fulfillment", False)),
+            "physical": bool(p.get("physical", False)),
+            "shared_with": p.get("shared_with"),
+            "edition": p.get("edition", "") or "",
+            "medium": p.get("medium", "") or "",
+            "updated_at": now,
+            "updated_by": admin.id,
+            "refreshed_at": now,
+        }
+        result = await db.products.update_one(
+            {"sku": sku}, {"$set": update_doc}, upsert=False
+        )
+        if result.matched_count > 0:
+            updated_skus.append(sku)
+        else:
+            not_found_skus.append(sku)
+
+    await log_admin_action(
+        "refresh_product_dates", admin.id, "products", "catalog",
+        {"updated": len(updated_skus), "not_found": len(not_found_skus)}
+    )
+    return {
+        "message": "Product dates refreshed from canonical PRODUCTS catalog",
+        "updated": len(updated_skus),
+        "not_found": len(not_found_skus),
+        "not_found_skus": not_found_skus,
+        "refreshed_at": now,
+    }
+
+
+@router.get("/products/attachment-health")
+async def products_attachment_health(admin: AdminUser = Depends(get_current_admin)):
+    """Fulfillment guardrail: list every active product and flag whether it
+    has at least one file attached via db.files.attachments[]. Lets the admin
+    UI surface a "⚠ no file attached" badge on rows that will silently fail
+    at checkout.
+
+    Rules surfaced:
+      - Digital products MUST have at least one attachment to be deliverable.
+      - Physical products MUST NOT have a digital file (it would be ignored).
+      - Products flagged ``no_digital_fulfillment`` are exempt from the digital
+        rule entirely.
+    """
+    products = await db.products.find(
+        {"status": "active"},
+        {"_id": 0, "id": 1, "sku": 1, "name": 1, "type": 1}
+    ).to_list(2000)
+
+    health = []
+    needs_files = []
+    physical_with_files = []
+    for p in products:
+        sku = p.get("sku") or ""
+        # Find any file attachment that references this product by id or sku
+        attachments_count = await db.files.count_documents({
+            "is_deleted": {"$ne": True},
+            "attachments": {"$elemMatch": {
+                "$or": [
+                    {"product_id": p.get("id")},
+                    {"product_id": sku},
+                ]
+            }},
+        })
+        # Cross-check against the in-code no_digital_fulfillment flag via PRODUCTS sku lookup
+        from payment_routes import PRODUCTS as _PRODUCTS
+        code_meta = next((v for v in _PRODUCTS.values() if v.get("sku") == sku), {})
+        no_digital = bool(code_meta.get("no_digital_fulfillment"))
+
+        item = {
+            "sku": sku,
+            "name": p.get("name"),
+            "type": p.get("type"),
+            "attachments_count": attachments_count,
+            "no_digital_fulfillment": no_digital,
+        }
+        if no_digital:
+            item["status"] = "ok_no_digital"
+        elif p.get("type") == "physical":
+            if attachments_count > 0:
+                item["status"] = "warn_physical_has_files"
+                physical_with_files.append(sku)
+            else:
+                item["status"] = "ok_physical"
+        else:
+            if attachments_count == 0:
+                item["status"] = "missing_file_attachment"
+                needs_files.append(sku)
+            else:
+                item["status"] = "ok"
+        health.append(item)
+
+    return {
+        "items": health,
+        "total": len(health),
+        "needs_files_count": len(needs_files),
+        "needs_files_skus": needs_files,
+        "physical_with_files_skus": physical_with_files,
+    }
+
 @router.put("/products/{product_id}")
 async def update_product(
     product_id: str,

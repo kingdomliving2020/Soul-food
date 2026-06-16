@@ -559,6 +559,12 @@ def is_deliverable(product_id: str) -> tuple:
     AND the mapped file physically exists on disk. Substitution across editions
     is never allowed (the resolver already enforces per-edition handling).
 
+    Hard guards (June 2026):
+      * Products flagged ``no_digital_fulfillment=True`` (e.g. IHI GM Pack,
+        IHI Core lessons) are NEVER deliverable as digital downloads.
+      * Products flagged ``physical=True`` without an explicit digital twin
+        are NEVER deliverable as digital downloads (print-only items).
+
     Notes (May 2026 clarification):
       * Full workbooks ARE deliverable as a single PDF for digital SKUs.
         POD/physical SKUs are blocked separately by ``_is_physical_format``
@@ -571,6 +577,14 @@ def is_deliverable(product_id: str) -> tuple:
         return (False, "empty_product_id")
 
     normalized = normalize_product_id(product_id)
+
+    # NEW: explicit no-digital flag on the product record itself.
+    p_meta = PRODUCTS.get(normalized) or PRODUCTS.get(product_id) or {}
+    if p_meta.get("no_digital_fulfillment"):
+        return (False, "no_digital_fulfillment_flag")
+    if p_meta.get("physical") and not p_meta.get("medium") == "digital":
+        # Physical SKU with no digital twin → never deliver a file.
+        return (False, "physical_only_no_digital")
 
     # Must have a file mapping.
     filename = PRODUCT_FILES.get(normalized)
@@ -1066,9 +1080,9 @@ PRODUCTS = {
         "edition": "YE"
     },
     
-    # ==================== BREAKFAST WORKBOOKS ====================
+    # ==================== BREAKFAST WORKBOOKS (AVAILABLE NOW — June 2026) ====================
     "breakfast_ie_digital": {
-        "name": "Break*fast IE (Digital) — Pre-Order",
+        "name": "Break*fast IE (Digital)",
         "sku": "BKFT-IE-DIG",
         "stripe_id": "prod_Tl5P17AYZd8eAR",
         "description": "Instructor edition — ready-to-use, low-prep ministry tool with teaching support, discussion guidance, and answer helps. Includes maps plus cultural and historical notes for clear lesson flow.",
@@ -1077,10 +1091,10 @@ PRODUCTS = {
         "currency": "usd",
         "edition": "IE",
         "medium": "digital",
-        "preorder": True
+        "preorder": False
     },
     "breakfast_ie_paperback": {
-        "name": "Break*fast Instructor Edition (WBK) — Pre-Order",
+        "name": "Break*fast Instructor Edition (WBK)",
         "sku": "BKFT-IE-PB",
         "stripe_id": "prod_Tl5DmbgIRsGRbR",
         "description": "Instructor edition — ready-to-use, low-prep ministry tool with teaching support, discussion guidance, and answer helps. Includes maps plus cultural and historical notes for clear lesson flow.",
@@ -1089,10 +1103,10 @@ PRODUCTS = {
         "currency": "usd",
         "edition": "IE",
         "medium": "paperback",
-        "preorder": True
+        "preorder": False
     },
     "breakfast_ae_digital": {
-        "name": "Break*fast AE (Digital) — Pre-Order",
+        "name": "Break*fast AE (Digital)",
         "sku": "BKFT-AE-DIG",
         "stripe_id": "prod_Tl5TzIALgCR5AX",
         "description": "Adult workbook centered on Foundation in Christ. Ready-to-use lessons with journal-style space, reflective prompts, and group-ready activities.",
@@ -1101,10 +1115,10 @@ PRODUCTS = {
         "currency": "usd",
         "edition": "AE",
         "medium": "digital",
-        "preorder": True
+        "preorder": False
     },
     "breakfast_ae_paperback": {
-        "name": "Break*fast Adult Edition (WBK) — Pre-Order",
+        "name": "Break*fast Adult Edition (WBK)",
         "sku": "BKFT-AE-PB",
         "stripe_id": "prod_Tl5GHVPeUEeqRH",
         "description": "Adult workbook centered on Foundation in Christ. Ready-to-use lessons with journal-style space, reflective prompts, and group-ready activities.",
@@ -1113,10 +1127,10 @@ PRODUCTS = {
         "currency": "usd",
         "edition": "AE",
         "medium": "paperback",
-        "preorder": True
+        "preorder": False
     },
     "breakfast_ye_digital": {
-        "name": "Break*fast YE (Digital) — Pre-Order",
+        "name": "Break*fast YE (Digital)",
         "sku": "BKFT-YE-DIG",
         "stripe_id": "prod_Tl5WM3aZcWrBB1",
         "description": "Youth workbook built to strengthen identity and growth in Christ. Ready-to-use lessons with guided prompts, journaling space, and engaging activities for teens.",
@@ -1125,10 +1139,10 @@ PRODUCTS = {
         "currency": "usd",
         "edition": "YE",
         "medium": "digital",
-        "preorder": True
+        "preorder": False
     },
     "breakfast_ye_paperback": {
-        "name": "Break*fast Youth Edition (WBK) — Pre-Order",
+        "name": "Break*fast Youth Edition (WBK)",
         "sku": "BKFT-YE-PB",
         "stripe_id": "prod_Tl5KYUQVq7fgKd",
         "description": "Youth workbook built to strengthen identity and growth in Christ. Ready-to-use lessons with guided prompts, journaling space, and engaging activities for teens.",
@@ -1137,45 +1151,51 @@ PRODUCTS = {
         "currency": "usd",
         "edition": "YE",
         "medium": "paperback",
-        "preorder": True
+        "preorder": False
     },
     
-    # ==================== LUNCH WORKBOOKS (PRE-ORDER — $3 off until Juneteenth) ====================
+    # ==================== LUNCH WORKBOOKS (PRE-ORDER — Available Aug 2026) ====================
     "lunch_ie_paperback": {
-        "name": "Lunch Instructor Edition (WBK) — Pre-Order",
+        "name": "Lunch Instructor Edition (WBK) — Pre-order — Available Aug 2026",
         "sku": "LNCH-IE-PB",
         "stripe_id": "prod_Tl5bF463nMytFx",
-        "description": "Instructor workbook built to provide kingdom relationship examples. Guided prompts, journaling space, and engaging activities designed for leading various types of groups.",
+        "description": "Instructor workbook built to provide kingdom relationship examples. Guided prompts, journaling space, and engaging activities designed for leading various types of groups. Pre-orders accepted through July 2026.",
         "list_price": 29.99,
         "sale_price": 26.99,
         "currency": "usd",
         "edition": "IE",
         "medium": "paperback",
-        "preorder": True
+        "preorder": True,
+        "preorder_label": "Pre-order — Available Aug 2026",
+        "preorder_available_on": "2026-08-01"
     },
     "lunch_ae_paperback": {
-        "name": "Lunch Adult Edition (WBK) — Pre-Order",
+        "name": "Lunch Adult Edition (WBK) — Pre-order — Available Aug 2026",
         "sku": "LNCH-AE-PB",
         "stripe_id": "prod_Tl5dMEyGFDitEf",
-        "description": "Adult workbook built to show Kingdom Relationship in the bible. Guided prompts, journaling space, and engaging activities designed for mature groups and family study.",
+        "description": "Adult workbook built to show Kingdom Relationship in the bible. Guided prompts, journaling space, and engaging activities designed for mature groups and family study. Pre-orders accepted through July 2026.",
         "list_price": 27.99,
         "sale_price": 24.99,
         "currency": "usd",
         "edition": "AE",
         "medium": "paperback",
-        "preorder": True
+        "preorder": True,
+        "preorder_label": "Pre-order — Available Aug 2026",
+        "preorder_available_on": "2026-08-01"
     },
     "lunch_ye_paperback": {
-        "name": "Lunch Youth Edition (WBK) — Pre-Order",
+        "name": "Lunch Youth Edition (WBK) — Pre-order — Available Aug 2026",
         "sku": "LNCH-YE-PB",
         "stripe_id": "prod_Tl5hAx8RL8Vvjh",
-        "description": "Youth workbook built to provide inspiring examples about Kingdom Relationships. Guided prompts, journaling space, and engaging activities designed for teens, youth groups, and family study.",
+        "description": "Youth workbook built to provide inspiring examples about Kingdom Relationships. Guided prompts, journaling space, and engaging activities designed for teens, youth groups, and family study. Pre-orders accepted through July 2026.",
         "list_price": 24.99,
         "sale_price": 21.99,
         "currency": "usd",
         "edition": "YE",
         "medium": "paperback",
-        "preorder": True
+        "preorder": True,
+        "preorder_label": "Pre-order — Available Aug 2026",
+        "preorder_available_on": "2026-08-01"
     },
     
     # ==================== HOLIDAY WORKBOOKS ====================
@@ -1539,7 +1559,95 @@ PRODUCTS = {
         "unit": "bundle",
         "physical": True,
         "quantity": 25
-    }
+    },
+
+    # ==================== IN-HIS-IMAGE — GM PACK (PHYSICAL ONLY — Available Now) ====================
+    # Print-order only. No digital file delivery. No file_fulfillment.
+    "ihi_gm_ae": {
+        "name": "In-His-Image GM Pack (Adult Edition)",
+        "sku": "IHI-GM-AE",
+        "description": "Compiled In-His-Image Game-Master Pack for Adult Edition — print-order only. Ships physically; no digital download.",
+        "list_price": 19.99,
+        "sale_price": 17.99,
+        "currency": "usd",
+        "edition": "AE",
+        "medium": "paperback",
+        "physical": True,
+        "no_digital_fulfillment": True,
+        "preorder": False,
+    },
+    "ihi_gm_ye": {
+        "name": "In-His-Image GM Pack (Youth Edition)",
+        "sku": "IHI-GM-YE",
+        "description": "Compiled In-His-Image Game-Master Pack for Youth Edition — print-order only. Ships physically; no digital download.",
+        "list_price": 19.99,
+        "sale_price": 17.99,
+        "currency": "usd",
+        "edition": "YE",
+        "medium": "paperback",
+        "physical": True,
+        "no_digital_fulfillment": True,
+        "preorder": False,
+    },
+
+    # ==================== IN-HIS-IMAGE — CORE (LESSON ONLY — Available Now) ====================
+    # Lesson content only. NO worksheets. NO digital delivery. iPDF / paperback
+    # presentation; not a fulfillment target.
+    "ihi_ae_core": {
+        "name": "In-His-Image — Adult Edition (Core Lesson)",
+        "sku": "IHI-AE",
+        "description": "Core In-His-Image lesson for adults — no worksheets, no digital delivery. Pair with IHI-AE-PRO to add the worksheets / activities / answer key / Kingdom TTT bank.",
+        "list_price": 0.00,
+        "sale_price": 0.00,
+        "currency": "usd",
+        "edition": "AE",
+        "free": True,
+        "no_digital_fulfillment": True,
+        "preorder": False,
+    },
+    "ihi_ye_core": {
+        "name": "In-His-Image — Youth Edition (Core Lesson)",
+        "sku": "IHI-YE",
+        "description": "Core In-His-Image lesson for youth — no worksheets, no digital delivery. Pair with IHI-AE-PRO to add the worksheets / activities / answer key / Kingdom TTT bank.",
+        "list_price": 0.00,
+        "sale_price": 0.00,
+        "currency": "usd",
+        "edition": "YE",
+        "free": True,
+        "no_digital_fulfillment": True,
+        "preorder": False,
+    },
+
+    # ==================== IN-HIS-IMAGE — PRO (DIGITAL ENHANCEMENT LAYER) ====================
+    # Shared enhancement layer usable with BOTH AE and YE core lessons.
+    # NOT an Instructor Edition — it is a worksheet/activity pack.
+    "ihi_pro": {
+        "name": "In-His-Image PRO — Digital Enhancement Pack",
+        "sku": "IHI-AE-PRO",
+        "description": "Digital enhancement layer for the In-His-Image core lesson (works with both AE and YE). Includes worksheets, activities, answer key, and Kingdom Tricky Testaments question bank.",
+        "list_price": 12.99,
+        "sale_price": 9.99,
+        "currency": "usd",
+        "edition": "PRO",
+        "medium": "digital",
+        "type": "digital",
+        "preorder": False,
+        "shared_with": ["AE", "YE"],
+    },
+
+    # ==================== BREAKFAST EXPANSION GAME PACK (COMING THIS MONTH) ====================
+    "bkft_expansion_gamepack": {
+        "name": "Break*fast Expansion Offline Game Pack",
+        "sku": "BKFT-EXP-GAME",
+        "description": "Expanded offline game content for Break*fast — additional Tricky Testaments banks, group activities, and printable cards. In production now.",
+        "list_price": 14.99,
+        "sale_price": 12.99,
+        "currency": "usd",
+        "edition": "ALL",
+        "preorder": True,
+        "preorder_label": "Coming This Month",
+        "preorder_available_on": "2026-06-30",
+    },
 }
 
 # Bulk discount coupon codes
@@ -1600,8 +1708,12 @@ async def get_product_catalog():
             "medium": p.get("medium", ""),
             "type": p.get("type", ""),
             "preorder": p.get("preorder", False),
+            "preorder_label": p.get("preorder_label"),
+            "preorder_available_on": p.get("preorder_available_on"),
             "free": p.get("free", False),
             "physical": p.get("physical", False),
+            "no_digital_fulfillment": p.get("no_digital_fulfillment", False),
+            "shared_with": p.get("shared_with"),
             "is_bundle": p.get("is_bundle", False),
             "description": p.get("description", ""),
             "source": "code",
@@ -1616,7 +1728,10 @@ async def get_product_catalog():
             {"status": "active"},
             {"_id": 0, "id": 1, "sku": 1, "name": 1, "description": 1,
              "price": 1, "compare_price": 1, "type": 1, "edition": 1,
-             "series": 1, "metadata": 1}
+             "series": 1, "metadata": 1, "preorder": 1, "preorder_label": 1,
+             "preorder_available_on": 1, "no_digital_fulfillment": 1,
+             "physical": 1, "promo_until": 1, "promo_sale_price": 1,
+             "shared_with": 1, "medium": 1}
         ):
             db_entry = {
                 "product_id": doc.get("id") or doc.get("sku"),
@@ -1625,14 +1740,18 @@ async def get_product_catalog():
                 "list_price": float(doc.get("compare_price") or doc.get("price") or 0),
                 "sale_price": float(doc.get("price") or 0),
                 "effective_price": float(doc.get("price") or 0),
-                "promo_sale_price": None,
-                "promo_until": None,
+                "promo_sale_price": doc.get("promo_sale_price"),
+                "promo_until": doc.get("promo_until"),
                 "edition": doc.get("edition", "") or "",
-                "medium": "",
+                "medium": doc.get("medium", "") or "",
                 "type": doc.get("type", "") or "digital",
-                "preorder": False,
+                "preorder": bool(doc.get("preorder", False)),
+                "preorder_label": doc.get("preorder_label"),
+                "preorder_available_on": doc.get("preorder_available_on"),
                 "free": False,
-                "physical": (doc.get("type") == "physical"),
+                "physical": bool(doc.get("physical", False)) or (doc.get("type") == "physical"),
+                "no_digital_fulfillment": bool(doc.get("no_digital_fulfillment", False)),
+                "shared_with": doc.get("shared_with"),
                 "is_bundle": False,
                 "description": doc.get("description", "") or "",
                 "source": "db",

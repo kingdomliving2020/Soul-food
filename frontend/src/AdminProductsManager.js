@@ -65,12 +65,14 @@ const AdminProductsManager = () => {
   const [loading, setLoading] = useState(false);
   const [seeding, setSeeding] = useState(false);
   const [seedMsg, setSeedMsg] = useState('');
+  const [refreshingDates, setRefreshingDates] = useState(false);
   const [statusFilter, setStatusFilter] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
   const [editTarget, setEditTarget] = useState(null); // null | "new" | {existing product}
   const [form, setForm] = useState(EMPTY_PRODUCT);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
+  const [attachHealth, setAttachHealth] = useState({}); // sku -> status
   const limit = 25;
 
   const authHeaders = () => {
@@ -93,6 +95,17 @@ const AdminProductsManager = () => {
     } finally {
       setLoading(false);
     }
+
+    // Side-load attachment health (small payload, fire-and-forget)
+    try {
+      const r = await fetch(`${API_URL}/api/admin/products/attachment-health`, { headers: authHeaders() });
+      if (r.ok) {
+        const data = await r.json();
+        const map = {};
+        (data.items || []).forEach((it) => { map[it.sku] = it; });
+        setAttachHealth(map);
+      }
+    } catch (_) { /* non-fatal */ }
     // authHeaders reads localStorage on each call — safe to omit from deps
     // eslint-disable-next-line
   }, [page, statusFilter, typeFilter]);
@@ -186,7 +199,7 @@ const AdminProductsManager = () => {
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
-        setSeedMsg(`✓ ${data.message || 'Catalog seeded'} — ${data.created || 0} created, ${data.updated || 0} updated.`);
+        setSeedMsg(`✓ ${data.message || 'Catalog seeded'} — ${data.inserted || 0} inserted, ${data.updated || 0} updated.`);
         fetchProducts();
       } else {
         setSeedMsg(data.detail || `Seed failed (${res.status})`);
@@ -195,6 +208,31 @@ const AdminProductsManager = () => {
       setSeedMsg(`Network error: ${e.message}`);
     } finally {
       setSeeding(false);
+    }
+  };
+
+  const handleRefreshDates = async () => {
+    setRefreshingDates(true);
+    setSeedMsg('');
+    try {
+      const res = await fetch(`${API_URL}/api/admin/products/refresh-dates`, {
+        method: 'POST',
+        headers: authHeaders(),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        const notes = [];
+        notes.push(`${data.updated || 0} updated`);
+        if (data.not_found) notes.push(`${data.not_found} not yet seeded`);
+        setSeedMsg(`✓ Dates refreshed from canonical catalog — ${notes.join(', ')}.`);
+        fetchProducts();
+      } else {
+        setSeedMsg(data.detail || `Refresh failed (${res.status})`);
+      }
+    } catch (e) {
+      setSeedMsg(`Network error: ${e.message}`);
+    } finally {
+      setRefreshingDates(false);
     }
   };
 
@@ -213,6 +251,9 @@ const AdminProductsManager = () => {
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={fetchProducts} data-testid="products-refresh-btn">
             <RefreshCcw className="w-4 h-4 mr-1" /> Refresh
+          </Button>
+          <Button variant="outline" size="sm" disabled={refreshingDates} onClick={handleRefreshDates} data-testid="products-refresh-dates-btn">
+            <RefreshCcw className={`w-4 h-4 mr-1 ${refreshingDates ? 'animate-spin' : ''}`} /> {refreshingDates ? 'Refreshing…' : 'Refresh dates'}
           </Button>
           <Button variant="outline" size="sm" disabled={seeding} onClick={handleSeed} data-testid="products-seed-catalog-btn">
             <Download className="w-4 h-4 mr-1" /> {seeding ? 'Seeding…' : 'Seed from catalog'}
@@ -279,11 +320,35 @@ const AdminProductsManager = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((p) => (
+                  {products.map((p) => {
+                    const ah = attachHealth[p.sku] || {};
+                    return (
                     <tr key={p.id || p.sku} className="border-t border-slate-100 hover:bg-slate-50" data-testid={`product-row-${p.sku}`}>
                       <td className="px-4 py-2.5 font-mono text-xs">{p.sku}</td>
                       <td className="px-4 py-2.5">
-                        <div className="font-medium text-slate-800">{p.name}</div>
+                        <div className="font-medium text-slate-800 flex items-center gap-2 flex-wrap">
+                          <span>{p.name}</span>
+                          {ah.status === 'missing_file_attachment' && p.status === 'active' && (
+                            <span title="No file attached — checkout will not deliver this digital product" className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-800 border border-amber-200" data-testid={`product-needs-file-${p.sku}`}>
+                              <AlertCircle className="w-3 h-3" /> no file
+                            </span>
+                          )}
+                          {ah.status === 'warn_physical_has_files' && (
+                            <span title="Physical product has a file attached — it will be ignored at fulfillment" className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-orange-100 text-orange-800 border border-orange-200">
+                              <AlertCircle className="w-3 h-3" /> file ignored
+                            </span>
+                          )}
+                          {ah.status === 'ok_no_digital' && (
+                            <span title="No digital fulfillment by design" className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                              <CheckCircle2 className="w-3 h-3" /> physical only
+                            </span>
+                          )}
+                          {p.preorder && (
+                            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                              {p.preorder_label || 'Pre-order'}
+                            </span>
+                          )}
+                        </div>
                         {(p.series || p.edition) && (
                           <div className="text-xs text-slate-500">{[p.series, p.edition].filter(Boolean).join(' · ')}</div>
                         )}
@@ -300,7 +365,8 @@ const AdminProductsManager = () => {
                         </Button>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
