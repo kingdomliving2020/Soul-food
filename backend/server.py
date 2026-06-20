@@ -451,15 +451,39 @@ async def get_lesson(lesson_id: str):
 
 # Capture build/version metadata at boot for /api/health/version
 import subprocess
+_git_sha = None
+# Priority 1: explicit env var (set by build pipeline)
+if os.environ.get("APP_GIT_SHA"):
+    _git_sha = os.environ["APP_GIT_SHA"].strip()
+# Priority 2: shipped-in file written at Save-to-GitHub time
+if not _git_sha:
+    sha_file = ROOT_DIR / ".build_sha"
+    if sha_file.exists():
+        try:
+            _git_sha = sha_file.read_text().strip()
+        except Exception:
+            pass
+# Priority 3: ask git directly (works in preview where .git is present)
+if not _git_sha:
+    try:
+        _git_sha = subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=str(ROOT_DIR.parent),
+            stderr=subprocess.DEVNULL,
+            timeout=2,
+        ).decode().strip()
+    except Exception:
+        _git_sha = "unknown"
+
+# Best-effort: persist the SHA we just resolved so the NEXT deploy can find
+# it via the shipped file even without the .git folder. Safe no-op on prod.
 try:
-    _git_sha = subprocess.check_output(
-        ["git", "rev-parse", "--short", "HEAD"],
-        cwd=str(ROOT_DIR.parent),
-        stderr=subprocess.DEVNULL,
-        timeout=2,
-    ).decode().strip()
+    sha_file = ROOT_DIR / ".build_sha"
+    if _git_sha and _git_sha != "unknown" and not sha_file.exists():
+        sha_file.write_text(_git_sha + "\n")
 except Exception:
-    _git_sha = os.environ.get("APP_GIT_SHA", "unknown")
+    pass
+
 _boot_time_utc = datetime.now(timezone.utc).isoformat()
 _app_version = os.environ.get("APP_VERSION", "soft-launch")
 
