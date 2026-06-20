@@ -1598,13 +1598,14 @@ PRODUCTS = {
         "preorder": False,
     },
 
-    # ==================== IN-HIS-IMAGE — PRO (Digital Enhancement Layer) ====================
-    # Facilitator notes, answer support, discussion prompts. Shared usable
-    # with both AE and YE booklets.
+    # ==================== IN-HIS-IMAGE — PRO (Master File: 3 SKUs across formats) ====================
+    # ONE master file (Worksheets + Activities + Answer Key + Kingdom TTT)
+    # sold three ways. Kingdom TTT is NOT a separate product — it's baked
+    # into the AE-Pro master file.
     "ihi_pro": {
-        "name": "AE-Pro Facilitator Guide",
+        "name": "AE-Pro Facilitator Guide (Digital)",
         "sku": "IHI-AE-PRO",
-        "description": "Digital facilitator guide for the In-His-Image lesson set. Facilitator notes, answer support, discussion prompts. Lead with confidence. Pairs with both AE and YE booklets.",
+        "description": "Digital download of the AE-Pro Facilitator Guide. One master file containing worksheets, activities, answer key, and Kingdom Tricky Testaments. Pairs with both AE and YE IHI booklets.",
         "list_price": 11.99,
         "sale_price": 11.99,
         "currency": "usd",
@@ -1614,30 +1615,29 @@ PRODUCTS = {
         "preorder": False,
         "shared_with": ["AE", "YE"],
     },
-
-    # ==================== IN-HIS-IMAGE — PRO + OFFLINE GM (Digital) ====================
-    # Same Pro guide PLUS offline game materials, single digital package.
-    "ihi_ae_pro_gm": {
-        "name": "AE-Pro + Offline GM Package",
-        "sku": "IHI-AE-PRO-GM",
-        "description": "AE-Pro Facilitator Guide plus offline Game-Master materials in a single digital package. Teach and play. Pairs with both AE and YE booklets.",
-        "list_price": 14.99,
-        "sale_price": 14.99,
+    "ihi_pro_pod": {
+        "name": "AE-Pro Facilitator Guide (POD Print)",
+        "sku": "IHI-AE-PRO-POD",
+        "description": "Print-on-demand physical copy of the AE-Pro Facilitator Guide. Same master file content (worksheets, activities, answer key, Kingdom TTT) printed and shipped. No digital download.",
+        "list_price": 17.99,
+        "sale_price": 17.99,
         "currency": "usd",
         "edition": "PRO",
-        "medium": "digital",
-        "type": "digital",
+        "medium": "paperback",
+        "type": "physical",
+        "physical": True,
+        "no_digital_fulfillment": True,
         "preorder": False,
         "shared_with": ["AE", "YE"],
     },
 
     # ==================== IN-HIS-IMAGE — PRO BUNDLE (Hybrid: print + digital) ====================
-    # Printed facilitator guide ships physically; digital copy + game package
-    # delivered as files. Hybrid fulfillment: ship + email.
+    # Printed facilitator guide ships physically; same master file delivered
+    # digitally. Hybrid fulfillment: ship + email.
     "ihi_ae_pro_bundle": {
-        "name": "AE-Pro Bundle (Print + Digital + GM)",
+        "name": "AE-Pro Bundle (Print + Digital)",
         "sku": "IHI-AE-PRO-BUNDLE",
-        "description": "Printed facilitator guide, digital copy, and offline game package — best of both worlds. Hybrid fulfillment: physical ships in 5–10 business days, digital delivered immediately.",
+        "description": "Get the AE-Pro Facilitator Guide both ways — printed copy ships physically AND digital download delivered immediately. Hybrid fulfillment.",
         "list_price": 19.99,
         "sale_price": 19.99,
         "currency": "usd",
@@ -1713,40 +1713,6 @@ PRODUCTS = {
                 {"sku": "IHI-AE-PRO", "quantity": 2},
             ],
         },
-    },
-
-    # ==================== IN-HIS-IMAGE — GM PACK (DEPRECATED June 20, 2026) ====================
-    # Replaced by IHI-AE-PRO-GM (digital) and IHI-AE-PRO-BUNDLE (hybrid).
-    # Left in code with status=inactive so historical references resolve.
-    "ihi_gm_ae": {
-        "name": "In-His-Image GM Pack (Adult) — DEPRECATED",
-        "sku": "IHI-GM-AE",
-        "description": "[Deprecated] Replaced by AE-Pro + Offline GM Package (IHI-AE-PRO-GM).",
-        "list_price": 19.99,
-        "sale_price": 17.99,
-        "currency": "usd",
-        "edition": "AE",
-        "medium": "paperback",
-        "physical": True,
-        "no_digital_fulfillment": True,
-        "preorder": False,
-        "deprecated": True,
-        "inactive": True,
-    },
-    "ihi_gm_ye": {
-        "name": "In-His-Image GM Pack (Youth) — DEPRECATED",
-        "sku": "IHI-GM-YE",
-        "description": "[Deprecated] Replaced by AE-Pro + Offline GM Package (IHI-AE-PRO-GM).",
-        "list_price": 19.99,
-        "sale_price": 17.99,
-        "currency": "usd",
-        "edition": "YE",
-        "medium": "paperback",
-        "physical": True,
-        "no_digital_fulfillment": True,
-        "preorder": False,
-        "deprecated": True,
-        "inactive": True,
     },
 
     # ==================== BREAKFAST EXPANSION GAME PACK (COMING THIS MONTH) ====================
