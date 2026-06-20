@@ -1450,17 +1450,12 @@ PRODUCTS = {
         "edition": "YE",
         "free": True
     },
-    "bonus-ie-holiday": {
-        "name": "Holiday Bonus Lessons (Instructor Edition)",
-        "sku": "BONUS-HOL-IE",
-        "description": "Names of God & Times and Seasons bonus lessons with game content for instructors.",
-        "list_price": 9.99,
-        "sale_price": 9.99,
-        "currency": "usd",
-        "edition": "IE",
-        "free": False
-    },
-    
+    # bonus-ie-holiday: REMOVED June 20, 2026 — the Holiday Bonus lessons
+    # (Names of God & Times and Seasons) are NOT an Instructor spinoff for the
+    # Holiday Series. The AE/YE versions remain free standalone bonuses. If a
+    # paid instructor product is ever needed for these, it should be modeled
+    # as its own series, not a Holiday IE variant.
+
     # ==================== ACHIEVEMENT MEDALLIONS ====================
     # GRinCH (Grid Iron Challenge) Medallions
     "medallion-grinch-ae": {
@@ -1572,7 +1567,7 @@ PRODUCTS = {
     "ihi_ae_core": {
         "name": "IHI Booklet (Adult Edition)",
         "sku": "IHI-AE",
-        "description": "3-lesson In-His-Image discipleship booklet for adults. Activities, discussion questions, puzzles, prayer and reflection. Printed booklet — ships physically; no digital download.",
+        "description": "Adult Edition companion booklet — 3 lessons with group worksheets, discussion guides, and activities, streamlined to work alongside the Youth Edition for cross-generational study. Print-only; ships physically. Free single-lesson nibbles available in My Library.",
         "list_price": 7.99,
         "sale_price": 7.99,
         "currency": "usd",
@@ -1582,11 +1577,12 @@ PRODUCTS = {
         "physical": True,
         "no_digital_fulfillment": True,
         "preorder": False,
+        "companion_sku": "IHI-YE",
     },
     "ihi_ye_core": {
         "name": "IHI Booklet (Youth Edition)",
         "sku": "IHI-YE",
-        "description": "3-lesson In-His-Image discipleship booklet for youth. Activities, discussion questions, puzzles, prayer and reflection. Printed booklet — ships physically; no digital download.",
+        "description": "Youth Edition companion booklet — same 3 lessons in age-appropriate language with group worksheets, discussion guides, and activities. Designed to run alongside the Adult Edition for parents and youth studying together. Print-only; ships physically.",
         "list_price": 7.99,
         "sale_price": 7.99,
         "currency": "usd",
@@ -1596,6 +1592,7 @@ PRODUCTS = {
         "physical": True,
         "no_digital_fulfillment": True,
         "preorder": False,
+        "companion_sku": "IHI-AE",
     },
 
     # ==================== IN-HIS-IMAGE — PRO (Master File: 3 SKUs across formats) ====================
@@ -1603,9 +1600,9 @@ PRODUCTS = {
     # sold three ways. Kingdom TTT is NOT a separate product — it's baked
     # into the AE-Pro master file.
     "ihi_pro": {
-        "name": "AE-Pro Facilitator Guide (Digital)",
+        "name": "AE-Pro Leader Guide (Digital)",
         "sku": "IHI-AE-PRO",
-        "description": "Digital download of the AE-Pro Facilitator Guide. One master file containing worksheets, activities, answer key, and Kingdom Tricky Testaments. Pairs with both AE and YE IHI booklets.",
+        "description": "Digital download of the AE-Pro Leader Guide for the In-His-Image series. A streamlined group-leader resource — facilitator notes, discussion prompts, and answer support. Lighter-weight than the full Instructor Editions for Holiday / Break*fast — intended for small group facilitators, not classroom-style teaching. Pairs with both AE and YE booklets.",
         "list_price": 11.99,
         "sale_price": 11.99,
         "currency": "usd",
@@ -1616,9 +1613,9 @@ PRODUCTS = {
         "shared_with": ["AE", "YE"],
     },
     "ihi_pro_pod": {
-        "name": "AE-Pro Facilitator Guide (POD Print)",
+        "name": "AE-Pro Leader Guide (Print)",
         "sku": "IHI-AE-PRO-POD",
-        "description": "Print-on-demand physical copy of the AE-Pro Facilitator Guide. Same master file content (worksheets, activities, answer key, Kingdom TTT) printed and shipped. No digital download.",
+        "description": "Printed copy of the AE-Pro Leader Guide for In-His-Image. Same content as the digital — facilitator notes, discussion prompts, answer support — printed and shipped. Note: this is a group-leader guide, not a full classroom Instructor Edition.",
         "list_price": 17.99,
         "sale_price": 17.99,
         "currency": "usd",

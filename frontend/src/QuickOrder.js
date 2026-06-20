@@ -476,6 +476,49 @@ const QuickOrder = () => {
       salePercent: 0
     },
     {
+      id: 'in-his-image',
+      name: 'In His Image Series',
+      tagline: 'Companion Booklets for Group Study',
+      description: 'AE + YE booklets designed to work together — same lessons, age-appropriate language. Print-only, ships physically. Pair with AE-Pro for facilitator support.',
+      available: true,
+      editions: ['adult', 'youth', 'pro'],
+      formats: ['physical', 'digital'],
+      packages: [
+        {
+          id: 'ihi-ae-booklet', name: 'IHI Booklet — Adult Edition',
+          price: 7.99, edition: 'adult', format: 'physical',
+          available: true, image: '/covers/ihi-ae-booklet.svg',
+          note: '3 lessons + group worksheets · companion to YE',
+        },
+        {
+          id: 'ihi-ye-booklet', name: 'IHI Booklet — Youth Edition',
+          price: 7.99, edition: 'youth', format: 'physical',
+          available: true, image: '/covers/ihi-ye-booklet.svg',
+          note: '3 lessons + group worksheets · companion to AE',
+        },
+        {
+          id: 'ihi-ae-pro-digital', name: 'AE-Pro Leader Guide (Digital)',
+          price: 11.99, edition: 'pro', format: 'digital',
+          available: true, image: '/covers/ihi-ae-pro.svg',
+          note: 'Group leader support · digital download',
+        },
+        {
+          id: 'ihi-ae-pro-pod', name: 'AE-Pro Leader Guide (Print)',
+          price: 17.99, edition: 'pro', format: 'physical',
+          available: true, image: '/covers/ihi-ae-pro-pod.svg',
+          note: 'Printed leader guide · ships physically',
+        },
+        {
+          id: 'ihi-ae-pro-bundle', name: 'AE-Pro Bundle (Print + Digital)',
+          price: 19.99, edition: 'pro', format: 'physical',
+          available: true, image: '/covers/ihi-ae-pro-bundle.svg',
+          note: 'Best value · digital instantly + print ships',
+        },
+      ],
+      salePercent: 0,
+      footer: 'Free single-lesson nibbles available in My Library — explore the content before you buy the full booklet.',
+    },
+    {
       id: 'subscriptions',
       name: 'Subscriptions',
       tagline: 'All-Access Plans',
@@ -696,15 +739,6 @@ const QuickOrder = () => {
       isBundle: true,
       description: 'Both game packs at a discount',
       preOrder: true
-    },
-    {
-      id: 'bonus-ie-holiday',
-      name: 'Holiday Bonus Lessons (Instructor)',
-      subtitle: 'Names of God & Times and Seasons with Games',
-      image: '/covers/holiday-instructor-front.jpg',
-      price: 9.99,
-      isDigital: true,
-      description: 'Instructor edition with game content for group activities'
     },
     {
       id: 'study-kit',
@@ -1322,6 +1356,17 @@ const QuickOrder = () => {
                               return '/covers/breakfast-adult-front.jpg';
                             }
                             if (meal.id === 'lunch') return '/soul-food-logo.png';
+                            if (meal.id === 'in-his-image') {
+                              // Cover follows the selected package, falling back to edition
+                              const pkg = pkgData?.id || '';
+                              if (pkg.includes('pro-bundle')) return '/covers/ihi-ae-pro-bundle.svg';
+                              if (pkg.includes('pro-pod'))    return '/covers/ihi-ae-pro-pod.svg';
+                              if (pkg.includes('pro'))        return '/covers/ihi-ae-pro.svg';
+                              if (pkg.includes('ye'))         return '/covers/ihi-ye-booklet.svg';
+                              if (selectedEdition === 'youth') return '/covers/ihi-ye-booklet.svg';
+                              if (selectedEdition === 'pro')   return '/covers/ihi-ae-pro.svg';
+                              return '/covers/ihi-ae-booklet.svg';
+                            }
                             if (meal.id === 'instructor') {
                               // Check selected package for instructor section
                               if (selectedPkg?.includes('holiday')) return '/covers/holiday-ie-front.jpg';
