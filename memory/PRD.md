@@ -17,6 +17,12 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### IHI Booklet Cover Artwork (June 20, 2026)
+- [x] Replaced SVG placeholders in `/app/frontend/public/covers/` with real artwork: `ihi-ae-booklet.png`, `ihi-ye-booklet.png`, `ihi-ae-pro.png`.
+- [x] Updated `QuickOrder.js` product config and `getPackageCover` mapping to reference the new `.png` files. AE-Pro Print and AE-Pro Bundle reuse `ihi-ae-pro.png` (single Pro cover supplied).
+- [x] Removed legacy `ihi-*.svg` placeholders.
+
+
 
 ### Pre-Launch Catalog Cleanup + Product Tiering (June 16, 2026)
 - [x] **All BKFT (Break*fast)** workbooks + snack packs + nibbles: `preorder=False`, names cleaned of "Pre-Order" suffixes. Storefront banner now reads *"Holiday Series & Break*fast available now! Lunch pre-orders open through July — ships August 2026."*
