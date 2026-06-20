@@ -893,6 +893,11 @@ async def refresh_product_dates(admin: AdminUser = Depends(get_current_admin)):
         sku = p.get("sku")
         if not sku:
             continue
+        # Auto-mark deprecated/inactive products as 'inactive' status so they
+        # disappear from the public storefront on next refresh.
+        target_status = None
+        if p.get("inactive") or p.get("deprecated"):
+            target_status = "inactive"
         update_doc = {
             "name": p.get("name", ""),
             "description": p.get("description", ""),
@@ -903,13 +908,17 @@ async def refresh_product_dates(admin: AdminUser = Depends(get_current_admin)):
             "promo_sale_price": p.get("promo_sale_price"),
             "no_digital_fulfillment": bool(p.get("no_digital_fulfillment", False)),
             "physical": bool(p.get("physical", False)),
+            "hybrid_fulfillment": bool(p.get("hybrid_fulfillment", False)),
             "shared_with": p.get("shared_with"),
+            "deprecated": bool(p.get("deprecated", False)),
             "edition": p.get("edition", "") or "",
             "medium": p.get("medium", "") or "",
             "updated_at": now,
             "updated_by": admin.id,
             "refreshed_at": now,
         }
+        if target_status:
+            update_doc["status"] = target_status
         result = await db.products.update_one(
             {"sku": sku}, {"$set": update_doc}, upsert=False
         )

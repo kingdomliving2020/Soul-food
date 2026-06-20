@@ -582,8 +582,12 @@ def is_deliverable(product_id: str) -> tuple:
     p_meta = PRODUCTS.get(normalized) or PRODUCTS.get(product_id) or {}
     if p_meta.get("no_digital_fulfillment"):
         return (False, "no_digital_fulfillment_flag")
-    if p_meta.get("physical") and not p_meta.get("medium") == "digital":
-        # Physical SKU with no digital twin → never deliver a file.
+    if p_meta.get("inactive") or p_meta.get("deprecated"):
+        return (False, "inactive_or_deprecated_sku")
+    # Hybrid fulfillment SKUs (e.g. IHI-AE-PRO-BUNDLE) are physical-shippable
+    # AND digital-deliverable. Skip the physical-blocks-digital rule for them.
+    if p_meta.get("physical") and not p_meta.get("medium") == "digital" and not p_meta.get("hybrid_fulfillment"):
+        # Physical-only SKU with no digital twin → never deliver a file.
         return (False, "physical_only_no_digital")
 
     # Must have a file mapping.
@@ -1561,78 +1565,188 @@ PRODUCTS = {
         "quantity": 25
     },
 
-    # ==================== IN-HIS-IMAGE — GM PACK (PHYSICAL ONLY — Available Now) ====================
-    # Print-order only. No digital file delivery. No file_fulfillment.
-    "ihi_gm_ae": {
-        "name": "In-His-Image GM Pack (Adult Edition)",
-        "sku": "IHI-GM-AE",
-        "description": "Compiled In-His-Image Game-Master Pack for Adult Edition — print-order only. Ships physically; no digital download.",
-        "list_price": 19.99,
-        "sale_price": 17.99,
-        "currency": "usd",
-        "edition": "AE",
-        "medium": "paperback",
-        "physical": True,
-        "no_digital_fulfillment": True,
-        "preorder": False,
-    },
-    "ihi_gm_ye": {
-        "name": "In-His-Image GM Pack (Youth Edition)",
-        "sku": "IHI-GM-YE",
-        "description": "Compiled In-His-Image Game-Master Pack for Youth Edition — print-order only. Ships physically; no digital download.",
-        "list_price": 19.99,
-        "sale_price": 17.99,
-        "currency": "usd",
-        "edition": "YE",
-        "medium": "paperback",
-        "physical": True,
-        "no_digital_fulfillment": True,
-        "preorder": False,
-    },
-
-    # ==================== IN-HIS-IMAGE — CORE (LESSON ONLY — Available Now) ====================
-    # Lesson content only. NO worksheets. NO digital delivery. iPDF / paperback
-    # presentation; not a fulfillment target.
+    # ==================== IN-HIS-IMAGE — POD BOOKLETS (Individuals tier) ====================
+    # 3-lesson discipleship booklets, printed only. Activities, discussion
+    # questions, puzzles, prayer + reflection. POD = print-on-demand; no
+    # digital file delivery.
     "ihi_ae_core": {
-        "name": "In-His-Image — Adult Edition (Core Lesson)",
+        "name": "IHI Booklet (Adult Edition)",
         "sku": "IHI-AE",
-        "description": "Core In-His-Image lesson for adults — no worksheets, no digital delivery. Pair with IHI-AE-PRO to add the worksheets / activities / answer key / Kingdom TTT bank.",
-        "list_price": 0.00,
-        "sale_price": 0.00,
+        "description": "3-lesson In-His-Image discipleship booklet for adults. Activities, discussion questions, puzzles, prayer and reflection. Printed booklet — ships physically; no digital download.",
+        "list_price": 7.99,
+        "sale_price": 7.99,
         "currency": "usd",
         "edition": "AE",
-        "free": True,
+        "medium": "paperback",
+        "type": "physical",
+        "physical": True,
         "no_digital_fulfillment": True,
         "preorder": False,
     },
     "ihi_ye_core": {
-        "name": "In-His-Image — Youth Edition (Core Lesson)",
+        "name": "IHI Booklet (Youth Edition)",
         "sku": "IHI-YE",
-        "description": "Core In-His-Image lesson for youth — no worksheets, no digital delivery. Pair with IHI-AE-PRO to add the worksheets / activities / answer key / Kingdom TTT bank.",
-        "list_price": 0.00,
-        "sale_price": 0.00,
+        "description": "3-lesson In-His-Image discipleship booklet for youth. Activities, discussion questions, puzzles, prayer and reflection. Printed booklet — ships physically; no digital download.",
+        "list_price": 7.99,
+        "sale_price": 7.99,
         "currency": "usd",
         "edition": "YE",
-        "free": True,
+        "medium": "paperback",
+        "type": "physical",
+        "physical": True,
         "no_digital_fulfillment": True,
         "preorder": False,
     },
 
-    # ==================== IN-HIS-IMAGE — PRO (DIGITAL ENHANCEMENT LAYER) ====================
-    # Shared enhancement layer usable with BOTH AE and YE core lessons.
-    # NOT an Instructor Edition — it is a worksheet/activity pack.
+    # ==================== IN-HIS-IMAGE — PRO (Digital Enhancement Layer) ====================
+    # Facilitator notes, answer support, discussion prompts. Shared usable
+    # with both AE and YE booklets.
     "ihi_pro": {
-        "name": "In-His-Image PRO — Digital Enhancement Pack",
+        "name": "AE-Pro Facilitator Guide",
         "sku": "IHI-AE-PRO",
-        "description": "Digital enhancement layer for the In-His-Image core lesson (works with both AE and YE). Includes worksheets, activities, answer key, and Kingdom Tricky Testaments question bank.",
-        "list_price": 12.99,
-        "sale_price": 9.99,
+        "description": "Digital facilitator guide for the In-His-Image lesson set. Facilitator notes, answer support, discussion prompts. Lead with confidence. Pairs with both AE and YE booklets.",
+        "list_price": 11.99,
+        "sale_price": 11.99,
         "currency": "usd",
         "edition": "PRO",
         "medium": "digital",
         "type": "digital",
         "preorder": False,
         "shared_with": ["AE", "YE"],
+    },
+
+    # ==================== IN-HIS-IMAGE — PRO + OFFLINE GM (Digital) ====================
+    # Same Pro guide PLUS offline game materials, single digital package.
+    "ihi_ae_pro_gm": {
+        "name": "AE-Pro + Offline GM Package",
+        "sku": "IHI-AE-PRO-GM",
+        "description": "AE-Pro Facilitator Guide plus offline Game-Master materials in a single digital package. Teach and play. Pairs with both AE and YE booklets.",
+        "list_price": 14.99,
+        "sale_price": 14.99,
+        "currency": "usd",
+        "edition": "PRO",
+        "medium": "digital",
+        "type": "digital",
+        "preorder": False,
+        "shared_with": ["AE", "YE"],
+    },
+
+    # ==================== IN-HIS-IMAGE — PRO BUNDLE (Hybrid: print + digital) ====================
+    # Printed facilitator guide ships physically; digital copy + game package
+    # delivered as files. Hybrid fulfillment: ship + email.
+    "ihi_ae_pro_bundle": {
+        "name": "AE-Pro Bundle (Print + Digital + GM)",
+        "sku": "IHI-AE-PRO-BUNDLE",
+        "description": "Printed facilitator guide, digital copy, and offline game package — best of both worlds. Hybrid fulfillment: physical ships in 5–10 business days, digital delivered immediately.",
+        "list_price": 19.99,
+        "sale_price": 19.99,
+        "currency": "usd",
+        "edition": "PRO",
+        "medium": "hybrid",
+        "type": "physical",
+        "physical": True,
+        "preorder": False,
+        "shared_with": ["AE", "YE"],
+        "hybrid_fulfillment": True,
+    },
+
+    # ==================== BUNDLES (Hybrid fulfillment) ====================
+    "bundle_family": {
+        "name": "Family Bundle",
+        "sku": "BUNDLE-FAMILY",
+        "description": "Family discipleship starter — 4 booklets (customer picks any mix of AE/YE) plus 1 AE-Pro facilitator guide. Hybrid fulfillment: booklets ship physically, AE-Pro delivered digitally.",
+        "list_price": 24.99,
+        "sale_price": 24.99,
+        "currency": "usd",
+        "type": "physical",
+        "physical": True,
+        "is_bundle": True,
+        "preorder": False,
+        "hybrid_fulfillment": True,
+        "bundle_contents": {
+            "physical": [
+                {"sku": "IHI-AE-OR-YE", "quantity": 4, "note": "Customer picks AE/YE mix at checkout"},
+            ],
+            "digital": [
+                {"sku": "IHI-AE-PRO", "quantity": 1},
+            ],
+        },
+    },
+    "bundle_church_starter": {
+        "name": "Church Starter Bundle",
+        "sku": "BUNDLE-CHURCH-STARTER",
+        "description": "Perfect for Sunday School — 10 booklets (mix of AE/YE) plus 1 AE-Pro facilitator guide. Hybrid fulfillment.",
+        "list_price": 49.99,
+        "sale_price": 49.99,
+        "currency": "usd",
+        "type": "physical",
+        "physical": True,
+        "is_bundle": True,
+        "preorder": False,
+        "hybrid_fulfillment": True,
+        "bundle_contents": {
+            "physical": [
+                {"sku": "IHI-AE-OR-YE", "quantity": 10, "note": "Customer picks AE/YE mix at checkout"},
+            ],
+            "digital": [
+                {"sku": "IHI-AE-PRO", "quantity": 1},
+            ],
+        },
+    },
+    "bundle_ministry": {
+        "name": "Ministry Bundle",
+        "sku": "BUNDLE-MINISTRY",
+        "description": "For larger ministries — 20 booklets (mix of AE/YE) plus 2 AE-Pro facilitator guides. Hybrid fulfillment.",
+        "list_price": 89.99,
+        "sale_price": 89.99,
+        "currency": "usd",
+        "type": "physical",
+        "physical": True,
+        "is_bundle": True,
+        "preorder": False,
+        "hybrid_fulfillment": True,
+        "bundle_contents": {
+            "physical": [
+                {"sku": "IHI-AE-OR-YE", "quantity": 20, "note": "Customer picks AE/YE mix at checkout"},
+            ],
+            "digital": [
+                {"sku": "IHI-AE-PRO", "quantity": 2},
+            ],
+        },
+    },
+
+    # ==================== IN-HIS-IMAGE — GM PACK (DEPRECATED June 20, 2026) ====================
+    # Replaced by IHI-AE-PRO-GM (digital) and IHI-AE-PRO-BUNDLE (hybrid).
+    # Left in code with status=inactive so historical references resolve.
+    "ihi_gm_ae": {
+        "name": "In-His-Image GM Pack (Adult) — DEPRECATED",
+        "sku": "IHI-GM-AE",
+        "description": "[Deprecated] Replaced by AE-Pro + Offline GM Package (IHI-AE-PRO-GM).",
+        "list_price": 19.99,
+        "sale_price": 17.99,
+        "currency": "usd",
+        "edition": "AE",
+        "medium": "paperback",
+        "physical": True,
+        "no_digital_fulfillment": True,
+        "preorder": False,
+        "deprecated": True,
+        "inactive": True,
+    },
+    "ihi_gm_ye": {
+        "name": "In-His-Image GM Pack (Youth) — DEPRECATED",
+        "sku": "IHI-GM-YE",
+        "description": "[Deprecated] Replaced by AE-Pro + Offline GM Package (IHI-AE-PRO-GM).",
+        "list_price": 19.99,
+        "sale_price": 17.99,
+        "currency": "usd",
+        "edition": "YE",
+        "medium": "paperback",
+        "physical": True,
+        "no_digital_fulfillment": True,
+        "preorder": False,
+        "deprecated": True,
+        "inactive": True,
     },
 
     # ==================== BREAKFAST EXPANSION GAME PACK (COMING THIS MONTH) ====================
@@ -1650,25 +1764,28 @@ PRODUCTS = {
     },
 }
 
-# Bulk discount coupon codes
+# Bulk discount coupon codes — aligned to canonical SOFU pricing list
+# (Volume tiers: 10-24=5%, 25-49=10%, 50+=15%).
 BULK_COUPONS = {
     "BOOK10": {
-        "name": "Book Club Special",
-        "discount_percent": 10,
-        "min_quantity": 5,
-        "description": "10% off for book clubs (5+ items)"
+        "name": "Volume — 10 to 24 Booklets",
+        "discount_percent": 5,
+        "min_quantity": 10,
+        "max_quantity": 24,
+        "description": "5% off for orders of 10-24 booklets"
     },
     "BULK15": {
-        "name": "Small Bulk Order",
-        "discount_percent": 15,
-        "min_quantity": 10,
-        "description": "15% off for bulk orders (10+ items)"
+        "name": "Volume — 25 to 49 Booklets",
+        "discount_percent": 10,
+        "min_quantity": 25,
+        "max_quantity": 49,
+        "description": "10% off for orders of 25-49 booklets"
     },
     "MEGA30": {
-        "name": "Mega Bulk Order",
-        "discount_percent": 30,
-        "min_quantity": 25,
-        "description": "30% off for mega orders (25+ items)"
+        "name": "Volume — 50+ Booklets",
+        "discount_percent": 15,
+        "min_quantity": 50,
+        "description": "15% off for orders of 50+ booklets"
     }
 }
 
@@ -1713,11 +1830,19 @@ async def get_product_catalog():
             "free": p.get("free", False),
             "physical": p.get("physical", False),
             "no_digital_fulfillment": p.get("no_digital_fulfillment", False),
+            "hybrid_fulfillment": p.get("hybrid_fulfillment", False),
+            "bundle_contents": p.get("bundle_contents"),
             "shared_with": p.get("shared_with"),
             "is_bundle": p.get("is_bundle", False),
+            "deprecated": p.get("deprecated", False),
+            "inactive": p.get("inactive", False),
             "description": p.get("description", ""),
             "source": "code",
         }
+        # Skip deprecated/inactive entries from the public catalog (keeps the
+        # storefront clean; admin UI still sees them).
+        if entry["inactive"] or entry["deprecated"]:
+            continue
         catalog.append(entry)
         if entry["sku"]:
             seen_skus[entry["sku"]] = len(catalog) - 1

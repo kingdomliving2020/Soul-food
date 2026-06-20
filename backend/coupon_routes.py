@@ -116,9 +116,9 @@ DEFAULT_COUPONS = [
     {"code": "test123", "role": "adult", "max_uses": 5, "discount_percent": 100, "session_limit_mins": 90, "conditions": "AE test - single or one month download, access to current adult game content, 90min session"},
     
     # Bulk Purchase Discount Codes
-    {"code": "BOOK10", "max_uses": 1000, "discount_percent": 10, "min_quantity": 5, "conditions": "Book Club Special - 10% off for 5+ items"},
-    {"code": "BULK15", "max_uses": 1000, "discount_percent": 15, "min_quantity": 10, "conditions": "Small Bulk Order - 15% off for 10+ items"},
-    {"code": "MEGA30", "max_uses": 500, "discount_percent": 30, "min_quantity": 25, "conditions": "Mega Bulk Order - 30% off for 25+ items"},
+    {"code": "BOOK10", "max_uses": 1000, "discount_percent": 5, "min_quantity": 10, "conditions": "Volume — 5% off for 10-24 booklets"},
+    {"code": "BULK15", "max_uses": 1000, "discount_percent": 10, "min_quantity": 25, "conditions": "Volume — 10% off for 25-49 booklets"},
+    {"code": "MEGA30", "max_uses": 500, "discount_percent": 15, "min_quantity": 50, "conditions": "Volume — 15% off for 50+ booklets"},
     
     # Launch Coupons (New - April 2026)
     {"code": "WELCOME10", "max_uses": 500, "discount_percent": 10, "conditions": "Welcome - 10% off all products"},
@@ -685,3 +685,38 @@ async def initialize_coupons():
         print(f"[Coupon Hardening] {summary}")
     except Exception as e:
         print(f"[Coupon Hardening] Skipped on startup: {e}")
+    try:
+        bulk_summary = await sync_bulk_volume_coupons()
+        print(f"[Bulk Volume Sync] {bulk_summary}")
+    except Exception as e:
+        print(f"[Bulk Volume Sync] Skipped on startup: {e}")
+
+
+async def sync_bulk_volume_coupons():
+    """Idempotent: align existing BOOK10 / BULK15 / MEGA30 coupons in the DB
+    with the canonical SOFU MVP pricing list (10-24=5%, 25-49=10%, 50+=15%).
+
+    Old values used 10/15/30% at different thresholds. This keeps the codes
+    alive (preserves redemption history) but updates the discount + threshold.
+    """
+    now_iso = datetime.now(timezone.utc).isoformat()
+    canonical = [
+        {"code": "BOOK10", "discount_percent": 5,  "min_quantity": 10, "conditions": "Volume — 5% off for 10-24 booklets"},
+        {"code": "BULK15", "discount_percent": 10, "min_quantity": 25, "conditions": "Volume — 10% off for 25-49 booklets"},
+        {"code": "MEGA30", "discount_percent": 15, "min_quantity": 50, "conditions": "Volume — 15% off for 50+ booklets"},
+    ]
+    updated = []
+    for c in canonical:
+        result = await db.coupons.update_one(
+            {"code": _code_match(c["code"])},
+            {"$set": {
+                "discount_percent": c["discount_percent"],
+                "min_quantity": c["min_quantity"],
+                "conditions": c["conditions"],
+                "updated_at": now_iso,
+                "synced_from": "sofu_mvp_pricing_list",
+            }}
+        )
+        if result.matched_count > 0:
+            updated.append(c["code"])
+    return {"updated": updated, "skipped": [c["code"] for c in canonical if c["code"] not in updated]}
