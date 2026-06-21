@@ -17,6 +17,14 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Small Group Bundle + Auth Hardening (June 21, 2026)
+- [x] **Small Group Bundle** shipped to preview — $44.99 single price · 1 IE + 4 participant booklets · 5 preset mixes (4A · 4Y · 2+2 · 3+1 · 1+3) · Custom Mix · top-of-Quick-Order placement.
+- [x] **Auto $1-off add-on rule** — when bundle is in cart, ANY additional participant-facing booklet (IHI / 4 C's / Foundation / Holiday AE+YE) gets $1 off per unit. Detected by SKU prefix in CartContext. No coupon code needed.
+- [x] **Eligible booklets**: `ihi-*`, `4cs-*`, `breakfast-ae/ye*`, `holiday-ae/ye*`.
+- [x] **Auth hardening (Priority 1)** — `authUtils.clearAllAuth()` purges all 9 auth localStorage keys + sessionStorage + dispatches `auth-changed`. Stale-JWT self-heal on App mount via `fetchWithAuthCleanup` against `/api/auth/me` — kills the "User Not Found" ghost from account-switching/cache-clear flows.
+- [x] Pre-deploy regression check still green (5 passed, 1 skipped).
+
+
 ### Pre-Deploy Regression Guard (June 21, 2026)
 - [x] `/app/scripts/pre-deploy-check.sh` — one-command runner for the 3-flow regression suite. Exits 0 on safe, non-zero blocks deploy.
 - [x] Usage: `bash scripts/pre-deploy-check.sh` (run before clicking Deploy in Emergent). Optional `FRONTEND_URL=https://kingdom-soul.com` to validate prod post-deploy.
