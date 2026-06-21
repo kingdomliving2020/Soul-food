@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,13 +17,17 @@ const TwoFactorVerify = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
-  
+
   // Get user info from location state or localStorage
   const userId = location.state?.userId;
   const returnTo = location.state?.returnTo || '/my-library';
-  const user = JSON.parse(localStorage.getItem('soul_food_user') || '{}');
+  // Memoized — avoid re-parsing localStorage on every render
+  const user = useMemo(() => {
+    try { return JSON.parse(localStorage.getItem('soul_food_user') || '{}'); }
+    catch { return {}; }
+  }, []);
   const token = localStorage.getItem('soul_food_token');
-  
+
   // Redirect if no user context
   useEffect(() => {
     if (!userId && !user.id) {

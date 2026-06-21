@@ -1939,6 +1939,9 @@ async def download_catalog_csv(admin: AdminUser = Depends(get_current_admin)):
             end = j + 1
             break
     
+    # NOTE: ast.literal_eval safely parses Python literals only (lists/dicts/strings/numbers).
+    # It does NOT execute arbitrary code. Do NOT replace with eval(). The catalog source is
+    # the trusted local payment_routes.py module — not user input.
     products = ast.literal_eval(content[i:end])
     
     output = BytesIO()
@@ -2019,6 +2022,9 @@ async def upload_catalog_csv(
             end = j + 1
             break
     
+    # NOTE: ast.literal_eval safely parses Python literals only (lists/dicts/strings/numbers).
+    # It does NOT execute arbitrary code. The catalog source is the trusted local
+    # payment_routes.py module — not user input.
     products = ast.literal_eval(file_content[i:end])
     
     updated = []

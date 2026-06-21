@@ -292,7 +292,7 @@ const OrderLookup = () => {
                   <h3 className="font-semibold text-lg text-slate-800">Items</h3>
                   <div className="divide-y">
                     {order.order.items.map((item, idx) => (
-                      <div key={idx} className="py-3 flex justify-between items-start">
+                      <div key={item.product_id || item.id || `${item.name}-${idx}`} className="py-3 flex justify-between items-start">
                         <div className="flex-1">
                           <p className="font-medium text-slate-800">{item.name}</p>
                           <p className="text-sm text-slate-600">Qty: {item.quantity || 1}</p>
@@ -338,7 +338,7 @@ const OrderLookup = () => {
                 <CardContent>
                   <div className="space-y-3">
                     {order.download_links.map((link, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                      <div key={link.product_id || link.product_name || `dl-${idx}`} className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                         <div>
                           <p className="font-medium text-slate-800">{link.product_name}</p>
                           <p className="text-sm text-slate-600">

@@ -9,6 +9,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Login Modal Component (Amazon/Walmart style)
 const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
+  const navigate = useNavigate();
   const [mode, setMode] = useState('login'); // 'login', 'register', or 'otp'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

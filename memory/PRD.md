@@ -17,6 +17,16 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Code Quality Sweep — 3 Real Bugs + Hygiene Fixes (June 21, 2026)
+- [x] Audited the external code-review report. Confirmed: `eval()` finding was a false alarm (code uses `ast.literal_eval`), circular import was already mitigated via lazy imports, 60+ "missing hook deps" were over-aggressive static analysis on non-reactive module constants.
+- [x] **3 real production bugs caught & fixed**:
+   - `AdminConsole.js` was missing `import AdminCoupons` — `/admin/coupons` route would have crashed on navigation.
+   - `LoginModal` in `CheckoutPage.js:617` referenced `navigate` without `useNavigate()` — "Forgot password?" link inside checkout would throw on click.
+   - `TrickyTestamentGame.js:407` called `setSelectedAnswer` without a `useState` declaration — answering any question would throw.
+- [x] **Hygiene**: memoized user localStorage parse in `TwoFactorVerify.js`; stable keys in `OrderLookup.js` + `InteractiveLesson.js`; documented `ast.literal_eval` safety; replaced bare `except:` in `server.py`; reformatted multi-statement-one-line in `auth_routes_v2.py`; removed duplicate lazy imports.
+- [x] httpOnly cookie migration + 1000-line component decomposition deferred per scope-control directive (parked in P2 backlog).
+
+
 ### July 4 Campaign Banner + Coupon Analytics (June 21, 2026)
 - [x] **July4Banner** mounted above homepage hero. Headline "Freedom Takes on a Whole New Meaning in Christ" + Independence Day badge + 4 featured product tiles (In His Image, GRinCH Bingo, Passport Trek, Foundation in Christ — COMING SOON). CTA "Shop the July 4 Collection" → `/quick-order?promo=FREEDOM10`. Auto-hides after July 7 04:00 UTC (end of July 6 ET).
 - [x] **Coupon analytics persistence** — every successful Stripe redemption now writes a row to `coupon_usage` with `code`, `order_number`, `customer_email`, `revenue` (paid total), `discount_given` (subtotal − paid), `redeemed_at`. Coupon doc also gets `last_redemption_at` stamped.

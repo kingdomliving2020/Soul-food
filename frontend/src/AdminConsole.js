@@ -13,6 +13,7 @@ import { Toaster, toast } from 'sonner';
 import { safeJson } from './lib/safeFetch';
 import AdminCodesRedemptions from './AdminCodesRedemptions';
 import AdminProductsManager from './AdminProductsManager';
+import AdminCoupons from './AdminCoupons';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 

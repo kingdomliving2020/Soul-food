@@ -523,7 +523,7 @@ const InteractiveLesson = () => {
               <CardContent>
                 <ul className="space-y-2">
                   {nibble.to_go_box.map((item, index) => (
-                    <li key={index} className="flex items-start">
+                    <li key={`takeaway-${index}-${String(item).slice(0, 24)}`} className="flex items-start">
                       <span className="text-teal-600 mr-2">✓</span>
                       <span className="text-slate-700">{item}</span>
                     </li>

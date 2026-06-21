@@ -176,10 +176,14 @@ def validate_password_strength(password: str) -> tuple[bool, str]:
         return False, "Password is too common. Please choose a stronger password."
     
     criteria_met = 0
-    if re.search(r'[A-Z]', password): criteria_met += 1
-    if re.search(r'[a-z]', password): criteria_met += 1
-    if re.search(r'\d', password): criteria_met += 1
-    if re.search(r'[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/`~]', password): criteria_met += 1
+    if re.search(r'[A-Z]', password):
+        criteria_met += 1
+    if re.search(r'[a-z]', password):
+        criteria_met += 1
+    if re.search(r'\d', password):
+        criteria_met += 1
+    if re.search(r'[!@#$%^&*(),.?":{}|<>_\-+=\[\]\\\/`~]', password):
+        criteria_met += 1
     
     if criteria_met < 3:
         return False, "Password must contain at least 3 of: uppercase, lowercase, number, special character"
@@ -1318,7 +1322,6 @@ class ResetPasswordRequest(BaseModel):
 @router.post("/forgot-password")
 async def forgot_password(req: ForgotPasswordRequest, background_tasks: BackgroundTasks, request: Request):
     """Send password reset email to user"""
-    from security import check_reset_rate_limit, record_reset_request, create_reset_token
     
     email = req.email.strip().lower()
     ip = request.client.host if request.client else "unknown"
@@ -1379,7 +1382,6 @@ async def forgot_password(req: ForgotPasswordRequest, background_tasks: Backgrou
 @router.post("/reset-password")
 async def reset_password(req: ResetPasswordRequest):
     """Reset password using token from email — auto-logs user in after reset"""
-    from security import verify_reset_token
     
     is_valid, user_id, msg = await verify_reset_token(req.token)
     if not is_valid:
