@@ -1911,7 +1911,7 @@ const QuickOrder = () => {
                       <img
                         src={img}
                         alt={game.name}
-                        className={`w-full h-32 ${game.id === 'game-passport-trek' ? 'object-contain p-3 scale-90' : 'object-cover object-top'} rounded-lg mb-3 bg-white ${pkg.preOrder ? 'opacity-90' : ''}`}
+                        className={`w-full h-32 ${game.id === 'game-passport-trek' ? 'object-contain p-3 scale-90' : 'object-contain p-1'} rounded-lg mb-3 bg-white ${pkg.preOrder ? 'opacity-90' : ''}`}
                       />
                       <div className="absolute top-2 left-2">
                         <span className={`text-white text-[10px] font-bold px-2 py-1 rounded ${pkg.preOrder ? 'bg-amber-500' : 'bg-emerald-600'}`}>

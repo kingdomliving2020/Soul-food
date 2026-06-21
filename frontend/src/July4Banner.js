@@ -12,7 +12,7 @@ const CAMPAIGN_END = Date.UTC(2026, 6, 7, 4, 0, 0); // July 7 04:00 UTC = end of
 
 const FEATURED = [
   { name: 'In His Image', img: '/covers/ihi-ae-booklet.png', imgClass: 'p-1' },
-  { name: 'GRinCH Bingo', img: '/covers/game-gridiron-ae.png', imgClass: 'p-1' },
+  { name: 'GRinCH Bingo', img: '/covers/game-gridiron-ae.png', imgClass: 'p-2' },
   { name: 'Small Group Bundle', img: '/covers/breakfast-adult-front.jpg', imgClass: 'p-2', tag: 'NEW · 1 IE + 4 Seats' },
   { name: 'Foundation in Christ', img: '/covers/bkft-ye-sp-m1.png', imgClass: 'p-4 scale-90', tag: 'Booklets Available Now' },
 ];
