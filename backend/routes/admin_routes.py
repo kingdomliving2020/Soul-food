@@ -963,14 +963,18 @@ async def products_attachment_health(admin: AdminUser = Depends(get_current_admi
     physical_with_files = []
     for p in products:
         sku = p.get("sku") or ""
-        # Find any file attachment that references this product by id or sku
+        # Find any file attachment that references this product by id or sku.
+        # NOTE: the attach endpoint writes ``target_id`` (see admin_files_routes.py
+        # attach_file), so this query MUST use ``target_id`` — using ``product_id``
+        # silently never matches and every product shows "no file attached".
         attachments_count = await db.files.count_documents({
             "is_deleted": {"$ne": True},
             "attachments": {"$elemMatch": {
+                "target_type": "product",
                 "$or": [
-                    {"product_id": p.get("id")},
-                    {"product_id": sku},
-                ]
+                    {"target_id": p.get("id")},
+                    {"target_id": sku},
+                ],
             }},
         })
         # Cross-check against the in-code no_digital_fulfillment flag via PRODUCTS sku lookup

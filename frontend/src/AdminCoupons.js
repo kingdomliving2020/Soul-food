@@ -37,7 +37,13 @@ const AdminCoupons = () => {
   const [form, setForm] = useState(emptyForm);
 
   const authHeaders = useCallback(() => {
-    const token = localStorage.getItem('token') || localStorage.getItem('admin_token');
+    // Canonical token key used across admin pages is `soul_food_token`.
+    // Fall back to legacy keys defensively so any earlier session still works.
+    const token =
+      localStorage.getItem('soul_food_token') ||
+      localStorage.getItem('soulFoodToken') ||
+      localStorage.getItem('token') ||
+      localStorage.getItem('admin_token');
     return token ? { Authorization: `Bearer ${token}` } : {};
   }, []);
 
