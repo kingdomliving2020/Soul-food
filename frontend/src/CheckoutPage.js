@@ -853,7 +853,8 @@ const CheckoutPage = () => {
         body: JSON.stringify({
           code: couponCode.toUpperCase(),
           product_ids: productIds,
-          cart_total: subtotal
+          cart_total: subtotal,
+          quantity: cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0)
         }),
       });
 

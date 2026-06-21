@@ -388,9 +388,15 @@ async def validate_coupon(request: CouponValidateRequest):
     # Coupon is valid!
     discount_percent = coupon.get("discount_percent", 0)
     override_total = coupon.get("override_total")  # For $1 test coupon
+    override_per_item = coupon.get("override_per_item")  # For per-item test pricing (e.g. $2/item)
     discount_amount = coupon.get("discount_amount", 0)  # Fixed dollar discount
     discount_type = coupon.get("discount_type", "percent")
     spend_cap = coupon.get("spend_cap")  # max dollar discount cap
+
+    # If override_per_item is set, compute override_total dynamically based on cart quantity
+    if override_per_item is not None and override_per_item > 0:
+        qty = max(1, request.quantity or 1)
+        override_total = round(float(override_per_item) * qty, 2)
 
     # Calculate discount_dollars for fixed amount coupons
     discount_dollars = 0.0

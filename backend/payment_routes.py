@@ -2613,6 +2613,19 @@ async def get_checkout_status(session_id: str):
                     }
                 }
             )
+
+            # Increment coupon times_used so per-coupon caps (e.g. DOLLARTEST2 max 3 uses) are enforced
+            coupon_code_used = transaction.get("coupon_code")
+            if coupon_code_used:
+                try:
+                    import re as _re
+                    await db.coupons.update_one(
+                        {"code": {"$regex": "^" + _re.escape(coupon_code_used) + "$", "$options": "i"}},
+                        {"$inc": {"times_used": 1}, "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}}
+                    )
+                    print(f"[StatusCheck] Incremented times_used for coupon: {coupon_code_used}")
+                except Exception as _e:
+                    print(f"[StatusCheck] Failed to increment coupon usage for {coupon_code_used}: {_e}")
             
             # Create download links for ALL items in the cart
             items = transaction.get("items", [])
