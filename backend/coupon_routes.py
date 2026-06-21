@@ -353,6 +353,15 @@ async def validate_coupon(request: CouponValidateRequest):
             message=f"This coupon requires a minimum of {min_qty} items",
             code=coupon["code"]
         )
+
+    # Check minimum cart total requirement
+    min_cart = coupon.get("min_cart_total")
+    if min_cart and request.cart_total < float(min_cart):
+        return CouponValidateResponse(
+            valid=False,
+            message=f"This coupon requires a minimum order of ${float(min_cart):.2f}",
+            code=coupon["code"]
+        )
     
     # Check validity dates
     now = datetime.now(timezone.utc)
@@ -426,6 +435,11 @@ async def validate_coupon(request: CouponValidateRequest):
         message = f"Coupon applied! ${discount_amount:.2f} off your order"
     else:
         message = f"Coupon applied! You get {discount_percent}% off"
+
+    # Per-coupon custom message override (e.g. "thx Aunt W")
+    custom_msg = coupon.get("display_message")
+    if custom_msg:
+        message = str(custom_msg)
     
     return CouponValidateResponse(
         valid=True,
