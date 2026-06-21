@@ -17,6 +17,17 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Juneteenth Full Retirement + Single-Campaign Lock (June 21, 2026)
+- [x] **All user-facing Juneteenth content retired.** July 4 / FREEDOM10 is now the SOLE active promotion across preview.
+- [x] `ResurrectionCountdown` component (SoulFoodApp.js) — removed.
+- [x] `usePentecostCountdown` hook (QuickOrder.js) — stubbed to always return `expired: true` (preserves call sites without rendering anything).
+- [x] Early Bird countdown UI block (QuickOrder.js) — deleted.
+- [x] Game pass 20% off Juneteenth promo (QuickOrder.js) — `isGameSaleActive` hardcoded false. List price applies; FREEDOM10 stacks 10% off through July 6.
+- [x] "Sale ends Juneteenth" footer caption — deleted.
+- [x] July 4 featured tile: Foundation in Christ badge updated from "Coming Soon" → "Booklets Available Now" (clarifies booklet purchasable today; game expansion deck still pre-order in Game Store).
+- [x] Verified: page body contains zero user-facing "Juneteenth" substrings post-sweep.
+
+
 ### Small Group Bundle + Auth Hardening (June 21, 2026)
 - [x] **Small Group Bundle** shipped to preview — $44.99 single price · 1 IE + 4 participant booklets · 5 preset mixes (4A · 4Y · 2+2 · 3+1 · 1+3) · Custom Mix · top-of-Quick-Order placement.
 - [x] **Auto $1-off add-on rule** — when bundle is in cart, ANY additional participant-facing booklet (IHI / 4 C's / Foundation / Holiday AE+YE) gets $1 off per unit. Detected by SKU prefix in CartContext. No coupon code needed.

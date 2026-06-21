@@ -221,49 +221,9 @@ const GameAddToCartButton = () => {
   );
 };
 
-// Juneteenth Sale Countdown Component (Early Bird savings ends Juneteenth)
-const ResurrectionCountdown = () => {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-  
-  useEffect(() => {
-    // Juneteenth 2026 — June 19, 2026 (Early Bird savings extended)
-    const saleEndDate = new Date('2026-06-19T23:59:59');
-    
-    const updateCountdown = () => {
-      const now = new Date();
-      const diff = saleEndDate - now;
-      
-      if (diff > 0) {
-        setTimeLeft({
-          days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((diff / (1000 * 60)) % 60),
-          seconds: Math.floor((diff / 1000) % 60)
-        });
-      }
-    };
-    
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
-  }, []);
-  
-  return (
-    <div className="flex gap-2 sm:gap-3 justify-start" data-testid="hero-countdown">
-      {[
-        { value: timeLeft.days, label: 'Days' },
-        { value: timeLeft.hours, label: 'Hrs' },
-        { value: timeLeft.minutes, label: 'Min' },
-        { value: timeLeft.seconds, label: 'Sec' }
-      ].map((item) => (
-        <div key={item.label} className="bg-white/10 backdrop-blur-sm rounded-lg px-3 py-2 sm:px-3.5 sm:py-2.5 min-w-[56px] sm:min-w-[64px] text-center border border-purple-400/30">
-          <div className="text-2xl sm:text-3xl font-bold text-amber-300 leading-none">{String(item.value).padStart(2, '0')}</div>
-          <div className="text-[10px] sm:text-xs text-purple-300 uppercase tracking-wider mt-1">{item.label}</div>
-        </div>
-      ))}
-    </div>
-  );
-};
+// ResurrectionCountdown / Juneteenth Sale component — RETIRED (June 21, 2026)
+// The July 4 / FREEDOM10 campaign is now the single active promotion.
+// Component def removed; if you need a future countdown, add a fresh one.
 
 const SoulFoodLanding = () => {
   const [series, setSeries] = useState(SOUL_FOOD_SERIES);

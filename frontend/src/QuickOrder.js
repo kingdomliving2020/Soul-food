@@ -39,32 +39,10 @@ const useCountdown = (targetDate) => {
   return timeLeft;
 };
 
-// Juneteenth countdown hook for early bird deals (sale extended)
+// Juneteenth/Pentecost countdown — RETIRED (Independence Day campaign is now the active promotion)
+// Kept as a no-op stub to preserve call sites until next refactor pass.
 const usePentecostCountdown = () => {
-  const saleEndDate = new Date('2026-06-19T23:59:59');
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, expired: false });
-  
-  useEffect(() => {
-    const update = () => {
-      const now = new Date();
-      const diff = saleEndDate - now;
-      if (diff <= 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, expired: true });
-        return;
-      }
-      setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        minutes: Math.floor((diff / (1000 * 60)) % 60),
-        expired: false
-      });
-    };
-    update();
-    const timer = setInterval(update, 60000);
-    return () => clearInterval(timer);
-  }, []);
-  
-  return timeLeft;
+  return { days: 0, hours: 0, minutes: 0, expired: true };
 };
 
 // Soft Launch Banner with Resurrection Sunday Theme
@@ -126,28 +104,7 @@ const PalmSundayBanner = () => {
           </div>
         </div>
 
-        {/* Early Bird Countdown — disabled (Juneteenth campaign ended) */}
-        {false && !pentecost.expired && (
-          <div className="mt-5 flex justify-center">
-            <div className="bg-white/15 backdrop-blur-sm rounded-xl px-6 py-3 flex items-center gap-4">
-              <span className="text-amber-300 font-semibold text-sm">Early Bird ends Juneteenth:</span>
-              <div className="flex gap-2">
-                <div className="bg-white/25 rounded-lg px-3 py-1 text-center">
-                  <span className="text-lg font-bold">{pentecost.days}</span>
-                  <p className="text-xs text-purple-200">days</p>
-                </div>
-                <div className="bg-white/25 rounded-lg px-3 py-1 text-center">
-                  <span className="text-lg font-bold">{pentecost.hours}</span>
-                  <p className="text-xs text-purple-200">hrs</p>
-                </div>
-                <div className="bg-white/25 rounded-lg px-3 py-1 text-center">
-                  <span className="text-lg font-bold">{pentecost.minutes}</span>
-                  <p className="text-xs text-purple-200">min</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Early Bird Countdown — RETIRED (Juneteenth campaign ended; July 4 / FREEDOM10 is now the sole active promotion) */}
 
         {/* Shipping Info */}
         <div className="text-center mt-4">
@@ -631,9 +588,9 @@ const QuickOrder = () => {
     }
   ];
 
-  // Gaming passes - 20% OFF until Juneteenth (June 19, 2026) - NO COUPON REQUIRED (Early Bird extended)
-  const PENTECOST_DATE = new Date('2026-06-19T23:59:59');
-  const isGameSaleActive = new Date() < PENTECOST_DATE;
+  // Gaming passes — Juneteenth early-bird promo RETIRED. July 4 / FREEDOM10 is the
+  // sole active campaign. List price applies; FREEDOM10 stacks 10% off through July 6.
+  const isGameSaleActive = false;
   
   const gamingPasses = [
     {
@@ -1917,12 +1874,7 @@ const QuickOrder = () => {
               </Card>
             ))}
           </div>
-          {/* Pentecost deadline */}
-          {isGameSaleActive && (
-            <div className="mt-4 text-center">
-              <p className="text-sm text-slate-500">20% off game passes — no coupon required. Sale ends Juneteenth (June 19, 2026).</p>
-            </div>
-          )}
+          {/* Juneteenth game-pass promo retired — July 4 / FREEDOM10 is the sole active campaign */}
         </section>
 
         {/* ===================== PRE-ORDER SECTION DIVIDER ===================== */}
