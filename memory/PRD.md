@@ -17,6 +17,25 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Homepage Ministry Journey Tiles + Customer-Facing Rebrand (June 21, 2026)
+- [x] **New "Ministry Journey" 4-tile section** added after hero in `SoulFoodApp.js` — Identity → Engagement → Community → Growth with arrow progression and eyebrow "A Ministry Journey".
+- [x] **4 coordinated lifestyle tile images** at `/app/frontend/public/covers/`:
+  - `tile-ihi.png` — Adult-Pro lake/aurora bench cover (user-provided, cropped tight on lake photo, 1024×1024).
+  - `tile-games.png` — Church game-night facilitator + raised hands (Gemini 3.1 Flash Image).
+  - `tile-smallgroup.png` — Multi-ethnic small group with Bibles + fellowship food (Gemini 3.1 Flash Image).
+  - `tile-foundation.png` — Young man at breakfast counter with tablet (user-provided "Young Man Breakfast Counter Cover").
+- [x] **July 4 Banner featured tiles** (`July4Banner.js`) updated to use the same 4 ministry-journey images for visual consistency (object-cover instead of object-contain).
+- [x] **Customer-facing rebrand** applied across landing + storefront — internal IDs/SKUs/order history untouched:
+  - "Holiday Series" → **"4 C's of Christianity"** (display only — `id: 'holiday'` preserved, all backend catalog/SKU references unchanged).
+  - "Break*fast Series" → **"Foundation in Christ"** (display only — `id: 'breakfast'` preserved).
+  - "in Christ" wrapped in `whitespace-nowrap` everywhere it appears to prevent orphan line-breaks.
+  - Files touched: `SoulFoodApp.js`, `July4Banner.js`, `QuickOrder.js`, `App.js`, `ProductSelectionModal.js`, `SnackPacksPage.js`, `MultimediaPage.js`.
+  - Untouched per directive: `AdminProductsManager.js`, `RefundRequest.js` placeholder, `InstructorToolbox.js`, backend `payment_routes.py` catalog dictionaries, `SnackPacksPage.js` `series_name === 'Holiday Series AE'` filter keys.
+- [x] **Image generation script** preserved at `/app/backend/scripts/generate_tile_images.py` (Gemini 3.1 Flash Image / Nano Banana via EMERGENT_LLM_KEY) for future tile regen.
+- [x] Archive screenshots: `/app/memory/screenshots/2026-06-21_journey-desktop.png` and `_mobile.png`.
+- [x] Verified: zero "Holiday Series" / "Breakfast Series" / "Break*fast Series" customer-facing substrings remain on landing page (`s.name` field on internal `SOUL_FOOD_SERIES` data also renamed for display consistency — no lookups broken since filtering uses `s.id`).
+
+
 ### Juneteenth Full Retirement + Single-Campaign Lock (June 21, 2026)
 - [x] **All user-facing Juneteenth content retired.** July 4 / FREEDOM10 is now the SOLE active promotion across preview.
 - [x] `ResurrectionCountdown` component (SoulFoodApp.js) — removed.
