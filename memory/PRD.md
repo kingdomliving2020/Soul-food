@@ -17,6 +17,12 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Pre-Deploy Regression Guard (June 21, 2026)
+- [x] `/app/scripts/pre-deploy-check.sh` — one-command runner for the 3-flow regression suite. Exits 0 on safe, non-zero blocks deploy.
+- [x] Usage: `bash scripts/pre-deploy-check.sh` (run before clicking Deploy in Emergent). Optional `FRONTEND_URL=https://kingdom-soul.com` to validate prod post-deploy.
+- [x] Verified: 11-second runtime, all guards pass on current preview.
+
+
 ### Code Quality Sweep — 3 Real Bugs + Hygiene Fixes (June 21, 2026)
 - [x] Audited the external code-review report. Confirmed: `eval()` finding was a false alarm (code uses `ast.literal_eval`), circular import was already mitigated via lazy imports, 60+ "missing hook deps" were over-aggressive static analysis on non-reactive module constants.
 - [x] **3 real production bugs caught & fixed**:
