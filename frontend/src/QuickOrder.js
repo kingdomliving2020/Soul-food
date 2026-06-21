@@ -6,6 +6,7 @@ import { useCart } from './CartContext';
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { ShoppingCart, X, Trash2 } from 'lucide-react';
+import SmallGroupBundleModal, { SmallGroupBundleCard } from './SmallGroupBundle';
 
 // Countdown Timer Hook for Palm Sunday deadline
 const useCountdown = (targetDate) => {
@@ -241,6 +242,7 @@ const BackCoverModal = ({ isOpen, onClose, frontCover, backCover, productName })
 
 const QuickOrder = () => {
   const { addToCart, cartItems, removeFromCart, updateQuantity, getCartTotal, getCartCount, isCartOpen, setIsCartOpen } = useCart();
+  const [sgbModalOpen, setSgbModalOpen] = useState(false);
   const [previewModal, setPreviewModal] = useState({ isOpen: false, frontCover: '', backCover: '', productName: '' });
   const [quickBundleEdition, setQuickBundleEdition] = useState(null);
   
@@ -1034,6 +1036,29 @@ const QuickOrder = () => {
 
         {/* 🌿 LAUNCH BANNER */}
         <PalmSundayBanner />
+
+        {/* ===================== SMALL GROUP BUNDLE (TOP) ===================== */}
+        <section className="mb-12" data-testid="small-group-section">
+          <div className="flex items-center gap-3 mb-4">
+            <h3 className="text-2xl font-bold text-slate-800">Built for Small Groups</h3>
+            <Badge className="bg-emerald-600 text-white text-xs px-2 py-0.5">Recommended</Badge>
+          </div>
+          <p className="text-sm text-slate-600 mb-5 max-w-2xl">
+            SOFU is designed for group learning, discussion, and discipleship. Start your ministry team, study group, homeschool circle, or church class with everything they need in one bundle.
+          </p>
+          <div className="grid md:grid-cols-2 gap-6 items-stretch">
+            <SmallGroupBundleCard onOpen={() => setSgbModalOpen(true)} />
+            <div className="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col justify-center">
+              <h4 className="font-bold text-slate-800 mb-2">Why a bundle?</h4>
+              <p className="text-sm text-slate-600 mb-3">
+                Buying individually adds up fast. The Small Group Bundle saves you up to $39.96 and bakes in the structure most leaders want anyway: <em>one teacher, four learners.</em>
+              </p>
+              <p className="text-sm text-slate-600">
+                Need a larger circle? Add booklets to your cart after the bundle — each one is automatically <strong>$1 off</strong>, no coupon needed.
+              </p>
+            </div>
+          </div>
+        </section>
 
         {/* ===================== FEATURED SECTION ===================== */}
         <section className="mb-12" data-testid="featured-section">
@@ -2213,6 +2238,7 @@ const QuickOrder = () => {
             </CardContent>
           </Card>
         </section>
+        <SmallGroupBundleModal open={sgbModalOpen} onClose={() => setSgbModalOpen(false)} />
       </div>
     </div>
   );

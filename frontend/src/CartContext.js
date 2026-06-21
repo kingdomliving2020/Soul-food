@@ -205,9 +205,42 @@ export const CartProvider = ({ children }) => {
     setCartItems([]);
   }, []);
 
+  // True if the item is a participant-facing booklet eligible for bundle add-on $1-off.
+  // Detected by ID/SKU prefix so existing add-to-cart calls don't need a flag change.
+  const isParticipantBookletItem = (item) => {
+    if (item.isSmallGroupBundle) return false;
+    if (item.isParticipantBooklet === true) return true;
+    if (item.isParticipantBooklet === false) return false;
+    const id = String(item.id || item.productId || '').toLowerCase();
+    return (
+      id.startsWith('ihi-') ||
+      id.startsWith('4cs-') ||
+      id.startsWith('breakfast-ae') ||
+      id.startsWith('breakfast-ye') ||
+      id.startsWith('holiday-ae') ||
+      id.startsWith('holiday-ye')
+    );
+  };
+
   const getCartTotal = () => {
-    return cartItems.reduce((total, item) => {
+    const rawTotal = cartItems.reduce((total, item) => {
       return total + (item.salePrice * item.quantity);
+    }, 0);
+    const hasBundle = cartItems.some(it => it.isSmallGroupBundle);
+    if (!hasBundle) return rawTotal;
+    const addonDiscount = cartItems.reduce((d, item) => {
+      if (!isParticipantBookletItem(item)) return d;
+      return d + (1.00 * item.quantity);
+    }, 0);
+    return Math.max(0, rawTotal - addonDiscount);
+  };
+
+  const getBundleAddonSavings = () => {
+    const hasBundle = cartItems.some(it => it.isSmallGroupBundle);
+    if (!hasBundle) return 0;
+    return cartItems.reduce((d, item) => {
+      if (!isParticipantBookletItem(item)) return d;
+      return d + (1.00 * item.quantity);
     }, 0);
   };
 
@@ -258,6 +291,7 @@ export const CartProvider = ({ children }) => {
     updateQuantity,
     clearCart,
     getCartTotal,
+    getBundleAddonSavings,
     getCartCount,
     hasGiftCertificates,
     isCartOpen,

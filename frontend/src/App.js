@@ -29,6 +29,7 @@ import ResetPassword from './ResetPassword';
 import AboutUs from './AboutUs';
 import AdminConsole from './AdminConsole';
 import PromoCapture from './PromoCapture';
+import { clearAllAuth, fetchWithAuthCleanup } from './authUtils';
 import { PrivacyPolicy, TermsOfService } from './LegalPages';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -149,6 +150,21 @@ const LandingPage = () => {
     window.addEventListener('auth-changed', syncAuth);
     // Also check periodically for same-tab login (storage events don't fire same-tab)
     const interval = setInterval(syncAuth, 1000);
+
+    // Stale-JWT self-heal: if our stored token points to a user that no longer
+    // exists on the backend (e.g. account was created on preview but we're on
+    // prod, or it was deleted), purge auth state instead of showing "User Not Found".
+    (async () => {
+      try {
+        const res = await fetchWithAuthCleanup(`${API}/auth/me`);
+        if (res.status === 404) {
+          setCurrentUser(null);
+        }
+      } catch {
+        // network errors are fine — we'll re-check on next page load
+      }
+    })();
+
     return () => {
       window.removeEventListener('storage', syncAuth);
       window.removeEventListener('auth-changed', syncAuth);
@@ -157,14 +173,8 @@ const LandingPage = () => {
   }, []);
   
   const handleLogout = () => {
-    localStorage.removeItem('soul_food_token');
-    localStorage.removeItem('soul_food_user');
+    clearAllAuth();
     localStorage.removeItem('soul_food_session');
-    // Clear legacy keys too
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('soulFoodToken');
-    localStorage.removeItem('soulFoodUser');
     setCurrentUser(null);
     toast.success('Logged out successfully');
   };
