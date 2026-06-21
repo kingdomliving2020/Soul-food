@@ -59,7 +59,9 @@ class CouponValidateResponse(BaseModel):
 
 class CouponCreate(BaseModel):
     code: str
-    discount_percent: int = Field(ge=0, le=100)
+    discount_percent: int = Field(default=0, ge=0, le=100)
+    discount_type: Optional[str] = None  # 'percent' | 'fixed_cart'
+    discount_amount: Optional[float] = None  # for fixed_cart
     max_uses: int = Field(default=100, ge=1)
     min_quantity: Optional[int] = None
     contributor: Optional[str] = None
@@ -75,6 +77,8 @@ class CouponCreate(BaseModel):
 
 class CouponUpdate(BaseModel):
     discount_percent: Optional[int] = Field(default=None, ge=0, le=100)
+    discount_type: Optional[str] = None
+    discount_amount: Optional[float] = None
     max_uses: Optional[int] = Field(default=None, ge=1)
     min_quantity: Optional[int] = None
     conditions: Optional[str] = None

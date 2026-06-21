@@ -17,6 +17,16 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Game Store Consolidation + Edition Sync + Coupon Admin UI (June 21, 2026)
+- [x] **Game Store rebuilt CAH-style**: 6 game-pack SKUs collapsed into 3 cards (GRinCH Bingo / Passport Trek / Game Bundle) with Edition + Package dropdowns. Base game ($19.99) + expansions ($9.99 ea — Foundation in Christ, Kingdom Relationship; pre-order).
+- [x] Renamed `"Size:"` → `"Package:"` across all storefront meal cards.
+- [x] **Edition sync bug fixed** — selecting a Youth package now auto-sets Edition = Youth (and Adult ↔ Adult). Verified in screenshot.
+- [x] `"Grinch"` → `"GRinCH Bingo"` rename throughout new Game Store.
+- [x] **DOLLARTEST2** test coupon shipped: `override_per_item: $2` (cart total = qty × $2), `max_uses: 3`, 24-hour expiry, hidden. Added `override_per_item` mechanism to `coupon_routes.py`. Frontend now sends total cart `quantity` in validate request.
+- [x] **Coupon usage cap bug fixed** — `times_used` now increments after every successful Stripe transaction (status-check path). Previously the per-coupon caps were never enforced.
+- [x] **New Admin UI: Coupon Management** (`/admin/coupons`) — view all, search/filter (all/active/inactive/expired), create, edit, enable/disable, delete. Supports Percent or Fixed-Dollar discount type, expiration, spend cap, hidden flag. Backend models extended to accept `discount_type` + `discount_amount` on create/update.
+
+
 ### IHI Booklet Cover Artwork (June 20, 2026)
 - [x] Replaced SVG placeholders in `/app/frontend/public/covers/` with real artwork: `ihi-ae-booklet.png`, `ihi-ye-booklet.png`, `ihi-ae-pro.png`.
 - [x] Updated `QuickOrder.js` product config and `getPackageCover` mapping to reference the new `.png` files. AE-Pro Print and AE-Pro Bundle reuse `ihi-ae-pro.png` (single Pro cover supplied).

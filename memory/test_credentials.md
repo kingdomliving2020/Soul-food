@@ -54,3 +54,8 @@ Use `/register` to create new test accounts.
 - Resend: Configured, kingdom-soul.com verified
 - MongoDB: Connection string in backend/.env
 - SITE_URL: https://kingdom-soul.com (used for all email links)
+
+## DOLLARTEST2 (HIDDEN — preview-only test coupon — June 21, 2026)
+- `DOLLARTEST2` — sets EACH item to **$2.00** (cart total = qty × $2)
+- `max_uses=3`, expires 24h from creation, `hidden=true`
+- Use for live Stripe checkout testing without spending real money

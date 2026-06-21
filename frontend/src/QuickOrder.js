@@ -670,75 +670,44 @@ const QuickOrder = () => {
       link: '/gift-certificates',
       hidden: true
     },
-    // Game Packs - Offline Board Games
+    // Game Store - Consolidated Card model (base + expansions, like Cards Against Humanity)
     {
-      id: 'game-pack-gridiron-ae',
-      name: 'GRinCH Game Pack (Adult)',
-      subtitle: 'Grid Iron Challenge - Instructions, Tracking Card, Player Cards, Chips',
-      image: '/covers/game-gridiron-ae.png',
-      price: 19.99,
-      isGamePack: true,
-      edition: 'adult',
-      description: 'Complete offline game kit for adult groups',
-      preOrder: true,
-      note: 'Physical kit ships 5–10 business days · rates vary by region'
+      id: 'game-grinch-bingo',
+      name: 'GRinCH Bingo',
+      subtitle: 'Grid Iron Challenge — Bible study bingo for groups',
+      isGameStore: true,
+      images: { adult: '/covers/game-gridiron-ae.png', youth: '/covers/game-gridiron-ye.png' },
+      editions: ['adult', 'youth'],
+      gamePackages: [
+        { id: 'base-4cs', name: "4 C's of Christianity", price: 19.99, available: true, badge: 'Base Game · Available' },
+        { id: 'exp-foundation', name: 'Foundation in Christ — Expansion', price: 9.99, preOrder: true, badge: 'Expansion · Pre-Order' },
+        { id: 'exp-kingdom', name: 'Kingdom Relationship — Expansion', price: 9.99, preOrder: true, badge: 'Expansion · Pre-Order' },
+      ],
+      description: 'Same game, expanding card decks. Start with the base; add expansions anytime.'
     },
     {
-      id: 'game-pack-gridiron-ye',
-      name: 'GRinCH Game Pack (Youth)',
-      subtitle: 'Grid Iron Challenge - Instructions, Tracking Card, Player Cards, Chips',
-      image: '/covers/game-gridiron-ye.png',
-      price: 19.99,
-      isGamePack: true,
-      edition: 'youth',
-      description: 'Complete offline game kit for youth groups',
-      preOrder: true
+      id: 'game-passport-trek',
+      name: 'Passport Trek',
+      subtitle: 'SOFU Passport Trek — Bible study journey game',
+      isGameStore: true,
+      images: { adult: '/covers/game-passport-ae.png', youth: '/covers/game-passport-ye.png' },
+      editions: ['adult', 'youth'],
+      gamePackages: [
+        { id: 'base', name: 'Base Game', price: 19.99, preOrder: true, badge: 'Base Game · Pre-Order' },
+      ],
+      description: 'Complete offline game kit — instructions, tracking card, player cards, chips.'
     },
     {
-      id: 'game-pack-passport-ae',
-      name: 'Passport Trek Game Pack (Adult)',
-      subtitle: 'SOFU Passport Trek - Instructions, Tracking Card, Player Cards, Chips',
-      image: '/covers/game-passport-ae.png',
-      price: 19.99,
-      isGamePack: true,
-      edition: 'adult',
-      description: 'Complete offline game kit for adult groups',
-      preOrder: true
-    },
-    {
-      id: 'game-pack-passport-ye',
-      name: 'Passport Trek Game Pack (Youth)',
-      subtitle: 'SOFU Passport Trek - Instructions, Tracking Card, Player Cards, Chips',
-      image: '/covers/game-passport-ye.png',
-      price: 19.99,
-      isGamePack: true,
-      edition: 'youth',
-      description: 'Complete offline game kit for youth groups',
-      preOrder: true
-    },
-    {
-      id: 'game-pack-bundle-adult',
-      name: 'Game Bundle (Adult) - Both Games',
-      subtitle: 'GRinCH + Passport Trek - Save $10',
-      image: '/covers/game-gridiron-ae.png',
-      price: 29.99,
-      isGamePack: true,
-      edition: 'adult',
-      isBundle: true,
-      description: 'Both game packs at a discount',
-      preOrder: true
-    },
-    {
-      id: 'game-pack-bundle-youth',
-      name: 'Game Bundle (Youth) - Both Games',
-      subtitle: 'GRinCH + Passport Trek - Save $10',
-      image: '/covers/game-gridiron-ye.png',
-      price: 29.99,
-      isGamePack: true,
-      edition: 'youth',
-      isBundle: true,
-      description: 'Both game packs at a discount',
-      preOrder: true
+      id: 'game-bundle',
+      name: 'Game Bundle',
+      subtitle: 'GRinCH Bingo + Passport Trek — Save $10',
+      isGameStore: true,
+      images: { adult: '/covers/game-gridiron-ae.png', youth: '/covers/game-gridiron-ye.png' },
+      editions: ['adult', 'youth'],
+      gamePackages: [
+        { id: 'bundle', name: 'GRinCH Bingo + Passport Trek', price: 29.99, preOrder: true, badge: 'Bundle · Save $10' },
+      ],
+      description: 'Both games at a discount. Ships together when Passport Trek releases.'
     },
     {
       id: 'study-kit',
@@ -1407,16 +1376,21 @@ const QuickOrder = () => {
                         <h4 className="font-bold text-lg text-slate-800 leading-tight">{meal.name}</h4>
                         <p className="text-xs text-slate-500 mb-2 line-clamp-2">{meal.tagline}</p>
                         
-                        {/* Package Size Selector */}
+                        {/* Package Selector */}
                         <div className="mb-2">
-                          <label className="block text-xs font-semibold mb-1 text-slate-700">Size:</label>
+                          <label className="block text-xs font-semibold mb-1 text-slate-700">Package:</label>
                           <select
+                            data-testid={`package-select-${meal.id}`}
                             className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white"
                             value={selectedPkg}
                             onChange={(e) => {
                               const pkg = meal.packages.find(p => p.id === e.target.value);
                               if (pkg?.available !== false) {
                                 updateSelection(meal.id, 'package', e.target.value);
+                                // Edition sync: if the chosen package targets a specific edition, set it too
+                                if (pkg?.edition && meal.editions?.includes(pkg.edition)) {
+                                  updateSelection(meal.id, 'edition', pkg.edition);
+                                }
                               }
                             }}
                           >
@@ -1940,11 +1914,133 @@ const QuickOrder = () => {
           </p>
         </section>
 
+        {/* Game Store Section - Cards Against Humanity-style with base + expansions */}
+        <section className="mb-12">
+          <h3 className="text-2xl font-bold mb-2 text-slate-800">🎲 Game Store</h3>
+          <p className="text-sm text-slate-600 mb-6">Pick your edition, then your pack. Start with the base game — add expansions whenever you&apos;re ready.</p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {merchandise.filter(item => item.isGameStore && !item.hidden).map(game => {
+              const sel = selections[game.id] || {};
+              const ed = sel.edition || game.editions[0];
+              const pkgs = game.gamePackages;
+              const pkgId = sel.gamePackage || pkgs[0].id;
+              const pkg = pkgs.find(p => p.id === pkgId) || pkgs[0];
+              const qty = sel.quantity || 1;
+              const img = game.images?.[ed] || Object.values(game.images || {})[0];
+              return (
+                <Card key={game.id} data-testid={`game-card-${game.id}`} className="shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full relative">
+                  <CardContent className="p-4 flex flex-col flex-1">
+                    <div className="relative">
+                      <img src={img} alt={game.name} className={`w-full h-40 object-contain rounded-lg mb-3 bg-white ${pkg.preOrder ? 'opacity-80' : ''}`} />
+                      <div className="absolute top-2 left-2">
+                        <span className={`text-white text-[10px] font-bold px-2 py-1 rounded ${pkg.preOrder ? 'bg-amber-500' : 'bg-emerald-600'}`}>
+                          {pkg.preOrder ? 'Pre-Order' : 'Available'}
+                        </span>
+                      </div>
+                      {pkg.id.startsWith('exp-') && (
+                        <div className="absolute bottom-2 right-2 bg-indigo-600/90 text-white text-[10px] font-semibold px-2 py-1 rounded shadow">
+                          {pkg.id === 'exp-foundation' ? 'Foundation in Christ' : 'Kingdom Relationship'}
+                        </div>
+                      )}
+                    </div>
+
+                    <h4 className="text-base font-bold text-slate-800 mb-1">{game.name}</h4>
+                    <p className="text-xs text-slate-500 mb-3">{game.subtitle}</p>
+
+                    {/* Edition Selector */}
+                    <div className="mb-2">
+                      <label className="block text-xs font-semibold mb-1 text-slate-700">Edition:</label>
+                      <select
+                        data-testid={`game-edition-${game.id}`}
+                        className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white"
+                        value={ed}
+                        onChange={(e) => updateSelection(game.id, 'edition', e.target.value)}
+                      >
+                        {game.editions.map(e => (
+                          <option key={e} value={e}>{e === 'adult' ? 'Adult' : 'Youth'}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Package Selector (only show if more than 1 package) */}
+                    {pkgs.length > 1 && (
+                      <div className="mb-2">
+                        <label className="block text-xs font-semibold mb-1 text-slate-700">Package:</label>
+                        <select
+                          data-testid={`game-package-${game.id}`}
+                          className="w-full p-2 border border-slate-300 rounded-lg text-sm bg-white"
+                          value={pkgId}
+                          onChange={(e) => updateSelection(game.id, 'gamePackage', e.target.value)}
+                        >
+                          {pkgs.map(p => (
+                            <option key={p.id} value={p.id}>
+                              {p.name} {p.preOrder ? '(Pre-Order)' : ''}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+
+                    <div className="flex-1" />
+
+                    {/* Quantity */}
+                    <div className="mb-2">
+                      <label className="block text-xs font-medium mb-1 text-slate-700">Quantity:</label>
+                      <div className="flex items-center gap-1">
+                        <Button variant="outline" size="sm" data-testid={`game-qty-dec-${game.id}`}
+                          onClick={() => updateSelection(game.id, 'quantity', Math.max(1, qty - 1))}
+                          className="h-7 w-7 p-0 text-xs">−</Button>
+                        <span className="w-8 text-center font-semibold text-sm">{qty}</span>
+                        <Button variant="outline" size="sm" data-testid={`game-qty-inc-${game.id}`}
+                          onClick={() => updateSelection(game.id, 'quantity', qty + 1)}
+                          className="h-7 w-7 p-0 text-xs">+</Button>
+                      </div>
+                    </div>
+
+                    {/* Price */}
+                    <div className="mb-3 text-sm">
+                      <span className="text-xl font-bold text-purple-600">${pkg.price.toFixed(2)}</span>
+                      <span className="text-xs text-slate-500 ml-2">each · {pkg.badge}</span>
+                    </div>
+
+                    {/* CTA */}
+                    <Button
+                      data-testid={`game-cta-${game.id}`}
+                      onClick={() => {
+                        const edLabel = ed === 'adult' ? 'Adult' : 'Youth';
+                        const fullId = `${game.id}-${ed}-${pkg.id}`;
+                        const fullName = pkgs.length > 1
+                          ? `${game.name} (${edLabel}) — ${pkg.name}`
+                          : `${game.name} (${edLabel})`;
+                        addToCart({
+                          id: fullId,
+                          name: fullName,
+                          price: pkg.price,
+                          quantity: qty,
+                          edition: ed,
+                          isGamePack: true,
+                          isExpansion: pkg.id.startsWith('exp-'),
+                          preOrder: !!pkg.preOrder,
+                        });
+                        toast.success(`Added ${fullName} to cart`);
+                      }}
+                      size="sm"
+                      className={`w-full text-xs ${pkg.preOrder ? 'bg-amber-500 hover:bg-amber-600 text-white' : 'bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800'}`}
+                    >
+                      {pkg.preOrder ? 'Pre-Order' : 'Add to Cart'}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </section>
+
         {/* Merchandise Section */}
         <section>
           <h3 className="text-2xl font-bold mb-6 text-slate-800">🎁 Extras & Merchandise</h3>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {merchandise.filter(item => !item.hidden).map(item => (
+            {merchandise.filter(item => !item.hidden && !item.isGameStore).map(item => (
               <Card key={item.id} className="shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full relative">
                 <CardContent className="p-4 flex flex-col flex-1">
                   <img 

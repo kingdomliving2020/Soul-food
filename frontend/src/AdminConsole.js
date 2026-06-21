@@ -46,6 +46,7 @@ const navItems = [
   { path: '/admin/logs', icon: Shield, label: 'Audit Logs' },
   { path: '/admin/codes', icon: TicketCheck, label: 'Submitted Codes' },
   { path: '/admin/codes-redemptions', icon: Tag, label: 'Codes & Redemptions' },
+  { path: '/admin/coupons', icon: TicketCheck, label: 'Coupons' },
 ];
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -1941,6 +1942,7 @@ const AdminConsole = () => {
                 <Route path="logs/*" element={<AuditLogs />} />
                 <Route path="codes/*" element={<SubmittedCodes />} />
                 <Route path="codes-redemptions/*" element={<AdminCodesRedemptions />} />
+                <Route path="coupons/*" element={<AdminCoupons />} />
               </Routes>
             </main>
           </div>
