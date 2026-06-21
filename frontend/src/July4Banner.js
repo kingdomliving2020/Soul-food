@@ -44,7 +44,7 @@ const July4Banner = () => {
       <div aria-hidden="true" className="absolute inset-y-0 right-0 w-1.5 bg-gradient-to-b from-red-500 via-red-400 to-red-500 opacity-80" />
 
       <div className="relative z-10 container mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-10">
-        <div className="flex items-center gap-2 text-red-700 text-xs font-bold uppercase tracking-widest mb-2">
+        <div className="flex items-center justify-center gap-2 text-red-700 text-xs font-bold uppercase tracking-widest mb-2">
           <span aria-hidden="true" className="text-blue-700">★</span>
           <span>Independence Day Campaign · Limited Time</span>
           <span aria-hidden="true" className="text-blue-700">★</span>
@@ -52,22 +52,22 @@ const July4Banner = () => {
 
         <h2
           data-testid="july4-headline"
-          className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight mb-3"
+          className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight mb-3 text-center"
         >
           Freedom Takes on a Whole New Meaning{' '}
-          <span className="bg-gradient-to-r from-red-600 via-blue-700 to-red-600 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-red-600 via-blue-700 to-red-600 bg-clip-text text-transparent whitespace-nowrap">
             in Christ
           </span>
         </h2>
 
         <p
           data-testid="july4-subheadline"
-          className="text-base sm:text-lg text-slate-700 max-w-2xl mb-5"
+          className="text-base sm:text-lg text-slate-700 max-w-2xl mb-5 mx-auto text-center"
         >
           Celebrate Independence Day by exploring the freedom found in Jesus Christ.
         </p>
 
-        <div className="flex flex-wrap items-center gap-3 mb-7">
+        <div className="flex flex-wrap items-center justify-center gap-3 mb-7">
           <a
             data-testid="july4-cta"
             href="/quick-order?promo=FREEDOM10"
