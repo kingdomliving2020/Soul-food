@@ -449,41 +449,11 @@ async def get_lesson(lesson_id: str):
     
     return lesson
 
-# Capture build/version metadata at boot for /api/health/version
-import subprocess
-_git_sha = None
-# Priority 1: explicit env var (set by build pipeline)
-if os.environ.get("APP_GIT_SHA"):
-    _git_sha = os.environ["APP_GIT_SHA"].strip()
-# Priority 2: shipped-in file written at Save-to-GitHub time
-if not _git_sha:
-    sha_file = ROOT_DIR / ".build_sha"
-    if sha_file.exists():
-        try:
-            _git_sha = sha_file.read_text().strip()
-        except Exception:
-            pass
-# Priority 3: ask git directly (works in preview where .git is present)
-if not _git_sha:
-    try:
-        _git_sha = subprocess.check_output(
-            ["git", "rev-parse", "--short", "HEAD"],
-            cwd=str(ROOT_DIR.parent),
-            stderr=subprocess.DEVNULL,
-            timeout=2,
-        ).decode().strip()
-    except Exception:
-        _git_sha = "unknown"
-
-# Best-effort: persist the SHA we just resolved so the NEXT deploy can find
-# it via the shipped file even without the .git folder. Safe no-op on prod.
-try:
-    sha_file = ROOT_DIR / ".build_sha"
-    if _git_sha and _git_sha != "unknown" and not sha_file.exists():
-        sha_file.write_text(_git_sha + "\n")
-except Exception:
-    pass
-
+# Boot metadata for /api/health/version.
+# NOTE: Emergent deploys from preview-pod snapshots — deployed containers do not
+# include `.git` or `.build_sha`. Comparing preview SHA to production is
+# architecturally invalid in Emergent. We expose `booted_at` and `now` so ops
+# can confirm a fresh redeploy happened; SHA tracking has been removed.
 _boot_time_utc = datetime.now(timezone.utc).isoformat()
 _app_version = os.environ.get("APP_VERSION", "soft-launch")
 
@@ -491,13 +461,12 @@ _app_version = os.environ.get("APP_VERSION", "soft-launch")
 @api_router.get("/health/version")
 async def health_version():
     """Lightweight build-stamp endpoint. Lets ops verify whether a given
-    environment is running stale code without needing a full health check.
+    environment was recently redeployed without needing a full health check.
     Public on purpose — returns no PII or secrets."""
     return {
         "status": "ok",
         "app": "soul-food-api",
         "version": _app_version,
-        "git_sha": _git_sha,
         "booted_at": _boot_time_utc,
         "now": datetime.now(timezone.utc).isoformat(),
     }
@@ -517,12 +486,12 @@ async def health_seed_manifest():
     import json as _json
     seed_path = os.path.join(os.path.dirname(__file__), "seed_files_manifest.json")
     if not os.path.exists(seed_path):
-        return {"present": False, "path": seed_path, "git_sha": _git_sha}
+        return {"present": False, "path": seed_path}
     try:
         with open(seed_path, "r") as fh:
             seed = _json.load(fh)
     except Exception as e:
-        return {"present": True, "readable": False, "error": str(e), "git_sha": _git_sha}
+        return {"present": True, "readable": False, "error": str(e)}
     db_count = await db.files.count_documents({"is_deleted": False})
     return {
         "present": True,
@@ -535,7 +504,6 @@ async def health_seed_manifest():
         "count": seed.get("count") or len(seed.get("items") or []),
         "db_files_active_count": db_count,
         "autoseed_disabled": os.environ.get("AUTOSEED_FILES_DISABLED") == "1",
-        "git_sha": _git_sha,
     }
 
 
@@ -602,7 +570,6 @@ async def health_db_diagnostic():
         "mongo_host": mongo_host,
         "collection_counts": counts,
         "all_databases_on_cluster": sibling_db_counts,
-        "git_sha": _git_sha,
         "now": datetime.now(timezone.utc).isoformat(),
     }
 

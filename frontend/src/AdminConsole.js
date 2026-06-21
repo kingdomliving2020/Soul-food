@@ -15,6 +15,42 @@ import AdminCodesRedemptions from './AdminCodesRedemptions';
 import AdminProductsManager from './AdminProductsManager';
 import AdminCoupons from './AdminCoupons';
 
+/**
+ * BuildVersionBadge — small ops-only footer showing the backend's `booted_at`
+ * and current `now` timestamps from /api/health/version. Lets you confirm that
+ * a redeploy actually happened without needing curl.
+ *
+ * Emergent deploys from preview-pod snapshots — there is no useful "git SHA"
+ * to compare to. We show boot time instead.
+ */
+const BuildVersionBadge = () => {
+  const apiBase = process.env.REACT_APP_BACKEND_URL || '';
+  const [info, setInfo] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`${apiBase}/api/health/version`)
+      .then((r) => r.json())
+      .then((d) => { if (!cancelled) setInfo(d); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [apiBase]);
+  if (!info) return null;
+  const booted = info.booted_at ? new Date(info.booted_at).toLocaleString() : '—';
+  const now = info.now ? new Date(info.now).toLocaleString() : '—';
+  return (
+    <div
+      data-testid="build-version-badge"
+      className="mt-10 pt-4 border-t border-slate-200 flex flex-col sm:flex-row gap-1 sm:gap-4 text-[11px] text-slate-400 font-mono"
+      title="Backend health/version — confirms a fresh deploy happened"
+    >
+      <span>app: {info.app || 'soul-food-api'}</span>
+      <span>version: {info.version || '—'}</span>
+      <span>booted_at: {booted}</span>
+      <span>now: {now}</span>
+    </div>
+  );
+};
+
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
 // =============================================================================
@@ -1945,6 +1981,7 @@ const AdminConsole = () => {
                 <Route path="codes-redemptions/*" element={<AdminCodesRedemptions />} />
                 <Route path="coupons/*" element={<AdminCoupons />} />
               </Routes>
+              <BuildVersionBadge />
             </main>
           </div>
         </div>
