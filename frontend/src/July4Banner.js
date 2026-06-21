@@ -14,7 +14,7 @@ const FEATURED = [
   { name: 'In His Image', img: '/covers/ihi-ae-booklet.png' },
   { name: 'GRinCH Bingo', img: '/covers/game-gridiron-ae.png' },
   { name: 'Passport Trek', img: '/covers/game-passport-ae.png' },
-  { name: 'Foundation in Christ', img: '/covers/4cs-ie.png', tag: 'Booklets Available Now' },
+  { name: 'Foundation in Christ', img: '/covers/bkft-ye-sp-m1.png', tag: 'Booklets Available Now' },
 ];
 
 const July4Banner = () => {
