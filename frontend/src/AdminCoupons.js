@@ -17,6 +17,8 @@ const emptyForm = {
   discount_amount: 0,
   max_uses: 100,
   min_quantity: '',
+  min_cart_total: '',
+  display_message: '',
   conditions: '',
   valid_until: '',
   spend_cap: '',
@@ -80,6 +82,8 @@ const AdminCoupons = () => {
       discount_amount: c.discount_amount || 0,
       max_uses: c.max_uses || 100,
       min_quantity: c.min_quantity ?? '',
+      min_cart_total: c.min_cart_total ?? '',
+      display_message: c.display_message || '',
       conditions: c.conditions || '',
       valid_until: c.valid_until ? String(c.valid_until).slice(0, 16) : '',
       spend_cap: c.spend_cap ?? '',
@@ -109,6 +113,8 @@ const AdminCoupons = () => {
       payload.discount_amount = parseFloat(form.discount_amount) || 0;
     }
     if (form.min_quantity !== '') payload.min_quantity = parseInt(form.min_quantity, 10);
+    if (form.min_cart_total !== '') payload.min_cart_total = parseFloat(form.min_cart_total);
+    if (form.display_message.trim()) payload.display_message = form.display_message.trim();
     if (form.spend_cap !== '') payload.spend_cap = parseFloat(form.spend_cap);
     if (form.valid_until) payload.valid_until = new Date(form.valid_until).toISOString();
 
@@ -439,6 +445,28 @@ const AdminCoupons = () => {
                   onChange={(e) => setForm({ ...form, valid_until: e.target.value })}
                   data-testid="form-valid-until"
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Minimum Cart Total ($, optional)</label>
+                <Input
+                  type="number" min="0" step="0.01"
+                  value={form.min_cart_total}
+                  onChange={(e) => setForm({ ...form, min_cart_total: e.target.value })}
+                  placeholder="e.g. 19.99 — rejects cart below this $"
+                  data-testid="form-min-cart-total"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Custom Success Message (optional)</label>
+                <Input
+                  value={form.display_message}
+                  onChange={(e) => setForm({ ...form, display_message: e.target.value })}
+                  placeholder={"e.g. \"thx Aunt W\" — replaces \"Coupon applied!\""}
+                  data-testid="form-display-message"
+                />
+                <p className="text-[10px] text-slate-500 mt-1">Shown to customer at checkout when the coupon validates.</p>
               </div>
 
               <div>

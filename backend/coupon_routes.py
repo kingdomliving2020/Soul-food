@@ -74,6 +74,8 @@ class CouponCreate(BaseModel):
     active: bool = True
     spend_cap: Optional[float] = None  # max dollar discount cap (e.g. $50 ceiling on % discounts)
     hidden: bool = False  # if true, hide from public-facing UI listings (internal-only)
+    min_cart_total: Optional[float] = None  # minimum cart $ required for the coupon to apply
+    display_message: Optional[str] = None  # custom success text shown to the customer
 
 class CouponUpdate(BaseModel):
     discount_percent: Optional[int] = Field(default=None, ge=0, le=100)
@@ -86,6 +88,8 @@ class CouponUpdate(BaseModel):
     valid_until: Optional[datetime] = None
     spend_cap: Optional[float] = None
     hidden: Optional[bool] = None
+    min_cart_total: Optional[float] = None
+    display_message: Optional[str] = None
 
 class CouponToggleRequest(BaseModel):
     active: bool
