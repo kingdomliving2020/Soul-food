@@ -875,7 +875,7 @@ const LandingPage = () => {
               <span className="text-xl">🎮</span>
               <div className="text-left">
                 <p className="font-bold text-purple-800">Game Passes 20% Off — No Coupon Needed!</p>
-                <p className="text-xs text-purple-600">Sale runs through Juneteenth (June 19, 2026)</p>
+                <p className="text-xs text-purple-600">Independence Day Campaign — code FREEDOM10 through July 6</p>
               </div>
             </div>
           </div>

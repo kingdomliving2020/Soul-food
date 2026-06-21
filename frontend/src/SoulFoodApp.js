@@ -631,18 +631,14 @@ const SoulFoodLanding = () => {
                 <span className="inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20 text-[11px] text-white/90">
                   <span aria-hidden="true">📖</span> Evangelical
                 </span>
-                <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-red-700/40 via-black/40 to-emerald-700/40 backdrop-blur-sm px-2.5 py-1 rounded-full border border-amber-400/40 text-[11px] text-amber-100" title="Honoring Juneteenth — Early Bird savings extended through June 19">
-                  <span aria-hidden="true">✊🏿</span> Honoring Juneteenth
-                </span>
               </div>
 
-              {/* Sale Countdown — label on its own row at all breakpoints so it's readable */}
+              {/* Active campaign callout */}
               <div className="mt-5 flex flex-col items-center sm:items-start gap-2 bg-white/10 backdrop-blur-sm px-4 py-3 rounded-2xl border border-white/20 max-w-md">
                 <div className="flex flex-col leading-tight">
-                  <span className="text-amber-400 text-sm font-semibold">Early Bird Sale</span>
-                  <span className="text-amber-300/90 text-xs">ends Juneteenth · June 19</span>
+                  <span className="text-amber-400 text-sm font-semibold">🇺🇸 Independence Day Campaign</span>
+                  <span className="text-amber-300/90 text-xs">Use code FREEDOM10 — auto-applies via promo links</span>
                 </div>
-                <ResurrectionCountdown />
               </div>
             </div>
             
@@ -1941,8 +1937,8 @@ const SoulFoodLanding = () => {
                   <div className="text-sm text-slate-700 space-y-2">
                     <p><strong>Holiday Series:</strong> All editions available now — digital downloads + physical books (ships 5–10 business days · rates vary by region).</p>
                     <p><strong>Break*fast Pre-Order ($5 off student / $10 off Instructor):</strong> Month 1 "Prayer the First Resort" nibbles & snack packs available now. Full workbooks ship soon!</p>
-                    <p><strong>Lunch Pre-Order (early-bird savings until Juneteenth):</strong> Ships in 5–10 business days · rates vary by region.</p>
-                    <p><strong>🎮 Game Passes 20% Off — No Coupon Needed!</strong> Early Bird savings through Juneteenth (June 19, 2026).</p>
+                    <p><strong>Lunch Pre-Order:</strong> Ships in 5–10 business days · rates vary by region.</p>
+                    <p><strong>🎮 Game Passes — Use code FREEDOM10 for 10% off through July 6.</strong></p>
                     <p className="font-semibold text-emerald-700 bg-emerald-100 px-3 py-2 rounded-lg mt-3">Get started today — Holiday digital downloads available instantly!</p>
                   </div>
                 </div>

@@ -23,43 +23,46 @@ const July4Banner = () => {
   return (
     <section
       data-testid="july4-banner"
-      className="relative overflow-hidden border-y-2 border-red-700/40"
+      className="relative overflow-hidden border-y-2 border-red-300"
       style={{
         background:
-          'linear-gradient(135deg, #7f1d1d 0%, #1e3a8a 50%, #7f1d1d 100%)',
+          'linear-gradient(135deg, #fef3f2 0%, #dbeafe 35%, #ffffff 50%, #dbeafe 65%, #fee2e2 100%)',
       }}
     >
-      {/* Stars overlay */}
+      {/* Soft stars overlay */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 opacity-25"
+        className="absolute inset-0 opacity-20"
         style={{
           backgroundImage:
-            'radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1.5px)',
-          backgroundSize: '36px 36px',
+            'radial-gradient(circle, rgba(30,58,138,0.35) 1px, transparent 1.5px)',
+          backgroundSize: '32px 32px',
         }}
       />
+      {/* Subtle red-stripe accents */}
+      <div aria-hidden="true" className="absolute inset-y-0 left-0 w-1.5 bg-gradient-to-b from-red-500 via-red-400 to-red-500 opacity-80" />
+      <div aria-hidden="true" className="absolute inset-y-0 right-0 w-1.5 bg-gradient-to-b from-red-500 via-red-400 to-red-500 opacity-80" />
 
       <div className="relative z-10 container mx-auto max-w-6xl px-4 sm:px-6 py-8 sm:py-10">
-        <div className="flex items-center gap-2 text-amber-300 text-xs font-bold uppercase tracking-widest mb-2">
-          <span aria-hidden="true">★</span>
+        <div className="flex items-center gap-2 text-red-700 text-xs font-bold uppercase tracking-widest mb-2">
+          <span aria-hidden="true" className="text-blue-700">★</span>
           <span>Independence Day Campaign · Limited Time</span>
-          <span aria-hidden="true">★</span>
+          <span aria-hidden="true" className="text-blue-700">★</span>
         </div>
 
         <h2
           data-testid="july4-headline"
-          className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-3"
+          className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight mb-3"
         >
           Freedom Takes on a Whole New Meaning{' '}
-          <span className="bg-gradient-to-r from-amber-300 via-yellow-200 to-amber-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-red-600 via-blue-700 to-red-600 bg-clip-text text-transparent">
             in Christ
           </span>
         </h2>
 
         <p
           data-testid="july4-subheadline"
-          className="text-base sm:text-lg text-blue-100 max-w-2xl mb-5"
+          className="text-base sm:text-lg text-slate-700 max-w-2xl mb-5"
         >
           Celebrate Independence Day by exploring the freedom found in Jesus Christ.
         </p>
@@ -68,14 +71,14 @@ const July4Banner = () => {
           <a
             data-testid="july4-cta"
             href="/quick-order?promo=FREEDOM10"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-slate-900 px-7 py-3 rounded-xl text-base sm:text-lg font-bold shadow-2xl hover:shadow-amber-400/40 transform hover:scale-105 transition-all"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-7 py-3 rounded-xl text-base sm:text-lg font-bold shadow-xl hover:shadow-red-400/40 transform hover:scale-105 transition-all"
           >
             Shop the July 4 Collection
             <span aria-hidden="true">→</span>
           </a>
-          <div className="text-amber-200 text-sm">
+          <div className="text-slate-700 text-sm">
             Use code{' '}
-            <span className="bg-white/10 backdrop-blur-sm px-2 py-1 rounded font-mono font-bold">
+            <span className="bg-blue-100 text-blue-900 px-2 py-1 rounded font-mono font-bold border border-blue-300">
               FREEDOM10
             </span>{' '}
             at checkout (auto-applies)
@@ -88,19 +91,19 @@ const July4Banner = () => {
             <a
               key={p.name}
               href="/quick-order?promo=FREEDOM10"
-              className="group bg-white/10 hover:bg-white/15 backdrop-blur-sm border border-white/15 hover:border-amber-300/60 rounded-xl p-3 transition-all"
+              className="group bg-white/80 hover:bg-white backdrop-blur-sm border-2 border-blue-200 hover:border-red-400 rounded-xl p-3 transition-all shadow-sm hover:shadow-md"
               data-testid={`july4-featured-${p.name.toLowerCase().replace(/\s+/g, '-')}`}
             >
-              <div className="aspect-square bg-white/90 rounded-lg overflow-hidden mb-2 flex items-center justify-center">
+              <div className="aspect-square bg-white rounded-lg overflow-hidden mb-2 flex items-center justify-center border border-slate-100">
                 <img
                   src={p.img}
                   alt={p.name}
                   className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform"
                 />
               </div>
-              <div className="text-white text-sm font-semibold leading-tight">{p.name}</div>
+              <div className="text-slate-800 text-sm font-semibold leading-tight">{p.name}</div>
               {p.tag && (
-                <div className="text-amber-300 text-[10px] uppercase tracking-wider mt-1 font-bold">
+                <div className="text-red-600 text-[10px] uppercase tracking-wider mt-1 font-bold">
                   {p.tag}
                 </div>
               )}

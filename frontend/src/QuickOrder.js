@@ -125,8 +125,8 @@ const PalmSundayBanner = () => {
           </div>
         </div>
 
-        {/* Early Bird Countdown */}
-        {!pentecost.expired && (
+        {/* Early Bird Countdown — disabled (Juneteenth campaign ended) */}
+        {false && !pentecost.expired && (
           <div className="mt-5 flex justify-center">
             <div className="bg-white/15 backdrop-blur-sm rounded-xl px-6 py-3 flex items-center gap-4">
               <span className="text-amber-300 font-semibold text-sm">Early Bird ends Juneteenth:</span>
