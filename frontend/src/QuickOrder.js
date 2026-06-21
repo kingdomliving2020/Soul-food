@@ -680,10 +680,10 @@ const QuickOrder = () => {
       editions: ['adult', 'youth'],
       gamePackages: [
         { id: 'base-4cs', name: "4 C's of Christianity", price: 19.99, available: true, badge: 'Base Game · Available' },
-        { id: 'exp-foundation', name: 'Foundation in Christ — Expansion', price: 9.99, preOrder: true, badge: 'Expansion · Pre-Order' },
-        { id: 'exp-kingdom', name: 'Kingdom Relationship — Expansion', price: 9.99, preOrder: true, badge: 'Expansion · Pre-Order' },
+        { id: 'exp-foundation', name: 'Foundation in Christ — Expansion Deck', price: 9.99, preOrder: true, badge: 'Game Deck · Pre-Order (Booklet available separately)' },
+        { id: 'exp-kingdom', name: 'Kingdom Relationship — Expansion Deck', price: 9.99, preOrder: true, badge: 'Game Deck · Pre-Order' },
       ],
-      description: 'Same game, expanding card decks. Start with the base; add expansions anytime.'
+      description: 'Same game, expanding card decks. Booklet versions of each study are sold separately.'
     },
     {
       id: 'game-passport-trek',
@@ -1931,7 +1931,7 @@ const QuickOrder = () => {
                 <Card key={game.id} data-testid={`game-card-${game.id}`} className="shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full relative">
                   <CardContent className="p-4 flex flex-col flex-1">
                     <div className="relative">
-                      <img src={img} alt={game.name} className={`w-full h-40 object-contain rounded-lg mb-3 bg-white ${pkg.preOrder ? 'opacity-80' : ''}`} />
+                      <img src={img} alt={game.name} className={`w-full h-32 object-cover object-top rounded-lg mb-3 bg-white ${pkg.preOrder ? 'opacity-90' : ''}`} />
                       <div className="absolute top-2 left-2">
                         <span className={`text-white text-[10px] font-bold px-2 py-1 rounded ${pkg.preOrder ? 'bg-amber-500' : 'bg-emerald-600'}`}>
                           {pkg.preOrder ? 'Pre-Order' : 'Available'}
@@ -1939,7 +1939,7 @@ const QuickOrder = () => {
                       </div>
                       {pkg.id.startsWith('exp-') && (
                         <div className="absolute bottom-2 right-2 bg-indigo-600/90 text-white text-[10px] font-semibold px-2 py-1 rounded shadow">
-                          {pkg.id === 'exp-foundation' ? 'Foundation in Christ' : 'Kingdom Relationship'}
+                          {pkg.id === 'exp-foundation' ? 'Foundation in Christ (Deck)' : 'Kingdom Relationship (Deck)'}
                         </div>
                       )}
                     </div>
