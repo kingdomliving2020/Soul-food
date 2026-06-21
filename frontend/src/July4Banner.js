@@ -11,10 +11,10 @@ import React from 'react';
 const CAMPAIGN_END = Date.UTC(2026, 6, 7, 4, 0, 0); // July 7 04:00 UTC = end of July 6 ET
 
 const FEATURED = [
-  { name: 'In His Image', img: '/covers/ihi-ae-booklet.png' },
-  { name: 'GRinCH Bingo', img: '/covers/game-gridiron-ae.png' },
-  { name: 'Passport Trek', img: '/covers/game-passport-ae.png' },
-  { name: 'Foundation in Christ', img: '/covers/bkft-ye-sp-m1.png', tag: 'Booklets Available Now' },
+  { name: 'In His Image', img: '/covers/ihi-ae-booklet.png', imgClass: 'p-1' },
+  { name: 'GRinCH Bingo', img: '/covers/game-gridiron-ae.png', imgClass: 'p-1' },
+  { name: 'Small Group Bundle', img: '/covers/breakfast-adult-front.jpg', imgClass: 'p-2', tag: 'NEW · 1 IE + 4 Seats' },
+  { name: 'Foundation in Christ', img: '/covers/bkft-ye-sp-m1.png', imgClass: 'p-4 scale-90', tag: 'Booklets Available Now' },
 ];
 
 const July4Banner = () => {
@@ -98,7 +98,7 @@ const July4Banner = () => {
                 <img
                   src={p.img}
                   alt={p.name}
-                  className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform"
+                  className={`w-full h-full object-contain ${p.imgClass || 'p-1'} group-hover:scale-105 transition-transform`}
                 />
               </div>
               <div className="text-slate-800 text-sm font-semibold leading-tight">{p.name}</div>
