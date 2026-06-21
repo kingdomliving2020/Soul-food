@@ -1931,7 +1931,11 @@ const QuickOrder = () => {
                 <Card key={game.id} data-testid={`game-card-${game.id}`} className="shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full relative">
                   <CardContent className="p-4 flex flex-col flex-1">
                     <div className="relative">
-                      <img src={img} alt={game.name} className={`w-full h-32 object-cover object-top rounded-lg mb-3 bg-white ${pkg.preOrder ? 'opacity-90' : ''}`} />
+                      <img
+                        src={img}
+                        alt={game.name}
+                        className={`w-full h-32 ${game.id === 'game-passport-trek' ? 'object-contain p-3 scale-90' : 'object-cover object-top'} rounded-lg mb-3 bg-white ${pkg.preOrder ? 'opacity-90' : ''}`}
+                      />
                       <div className="absolute top-2 left-2">
                         <span className={`text-white text-[10px] font-bold px-2 py-1 rounded ${pkg.preOrder ? 'bg-amber-500' : 'bg-emerald-600'}`}>
                           {pkg.preOrder ? 'Pre-Order' : 'Available'}
