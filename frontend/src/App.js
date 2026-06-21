@@ -28,6 +28,7 @@ import ForgotPassword from './ForgotPassword';
 import ResetPassword from './ResetPassword';
 import AboutUs from './AboutUs';
 import AdminConsole from './AdminConsole';
+import PromoCapture from './PromoCapture';
 import { PrivacyPolicy, TermsOfService } from './LegalPages';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -2026,6 +2027,7 @@ function App() {
     <div className="App">
       <CartProvider>
         <BrowserRouter>
+          <PromoCapture />
           <Routes>
             <Route path="/" element={<SoulFoodLanding />} />
             <Route path="/auth" element={<AuthPage />} />

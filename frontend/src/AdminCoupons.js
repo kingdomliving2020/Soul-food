@@ -3,9 +3,12 @@ import { Button } from './components/ui/button';
 import { Input } from './components/ui/input';
 import { Toaster, toast } from 'sonner';
 import { safeJson } from './lib/safeFetch';
-import { Plus, Edit, Trash2, RefreshCw, Eye, EyeOff, Check, X as XIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, RefreshCw, Eye, EyeOff, Check, X as XIcon, Link2 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
+
+// Public site URL used for promo links. Falls back to current origin.
+const SITE_URL = process.env.REACT_APP_SITE_URL || 'https://kingdom-soul.com';
 
 const emptyForm = {
   code: '',
@@ -272,6 +275,22 @@ const AdminCoupons = () => {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-1">
+                      <button
+                        onClick={() => {
+                          const url = `${SITE_URL}/?promo=${encodeURIComponent(c.code)}`;
+                          try {
+                            navigator.clipboard.writeText(url);
+                            toast.success(`Promo link copied: ${url}`);
+                          } catch {
+                            window.prompt('Copy this promo link:', url);
+                          }
+                        }}
+                        className="p-1.5 rounded hover:bg-indigo-50"
+                        title="Copy shareable promo link"
+                        data-testid={`copy-link-${c.code}`}
+                      >
+                        <Link2 className="h-4 w-4 text-indigo-600" />
+                      </button>
                       <button onClick={() => toggleActive(c)} className="p-1.5 rounded hover:bg-slate-100" title={active ? 'Disable' : 'Enable'} data-testid={`toggle-${c.code}`}>
                         {active ? <EyeOff className="h-4 w-4 text-slate-600" /> : <Eye className="h-4 w-4 text-emerald-600" />}
                       </button>

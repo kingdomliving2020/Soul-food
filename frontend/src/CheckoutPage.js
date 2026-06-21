@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useCart, PRODUCTS } from './CartContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { CreditCard, ShoppingBag, Trash2, Mail, User, LogIn, UserPlus, ArrowRight, ShieldCheck, X, MapPin, Loader2, Gift, Package, Send, AlertCircle } from 'lucide-react';
 import { safeJson } from './lib/safeFetch';
+import { getCapturedPromo, clearCapturedPromo } from './PromoCapture';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
@@ -824,68 +825,80 @@ const CheckoutPage = () => {
     return () => { clearTimeout(t); controller.abort(); };
   }, [cartItems, hasPhysicalItems, shippingAddress.country, shippingAddress.state, shippingAddress.zipCode, shippingAddress.city]);
 
-  const handleApplyCoupon = async () => {
-    if (!couponCode.trim()) {
+  // Internal: validate & apply a coupon code directly (used by auto-apply and the manual button)
+  const applyCouponByCode = async (rawCode) => {
+    const code = (rawCode || '').trim().toUpperCase();
+    if (!code) {
       setCouponError('Please enter a coupon code');
       return;
     }
-    
-    // Check minimum order requirement
     if (subtotal < COUPON_MINIMUM) {
       setCouponError(`Coupons require a minimum order of $${COUPON_MINIMUM.toFixed(2)}`);
       return;
     }
-
     setCouponLoading(true);
     setCouponError('');
-
     try {
-      // Get product IDs - use uniqueKey or productId, filter out any undefined
       const productIds = cartItems
         .map(item => item.uniqueKey || item.productId || item.id)
         .filter(id => id !== undefined);
-      
       const response = await fetch(`${BACKEND_URL}/api/coupons/validate`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          code: couponCode.toUpperCase(),
+          code,
           product_ids: productIds,
           cart_total: subtotal,
           quantity: cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0)
         }),
       });
-
-      const { ok, data } = await safeJson(response);
-
+      const { data } = await safeJson(response);
       if (data.valid) {
         setCouponApplied({
-          code: couponCode.toUpperCase(),
+          code,
           discount_percent: data.discount_percent,
           discount_dollars: data.discount_dollars || 0,
           override_total: data.override_total,
           is_gift_certificate: data.is_gift_certificate || false,
-          message: data.message
+          message: data.message,
         });
         setCouponError('');
+        setCouponCode(code);
       } else {
         setCouponError(data.message || data.detail || `Invalid coupon (${response.status})`);
         setCouponApplied(null);
       }
-    } catch (error) {
-      setCouponError(`Could not validate coupon: ${error.message || 'Check your connection'}`);
+    } catch (e) {
+      setCouponError(`Could not validate coupon: ${e.message || 'Check your connection'}`);
     } finally {
       setCouponLoading(false);
     }
+  };
+
+  const handleApplyCoupon = async () => {
+    await applyCouponByCode(couponCode);
   };
 
   const handleRemoveCoupon = () => {
     setCouponApplied(null);
     setCouponCode('');
     setCouponError('');
+    clearCapturedPromo();
   };
+
+  // Auto-apply captured promo (from ?promo=CODE URL param) once cart has items.
+  const autoPromoAttemptedRef = useRef(false);
+  useEffect(() => {
+    if (autoPromoAttemptedRef.current) return;
+    if (couponApplied) return;
+    if (!cartItems || cartItems.length === 0) return;
+    if (!subtotal || subtotal <= 0) return;
+    const captured = getCapturedPromo();
+    if (!captured?.code) return;
+    autoPromoAttemptedRef.current = true;
+    applyCouponByCode(captured.code);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cartItems, subtotal, couponApplied]);
 
   const handleCheckout = async () => {
     setLoading(true);

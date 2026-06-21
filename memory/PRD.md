@@ -17,6 +17,13 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Promo Link System + FREEDOM10 Campaign Coupon (June 21, 2026)
+- [x] **`FREEDOM10`** coupon live: 10% off, max 1000 uses, expires July 7 04:00 UTC (end of July 6 ET). For the Independence Day campaign.
+- [x] **`?promo=CODE` URL capture** — new `PromoCapture.js` mounts inside the router and watches every URL. When `?promo=` is present, it stores the code to localStorage (30-day TTL), strips the param from the URL, and shows a confirmation toast.
+- [x] **Auto-apply at checkout** — `CheckoutPage` reads the captured promo on mount and silently validates/applies it as soon as the cart has items. Customer never types the code. Verified end-to-end: visiting `/?promo=FREEDOM10` → adding to cart → going to checkout → `Discount (10%) −$3.00` shows automatically.
+- [x] **"Copy Promo Link" button** in Admin Coupon UI — generates `https://kingdom-soul.com/?promo=CODE` (configurable via `REACT_APP_SITE_URL`) and copies to clipboard. Perfect for SMS, email, QR codes, church announcements, social posts.
+
+
 ### Game Store Consolidation + Edition Sync + Coupon Admin UI (June 21, 2026)
 - [x] **Game Store rebuilt CAH-style**: 6 game-pack SKUs collapsed into 3 cards (GRinCH Bingo / Passport Trek / Game Bundle) with Edition + Package dropdowns. Base game ($19.99) + expansions ($9.99 ea — Foundation in Christ, Kingdom Relationship; pre-order).
 - [x] Renamed `"Size:"` → `"Package:"` across all storefront meal cards.

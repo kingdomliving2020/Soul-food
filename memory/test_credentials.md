@@ -59,3 +59,9 @@ Use `/register` to create new test accounts.
 - `DOLLARTEST2` — sets EACH item to **$2.00** (cart total = qty × $2)
 - `max_uses=3`, expires 24h from creation, `hidden=true`
 - Use for live Stripe checkout testing without spending real money
+
+## FREEDOM10 — Independence Day Campaign Coupon (June 21, 2026)
+- `FREEDOM10` — 10% off all products
+- Max 1000 uses, expires July 7 04:00 UTC (end of July 6 ET)
+- Shareable link: `https://kingdom-soul.com/?promo=FREEDOM10`
+- Auto-applies on landing — customer never has to type the code
