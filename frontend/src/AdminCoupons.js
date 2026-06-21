@@ -26,6 +26,7 @@ const emptyForm = {
 
 const AdminCoupons = () => {
   const [coupons, setCoupons] = useState([]);
+  const [analytics, setAnalytics] = useState({ by_code: {}, total_revenue: 0, total_discount_given: 0, total_codes_used: 0 });
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('all'); // all | active | inactive | expired
   const [search, setSearch] = useState('');
@@ -41,12 +42,19 @@ const AdminCoupons = () => {
   const fetchCoupons = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/api/coupons/admin/list`, { headers: authHeaders() });
-      const { data } = await safeJson(res);
-      if (res.ok) {
-        setCoupons(data.coupons || []);
+      const [listRes, analyticsRes] = await Promise.all([
+        fetch(`${API_URL}/api/coupons/admin/list`, { headers: authHeaders() }),
+        fetch(`${API_URL}/api/coupons/admin/analytics`, { headers: authHeaders() }),
+      ]);
+      const { data: listData } = await safeJson(listRes);
+      const { data: analyticsData } = await safeJson(analyticsRes);
+      if (listRes.ok) {
+        setCoupons(listData.coupons || []);
       } else {
-        toast.error(data?.detail || 'Failed to load coupons');
+        toast.error(listData?.detail || 'Failed to load coupons');
+      }
+      if (analyticsRes.ok) {
+        setAnalytics(analyticsData || { by_code: {} });
       }
     } catch (e) {
       toast.error('Network error loading coupons');
@@ -209,6 +217,25 @@ const AdminCoupons = () => {
         </div>
       </div>
 
+      {/* Analytics summary tiles */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4" data-testid="stat-revenue">
+          <div className="text-xs uppercase tracking-wider text-emerald-700 font-semibold">Revenue from coupons</div>
+          <div className="text-2xl font-bold text-emerald-800 mt-1">${(analytics.total_revenue || 0).toFixed(2)}</div>
+          <div className="text-xs text-emerald-600 mt-1">Across all redemptions</div>
+        </div>
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4" data-testid="stat-discount">
+          <div className="text-xs uppercase tracking-wider text-amber-700 font-semibold">Total discount given</div>
+          <div className="text-2xl font-bold text-amber-800 mt-1">${(analytics.total_discount_given || 0).toFixed(2)}</div>
+          <div className="text-xs text-amber-600 mt-1">Subsidized by promo</div>
+        </div>
+        <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4" data-testid="stat-codes-used">
+          <div className="text-xs uppercase tracking-wider text-indigo-700 font-semibold">Codes redeemed</div>
+          <div className="text-2xl font-bold text-indigo-800 mt-1">{analytics.total_codes_used || 0}</div>
+          <div className="text-xs text-indigo-600 mt-1">Unique codes with ≥1 use</div>
+        </div>
+      </div>
+
       <div className="flex flex-wrap gap-3 items-center">
         <Input
           placeholder="Search by code…"
@@ -238,6 +265,9 @@ const AdminCoupons = () => {
               <th className="px-4 py-3">Code</th>
               <th className="px-4 py-3">Discount</th>
               <th className="px-4 py-3">Uses</th>
+              <th className="px-4 py-3">Revenue</th>
+              <th className="px-4 py-3">Discounted</th>
+              <th className="px-4 py-3">Last Used</th>
               <th className="px-4 py-3">Expires</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3 text-right">Actions</th>
@@ -245,14 +275,15 @@ const AdminCoupons = () => {
           </thead>
           <tbody>
             {loading && (
-              <tr><td colSpan="6" className="px-4 py-8 text-center text-slate-400">Loading…</td></tr>
+              <tr><td colSpan="9" className="px-4 py-8 text-center text-slate-400">Loading…</td></tr>
             )}
             {!loading && filtered.length === 0 && (
-              <tr><td colSpan="6" className="px-4 py-8 text-center text-slate-400">No coupons match the current filters.</td></tr>
+              <tr><td colSpan="9" className="px-4 py-8 text-center text-slate-400">No coupons match the current filters.</td></tr>
             )}
             {!loading && filtered.map(c => {
               const expired = isExpired(c);
               const active = c.active !== false && !expired;
+              const stats = analytics.by_code?.[c.code.toUpperCase()] || {};
               return (
                 <tr key={c.code} className="border-t border-slate-100 hover:bg-slate-50" data-testid={`coupon-row-${c.code}`}>
                   <td className="px-4 py-3 font-mono font-semibold text-slate-800">
@@ -261,6 +292,15 @@ const AdminCoupons = () => {
                   </td>
                   <td className="px-4 py-3 text-slate-700">{fmtDiscount(c)}</td>
                   <td className="px-4 py-3 text-slate-700">{c.times_used || 0} / {c.max_uses || '∞'}</td>
+                  <td className="px-4 py-3 text-emerald-700 font-semibold" data-testid={`revenue-${c.code}`}>
+                    {stats.revenue ? `$${Number(stats.revenue).toFixed(2)}` : <span className="text-slate-300">—</span>}
+                  </td>
+                  <td className="px-4 py-3 text-amber-700" data-testid={`discount-${c.code}`}>
+                    {stats.discount_given ? `$${Number(stats.discount_given).toFixed(2)}` : <span className="text-slate-300">—</span>}
+                  </td>
+                  <td className="px-4 py-3 text-slate-600" data-testid={`last-used-${c.code}`}>
+                    {stats.last_redemption_at ? new Date(stats.last_redemption_at).toLocaleDateString() : <span className="text-slate-300">—</span>}
+                  </td>
                   <td className="px-4 py-3 text-slate-600">
                     {c.valid_until ? new Date(c.valid_until).toLocaleDateString() : <span className="text-slate-400">—</span>}
                   </td>

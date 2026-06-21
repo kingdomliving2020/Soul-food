@@ -2619,13 +2619,38 @@ async def get_checkout_status(session_id: str):
             if coupon_code_used:
                 try:
                     import re as _re
+                    now_iso = datetime.now(timezone.utc).isoformat()
                     await db.coupons.update_one(
                         {"code": {"$regex": "^" + _re.escape(coupon_code_used) + "$", "$options": "i"}},
-                        {"$inc": {"times_used": 1}, "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}}
+                        {"$inc": {"times_used": 1}, "$set": {"updated_at": now_iso, "last_redemption_at": now_iso}}
                     )
-                    print(f"[StatusCheck] Incremented times_used for coupon: {coupon_code_used}")
+                    # Capture per-redemption analytics for the admin reporting view
+                    paid_total_cents = checkout_status.amount_total or 0
+                    paid_total = (paid_total_cents / 100.0) if paid_total_cents else 0.0
+                    # Compute the raw cart subtotal (pre-discount) from item prices, if available
+                    subtotal_pre_discount = 0.0
+                    try:
+                        for itm in transaction.get("items", []) or []:
+                            ip = itm.get("price") or itm.get("salePrice") or 0
+                            iq = itm.get("quantity") or 1
+                            subtotal_pre_discount += float(ip) * int(iq)
+                    except Exception:
+                        subtotal_pre_discount = 0.0
+                    discount_given = max(0.0, round(subtotal_pre_discount - paid_total, 2)) if subtotal_pre_discount else 0.0
+                    await db.coupon_usage.insert_one({
+                        "code": coupon_code_used.upper(),
+                        "session_id": session_id,
+                        "order_number": order_number,
+                        "user_id": user_id or None,
+                        "customer_email": customer_email or None,
+                        "revenue": round(paid_total, 2),
+                        "discount_given": discount_given,
+                        "subtotal_pre_discount": round(subtotal_pre_discount, 2),
+                        "redeemed_at": now_iso,
+                    })
+                    print(f"[StatusCheck] Coupon redeemed: {coupon_code_used} revenue=${paid_total:.2f} discount=${discount_given:.2f}")
                 except Exception as _e:
-                    print(f"[StatusCheck] Failed to increment coupon usage for {coupon_code_used}: {_e}")
+                    print(f"[StatusCheck] Failed to record coupon usage for {coupon_code_used}: {_e}")
             
             # Create download links for ALL items in the cart
             items = transaction.get("items", [])

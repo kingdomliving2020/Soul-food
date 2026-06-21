@@ -483,6 +483,42 @@ async def list_all_coupons(admin = Depends(get_current_admin)):
     coupons = await db.coupons.find({}, {"_id": 0}).to_list(1000)
     return {"coupons": coupons, "count": len(coupons)}
 
+
+@router.get("/admin/analytics")
+async def coupon_analytics(admin = Depends(get_current_admin)):
+    """Per-coupon redemption analytics for the admin reporting view.
+    Returns one row per coupon code with: uses, revenue, total discount given,
+    last redemption timestamp. Aggregated from coupon_usage collection.
+    """
+    pipeline = [
+        {"$group": {
+            "_id": {"$toUpper": "$code"},
+            "uses": {"$sum": 1},
+            "revenue": {"$sum": {"$ifNull": ["$revenue", 0]}},
+            "discount_given": {"$sum": {"$ifNull": ["$discount_given", 0]}},
+            "last_redemption_at": {"$max": "$redeemed_at"},
+        }},
+        {"$project": {
+            "_id": 0,
+            "code": "$_id",
+            "uses": 1,
+            "revenue": {"$round": ["$revenue", 2]},
+            "discount_given": {"$round": ["$discount_given", 2]},
+            "last_redemption_at": 1,
+        }},
+        {"$sort": {"revenue": -1}},
+    ]
+    rows = await db.coupon_usage.aggregate(pipeline).to_list(2000)
+    # Index by code for the UI
+    by_code = {r["code"]: r for r in rows}
+    return {
+        "rows": rows,
+        "by_code": by_code,
+        "total_codes_used": len(rows),
+        "total_revenue": round(sum(r.get("revenue", 0) for r in rows), 2),
+        "total_discount_given": round(sum(r.get("discount_given", 0) for r in rows), 2),
+    }
+
 @router.get("/admin/{code}")
 async def get_coupon_details(code: str, admin = Depends(get_current_admin)):
     """Get details for a specific coupon (admin only)"""

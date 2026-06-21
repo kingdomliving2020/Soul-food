@@ -11,6 +11,7 @@ import ExitIntentPopup from './ExitIntentPopup';
 import { useCart } from './CartContext';
 import ProductSelectionModal from './ProductSelectionModal';
 import ChatbotWidget from './ChatbotWidget';
+import July4Banner from './July4Banner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -554,6 +555,7 @@ const SoulFoodLanding = () => {
       </div>
 
       {/* Hero Section — Conversion-Focused Above the Fold */}
+      <July4Banner />
       <section className="relative py-12 sm:py-20 px-4 sm:px-6 overflow-hidden" data-testid="hero-section">
         <div className="absolute inset-0 z-0">
           <div 

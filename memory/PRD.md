@@ -17,6 +17,13 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### July 4 Campaign Banner + Coupon Analytics (June 21, 2026)
+- [x] **July4Banner** mounted above homepage hero. Headline "Freedom Takes on a Whole New Meaning in Christ" + Independence Day badge + 4 featured product tiles (In His Image, GRinCH Bingo, Passport Trek, Foundation in Christ — COMING SOON). CTA "Shop the July 4 Collection" → `/quick-order?promo=FREEDOM10`. Auto-hides after July 7 04:00 UTC (end of July 6 ET).
+- [x] **Coupon analytics persistence** — every successful Stripe redemption now writes a row to `coupon_usage` with `code`, `order_number`, `customer_email`, `revenue` (paid total), `discount_given` (subtotal − paid), `redeemed_at`. Coupon doc also gets `last_redemption_at` stamped.
+- [x] **`GET /api/coupons/admin/analytics`** — aggregates `coupon_usage` by code: uses, revenue, discount given, last redemption. Returns global totals for the dashboard.
+- [x] **Admin Coupon UI: Analytics columns + summary tiles** — 3 KPI tiles (Revenue / Discount Given / Codes Redeemed) + new table columns (Revenue, Discounted, Last Used) per coupon. Ready for campaign measurement.
+
+
 ### Promo Link System + FREEDOM10 Campaign Coupon (June 21, 2026)
 - [x] **`FREEDOM10`** coupon live: 10% off, max 1000 uses, expires July 7 04:00 UTC (end of July 6 ET). For the Independence Day campaign.
 - [x] **`?promo=CODE` URL capture** — new `PromoCapture.js` mounts inside the router and watches every URL. When `?promo=` is present, it stores the code to localStorage (30-day TTL), strips the param from the URL, and shows a confirmation toast.
