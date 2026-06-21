@@ -67,7 +67,7 @@ const PalmSundayBanner = () => {
             <span className="text-3xl">✝️</span>
           </div>
           <p className="text-purple-100 text-sm md:text-base">
-            <strong>Holiday Series</strong> & <strong>Break*fast</strong> available now! <strong>Lunch</strong> pre-orders open through July — ships August 2026.
+            <strong>4 C&apos;s of Christianity</strong> &amp; <strong className="whitespace-nowrap">Foundation in Christ</strong> available now! <strong>Lunch</strong> pre-orders open through July — ships August 2026.
           </p>
         </div>
 
@@ -76,7 +76,7 @@ const PalmSundayBanner = () => {
           
           {/* Holiday - AVAILABLE NOW */}
           <div className="bg-emerald-500/30 backdrop-blur-sm rounded-xl px-5 py-4 text-center min-w-[180px]">
-            <p className="text-xs text-emerald-200 uppercase tracking-wide mb-1">Holiday Series</p>
+            <p className="text-xs text-emerald-200 uppercase tracking-wide mb-1">4 C&apos;s of Christianity</p>
             <p className="font-bold text-lg">Available Now</p>
             <p className="text-xs text-emerald-200 mt-1">Digital + Print</p>
           </div>
@@ -87,7 +87,7 @@ const PalmSundayBanner = () => {
 
           {/* Breakfast - AVAILABLE NOW */}
           <div className="bg-emerald-500/30 backdrop-blur-sm rounded-xl px-5 py-4 text-center min-w-[180px]">
-            <p className="text-xs text-emerald-200 uppercase tracking-wide mb-1">Break*fast Series</p>
+            <p className="text-xs text-emerald-200 uppercase tracking-wide mb-1 whitespace-nowrap">Foundation in Christ</p>
             <p className="font-bold text-lg">Available Now</p>
             <p className="text-xs text-emerald-200 mt-1">Digital + Print · Snack Packs &amp; Nibbles</p>
           </div>
@@ -305,8 +305,8 @@ const QuickOrder = () => {
   const mealSeries = [
     {
       id: 'holiday',
-      name: 'Holiday Series',
-      tagline: '4 C\'s of Christianity + 2 FREE Bonus Lessons',
+      name: '4 C\'s of Christianity',
+      tagline: 'Holiday Season Studies + 2 FREE Bonus Lessons',
       description: 'Covenant, Cradle, Cross, Comforter - celebrating faith through the seasons',
       available: true,
       editions: ['adult', 'youth', 'instructor'],
@@ -338,8 +338,8 @@ const QuickOrder = () => {
     },
     {
       id: 'breakfast',
-      name: 'Break*fast Series',
-      tagline: 'Foundation in Christ',
+      name: 'Foundation in Christ',
+      tagline: 'Daily discipleship rhythms',
       description: '48 lessons across 12 months of spiritual growth',
       available: true,
       editions: ['adult', 'youth'],
@@ -416,7 +416,7 @@ const QuickOrder = () => {
       id: 'workbooks',
       name: 'Full Workbooks',
       tagline: 'Complete Study Workbooks',
-      description: 'Holiday & Break*fast available now! Physical books ship in 5–10 business days · rates vary by region. Lunch available for pre-order — ships Aug 2026.',
+      description: '4 C\'s of Christianity & Foundation in Christ available now! Physical books ship in 5–10 business days · rates vary by region. Lunch available for pre-order — ships Aug 2026.',
       available: true,
       editions: ['adult', 'youth'],
       formats: ['digital', 'physical'],
@@ -1030,7 +1030,7 @@ const QuickOrder = () => {
               <CardContent className="p-5">
                 <Badge className="mb-3 bg-purple-600 text-white text-xs">Bundle — Save $4</Badge>
                 <h4 className="text-lg font-bold text-slate-800 mb-1">Holiday Table Bundle</h4>
-                <p className="text-sm text-slate-600 mb-3">Holiday ePub + Break*fast Snack Pack (Prayer Month 1)</p>
+                <p className="text-sm text-slate-600 mb-3">4 C&apos;s of Christianity ePub + Foundation in Christ Snack Pack (Prayer Month 1)</p>
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-sm text-slate-400 line-through">$23.98</span>
                   <span className="text-2xl font-bold text-purple-600">$19.99</span>
@@ -1080,7 +1080,7 @@ const QuickOrder = () => {
               <CardContent className="p-5">
                 <Badge className="mb-3 bg-amber-600 text-white text-xs">Bundle — Save $9</Badge>
                 <h4 className="text-lg font-bold text-slate-800 mb-1">Full Table Experience</h4>
-                <p className="text-sm text-slate-600 mb-3">Holiday ePub + Break*fast Snack Pack + 90-Day Game Pass</p>
+                <p className="text-sm text-slate-600 mb-3">4 C&apos;s of Christianity ePub + Foundation in Christ Snack Pack + 90-Day Game Pass</p>
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-sm text-slate-400 line-through">$43.97</span>
                   <span className="text-2xl font-bold text-amber-600">$34.99</span>

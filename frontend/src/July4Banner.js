@@ -11,10 +11,10 @@ import React from 'react';
 const CAMPAIGN_END = Date.UTC(2026, 6, 7, 4, 0, 0); // July 7 04:00 UTC = end of July 6 ET
 
 const FEATURED = [
-  { name: 'In His Image', img: '/covers/ihi-ae-booklet.png', imgClass: 'p-1' },
-  { name: 'GRinCH Bingo', img: '/covers/game-gridiron-ae.png', imgClass: 'p-2' },
-  { name: 'Small Group Bundle', img: '/covers/breakfast-adult-front.jpg', imgClass: 'p-2', tag: 'NEW · 1 IE + 4 Seats' },
-  { name: 'Foundation in Christ', img: '/covers/bkft-ye-sp-m1.png', imgClass: 'p-4 scale-90', tag: 'Booklets Available Now' },
+  { name: 'In His Image', img: '/covers/tile-ihi.png', imgClass: '', tag: 'Free Entry Point' },
+  { name: 'Bible Games & Challenges', img: '/covers/tile-games.png', imgClass: '', tag: 'Fun & Fellowship' },
+  { name: 'Small Group Bundle', img: '/covers/tile-smallgroup.png', imgClass: '', tag: 'NEW · 1 IE + 4 Seats' },
+  { name: 'Foundation in Christ', img: '/covers/tile-foundation.png', imgClass: '', tag: 'Booklets Available Now' },
 ];
 
 const July4Banner = () => {
@@ -94,11 +94,11 @@ const July4Banner = () => {
               className="group bg-white/80 hover:bg-white backdrop-blur-sm border-2 border-blue-200 hover:border-red-400 rounded-xl p-3 transition-all shadow-sm hover:shadow-md"
               data-testid={`july4-featured-${p.name.toLowerCase().replace(/\s+/g, '-')}`}
             >
-              <div className="aspect-square bg-white rounded-lg overflow-hidden mb-2 flex items-center justify-center border border-slate-100">
+              <div className="aspect-square bg-white rounded-lg overflow-hidden mb-2 border border-slate-100">
                 <img
                   src={p.img}
                   alt={p.name}
-                  className={`w-full h-full object-contain ${p.imgClass || 'p-1'} group-hover:scale-105 transition-transform`}
+                  className={`w-full h-full object-cover ${p.imgClass || ''} group-hover:scale-105 transition-transform`}
                 />
               </div>
               <div className="text-slate-800 text-sm font-semibold leading-tight">{p.name}</div>

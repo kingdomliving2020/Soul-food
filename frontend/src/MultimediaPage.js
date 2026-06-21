@@ -74,7 +74,7 @@ const MultimediaPage = () => {
       free: false,
       category: 'holiday-series',
       lessonLink: '/lesson/holiday-ae-covenant',
-      lessonTitle: 'Holiday Series - Lesson 1',
+      lessonTitle: '4 C\'s of Christianity - Lesson 1',
       thumbnail: '/images/team/pastor-mike-edwards.jpg',
       icon: '📜' // Scroll for covenant
     },
@@ -87,7 +87,7 @@ const MultimediaPage = () => {
       free: false,
       category: 'holiday-series',
       lessonLink: '/lesson/holiday-ae-cradle',
-      lessonTitle: 'Holiday Series - Lesson 2',
+      lessonTitle: '4 C\'s of Christianity - Lesson 2',
       thumbnail: '/images/team/pastor-mike-edwards.jpg',
       icon: '⭐' // Star for the nativity
     },
@@ -100,7 +100,7 @@ const MultimediaPage = () => {
       free: false,
       category: 'holiday-series',
       lessonLink: '/lesson/holiday-ae-cross',
-      lessonTitle: 'Holiday Series - Lesson 3',
+      lessonTitle: '4 C\'s of Christianity - Lesson 3',
       thumbnail: '/images/team/pastor-mike-edwards.jpg',
       icon: '✝️' // Cross
     },
@@ -113,7 +113,7 @@ const MultimediaPage = () => {
       free: false,
       category: 'holiday-series',
       lessonLink: '/lesson/holiday-ae-comforter',
-      lessonTitle: 'Holiday Series - Lesson 4',
+      lessonTitle: '4 C\'s of Christianity - Lesson 4',
       thumbnail: '/images/team/pastor-mike-edwards.jpg',
       icon: '🕊️' // Dove for Holy Spirit
     }
@@ -481,7 +481,7 @@ const MultimediaPage = () => {
             <div>
               <h3 className="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
                 <span className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-lg">✝️</span>
-                Holiday Series - The 4 C's
+                4 C&apos;s of Christianity
               </h3>
               <div className="grid md:grid-cols-2 gap-6">
                 {audioContent.filter(a => a.category === 'holiday-series').map(audio => (
@@ -566,7 +566,7 @@ const MultimediaPage = () => {
                             
                             <p className="text-xs text-slate-500 flex items-center gap-1">
                               <Lock className="w-3 h-3" />
-                              Purchase Holiday Series workbook to unlock full audio
+                              Purchase 4 C&apos;s of Christianity workbook to unlock full audio
                             </p>
                           </div>
                           

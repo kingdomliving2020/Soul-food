@@ -226,9 +226,9 @@ const SnackPacksPage = () => {
         {holidayMainNibbles.length > 0 && (
           <div className="mb-12">
             <h2 className="text-2xl font-bold text-slate-800 mb-2 flex items-center">
-              <span className="mr-2">🔔</span> Holiday Series – Adult Edition
+              <span className="mr-2">🔔</span> 4 C&apos;s of Christianity – Adult Edition
             </h2>
-            <p className="text-slate-600 mb-6">The 4 C's of Christianity: Covenant, Cradle, Cross, and Comforter</p>
+            <p className="text-slate-600 mb-6">Holiday Season Studies — Covenant, Cradle, Cross, and Comforter</p>
             
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {holidayMainNibbles.map((nibble) => (

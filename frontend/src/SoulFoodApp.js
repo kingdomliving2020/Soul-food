@@ -20,8 +20,8 @@ const API = `${BACKEND_URL}/api`;
 const SOUL_FOOD_SERIES = [
   {
     id: "breakfast",
-    name: "Break*fast",
-    theme: "Foundation in Christ",
+    name: "Foundation in Christ",
+    theme: "Daily Discipleship Rhythms",
     icon: "☀️",
     gradient: "from-amber-400 via-orange-500 to-red-500",
     bgColor: "bg-gradient-to-br from-amber-50 to-orange-50",
@@ -183,8 +183,8 @@ const SOUL_FOOD_SERIES = [
   },
   {
     id: "holiday",
-    name: "Holiday Series",
-    theme: "4 C's of Christianity",
+    name: "4 C's of Christianity",
+    theme: "Holiday Season Studies",
     icon: "✡️",
     gradient: "from-emerald-400 via-green-500 to-lime-500",
     bgColor: "bg-gradient-to-br from-emerald-50 to-green-50",
@@ -503,9 +503,9 @@ const SoulFoodLanding = () => {
           <nav className="flex items-center justify-center gap-1 sm:gap-4 py-2 overflow-x-auto text-xs sm:text-sm text-white">
             <a href="#bundle-offer" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">Bundle Deal</a>
             <span className="text-purple-400 hidden sm:inline">|</span>
-            <a href="#series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">Holiday Series</a>
+            <a href="#series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">4 C&apos;s of Christianity</a>
             <span className="text-purple-400 hidden sm:inline">|</span>
-            <a href="#breakfast-series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">Breakfast</a>
+            <a href="#breakfast-series" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">Foundation&nbsp;in&nbsp;Christ</a>
             <span className="text-purple-400 hidden sm:inline">|</span>
             <a href="#gaming" className="px-3 py-1.5 hover:bg-white/10 rounded-lg whitespace-nowrap transition-colors">Games</a>
             <span className="text-purple-400 hidden sm:inline">|</span>
@@ -606,7 +606,7 @@ const SoulFoodLanding = () => {
             <div className="flex-shrink-0 text-center">
               <img 
                 src="/images/holiday-cover-ae.png" 
-                alt="Soul Food Holiday Series" 
+                alt="Soul Food — 4 C's of Christianity" 
                 className="w-44 sm:w-56 lg:w-64 rounded-xl shadow-2xl border-4 border-white/20 mx-auto"
               />
               <div className="mt-4 flex flex-wrap justify-center gap-2">
@@ -614,6 +614,144 @@ const SoulFoodLanding = () => {
                 <Badge className="bg-white/15 text-white/90 border border-white/20 text-xs px-3 py-1">Print + Ship</Badge>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Ministry Journey — 4 Featured Tiles (Identity → Engagement → Community → Growth) */}
+      <section
+        className="relative py-14 sm:py-20 px-4 sm:px-6 bg-gradient-to-b from-slate-50 via-white to-slate-50"
+        data-testid="ministry-journey-section"
+      >
+        <div className="container mx-auto max-w-7xl">
+          <div className="text-center mb-10 sm:mb-14">
+            <p className="text-[11px] sm:text-xs font-semibold tracking-[0.25em] text-purple-600 uppercase mb-2" data-testid="journey-eyebrow">
+              A Ministry Journey
+            </p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-3 leading-tight" data-testid="journey-headline">
+              Identity <span className="text-purple-400">→</span> Engagement <span className="text-purple-400">→</span> Community <span className="text-purple-400">→</span> Growth
+            </h2>
+            <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
+              Wherever you are in your walk, Soul Food meets you there.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+            {/* Tile 1 — Identity: In His Image */}
+            <a
+              href="/lesson/free-sample"
+              className="group block rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-300"
+              data-testid="journey-tile-ihi"
+            >
+              <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5">
+                <div className="relative aspect-square overflow-hidden bg-slate-100">
+                  <img
+                    src="/covers/tile-ihi.png"
+                    alt="In His Image — couple under the aurora"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <span className="absolute top-3 left-3 bg-purple-600 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full shadow-lg">
+                    Identity
+                  </span>
+                </div>
+                <div className="p-4 sm:p-5">
+                  <h3 className="text-base sm:text-lg font-bold text-slate-800 leading-tight mb-1">
+                    <span className="whitespace-nowrap">In His Image</span>
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-snug">
+                    Free entry-point lesson — discover who you are in Christ.
+                  </p>
+                </div>
+              </div>
+            </a>
+
+            {/* Tile 2 — Engagement: Bible Games & Challenges */}
+            <a
+              href="#gaming"
+              className="group block rounded-2xl focus:outline-none focus:ring-4 focus:ring-amber-300"
+              data-testid="journey-tile-games"
+            >
+              <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5">
+                <div className="relative aspect-square overflow-hidden bg-slate-100">
+                  <img
+                    src="/covers/tile-games.png"
+                    alt="Church game night with facilitator and audience participation"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <span className="absolute top-3 left-3 bg-amber-500 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full shadow-lg">
+                    Engagement
+                  </span>
+                </div>
+                <div className="p-4 sm:p-5">
+                  <h3 className="text-base sm:text-lg font-bold text-slate-800 leading-tight mb-1">
+                    Bible Games &amp; Challenges
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-snug">
+                    Fun &amp; fellowship — trivia, bingo, and group play.
+                  </p>
+                </div>
+              </div>
+            </a>
+
+            {/* Tile 3 — Community: Small Group Bundle */}
+            <a
+              href="#bundle-offer"
+              className="group block rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-300"
+              data-testid="journey-tile-smallgroup"
+            >
+              <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5">
+                <div className="relative aspect-square overflow-hidden bg-slate-100">
+                  <img
+                    src="/covers/tile-smallgroup.png"
+                    alt="Small group gathered around a table with Bibles and fellowship"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <span className="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full shadow-lg">
+                    Community
+                  </span>
+                </div>
+                <div className="p-4 sm:p-5">
+                  <h3 className="text-base sm:text-lg font-bold text-slate-800 leading-tight mb-1">
+                    Small Group Bundle
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-snug">
+                    1 Instructor + 4 Participants — built for discussion.
+                  </p>
+                </div>
+              </div>
+            </a>
+
+            {/* Tile 4 — Growth: Foundation in Christ */}
+            <a
+              href="#breakfast-series"
+              className="group block rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-300"
+              data-testid="journey-tile-foundation"
+            >
+              <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5">
+                <div className="relative aspect-square overflow-hidden bg-slate-100">
+                  <img
+                    src="/covers/tile-foundation.png"
+                    alt="Morning devotional with Bible study tablet and breakfast"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    loading="lazy"
+                  />
+                  <span className="absolute top-3 left-3 bg-orange-500 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full shadow-lg">
+                    Growth
+                  </span>
+                </div>
+                <div className="p-4 sm:p-5">
+                  <h3 className="text-base sm:text-lg font-bold text-slate-800 leading-tight mb-1">
+                    <span className="whitespace-nowrap">Foundation in Christ</span>
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-500 leading-snug">
+                    Daily discipleship — personal study made simple.
+                  </p>
+                </div>
+              </div>
+            </a>
           </div>
         </div>
       </section>
@@ -1029,8 +1167,8 @@ const SoulFoodLanding = () => {
                     ✡️
                   </div>
                   <div>
-                    <h4 className="text-2xl font-bold text-slate-800">Holiday Series</h4>
-                    <p className="text-slate-600">The 4 C's of Christianity</p>
+                    <h4 className="text-2xl font-bold text-slate-800">4 C&apos;s of Christianity</h4>
+                    <p className="text-slate-600">Holiday Season Studies · Covenant · Cradle · Cross · Comforter</p>
                   </div>
                 </div>
                 <Badge className="bg-emerald-600 text-white px-6 py-3 text-base font-bold">
@@ -1128,7 +1266,7 @@ const SoulFoodLanding = () => {
                         <Check className="w-3.5 h-3.5 text-purple-700" />
                       </div>
                       <div>
-                        <p className="font-semibold text-slate-800 text-sm">Break*fast Series — Month 1 Snack Pack (SP1)</p>
+                        <p className="font-semibold text-slate-800 text-sm"><span className="whitespace-nowrap">Foundation in Christ</span> — Month 1 Snack Pack (SP1)</p>
                         <p className="text-xs text-slate-500">Prayer Is the First Resort — 4-week SP1 module</p>
                       </div>
                     </div>
@@ -1730,7 +1868,7 @@ const SoulFoodLanding = () => {
                     </li>
                     <li className="flex items-start space-x-2">
                       <span className="text-amber-600 font-bold">✓</span>
-                      <span><strong>All 48 Lessons</strong> - Complete Break*fast + Holiday series</span>
+                      <span><strong>All 48 Lessons</strong> - Complete <span className="whitespace-nowrap">Foundation in Christ</span> + 4 C&apos;s of Christianity series</span>
                     </li>
                     <li className="flex items-start space-x-2">
                       <span className="text-amber-600 font-bold">✓</span>
@@ -1895,8 +2033,8 @@ const SoulFoodLanding = () => {
                 <div className="text-left">
                   <h4 className="font-bold text-slate-800 mb-2">✝️ Soul Food Is LIVE!</h4>
                   <div className="text-sm text-slate-700 space-y-2">
-                    <p><strong>Holiday Series:</strong> All editions available now — digital downloads + physical books (ships 5–10 business days · rates vary by region).</p>
-                    <p><strong>Break*fast Pre-Order ($5 off student / $10 off Instructor):</strong> Month 1 "Prayer the First Resort" nibbles & snack packs available now. Full workbooks ship soon!</p>
+                    <p><strong>4 C&apos;s of Christianity:</strong> All editions available now — digital downloads + physical books (ships 5–10 business days · rates vary by region).</p>
+                    <p><strong><span className="whitespace-nowrap">Foundation in Christ</span> Pre-Order ($5 off student / $10 off Instructor):</strong> Month 1 &quot;Prayer the First Resort&quot; nibbles &amp; snack packs available now. Full workbooks ship soon!</p>
                     <p><strong>Lunch Pre-Order:</strong> Ships in 5–10 business days · rates vary by region.</p>
                     <p><strong>🎮 Game Passes — Use code FREEDOM10 for 10% off through July 6.</strong></p>
                     <p className="font-semibold text-emerald-700 bg-emerald-100 px-3 py-2 rounded-lg mt-3">Get started today — Holiday digital downloads available instantly!</p>
