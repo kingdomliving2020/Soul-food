@@ -686,6 +686,46 @@ logger = logging.getLogger(__name__)
 async def shutdown_db_client():
     client.close()
 
+
+
+# =============================================================================
+# Security: Refuse to boot with the known-revoked Stripe live key.
+# =============================================================================
+# Stripe disabled a live key whose suffix is `krUqqN` on June 22, 2026 because
+# it was found in our public GitHub history. If anyone (or any auto-rollback)
+# ever sets that exact value again, fail loud at startup so we don't silently
+# run with a dead key in production. We deliberately store ONLY the suffix
+# fingerprint here so this guard cannot itself become a secret-disclosure vector.
+REVOKED_STRIPE_KEY_SUFFIXES = (
+    "krUqqN",   # original sk_live_… leaked June 2026
+)
+
+
+def _enforce_revoked_stripe_key_guard() -> None:
+    """Crash the app at import-time if STRIPE_SECRET_KEY matches a known-revoked
+    fingerprint. Safer than a soft warning because a dead key would cause every
+    checkout to 5xx with a confusing error chain — better to never start."""
+    sk = os.environ.get("STRIPE_SECRET_KEY", "")
+    if not sk:
+        # Don't enforce here — payment_routes already errors clearly when the
+        # key is missing on a per-request basis. Local/dev may legitimately run
+        # without Stripe configured.
+        return
+    for suffix in REVOKED_STRIPE_KEY_SUFFIXES:
+        if sk.endswith(suffix):
+            msg = (
+                "STRIPE_SECRET_KEY ends with a known-revoked fingerprint "
+                f"({suffix}). This key was disabled by Stripe due to public "
+                "exposure. Rotate the key in the Stripe Dashboard and update "
+                "the production STRIPE_SECRET_KEY env var before booting."
+            )
+            logger.error("[security] %s", msg)
+            raise RuntimeError(msg)
+
+
+_enforce_revoked_stripe_key_guard()
+
+
 # Initialize Soul Food curriculum
 @app.on_event("startup")
 async def autoseed_files_from_manifest():
