@@ -16,6 +16,55 @@ const BOOKLET_OPTIONS = [
   { id: 'breakfast-ye',        label: 'Foundation in Christ — Youth', edition: 'youth', series: 'Foundation' },
 ];
 
+// Bundle tiers. The buyer picks a class size — no math, no configuration.
+// `seats` = how many participant booklets the buyer can pick.
+// `payFor` = how many participants the price reflects (the rest are "free seats").
+// Price is held flat per tier so churches can buy by class size.
+const TIERS = [
+  {
+    key: 'sgb-4',
+    label: 'Small Group Bundle',
+    subtitle: '1 Instructor + 4 Participants',
+    seats: 4,
+    payFor: 4,
+    price: 44.99,
+    badge: 'Original',
+    color: 'emerald',
+  },
+  {
+    key: 'sgb-starter',
+    label: 'Starter Bundle',
+    subtitle: '1 Instructor + 5 Participants',
+    seats: 5,
+    payFor: 5,
+    price: 54.99,
+    badge: 'New',
+    color: 'sky',
+  },
+  {
+    key: 'sgb-small',
+    label: 'Small Group (10)',
+    subtitle: '1 Instructor + 10 Participants · pay for 8',
+    seats: 10,
+    payFor: 8,
+    price: 87.99,
+    badge: '+2 Free Seats',
+    color: 'teal',
+  },
+  {
+    key: 'sgb-medium',
+    label: 'Medium Group (15)',
+    subtitle: '1 Instructor + 15 Participants · pay for 12',
+    seats: 15,
+    payFor: 12,
+    price: 131.99,
+    badge: '+3 Free Seats',
+    color: 'indigo',
+  },
+];
+
+const DEFAULT_TIER = TIERS[0];
+
 const PRESETS = [
   { key: '4a',   label: '4 Adult',          mix: ['ihi-ae-booklet', 'ihi-ae-booklet', 'ihi-ae-booklet', 'ihi-ae-booklet'] },
   { key: '4y',   label: '4 Youth',          mix: ['ihi-ye-booklet', 'ihi-ye-booklet', 'ihi-ye-booklet', 'ihi-ye-booklet'] },
@@ -24,12 +73,21 @@ const PRESETS = [
   { key: '1-3',  label: '1 Adult + 3 Youth',mix: ['ihi-ae-booklet', 'ihi-ye-booklet', 'ihi-ye-booklet', 'ihi-ye-booklet'] },
 ];
 
-export const BUNDLE_PRICE = 44.99;
+// Backwards compatible export — used by other files for the 4-seat bundle CTA copy.
+export const BUNDLE_PRICE = DEFAULT_TIER.price;
 
 const SmallGroupBundleModal = ({ open, onClose }) => {
   const { addToCart } = useCart();
-  const [slots, setSlots] = useState(PRESETS[0].mix);
+  const [tier, setTier] = useState(DEFAULT_TIER);
+  const [slots, setSlots] = useState(() => Array(DEFAULT_TIER.seats).fill('ihi-ae-booklet'));
   const [activePreset, setActivePreset] = useState('4a');
+
+  // When tier changes, resize the slots to match new seat count, defaulting to Adult.
+  const changeTier = (next) => {
+    setTier(next);
+    setSlots(() => Array(next.seats).fill('ihi-ae-booklet'));
+    setActivePreset('custom');
+  };
 
   const summary = useMemo(() => {
     const counts = {};
@@ -46,7 +104,12 @@ const SmallGroupBundleModal = ({ open, onClose }) => {
   const applyPreset = (presetKey) => {
     const p = PRESETS.find(x => x.key === presetKey);
     if (!p) return;
-    setSlots(p.mix);
+    // Resize preset mix to current tier seat count by repeating/truncating.
+    const next = [];
+    for (let i = 0; i < tier.seats; i++) {
+      next.push(p.mix[i % p.mix.length]);
+    }
+    setSlots(next);
     setActivePreset(presetKey);
   };
 
@@ -59,22 +122,25 @@ const SmallGroupBundleModal = ({ open, onClose }) => {
 
   const handleAdd = () => {
     addToCart({
-      id: 'bundle-small-group',
-      productId: 'bundle-small-group',
-      uniqueKey: `bundle-small-group-${Date.now()}`,
-      name: 'Small Group Bundle — 1 IE + 4 Participant Seats',
-      price: BUNDLE_PRICE,
-      salePrice: BUNDLE_PRICE,
-      listPrice: BUNDLE_PRICE,
+      id: tier.key,
+      productId: tier.key,
+      uniqueKey: `${tier.key}-${Date.now()}`,
+      name: `${tier.label} — 1 IE + ${tier.seats} Participant Seats`,
+      price: tier.price,
+      salePrice: tier.price,
+      listPrice: tier.price,
       quantity: 1,
       isSmallGroupBundle: true,
       metadata: {
         instructor_edition: 1,
+        participant_seats: tier.seats,
+        pay_for_seats: tier.payFor,
         participant_mix: slots,
         summary,
+        bundleTier: tier.key,
       },
     });
-    toast.success(`Small Group Bundle added · ${summary}`);
+    toast.success(`${tier.label} added · ${summary}`);
     onClose();
   };
 
@@ -95,8 +161,8 @@ const SmallGroupBundleModal = ({ open, onClose }) => {
               <Users className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900">Small Group Bundle</h3>
-              <p className="text-xs text-slate-600">Choose your 4 participant booklets</p>
+              <h3 className="text-lg font-bold text-slate-900">{tier.label}</h3>
+              <p className="text-xs text-slate-600">{tier.subtitle}</p>
             </div>
           </div>
           <button onClick={onClose} className="text-slate-500 hover:text-slate-700" data-testid="sgb-close">
@@ -105,13 +171,50 @@ const SmallGroupBundleModal = ({ open, onClose }) => {
         </div>
 
         {/* Body */}
-        <div className="px-6 py-5 space-y-5">
+        <div className="px-6 py-5 space-y-5 max-h-[80vh] overflow-y-auto">
+          {/* Tier picker */}
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">
+              Pick Your Class Size
+            </label>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+              {TIERS.map(t => {
+                const isActive = tier.key === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => changeTier(t)}
+                    data-testid={`sgb-tier-${t.key}`}
+                    className={`p-3 rounded-xl border text-left transition-all ${
+                      isActive
+                        ? 'bg-emerald-600 text-white border-emerald-600 shadow-md'
+                        : 'bg-white text-slate-700 border-slate-300 hover:border-emerald-400 hover:bg-emerald-50'
+                    }`}
+                  >
+                    <div className={`text-[10px] font-bold tracking-wider uppercase mb-1 ${isActive ? 'text-emerald-100' : 'text-emerald-700'}`}>
+                      {t.badge}
+                    </div>
+                    <div className="font-bold text-sm leading-tight mb-0.5">
+                      {t.seats} Seats
+                    </div>
+                    <div className={`text-[11px] ${isActive ? 'text-emerald-50' : 'text-slate-500'}`}>
+                      ${t.price.toFixed(2)}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Includes summary */}
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
             <div className="text-xs uppercase tracking-wider text-emerald-700 font-semibold mb-1">Includes</div>
             <ul className="text-sm text-slate-700 space-y-1">
-              <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-600" /> 1 Instructor Edition</li>
-              <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-600" /> 4 Participant Booklets (you choose the mix)</li>
+              <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-600" /> 1 Instructor Edition (no duplicates)</li>
+              <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-600" /> {tier.seats} Participant Booklets (you choose the mix)</li>
+              {tier.payFor < tier.seats && (
+                <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-600" /> Price reflects {tier.payFor} participants — {tier.seats - tier.payFor} free seats included</li>
+              )}
               <li className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-600" /> Auto $1 off each extra booklet added to your cart</li>
             </ul>
           </div>
@@ -144,13 +247,13 @@ const SmallGroupBundleModal = ({ open, onClose }) => {
             </div>
           </div>
 
-          {/* 4 slot pickers */}
+          {/* Dynamic seat pickers */}
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">Your 4 Booklets</label>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2">Your {tier.seats} Booklets</label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {slots.map((id, idx) => (
                 <div key={idx} className="flex items-center gap-2">
-                  <span className="text-xs font-semibold text-slate-500 w-12">Slot {idx + 1}</span>
+                  <span className="text-xs font-semibold text-slate-500 w-16">Seat {idx + 1}</span>
                   <select
                     data-testid={`sgb-slot-${idx + 1}`}
                     value={id}
@@ -170,10 +273,10 @@ const SmallGroupBundleModal = ({ open, onClose }) => {
           <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center justify-between">
             <div>
               <div className="text-xs text-slate-500">Bundle total</div>
-              <div className="text-2xl font-bold text-slate-900">${BUNDLE_PRICE.toFixed(2)}</div>
+              <div className="text-2xl font-bold text-slate-900">${tier.price.toFixed(2)}</div>
             </div>
             <div className="text-xs text-slate-600 max-w-[60%] text-right">
-              <span className="text-emerald-700 font-semibold">Save up to $39.96</span> vs buying separately. <br />
+              <span className="text-emerald-700 font-semibold">Best for {tier.seats}-person classes.</span> <br />
               Need more seats? Add booklets to your cart — each one is $1 off.
             </div>
           </div>
@@ -187,7 +290,7 @@ const SmallGroupBundleModal = ({ open, onClose }) => {
             data-testid="sgb-add-to-cart"
             className="bg-emerald-600 hover:bg-emerald-700 text-white"
           >
-            Add Bundle to Cart · ${BUNDLE_PRICE.toFixed(2)}
+            Add Bundle to Cart · ${tier.price.toFixed(2)}
           </Button>
         </div>
       </div>
@@ -200,29 +303,29 @@ export const SmallGroupBundleCard = ({ onOpen }) => (
   <Card data-testid="sgb-card" className="shadow-xl border-2 border-emerald-200 hover:border-emerald-400 transition-colors h-full flex flex-col">
     <CardContent className="p-5 flex flex-col h-full">
       <div className="self-start mb-3 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider">
-        🟢 Best for Small Groups
+        🟢 Built for Groups
       </div>
-      <h3 className="text-xl font-bold text-slate-900 mb-1">Small Group Bundle</h3>
+      <h3 className="text-xl font-bold text-slate-900 mb-1">Small Group Bundles</h3>
       <p className="text-sm text-slate-600 mb-4">
-        Built for ministry teams, study groups, homeschool & church classes.
+        Pick your class size — 4, 5, 10, or 15 seats. Ministry teams · homeschool · church classes.
       </p>
       <ul className="text-sm text-slate-700 space-y-1.5 mb-5">
-        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> 1 Instructor Edition</li>
-        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> 4 Participant Booklets (your mix)</li>
-        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> Choose Adult, Youth, or any combo</li>
+        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> 1 Instructor Edition (no duplicates)</li>
+        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> Participant Booklets — your mix of Adult / Youth</li>
+        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> Bigger tiers include free seats (no math)</li>
         <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> +$1 OFF each extra booklet added</li>
       </ul>
       <div className="mt-auto">
         <div className="flex items-baseline justify-between mb-3">
-          <span className="text-3xl font-bold text-emerald-700">${BUNDLE_PRICE.toFixed(2)}</span>
-          <span className="text-xs text-slate-500">Save up to $39.96 vs separately</span>
+          <span className="text-3xl font-bold text-emerald-700">From ${BUNDLE_PRICE.toFixed(2)}</span>
+          <span className="text-xs text-slate-500">4 · 5 · 10 · 15 seats</span>
         </div>
         <Button
           onClick={onOpen}
           data-testid="sgb-open"
           className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-semibold py-3"
         >
-          Build Your Bundle →
+          Pick Class Size →
         </Button>
       </div>
     </CardContent>

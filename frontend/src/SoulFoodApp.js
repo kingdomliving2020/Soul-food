@@ -660,7 +660,7 @@ const SoulFoodLanding = () => {
                     <span className="whitespace-nowrap">In His Image</span>
                   </h3>
                   <p className="text-xs sm:text-sm text-slate-500 leading-snug">
-                    Free entry-point lesson — discover who you are in Christ.
+                    <span className="font-semibold text-purple-700">Start Here.</span> Discover who you are in Christ.
                   </p>
                 </div>
               </div>

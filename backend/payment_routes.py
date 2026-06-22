@@ -2524,6 +2524,9 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
                 "salePrice": item.get('salePrice', item.get('price', 0)),
                 "edition": item.get('edition'),
                 "isBundle": item.get('isBundle', False),
+                "isSmallGroupBundle": item.get('isSmallGroupBundle', False),
+                "bundle_contents": item.get('bundle_contents'),
+                "bundle_tier": item.get('bundle_tier'),
             })
         
         # Store pending transaction with order number + account linking

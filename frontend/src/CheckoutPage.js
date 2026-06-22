@@ -655,7 +655,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess }) => {
 };
 
 const CheckoutPage = () => {
-  const { cartItems, getCartTotal, clearCart, removeFromCart, updateQuantity } = useCart();
+  const { cartItems, getCartTotal, getEffectiveItemPrice, getBundleAddonSavings, clearCart, removeFromCart, updateQuantity } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
@@ -1013,9 +1013,12 @@ const CheckoutPage = () => {
             product_id: item.productId || item.uniqueKey || item.id,
             name: item.name,
             quantity: item.quantity,
-            salePrice: item.salePrice,
+            salePrice: getEffectiveItemPrice(item),
             edition: item.metadata?.edition || null,
             isBundle: item.metadata?.isBundle || item.isBundle || false,
+            isSmallGroupBundle: item.isSmallGroupBundle || false,
+            bundle_contents: item.isSmallGroupBundle ? (item.metadata?.summary || null) : null,
+            bundle_tier: item.metadata?.bundleTier || null,
           })),
           origin_url: window.location.origin,
           coupon_code: couponApplied?.code || null,
@@ -1269,47 +1272,86 @@ const CheckoutPage = () => {
             
             <div className="space-y-4">
               {cartItems.map((item, index) => (
-                <div key={item.uniqueKey || item.productId || item.id || `cart-${index}`} className="flex items-center justify-between border-b pb-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                    <p className="text-sm text-gray-500">
-                      {item.seriesName && `${item.seriesName} • `}
-                      ${item.salePrice?.toFixed(2)} each
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {/* Quantity Controls */}
-                    <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden" data-testid={`qty-control-${index}`}>
+                <div key={item.uniqueKey || item.productId || item.id || `cart-${index}`} className="border-b pb-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                      <p className="text-sm text-gray-500">
+                        {item.seriesName && `${item.seriesName} • `}
+                        ${item.salePrice?.toFixed(2)} each
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {/* Quantity Controls */}
+                      <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden" data-testid={`qty-control-${index}`}>
+                        <button
+                          onClick={() => updateQuantity(item.uniqueKey || item.productId, item.quantity - 1)}
+                          className="px-2.5 py-1 text-gray-600 hover:bg-gray-100 transition-colors font-bold"
+                          data-testid={`qty-minus-${index}`}
+                        >
+                          -
+                        </button>
+                        <span className="px-3 py-1 text-sm font-semibold bg-gray-50 min-w-[32px] text-center">{item.quantity}</span>
+                        <button
+                          onClick={() => updateQuantity(item.uniqueKey || item.productId, item.quantity + 1)}
+                          className="px-2.5 py-1 text-gray-600 hover:bg-gray-100 transition-colors font-bold"
+                          data-testid={`qty-plus-${index}`}
+                        >
+                          +
+                        </button>
+                      </div>
+                      <span className="font-bold text-purple-600 min-w-[60px] text-right">
+                        ${(item.salePrice * item.quantity).toFixed(2)}
+                      </span>
                       <button
-                        onClick={() => updateQuantity(item.uniqueKey || item.productId, item.quantity - 1)}
-                        className="px-2.5 py-1 text-gray-600 hover:bg-gray-100 transition-colors font-bold"
-                        data-testid={`qty-minus-${index}`}
+                        onClick={() => removeFromCart(item.uniqueKey || item.productId)}
+                        className="text-red-500 hover:text-red-700 p-1"
+                        title="Remove item"
+                        data-testid={`remove-item-${index}`}
                       >
-                        -
-                      </button>
-                      <span className="px-3 py-1 text-sm font-semibold bg-gray-50 min-w-[32px] text-center">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.uniqueKey || item.productId, item.quantity + 1)}
-                        className="px-2.5 py-1 text-gray-600 hover:bg-gray-100 transition-colors font-bold"
-                        data-testid={`qty-plus-${index}`}
-                      >
-                        +
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
-                    <span className="font-bold text-purple-600 min-w-[60px] text-right">
-                      ${(item.salePrice * item.quantity).toFixed(2)}
-                    </span>
-                    <button
-                      onClick={() => removeFromCart(item.uniqueKey || item.productId)}
-                      className="text-red-500 hover:text-red-700 p-1"
-                      title="Remove item"
-                      data-testid={`remove-item-${index}`}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
                   </div>
+                  {/* Small Group Bundle: expand contents so the buyer/fulfillment can see exactly what was selected */}
+                  {item.isSmallGroupBundle && (
+                    <div className="mt-3 ml-1 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2.5" data-testid={`bundle-contents-${index}`}>
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 mb-1.5">Bundle Includes</div>
+                      <ul className="text-xs text-slate-700 space-y-1">
+                        <li>• 1 × Instructor Edition</li>
+                        {(() => {
+                          const mix = item.metadata?.participant_mix || [];
+                          const counts = {};
+                          for (const id of mix) {
+                            const label = {
+                              'ihi-ae-booklet': 'In His Image — Adult',
+                              'ihi-ye-booklet': 'In His Image — Youth',
+                              '4cs-ae': "4 C's of Christianity — Adult",
+                              '4cs-ye': "4 C's of Christianity — Youth",
+                              'breakfast-ae': 'Foundation in Christ — Adult',
+                              'breakfast-ye': 'Foundation in Christ — Youth',
+                            }[id] || id;
+                            counts[label] = (counts[label] || 0) + 1;
+                          }
+                          return Object.entries(counts).map(([label, n]) => (
+                            <li key={label}>• {n} × {label}</li>
+                          ));
+                        })()}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               ))}
+            </div>
+            {/* Continue Shopping link */}
+            <div className="mt-4 pt-4 border-t border-slate-100 text-center">
+              <a
+                href="/quick-order"
+                data-testid="continue-shopping"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-purple-700 hover:text-purple-900 hover:underline"
+              >
+                ← Forgot Something? Continue Shopping
+              </a>
             </div>
           </div>
 
@@ -1766,6 +1808,12 @@ const CheckoutPage = () => {
                 <span>Subtotal</span>
                 <span>${subtotal.toFixed(2)}</span>
               </div>
+              {getBundleAddonSavings() > 0 && (
+                <div className="flex justify-between text-emerald-600 text-sm" data-testid="bundle-addon-savings">
+                  <span>Bundle add-on savings ($1 each)</span>
+                  <span>included above</span>
+                </div>
+              )}
               {couponApplied && (
                 <div className="flex justify-between text-green-600 font-semibold">
                   <span>Discount ({couponApplied.discount_percent}%)</span>

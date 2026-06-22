@@ -292,26 +292,34 @@ const OrderLookup = () => {
                   <h3 className="font-semibold text-lg text-slate-800">Items</h3>
                   <div className="divide-y">
                     {order.order.items.map((item, idx) => (
-                      <div key={item.product_id || item.id || `${item.name}-${idx}`} className="py-3 flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="font-medium text-slate-800">{item.name}</p>
-                          <p className="text-sm text-slate-600">Qty: {item.quantity || 1}</p>
-                          {item.is_digital && (
-                            <span className={`text-xs px-2 py-0.5 rounded ${
-                              item.is_downloaded 
-                                ? 'bg-green-100 text-green-700' 
-                                : 'bg-blue-100 text-blue-700'
-                            }`}>
-                              {item.is_downloaded ? 'Downloaded' : 'Digital'}
-                            </span>
-                          )}
-                          {!item.refund_eligible && item.refund_reason && (
-                            <p className="text-xs text-orange-600 mt-1">{item.refund_reason}</p>
-                          )}
+                      <div key={item.product_id || item.id || `${item.name}-${idx}`} className="py-3">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <p className="font-medium text-slate-800">{item.name}</p>
+                            <p className="text-sm text-slate-600">Qty: {item.quantity || 1}</p>
+                            {item.is_digital && (
+                              <span className={`text-xs px-2 py-0.5 rounded ${
+                                item.is_downloaded 
+                                  ? 'bg-green-100 text-green-700' 
+                                  : 'bg-blue-100 text-blue-700'
+                              }`}>
+                                {item.is_downloaded ? 'Downloaded' : 'Digital'}
+                              </span>
+                            )}
+                            {!item.refund_eligible && item.refund_reason && (
+                              <p className="text-xs text-orange-600 mt-1">{item.refund_reason}</p>
+                            )}
+                          </div>
+                          <p className="font-semibold text-slate-800">
+                            ${(item.salePrice || item.price || 0).toFixed(2)}
+                          </p>
                         </div>
-                        <p className="font-semibold text-slate-800">
-                          ${(item.salePrice || item.price || 0).toFixed(2)}
-                        </p>
+                        {item.isSmallGroupBundle && item.bundle_contents && (
+                          <div className="mt-2 ml-1 bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2 text-xs text-slate-700">
+                            <div className="font-bold text-emerald-700 uppercase tracking-wider text-[10px] mb-1">Bundle Includes</div>
+                            <div>1 × Instructor Edition · {item.bundle_contents}</div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>

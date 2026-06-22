@@ -110,21 +110,28 @@ export const CartProvider = ({ children }) => {
     // Check if it's a custom item object (from QuickOrder merchandise)
     if (typeof itemOrProductId === 'object' && itemOrProductId !== null) {
       const customItem = itemOrProductId;
-      uniqueKey = customItem.id || `custom_${Date.now()}`;
+      uniqueKey = customItem.uniqueKey || customItem.id || `custom_${Date.now()}`;
       itemToAdd = {
-        productId: customItem.id,
+        productId: customItem.productId || customItem.id,
         uniqueKey: uniqueKey,
+        id: customItem.id,
         name: customItem.name,
-        salePrice: customItem.price,
-        listPrice: customItem.price,
+        salePrice: customItem.salePrice ?? customItem.price,
+        listPrice: customItem.listPrice ?? customItem.price,
+        price: customItem.price,
         quantity: customItem.quantity || 1,
         image: customItem.image,
+        isSmallGroupBundle: customItem.isSmallGroupBundle || false,
+        isGiftCertificate: customItem.isGiftCertificate || false,
+        isParticipantBooklet: customItem.isParticipantBooklet,
         metadata: {
           series: customItem.series || null,
           seriesName: customItem.seriesName || null,
           edition: customItem.edition || 'standard',
-          medium: customItem.medium || 'physical',
-          unit_price: customItem.price
+          medium: customItem.medium || (customItem.isSmallGroupBundle ? 'bundle' : 'physical'),
+          unit_price: customItem.price,
+          // Preserve any custom metadata the caller passed (bundle mix, summary, tier, etc.)
+          ...(customItem.metadata || {})
         }
       };
     } else {
@@ -278,6 +285,17 @@ export const CartProvider = ({ children }) => {
     return uniqueKey;
   };
 
+  // Returns the per-unit effective sale price for an item, factoring in
+  // the Small Group Bundle $1-off rule when applicable. This is what
+  // Stripe and the order email should bill against.
+  const getEffectiveItemPrice = (item) => {
+    const base = Number(item.salePrice ?? item.listPrice ?? item.price ?? 0);
+    const hasBundle = cartItems.some(it => it.isSmallGroupBundle);
+    if (!hasBundle) return base;
+    if (!isParticipantBookletItem(item)) return base;
+    return Math.max(0, base - 1.00);
+  };
+
   // Check if cart has gift certificates
   const hasGiftCertificates = () => {
     return cartItems.some(item => item.isGiftCertificate);
@@ -292,6 +310,7 @@ export const CartProvider = ({ children }) => {
     clearCart,
     getCartTotal,
     getBundleAddonSavings,
+    getEffectiveItemPrice,
     getCartCount,
     hasGiftCertificates,
     isCartOpen,

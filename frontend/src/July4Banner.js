@@ -11,7 +11,7 @@ import React from 'react';
 const CAMPAIGN_END = Date.UTC(2026, 6, 7, 4, 0, 0); // July 7 04:00 UTC = end of July 6 ET
 
 const FEATURED = [
-  { name: 'In His Image', img: '/covers/tile-ihi.png', imgClass: '', tag: 'Free Entry Point' },
+  { name: 'In His Image', img: '/covers/tile-ihi.png', imgClass: '', tag: 'Start Here' },
   { name: 'Bible Games & Challenges', img: '/covers/tile-games.png', imgClass: '', tag: 'Fun & Fellowship' },
   { name: 'Small Group Bundle', img: '/covers/tile-smallgroup.png', imgClass: '', tag: 'NEW · 1 IE + 4 Seats' },
   { name: 'Foundation in Christ', img: '/covers/tile-foundation.png', imgClass: '', tag: 'Booklets Available Now' },

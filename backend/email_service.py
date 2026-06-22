@@ -133,8 +133,17 @@ def get_order_confirmation_template(
         qty = item.get('quantity', 1)
         # Sub-deliverables for this row (bundle expansion or single)
         sub_html = ""
+        # Small Group Bundle: render the customer's selected mix explicitly so
+        # fulfillment and the buyer both see exactly what was chosen.
+        if item.get('isSmallGroupBundle') and item.get('bundle_contents'):
+            sub_html = (
+                '<ul style="margin: 8px 0 0 18px; padding: 0; color: #047857; font-size: 13px;">'
+                '<li>1 × Instructor Edition</li>'
+                f'<li>{item.get("bundle_contents")}</li>'
+                '</ul>'
+            )
         row = expanded[idx] if idx < len(expanded) else None
-        if row and (row.get("is_bundle") or len(row.get("deliverables", [])) > 1):
+        if not sub_html and row and (row.get("is_bundle") or len(row.get("deliverables", [])) > 1):
             sub_html = '<ul style="margin: 8px 0 0 18px; padding: 0; color: #4b5563; font-size: 13px;">'
             for d in row.get("deliverables", []):
                 pending_tag = (
@@ -143,7 +152,7 @@ def get_order_confirmation_template(
                 )
                 sub_html += f'<li>{d.get("label","")}{pending_tag}</li>'
             sub_html += '</ul>'
-        elif row and row.get("deliverables") and row["deliverables"][0].get("status") == "pending":
+        elif not sub_html and row and row.get("deliverables") and row["deliverables"][0].get("status") == "pending":
             d = row["deliverables"][0]
             sub_html = (
                 f'<div style="margin-top:6px;color:#b45309;font-size:13px;font-weight:600;">'

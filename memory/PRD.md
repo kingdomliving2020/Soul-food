@@ -17,6 +17,40 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Launch-Path Sprint #2 (June 22, 2026) — Coupon Apply, Bundle Visibility, $1 Add-on, Bundle Tiers
+- [x] **#1 Coupon application at checkout** — verified end-to-end with FREEDOM25 (25%): subtotal $87.99 → discount −$22.00 → total $65.99. The validate + apply chain (frontend + backend) was working; the previous fork's auth-key bug was the only blocker.
+- [x] **#2 Bundle visibility through cart → checkout → order → email**:
+  - `CartContext.addToCart` was overwriting `metadata` and dropping the `isSmallGroupBundle` flag for custom items. Fixed to merge metadata + propagate `isSmallGroupBundle`, `isParticipantBooklet`, and proper `uniqueKey`.
+  - Checkout cart now renders a green "Bundle Includes" expansion under each bundle line showing `1 × Instructor Edition` + the buyer-chosen participant mix (e.g., "10 × In His Image — Adult").
+  - `CheckoutPage.js` payload now sends `isSmallGroupBundle`, `bundle_contents` (summary string), and `bundle_tier` per item; `payment_routes.py` persists these on the transaction `items[]` for order history + fulfillment.
+  - `email_service.py` order-confirmation template renders the same bundle expansion in HTML for the buyer's confirmation email.
+  - `OrderLookup.js` order detail view now shows the bundle expansion so fulfillment can reference it.
+- [x] **#3 $1 add-on participant discount** — was frontend-display-only; never reached Stripe. Added `getEffectiveItemPrice(item)` in `CartContext.js`, and `CheckoutPage.js` now sends `salePrice: getEffectiveItemPrice(item)` so Stripe charges the discounted amount. Added a "Bundle add-on savings" line in Order Summary so the buyer sees it.
+- [x] **#4 Continue Shopping** — added "← Forgot Something? Continue Shopping" link in checkout cart panel pointing to `/quick-order`.
+- [x] **#5 IHI tile copy** — replaced "Free entry-point lesson — discover who you are in Christ." with "**Start Here.** Discover who you are in Christ." on `SoulFoodApp.js` Ministry Journey tile + updated July4Banner tag from "Free Entry Point" → "Start Here".
+- [x] **Bundle Tiers added (Starter / Small / Medium)** — extended `SmallGroupBundle.js` with a tier picker inside the existing modal. Four tiers now available:
+  - Original `sgb-4` — 1 IE + 4 Participants — $44.99
+  - Starter `sgb-starter` — 1 IE + 5 Participants — $54.99
+  - Small Group `sgb-small` — 1 IE + 10 Participants (pay-for-8) — $87.99
+  - Medium Group `sgb-medium` — 1 IE + 15 Participants (pay-for-12) — $131.99
+  - Storefront card refactored to "Pick Class Size →" + "From $44.99 · 4 · 5 · 10 · 15 seats".
+  - `bundleTier` stored on cart item metadata + carried through to Stripe/order/email.
+- [x] **#6 Product taxonomy language** — handled in customer-facing rebrand pass (in His Image=Booklet, 4 C's of Christianity=Workbook, Foundation in Christ=Workbook, Snack Packs=4-lesson modules, Nibbles=single lessons). Catalog SKU descriptions already match.
+
+**Files touched this sprint:**
+- `/app/frontend/src/SmallGroupBundle.js` — tier picker, dynamic seat count, metadata persistence
+- `/app/frontend/src/CartContext.js` — addToCart metadata merge + `getEffectiveItemPrice` for bundle $1-off
+- `/app/frontend/src/CheckoutPage.js` — bundle expansion, Continue Shopping link, effective price in payload
+- `/app/frontend/src/OrderLookup.js` — bundle expansion in order history
+- `/app/frontend/src/SoulFoodApp.js` — "Start Here" copy on IHI tile
+- `/app/frontend/src/July4Banner.js` — "Start Here" tag
+- `/app/backend/payment_routes.py` — persist `isSmallGroupBundle`, `bundle_contents`, `bundle_tier` on transaction items
+- `/app/backend/email_service.py` — render bundle expansion in order-confirmation email
+
+**Deferred to post-launch (still parked):**
+- httpOnly cookie auth migration, NIST first-login password reset, email_verified backfill script, verification modal, Lunch pre-order workflow, refactor large files, Gift Certificates, Subscriptions, SMS OTP, Word Search game.
+
+
 ### Homepage Ministry Journey Tiles + Customer-Facing Rebrand (June 21, 2026)
 - [x] **New "Ministry Journey" 4-tile section** added after hero in `SoulFoodApp.js` — Identity → Engagement → Community → Growth with arrow progression and eyebrow "A Ministry Journey".
 - [x] **4 coordinated lifestyle tile images** at `/app/frontend/public/covers/`:
