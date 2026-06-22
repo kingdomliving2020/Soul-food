@@ -65,3 +65,15 @@ Use `/register` to create new test accounts.
 - Max 1000 uses, expires July 7 04:00 UTC (end of July 6 ET)
 - Shareable link: `https://kingdom-soul.com/?promo=FREEDOM10`
 - Auto-applies on landing — customer never has to type the code
+
+## FREEDOM25 — Independence Day 25% off (June 22, 2026)
+- `FREEDOM25` — 25% off when **cart total ≥ $100**
+- `min_cart_total=100` (enforced server-side by `coupon_routes.py`)
+- Display message: "July 4 — 25% off orders $100+"
+- ⚠️ **Preview only** — must be created/updated in **production** Admin Coupons UI:
+  - Code: `FREEDOM25`
+  - Discount: 25%
+  - Minimum cart: $100
+  - Max uses: 10000 (or your campaign cap)
+  - Active: ON
+
