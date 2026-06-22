@@ -38,6 +38,52 @@ def _code_match(code: str) -> dict:
     return {"$regex": "^" + re.escape(code) + "$", "$options": "i"}
 
 
+def _coerce_aware_datetime(value):
+    """Best-effort coercion of a coupon date field to a timezone-aware UTC datetime.
+
+    The coupons collection has mixed schemas:
+      - Older docs (seeded or hand-inserted): `valid_until` is an ISO **string**
+        like '2026-07-07T04:00:00+00:00'.
+      - Admin-UI-created docs (newer): Pydantic parsed the ISO string into a
+        `datetime` during request validation, then Mongo stored it as a BSON
+        Date. Motor returns BSON Dates as **timezone-naive** datetimes, which
+        crashes a comparison against `datetime.now(timezone.utc)` with
+        ``TypeError: can't compare offset-naive and offset-aware datetimes``.
+
+    Returns a tz-aware ``datetime`` or ``None`` if the value is missing /
+    unparseable. Never raises.
+    """
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        if value.tzinfo is None:
+            return value.replace(tzinfo=timezone.utc)
+        return value
+    if isinstance(value, str):
+        try:
+            return datetime.fromisoformat(value.replace('Z', '+00:00'))
+        except (ValueError, AttributeError):
+            return None
+    return None
+
+
+def _normalize_coupon_for_storage(doc: dict) -> dict:
+    """Coerce any datetime fields in a coupon doc to ISO strings BEFORE insert/update.
+
+    Keeping date fields as ISO strings on disk eliminates the
+    tz-aware/tz-naive comparison foot-gun and keeps a single storage shape
+    across coupons created via seed scripts and via the Admin UI.
+    """
+    out = dict(doc)
+    for field in ("valid_from", "valid_until", "created_at", "updated_at"):
+        v = out.get(field)
+        if isinstance(v, datetime):
+            if v.tzinfo is None:
+                v = v.replace(tzinfo=timezone.utc)
+            out[field] = v.isoformat()
+    return out
+
+
 # =============================================================================
 # Models
 # =============================================================================
@@ -367,30 +413,27 @@ async def validate_coupon(request: CouponValidateRequest):
             code=coupon["code"]
         )
     
-    # Check validity dates
+    # Check validity dates — coerce mixed (string / tz-naive datetime / tz-aware
+    # datetime) shapes to a uniform tz-aware datetime so the comparison can't
+    # raise TypeError. Older seeded coupons store ISO strings; coupons created
+    # via the Admin UI store BSON Dates which Motor returns tz-naive.
     now = datetime.now(timezone.utc)
-    
-    if coupon.get("valid_from"):
-        valid_from = coupon["valid_from"]
-        if isinstance(valid_from, str):
-            valid_from = datetime.fromisoformat(valid_from.replace('Z', '+00:00'))
-        if now < valid_from:
-            return CouponValidateResponse(
-                valid=False,
-                message="This coupon is not yet active",
-                code=coupon["code"]
-            )
-    
-    if coupon.get("valid_until"):
-        valid_until = coupon["valid_until"]
-        if isinstance(valid_until, str):
-            valid_until = datetime.fromisoformat(valid_until.replace('Z', '+00:00'))
-        if now > valid_until:
-            return CouponValidateResponse(
-                valid=False,
-                message="This coupon has expired",
-                code=coupon["code"]
-            )
+
+    valid_from = _coerce_aware_datetime(coupon.get("valid_from"))
+    if valid_from and now < valid_from:
+        return CouponValidateResponse(
+            valid=False,
+            message="This coupon is not yet active",
+            code=coupon["code"]
+        )
+
+    valid_until = _coerce_aware_datetime(coupon.get("valid_until"))
+    if valid_until and now > valid_until:
+        return CouponValidateResponse(
+            valid=False,
+            message="This coupon has expired",
+            code=coupon["code"]
+        )
     
     # Check if coupon applies to specific products
     if coupon.get("applies_to"):
@@ -576,7 +619,11 @@ async def create_coupon(coupon: CouponCreate, admin = Depends(get_current_admin)
         "created_at": now.isoformat(),
         "updated_at": now.isoformat()
     }
-    
+    # Coerce any Pydantic-parsed datetime fields to ISO strings before insert.
+    # This keeps a uniform on-disk shape across seeded and admin-created coupons
+    # and prevents the tz-naive datetime comparison bug in validate_coupon.
+    coupon_doc = _normalize_coupon_for_storage(coupon_doc)
+
     await db.coupons.insert_one(coupon_doc)
     
     return {"message": "Coupon created successfully", "code": coupon.code}
@@ -591,7 +638,10 @@ async def update_coupon(code: str, update: CouponUpdate, admin = Depends(get_cur
         raise HTTPException(status_code=400, detail="No update fields provided")
     
     update_fields["updated_at"] = datetime.now(timezone.utc).isoformat()
-    
+    # Coerce any datetime fields to ISO strings so the doc maintains a uniform
+    # on-disk shape (avoids tz-naive Motor read-back issue in validate).
+    update_fields = _normalize_coupon_for_storage(update_fields)
+
     result = await db.coupons.update_one(
         {"code": _code_match(code)},
         {"$set": update_fields}
@@ -649,6 +699,45 @@ async def harden_test_coupons_endpoint(admin = Depends(get_current_admin)):
     codes, ensure single hidden internal $1 test coupon exists)."""
     summary = await harden_test_coupons()
     return {"message": "Hardening applied", "summary": summary}
+
+
+@router.post("/admin/normalize-dates")
+async def normalize_coupon_dates(admin = Depends(get_current_admin)):
+    """One-shot maintenance: scan every coupon doc and convert any
+    ``datetime`` date fields to ISO strings.
+
+    This unblocks Admin-UI-created coupons (FREEDOM10, FREEDOM25, DEVILRIDE90,
+    etc.) that crashed validate() because Motor reads BSON Dates back as
+    timezone-naive ``datetime`` instances, which can't be compared to
+    ``datetime.now(timezone.utc)``.
+
+    Safe to run repeatedly — coupons already storing ISO strings are skipped.
+    """
+    fixed = []
+    skipped = 0
+    cursor = db.coupons.find({})
+    async for doc in cursor:
+        needs_update = False
+        update = {}
+        for field in ("valid_from", "valid_until", "created_at", "updated_at"):
+            v = doc.get(field)
+            if isinstance(v, datetime):
+                if v.tzinfo is None:
+                    v = v.replace(tzinfo=timezone.utc)
+                update[field] = v.isoformat()
+                needs_update = True
+        if needs_update:
+            await db.coupons.update_one({"_id": doc["_id"]}, {"$set": update})
+            fixed.append({"code": doc.get("code"), "fields": list(update.keys())})
+        else:
+            skipped += 1
+    return {
+        "message": "Date normalization complete",
+        "fixed_count": len(fixed),
+        "skipped_count": skipped,
+        "fixed": fixed,
+    }
+
 
 
 # =============================================================================
