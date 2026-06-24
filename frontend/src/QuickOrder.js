@@ -588,8 +588,8 @@ const QuickOrder = () => {
     // Game Store - Consolidated Card model (base + expansions, like Cards Against Humanity)
     {
       id: 'game-grinch-bingo',
-      name: 'GRinCH Bingo',
-      subtitle: 'Grid Iron Challenge — Bible study bingo for groups',
+      name: 'GRinCH Bingo — Base Game',
+      subtitle: 'Start here',
       isGameStore: true,
       images: { adult: '/covers/game-gridiron-ae.png', youth: '/covers/game-gridiron-ye.png' },
       editions: ['adult', 'youth'],
@@ -602,8 +602,8 @@ const QuickOrder = () => {
     },
     {
       id: 'game-passport-trek',
-      name: 'Passport Trek',
-      subtitle: 'SOFU Passport Trek — Bible study journey game',
+      name: 'Passport Trek — Expansion',
+      subtitle: 'Add after base game',
       isGameStore: true,
       images: { adult: '/covers/game-passport-ae.png', youth: '/covers/game-passport-ye.png' },
       editions: ['adult', 'youth'],
@@ -614,8 +614,8 @@ const QuickOrder = () => {
     },
     {
       id: 'game-bundle',
-      name: 'Game Bundle',
-      subtitle: 'GRinCH Bingo + Passport Trek — Save $10',
+      name: 'Game Bundle — Base + Trek',
+      subtitle: 'Best value (both included)',
       isGameStore: true,
       images: { adult: '/covers/game-gridiron-ae.png', youth: '/covers/game-gridiron-ye.png' },
       editions: ['adult', 'youth'],
@@ -1062,7 +1062,7 @@ const QuickOrder = () => {
                 <img
                   src="/covers/full-table.png"
                   alt="Full Table Experience — 4 C's workbook + Foundation in Christ snack pack + game pass"
-                  className="w-full h-full object-cover object-center scale-110"
+                  className="w-full h-full object-cover object-top scale-110"
                   loading="lazy"
                 />
               </div>

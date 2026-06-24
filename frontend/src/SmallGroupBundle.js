@@ -310,10 +310,10 @@ export const SmallGroupBundleCard = ({ onOpen }) => (
         Pick your class size — 4, 5, 10, or 15 seats. Ministry teams · homeschool · church classes.
       </p>
       <ul className="text-sm text-slate-700 space-y-1.5 mb-5">
-        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> 1 Instructor Edition (no duplicates)</li>
-        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> Participant Booklets — your mix of Adult / Youth</li>
-        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> Bigger tiers include free seats (no math)</li>
-        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> +$1 OFF each extra booklet added</li>
+        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> 1 Instructor Copy</li>
+        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> Student Booklets Included</li>
+        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> Free Seats in Larger Tiers</li>
+        <li className="flex items-start gap-2"><span className="text-emerald-600 font-bold">✓</span> $1 Off Extra Copies</li>
       </ul>
       <div className="mt-auto">
         <div className="flex items-baseline justify-between mb-3">
