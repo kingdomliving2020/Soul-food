@@ -404,12 +404,22 @@ async def validate_coupon(request: CouponValidateRequest):
             code=coupon["code"]
         )
 
-    # Check minimum cart total requirement
+    # Check minimum cart total requirement — show the gap-to-unlock as an
+    # encouragement rather than a rejection. Turns "no" into a clear next step.
     min_cart = coupon.get("min_cart_total")
     if min_cart and request.cart_total < float(min_cart):
+        remaining = float(min_cart) - request.cart_total
+        d_pct = coupon.get("discount_percent") or 0
+        d_dol = coupon.get("discount_dollars") or 0
+        if d_pct:
+            unlock_msg = f"🎉 You're only ${remaining:.2f} away from unlocking {coupon['code']} and saving {int(d_pct)}%!"
+        elif d_dol:
+            unlock_msg = f"🎉 You're only ${remaining:.2f} away from unlocking {coupon['code']} (${float(d_dol):.2f} off)!"
+        else:
+            unlock_msg = f"🎉 You're only ${remaining:.2f} away from unlocking {coupon['code']}!"
         return CouponValidateResponse(
             valid=False,
-            message=f"This coupon requires a minimum order of ${float(min_cart):.2f}",
+            message=unlock_msg,
             code=coupon["code"]
         )
     
