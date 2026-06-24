@@ -106,13 +106,27 @@ const PalmSundayBanner = () => {
             <p className="text-[10px] sm:text-xs text-emerald-100 text-center">Available Now</p>
           </div>
 
-          {/* Lunch Series — PRE-ORDER */}
+          {/* Lunch Series — PRE-ORDER · Kingdom Relationships fellowship treatment */}
           <div className="flex flex-col items-center" data-testid="status-lunch">
-            <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shadow-2xl ring-2 ring-amber-300 bg-gradient-to-br from-amber-100 via-orange-100 to-amber-200 flex items-center justify-center">
-              <div className="text-center px-2">
-                <div className="text-purple-900 text-3xl sm:text-5xl font-black leading-none mb-1">🍽️</div>
-                <div className="text-purple-900 text-[10px] sm:text-sm font-extrabold uppercase tracking-wider">Lunch</div>
-                <div className="text-purple-700 text-[8px] sm:text-[10px] mt-1">Coming Aug 2026</div>
+            <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shadow-2xl ring-2 ring-amber-300 bg-gradient-to-br from-rose-200 via-pink-100 to-amber-100 flex flex-col">
+              {/* Top brand band */}
+              <div className="bg-rose-300/80 px-2 py-1.5 text-center">
+                <div className="text-purple-900 font-extrabold text-[10px] sm:text-sm italic tracking-tight">Soul Food</div>
+                <div className="text-purple-900 text-[8px] sm:text-[10px] font-semibold leading-tight">Truth Served, Daily.</div>
+              </div>
+              {/* Center icon */}
+              <div className="flex-1 flex items-center justify-center px-2">
+                <div className="text-center">
+                  <div className="text-purple-900 text-3xl sm:text-5xl mb-1">🍽️🤝</div>
+                  <div className="text-purple-900 text-[10px] sm:text-sm font-extrabold uppercase tracking-wider leading-tight">
+                    Lunch
+                  </div>
+                  <div className="text-purple-700 text-[8px] sm:text-[11px] italic mt-0.5">Kingdom Relationships</div>
+                </div>
+              </div>
+              {/* Bottom strip */}
+              <div className="bg-rose-300/80 px-2 py-1 text-center">
+                <div className="text-purple-900 text-[8px] sm:text-[10px] font-semibold">Coming Aug 2026</div>
               </div>
               <span className="absolute top-1.5 right-1.5 bg-amber-500 text-purple-900 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shadow">
                 Pre-Order
@@ -121,7 +135,7 @@ const PalmSundayBanner = () => {
             <p className="mt-2 text-[10px] sm:text-xs font-bold text-amber-200 uppercase tracking-wider text-center leading-tight">
               Lunch Series
             </p>
-            <p className="text-[10px] sm:text-xs text-amber-100 text-center">Pre-Order · Aug 2026</p>
+            <p className="text-[10px] sm:text-xs text-amber-100 text-center">Kingdom Relationships · Aug 2026</p>
           </div>
         </div>
 
@@ -1048,11 +1062,11 @@ const QuickOrder = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Holiday Table Bundle */}
             <Card className="shadow-lg hover:shadow-xl transition-all border-2 border-purple-200 bg-gradient-to-br from-white to-purple-50 overflow-hidden" data-testid="holiday-table-bundle">
-              <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
+              <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
                 <img
                   src="/covers/holiday-table.png"
                   alt="Holiday Table Bundle — 4 C's of Christianity workbook with Foundation in Christ snack pack"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center scale-110"
                   loading="lazy"
                 />
               </div>
@@ -1106,11 +1120,11 @@ const QuickOrder = () => {
               <div className="absolute -top-2 -right-2 z-10">
                 <Badge className="bg-amber-500 text-white text-xs px-3 py-1 shadow-lg">Best Value</Badge>
               </div>
-              <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
+              <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
                 <img
                   src="/covers/full-table.png"
                   alt="Full Table Experience — 4 C's workbook + Foundation in Christ snack pack + game pass"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-center scale-110"
                   loading="lazy"
                 />
               </div>
