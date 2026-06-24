@@ -1026,11 +1026,19 @@ const QuickOrder = () => {
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Holiday Table Bundle */}
-            <Card className="shadow-lg hover:shadow-xl transition-all border-2 border-purple-200 bg-gradient-to-br from-white to-purple-50" data-testid="holiday-table-bundle">
+            <Card className="shadow-lg hover:shadow-xl transition-all border-2 border-purple-200 bg-gradient-to-br from-white to-purple-50 overflow-hidden" data-testid="holiday-table-bundle">
+              <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
+                <img
+                  src="/covers/holiday-table.png"
+                  alt="Holiday Table Bundle — 4 C's of Christianity workbook with Foundation in Christ snack pack"
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
+              </div>
               <CardContent className="p-5">
                 <Badge className="mb-3 bg-purple-600 text-white text-xs">Bundle — Save $4</Badge>
                 <h4 className="text-lg font-bold text-slate-800 mb-1">Holiday Table Bundle</h4>
-                <p className="text-sm text-slate-600 mb-3">4 C&apos;s of Christianity ePub + Foundation in Christ Snack Pack (Prayer Month 1)</p>
+                <p className="text-sm text-slate-600 mb-3">Represents the story of God&apos;s love for humanity in bite-size portions. 4 C&apos;s of Christianity workbook + Foundation in Christ snack pack.</p>
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-sm text-slate-400 line-through">$23.98</span>
                   <span className="text-2xl font-bold text-purple-600">$19.99</span>
@@ -1073,14 +1081,22 @@ const QuickOrder = () => {
             </Card>
 
             {/* Full Table Experience */}
-            <Card className="shadow-lg hover:shadow-xl transition-all border-2 border-amber-300 bg-gradient-to-br from-white to-amber-50 relative" data-testid="full-table-experience">
-              <div className="absolute -top-2 -right-2">
+            <Card className="shadow-lg hover:shadow-xl transition-all border-2 border-amber-300 bg-gradient-to-br from-white to-amber-50 relative overflow-hidden" data-testid="full-table-experience">
+              <div className="absolute -top-2 -right-2 z-10">
                 <Badge className="bg-amber-500 text-white text-xs px-3 py-1 shadow-lg">Best Value</Badge>
+              </div>
+              <div className="relative aspect-[16/10] bg-slate-100 overflow-hidden">
+                <img
+                  src="/covers/full-table.png"
+                  alt="Full Table Experience — 4 C's workbook + Foundation in Christ snack pack + game pass"
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                />
               </div>
               <CardContent className="p-5">
                 <Badge className="mb-3 bg-amber-600 text-white text-xs">Bundle — Save $9</Badge>
                 <h4 className="text-lg font-bold text-slate-800 mb-1">Full Table Experience</h4>
-                <p className="text-sm text-slate-600 mb-3">4 C&apos;s of Christianity ePub + Foundation in Christ Snack Pack + 90-Day Game Pass</p>
+                <p className="text-sm text-slate-600 mb-3">Includes lesson review and fun fellowship through two online solo and multiplayer games. 4 C&apos;s workbook + Foundation in Christ snack pack + 90-Day Game Pass.</p>
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-sm text-slate-400 line-through">$43.97</span>
                   <span className="text-2xl font-bold text-amber-600">$34.99</span>
