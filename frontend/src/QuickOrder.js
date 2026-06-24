@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCart } from './CartContext';
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
-import { ShoppingCart, X, Trash2 } from 'lucide-react';
+import { ShoppingCart, X, Trash2, Check } from 'lucide-react';
 import SmallGroupBundleModal, { SmallGroupBundleCard } from './SmallGroupBundle';
 
 // Countdown Timer Hook for Palm Sunday deadline
@@ -45,110 +45,31 @@ const usePentecostCountdown = () => {
   return { days: 0, hours: 0, minutes: 0, expired: true };
 };
 
-// Soft Launch Banner with Resurrection Sunday Theme
+// Soft Launch Banner — Flat horizontal feature band (no boxes, no gradients, no buttons)
 const PalmSundayBanner = () => {
-  // Palm Sunday shipping deadlines still apply
-  const expeditedDeadline = useCountdown('2026-03-15T23:59:59');
-  const standardDeadline = useCountdown('2026-03-10T23:59:59');
-  const pentecost = usePentecostCountdown();
-
   return (
-    <div className="mb-8 bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
-      {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
-      
-      <div className="relative z-10">
-        {/* Title only — let the covers do the talking */}
-        <div className="text-center mb-6">
-          <h3 className="text-2xl md:text-4xl font-extrabold tracking-tight">Truth Served, Daily</h3>
-          <p className="text-purple-200 text-xs uppercase tracking-[0.25em] mt-1">Soul Food Series — Status</p>
-        </div>
-
-        {/* Cover-first Availability Panel */}
-        <div className="grid grid-cols-3 gap-3 sm:gap-5 max-w-3xl mx-auto" data-testid="series-status-panel">
-
-          {/* 4 C's of Christianity — AVAILABLE NOW */}
-          <div className="flex flex-col items-center" data-testid="status-4cs">
-            <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shadow-2xl ring-2 ring-emerald-300 bg-white">
-              <img
-                src="/covers/holiday-ae-front-new.png"
-                alt="4 C's of Christianity workbook cover"
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-              <span className="absolute top-1.5 right-1.5 bg-emerald-500 text-white text-[8px] sm:text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shadow">
-                Now
-              </span>
-            </div>
-            <p className="mt-2 text-[10px] sm:text-xs font-bold text-emerald-200 uppercase tracking-wider text-center leading-tight">
-              4 C&apos;s of Christianity
-            </p>
-            <p className="text-[10px] sm:text-xs text-emerald-100 text-center">Available Now</p>
-          </div>
-
-          {/* Foundation in Christ — AVAILABLE NOW */}
-          <div className="flex flex-col items-center" data-testid="status-foundation">
-            <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shadow-2xl ring-2 ring-emerald-300 bg-white">
-              <img
-                src="/covers/breakfast-adult-front.jpg"
-                alt="Foundation in Christ workbook cover"
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-              <span className="absolute top-1.5 right-1.5 bg-emerald-500 text-white text-[8px] sm:text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shadow">
-                Now
-              </span>
-            </div>
-            <p className="mt-2 text-[10px] sm:text-xs font-bold text-emerald-200 uppercase tracking-wider text-center leading-tight whitespace-nowrap">
-              Foundation in Christ
-            </p>
-            <p className="text-[10px] sm:text-xs text-emerald-100 text-center">Available Now</p>
-          </div>
-
-          {/* Lunch Series — PRE-ORDER · Kingdom Relationships fellowship treatment */}
-          <div className="flex flex-col items-center" data-testid="status-lunch">
-            <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shadow-2xl ring-2 ring-amber-300 bg-gradient-to-br from-rose-200 via-pink-100 to-amber-100 flex flex-col">
-              {/* Top brand band */}
-              <div className="bg-rose-300/80 px-2 py-1.5 text-center">
-                <div className="text-purple-900 font-extrabold text-[10px] sm:text-sm italic tracking-tight">Soul Food</div>
-                <div className="text-purple-900 text-[8px] sm:text-[10px] font-semibold leading-tight">Truth Served, Daily.</div>
-              </div>
-              {/* Center icon */}
-              <div className="flex-1 flex items-center justify-center px-2">
-                <div className="text-center">
-                  <div className="text-purple-900 text-3xl sm:text-5xl mb-1">🍽️🤝</div>
-                  <div className="text-purple-900 text-[10px] sm:text-sm font-extrabold uppercase tracking-wider leading-tight">
-                    Lunch
-                  </div>
-                  <div className="text-purple-700 text-[8px] sm:text-[11px] italic mt-0.5">Kingdom Relationships</div>
-                </div>
-              </div>
-              {/* Bottom strip */}
-              <div className="bg-rose-300/80 px-2 py-1 text-center">
-                <div className="text-purple-900 text-[8px] sm:text-[10px] font-semibold">Coming Aug 2026</div>
-              </div>
-              <span className="absolute top-1.5 right-1.5 bg-amber-500 text-purple-900 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shadow">
-                Pre-Order
-              </span>
-            </div>
-            <p className="mt-2 text-[10px] sm:text-xs font-bold text-amber-200 uppercase tracking-wider text-center leading-tight">
-              Lunch Series
-            </p>
-            <p className="text-[10px] sm:text-xs text-amber-100 text-center">Kingdom Relationships · Aug 2026</p>
-          </div>
-        </div>
-
-        {/* Early Bird Countdown — RETIRED (Juneteenth campaign ended; July 4 / FREEDOM10 is now the sole active promotion) */}
-
-        {/* Shipping Info */}
-        <div className="text-center mt-4">
-          <div className="inline-flex items-center gap-3 bg-white/10 rounded-full px-4 py-2">
-            <span className="text-green-300 font-medium text-sm">Instant digital downloads</span>
-            <span className="w-1 h-1 bg-white/50 rounded-full"></span>
-            <span className="text-purple-200 text-sm">Physical books: Ships within 5–10 business days · rates vary by region</span>
-          </div>
-        </div>
+    <div className="mb-8 py-4 border-y border-slate-200">
+      <div
+        className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs sm:text-sm text-slate-700"
+        data-testid="series-status-panel"
+      >
+        <span className="inline-flex items-center gap-1.5" data-testid="status-4cs">
+          <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+          <span className="font-semibold whitespace-nowrap">4C Workbook</span>
+          <span className="text-slate-500 whitespace-nowrap">— Available Now</span>
+        </span>
+        <span className="text-slate-300" aria-hidden="true">|</span>
+        <span className="inline-flex items-center gap-1.5" data-testid="status-foundation">
+          <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+          <span className="font-semibold whitespace-nowrap">Foundation Bundle</span>
+          <span className="text-slate-500 whitespace-nowrap">— Available Now</span>
+        </span>
+        <span className="text-slate-300" aria-hidden="true">|</span>
+        <span className="inline-flex items-center gap-1.5" data-testid="status-lunch">
+          <Check className="w-4 h-4 text-amber-600 flex-shrink-0" />
+          <span className="font-semibold whitespace-nowrap">Lunch Series</span>
+          <span className="text-slate-500 whitespace-nowrap">— Pre-Order Aug 2026</span>
+        </span>
       </div>
     </div>
   );
@@ -1072,8 +993,25 @@ const QuickOrder = () => {
               </div>
               <CardContent className="p-5">
                 <Badge className="mb-3 bg-purple-600 text-white text-xs">Bundle — Save $4</Badge>
-                <h4 className="text-lg font-bold text-slate-800 mb-1">Holiday Table Bundle</h4>
-                <p className="text-sm text-slate-600 mb-3">Represents the story of God&apos;s love for humanity in bite-size portions. 4 C&apos;s of Christianity workbook + Foundation in Christ snack pack.</p>
+                <h4 className="text-lg font-bold text-slate-800 mb-2">Holiday Table Bundle</h4>
+                <ul className="space-y-1 mb-3" data-testid="holiday-bundle-features">
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>4 C&apos;s of Christianity workbook</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Foundation in Christ snack pack</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Adult or Youth edition</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Bite-size lessons for the season</span>
+                  </li>
+                </ul>
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-sm text-slate-400 line-through">$23.98</span>
                   <span className="text-2xl font-bold text-purple-600">$19.99</span>
@@ -1130,8 +1068,29 @@ const QuickOrder = () => {
               </div>
               <CardContent className="p-5">
                 <Badge className="mb-3 bg-amber-600 text-white text-xs">Bundle — Save $9</Badge>
-                <h4 className="text-lg font-bold text-slate-800 mb-1">Full Table Experience</h4>
-                <p className="text-sm text-slate-600 mb-3">Includes lesson review and fun fellowship through two online solo and multiplayer games. 4 C&apos;s workbook + Foundation in Christ snack pack + 90-Day Game Pass.</p>
+                <h4 className="text-lg font-bold text-slate-800 mb-2">Full Table Experience</h4>
+                <ul className="space-y-1 mb-3" data-testid="full-table-features">
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>4 C&apos;s of Christianity workbook</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Foundation in Christ snack pack</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>90-Day Game Pass included</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Solo &amp; multiplayer trivia games</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Adult or Youth edition</span>
+                  </li>
+                </ul>
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-sm text-slate-400 line-through">$43.97</span>
                   <span className="text-2xl font-bold text-amber-600">$34.99</span>
@@ -1174,21 +1133,45 @@ const QuickOrder = () => {
             </Card>
 
             {/* Quick Pick - HOL ePub */}
-            <Card className="shadow-lg hover:shadow-xl transition-all border border-emerald-200" data-testid="quick-pick-hol">
+            <Card className="shadow-lg hover:shadow-xl transition-all border-2 border-emerald-200 bg-gradient-to-br from-white to-emerald-50 overflow-hidden" data-testid="quick-pick-hol">
+              <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden flex items-center justify-center">
+                <img
+                  src="/covers/holiday-ae-front-new.png"
+                  alt="Holiday ePub — 4 C's of Christianity Adult Edition"
+                  className="h-full w-auto object-contain py-3"
+                  loading="lazy"
+                />
+              </div>
               <CardContent className="p-5">
                 <Badge className="mb-3 bg-emerald-500 text-white text-xs">Instant Access</Badge>
-                <h4 className="text-lg font-bold text-slate-800 mb-1">Holiday ePub (AE)</h4>
-                <p className="text-sm text-slate-600 mb-3">Complete Holiday Adult Edition — downloadable PDF workbook</p>
+                <h4 className="text-lg font-bold text-slate-800 mb-2">Holiday ePub (AE)</h4>
+                <ul className="space-y-1 mb-3" data-testid="quick-pick-features">
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Complete Holiday Adult Edition</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Downloadable PDF workbook</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Instant access after checkout</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-xs text-slate-700">
+                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Read on any device</span>
+                  </li>
+                </ul>
                 <div className="mb-3">
                   <span className="text-2xl font-bold text-emerald-600">$14.99</span>
                 </div>
-                <p className="text-xs text-slate-500 mb-4">Download instantly after purchase</p>
                 <Button
                   onClick={() => {
                     addToCart({ id: 'holiday-ae-digital', name: 'Holiday AE (ePub)', price: 9.99, quantity: 1 });
                     toast.success('Holiday AE ePub added!');
                   }}
-                  className="w-full bg-emerald-600 hover:bg-emerald-700"
+                  className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
                   data-testid="add-hol-epub-btn"
                 >
                   Add to Cart — $14.99

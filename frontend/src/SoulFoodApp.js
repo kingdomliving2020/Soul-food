@@ -28,6 +28,14 @@ const SOUL_FOOD_SERIES = [
     bgImage: "https://images.unsplash.com/photo-1756367260219-b60e3cb90fa5?w=800&h=400&fit=crop&crop=center",
     available: true,
     description: "Begin your spiritual journey with a rock-solid foundation in Christ. Perfect for new believers and those seeking renewal.",
+    features: [
+      "48 lessons across 12 months",
+      "Daily discipleship rhythms",
+      "Built for new believers & renewal",
+      "Adult + Youth editions",
+      "Instant digital download",
+      "Pairs with audio teachings"
+    ],
     themes: [
       {
         themeName: "Prayer, the First Resort",
@@ -69,6 +77,14 @@ const SOUL_FOOD_SERIES = [
     available: false,
     unlockDate: "Pre-Order Savings (Ships in 5–10 business days)",
     description: "Learn to build authentic, Christ-centered relationships that reflect God's love and unity.",
+    features: [
+      "Kingdom Relationships curriculum",
+      "12 lessons on biblical friendship",
+      "Pre-order savings active now",
+      "Ships August 2026",
+      "Adult, Youth & Instructor editions",
+      "Designed for small-group discussion"
+    ],
     themes: [
       {
         themeName: "Friends & Friction is OK",
@@ -110,6 +126,14 @@ const SOUL_FOOD_SERIES = [
     available: false,
     unlockDate: "Q2 2026",
     description: "Discover your unique calling and walk confidently in the purpose God has designed for you.",
+    features: [
+      "Talents vs. spiritual gifts taught",
+      "Leadership through humble service",
+      "Sowing & reaping principles",
+      "12 purpose-driven lessons",
+      "Unlocks Q2 2026",
+      "Adult, Youth & Instructor editions"
+    ],
     themes: [
       {
         themeName: "ID in Christ - Talents vs Gifts",
@@ -151,6 +175,14 @@ const SOUL_FOOD_SERIES = [
     available: false,
     unlockDate: "Q3 2026",
     description: "Grow into spiritual maturity, developing wisdom and character that honors Christ.",
+    features: [
+      "Persistent pursuit of Christ",
+      "Hard truths on poisoned pursuit",
+      "Honest lessons on grief",
+      "12 maturity-shaping studies",
+      "Unlocks Q3 2026",
+      "Adult, Youth & Instructor editions"
+    ],
     themes: [
       {
         themeName: "Persistent Pursuit",
@@ -191,6 +223,14 @@ const SOUL_FOOD_SERIES = [
     bgImage: "https://images.pexels.com/photos/8815225/pexels-photo-8815225.jpeg?w=800&h=400&fit=crop&crop=center",
     available: true,
     description: "The Covenant, The Cradle, The Cross, and The Comforter - celebrating faith through the seasons, plus bonus lessons.",
+    features: [
+      "Covenant · Cradle · Cross · Comforter",
+      "4 seasonal lessons + 2 FREE bonus",
+      "Instant digital + paperback options",
+      "Adult, Youth & Instructor editions",
+      "Includes 8-Hour Game Pass certificate",
+      "Pairs with Pastor Mike Edwards audio"
+    ],
     themes: [
       {
         themeName: "The 4 C's of Christianity + Bonus Lessons",
@@ -626,76 +666,18 @@ const SoulFoodLanding = () => {
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-10 sm:mb-14">
             <p className="text-[11px] sm:text-xs font-semibold tracking-[0.25em] text-purple-600 uppercase mb-2" data-testid="journey-eyebrow">
-              A Ministry Journey
+              Two Clear Paths
             </p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-3 leading-tight" data-testid="journey-headline">
-              Identity <span className="text-purple-400">→</span> Engagement <span className="text-purple-400">→</span> Community <span className="text-purple-400">→</span> Growth
+              Start with a <span className="text-purple-400">Lesson</span> — or grow as a <span className="text-purple-400">Group</span>.
             </h2>
             <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
               Wherever you are in your walk, Soul Food meets you there.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-            {/* Tile 1 — Identity: In His Image */}
-            <a
-              href="/lesson/free-sample"
-              className="group block rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-300"
-              data-testid="journey-tile-ihi"
-            >
-              <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5">
-                <div className="relative aspect-square overflow-hidden bg-slate-100">
-                  <img
-                    src="/covers/tile-ihi.png"
-                    alt="In His Image — couple under the aurora"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                  <span className="absolute top-3 left-3 bg-purple-600 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full shadow-lg">
-                    Identity
-                  </span>
-                </div>
-                <div className="p-4 sm:p-5">
-                  <h3 className="text-base sm:text-lg font-bold text-slate-800 leading-tight mb-1">
-                    <span className="whitespace-nowrap">In His Image</span>
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 leading-snug">
-                    <span className="font-semibold text-purple-700">Start Here.</span> Discover who you are in Christ.
-                  </p>
-                </div>
-              </div>
-            </a>
-
-            {/* Tile 2 — Engagement: Bible Games & Challenges */}
-            <a
-              href="#gaming"
-              className="group block rounded-2xl focus:outline-none focus:ring-4 focus:ring-amber-300"
-              data-testid="journey-tile-games"
-            >
-              <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5">
-                <div className="relative aspect-square overflow-hidden bg-slate-100">
-                  <img
-                    src="/covers/tile-games.png"
-                    alt="Church game night with facilitator and audience participation"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                  <span className="absolute top-3 left-3 bg-amber-500 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full shadow-lg">
-                    Engagement
-                  </span>
-                </div>
-                <div className="p-4 sm:p-5">
-                  <h3 className="text-base sm:text-lg font-bold text-slate-800 leading-tight mb-1">
-                    Bible Games &amp; Challenges
-                  </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 leading-snug">
-                    Fun &amp; fellowship — trivia, bingo, and group play.
-                  </p>
-                </div>
-              </div>
-            </a>
-
-            {/* Tile 3 — Community: Small Group Bundle */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
+            {/* Tile — Community: Small Group Bundle */}
             <a
               href="#bundle-offer"
               className="group block rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-300"
@@ -724,7 +706,7 @@ const SoulFoodLanding = () => {
               </div>
             </a>
 
-            {/* Tile 4 — Growth: Foundation in Christ */}
+            {/* Tile — Growth: Foundation in Christ */}
             <a
               href="#breakfast-series"
               className="group block rounded-2xl focus:outline-none focus:ring-4 focus:ring-orange-300"
@@ -850,7 +832,24 @@ const SoulFoodLanding = () => {
               </CardHeader>
               
               <CardContent className="relative p-6 flex flex-col flex-1">
-                <p className="text-slate-700 leading-relaxed">Experience our teaching style with this platform-exclusive sample. Learn about Abel's faithful sacrifice and Enoch's consistency with God.</p>
+                <ul className="space-y-1.5" data-testid="free-sample-features">
+                  <li className="flex items-start gap-2 text-sm text-slate-700">
+                    <Check className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Abel&apos;s faithful sacrifice</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700">
+                    <Check className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Enoch&apos;s walk with God</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700">
+                    <Check className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>Platform-exclusive teaching sample</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm text-slate-700">
+                    <Check className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                    <span>No credit card required</span>
+                  </li>
+                </ul>
                 
                 <div className="pt-4">
                   <Badge className="bg-amber-500 text-white px-3 py-1 text-sm font-semibold shadow-md">
@@ -918,7 +917,16 @@ const SoulFoodLanding = () => {
                 </CardHeader>
                 
               <CardContent className="relative p-6 flex flex-col flex-1">
-                <p className="text-slate-700 leading-relaxed">{s.description}</p>
+                {s.features && (
+                  <ul className="space-y-1.5 mb-2" data-testid={`series-features-${s.id}`}>
+                    {s.features.slice(0, 6).map((feat, idx) => (
+                      <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
+                        <Check className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
                 
                 {/* Status Badge */}
                 <div className="pt-2">
@@ -1022,7 +1030,16 @@ const SoulFoodLanding = () => {
                 </CardHeader>
                 
                 <CardContent className="relative p-6 flex flex-col flex-1">
-                  <p className="text-slate-700 leading-relaxed">{s.description}</p>
+                  {s.features && (
+                    <ul className="space-y-1.5 mb-2" data-testid={`series-features-${s.id}`}>
+                      {s.features.slice(0, 6).map((feat, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
+                          <Check className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                   
                   {/* Status Badge */}
                   <div className="pt-2">
@@ -1115,7 +1132,16 @@ const SoulFoodLanding = () => {
                 </CardHeader>
                 
                 <CardContent className="relative p-6 flex flex-col flex-1">
-                  <p className="text-slate-700 leading-relaxed">{s.description}</p>
+                  {s.features && (
+                    <ul className="space-y-1.5 mb-2" data-testid={`series-features-${s.id}`}>
+                      {s.features.slice(0, 6).map((feat, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
+                          <Check className="w-4 h-4 mt-0.5 text-emerald-600 flex-shrink-0" />
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                   
                   {/* Status Badge */}
                   <div className="pt-2">

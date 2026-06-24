@@ -17,6 +17,16 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Storefront Visual Cleanup (Feb 24, 2026) — Pre-Launch Conversion Polish
+- [x] **Top Card Row simplified** — removed "In His Image" and "Bible Games" tiles from `SoulFoodApp.js` Ministry Journey section. Reduced 4-tile grid to 2-tile (Small Group Bundle + Foundation in Christ). New headline: "Start with a Lesson — or grow as a Group."
+- [x] **Featured Row balanced** — `QuickOrder.js` third Featured tile (Holiday ePub) now matches the first two visually: added Holiday AE cover image, emerald gradient background, matching CTA style.
+- [x] **Status Panel flattened** — converted `PalmSundayBanner` (purple hero with 3 cover boxes) into a flat horizontal feature band with checkmarks: `✔ 4C Workbook — Available Now | ✔ Foundation Bundle — Available Now | ✔ Lunch Series — Pre-Order Aug 2026`. No boxes, gradients, or buttons.
+- [x] **Product Detail Panels converted to checkmark feature lists** — all `<p>{s.description}</p>` paragraphs across Free Sample, 4 C's of Christianity, Foundation in Christ, Lunch, Dinner, Supper cards now render as `<ul>` checklists (max 6 items, ~8 words each) using `Check` icon from lucide-react. Added `features[]` array to each entry of `SOUL_FOOD_SERIES`. Same treatment applied to Featured row tiles (Holiday Table Bundle, Full Table Experience, Holiday ePub).
+
+**Files touched this pass:**
+- `/app/frontend/src/SoulFoodApp.js` — Ministry Journey 2-tile layout, headline update, `features[]` on all series, paragraph → checklist conversion
+- `/app/frontend/src/QuickOrder.js` — `PalmSundayBanner` flat band rewrite, Featured Row tile balancing, checkmark feature lists, `Check` icon import
+
 ### Launch-Path Sprint #2 (June 22, 2026) — Coupon Apply, Bundle Visibility, $1 Add-on, Bundle Tiers
 - [x] **#1 Coupon application at checkout** — verified end-to-end with FREEDOM25 (25%): subtotal $87.99 → discount −$22.00 → total $65.99. The validate + apply chain (frontend + backend) was working; the previous fork's auth-key bug was the only blocker.
 - [x] **#2 Bundle visibility through cart → checkout → order → email**:
