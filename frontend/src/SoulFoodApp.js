@@ -704,7 +704,7 @@ const SoulFoodLanding = () => {
               <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5">
                 <div className="relative aspect-square overflow-hidden bg-slate-100">
                   <img
-                    src="/covers/tile-smallgroup.png"
+                    src="/covers/tile-smallgroup.png?v=trio2026"
                     alt="Small group gathered around a table with Bibles and fellowship"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"

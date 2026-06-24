@@ -59,48 +59,69 @@ const PalmSundayBanner = () => {
       <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
       
       <div className="relative z-10">
-        {/* Header */}
-        <div className="text-center mb-4">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <span className="text-3xl">✝️</span>
-            <h3 className="text-xl md:text-2xl font-bold">He Is Risen! Soul Food Is LIVE!</h3>
-            <span className="text-3xl">✝️</span>
-          </div>
-          <p className="text-purple-100 text-sm md:text-base">
-            <strong>4 C&apos;s of Christianity</strong> &amp; <strong className="whitespace-nowrap">Foundation in Christ</strong> available now! <strong>Lunch</strong> pre-orders open through July — ships August 2026.
-          </p>
+        {/* Title only — let the covers do the talking */}
+        <div className="text-center mb-6">
+          <h3 className="text-2xl md:text-4xl font-extrabold tracking-tight">Truth Served, Daily</h3>
+          <p className="text-purple-200 text-xs uppercase tracking-[0.25em] mt-1">Soul Food Series — Status</p>
         </div>
 
-        {/* Availability Grid */}
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-6">
-          
-          {/* Holiday - AVAILABLE NOW */}
-          <div className="bg-emerald-500/30 backdrop-blur-sm rounded-xl px-5 py-4 text-center min-w-[180px]">
-            <p className="text-xs text-emerald-200 uppercase tracking-wide mb-1">4 C&apos;s of Christianity</p>
-            <p className="font-bold text-lg">Available Now</p>
-            <p className="text-xs text-emerald-200 mt-1">Digital + Print</p>
+        {/* Cover-first Availability Panel */}
+        <div className="grid grid-cols-3 gap-3 sm:gap-5 max-w-3xl mx-auto" data-testid="series-status-panel">
+
+          {/* 4 C's of Christianity — AVAILABLE NOW */}
+          <div className="flex flex-col items-center" data-testid="status-4cs">
+            <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shadow-2xl ring-2 ring-emerald-300 bg-white">
+              <img
+                src="/covers/holiday-ae-front-new.png"
+                alt="4 C's of Christianity workbook cover"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <span className="absolute top-1.5 right-1.5 bg-emerald-500 text-white text-[8px] sm:text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shadow">
+                Now
+              </span>
+            </div>
+            <p className="mt-2 text-[10px] sm:text-xs font-bold text-emerald-200 uppercase tracking-wider text-center leading-tight">
+              4 C&apos;s of Christianity
+            </p>
+            <p className="text-[10px] sm:text-xs text-emerald-100 text-center">Available Now</p>
           </div>
 
-          {/* Divider */}
-          <div className="hidden lg:block h-16 w-px bg-white/30"></div>
-          <div className="lg:hidden w-full h-px bg-white/30"></div>
-
-          {/* Breakfast - AVAILABLE NOW */}
-          <div className="bg-emerald-500/30 backdrop-blur-sm rounded-xl px-5 py-4 text-center min-w-[180px]">
-            <p className="text-xs text-emerald-200 uppercase tracking-wide mb-1 whitespace-nowrap">Foundation in Christ</p>
-            <p className="font-bold text-lg">Available Now</p>
-            <p className="text-xs text-emerald-200 mt-1">Digital + Print · Snack Packs &amp; Nibbles</p>
+          {/* Foundation in Christ — AVAILABLE NOW */}
+          <div className="flex flex-col items-center" data-testid="status-foundation">
+            <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shadow-2xl ring-2 ring-emerald-300 bg-white">
+              <img
+                src="/covers/breakfast-adult-front.jpg"
+                alt="Foundation in Christ workbook cover"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <span className="absolute top-1.5 right-1.5 bg-emerald-500 text-white text-[8px] sm:text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shadow">
+                Now
+              </span>
+            </div>
+            <p className="mt-2 text-[10px] sm:text-xs font-bold text-emerald-200 uppercase tracking-wider text-center leading-tight whitespace-nowrap">
+              Foundation in Christ
+            </p>
+            <p className="text-[10px] sm:text-xs text-emerald-100 text-center">Available Now</p>
           </div>
 
-          {/* Divider */}
-          <div className="hidden lg:block h-16 w-px bg-white/30"></div>
-          <div className="lg:hidden w-full h-px bg-white/30"></div>
-
-          {/* Lunch - PRE-ORDER (Aug 2026) */}
-          <div className="bg-amber-400 text-purple-900 rounded-xl px-5 py-4 text-center min-w-[180px] shadow-lg">
-            <p className="text-xs uppercase tracking-wide font-medium mb-1">Lunch Series</p>
-            <p className="font-bold text-lg">Pre-Order — Aug 2026</p>
-            <p className="text-xs mt-1">Pre-orders open through July · ships August</p>
+          {/* Lunch Series — PRE-ORDER */}
+          <div className="flex flex-col items-center" data-testid="status-lunch">
+            <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shadow-2xl ring-2 ring-amber-300 bg-gradient-to-br from-amber-100 via-orange-100 to-amber-200 flex items-center justify-center">
+              <div className="text-center px-2">
+                <div className="text-purple-900 text-3xl sm:text-5xl font-black leading-none mb-1">🍽️</div>
+                <div className="text-purple-900 text-[10px] sm:text-sm font-extrabold uppercase tracking-wider">Lunch</div>
+                <div className="text-purple-700 text-[8px] sm:text-[10px] mt-1">Coming Aug 2026</div>
+              </div>
+              <span className="absolute top-1.5 right-1.5 bg-amber-500 text-purple-900 text-[8px] sm:text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shadow">
+                Pre-Order
+              </span>
+            </div>
+            <p className="mt-2 text-[10px] sm:text-xs font-bold text-amber-200 uppercase tracking-wider text-center leading-tight">
+              Lunch Series
+            </p>
+            <p className="text-[10px] sm:text-xs text-amber-100 text-center">Pre-Order · Aug 2026</p>
           </div>
         </div>
 
