@@ -103,7 +103,7 @@ const July4Banner = () => {
               </div>
               <div className="text-slate-800 text-sm font-semibold leading-tight">{p.name}</div>
               {p.tag && (
-                <div className="text-red-600 text-[10px] uppercase tracking-wider mt-1 font-bold">
+                <div className="text-red-600 text-[10px] uppercase tracking-wider mt-1 font-bold min-h-[1.5em]">
                   {p.tag}
                 </div>
               )}

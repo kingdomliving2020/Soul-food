@@ -1,0 +1,42 @@
+{
+  "summary": "Re-verification of iter47 presentation fixes. BOTH FIXES LANDED. (1) Homepage hero at tablet portrait 768x1024 now renders as a TWO-COLUMN layout (text 428px on the left, book cover 252px on the right at x=492), with left-aligned text via `md:text-left` and `flex-col md:flex-row`. The compressed stacked layout from iter47 is gone. At 1024 landscape it remains a clean two-column. At 390 mobile it still collapses to a single column (correct). (2) Quick Order 'Small Group Options' card is now wrapped in `max-w-2xl` (measured 672px) instead of the previous 576px (`max-w-xl`), reducing the empty right band noticeably at both 1440 and 1024. (3) Regression: NO horizontal scrollbar on / or /quick-order at any of 390x844, 768x1024, 1024x768, 1440x900 (scrollWidth equals clientWidth at all 8 combos). July4 featured tiles still wrap 2-up cleanly at 768.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Quick Order /quick-order @ tablet 1024 landscape", "issues": [
+        "Small Group card is now 672px in a ~976px parent — there is still ~300px of right-side empty space (less than before but visible). Optional polish: `mx-auto` to center, or `max-w-3xl` to push wider. Not a blocker."
+      ]},
+      {"screen": "Homepage hero @ tablet 768 portrait", "issues": [
+        "Two-column layout is healthy. Minor: book cover (252px) is still notably shorter than the left text column (656px), so a small vertical whitespace gap remains under the cover. Cosmetic only."
+      ]}
+    ]
+  },
+  "test_report_links": [
+    "/app/test_reports/screenshots_iter48/home_tablet_768_portrait.png",
+    "/app/test_reports/screenshots_iter48/home_tablet_768_hero_top.png",
+    "/app/test_reports/screenshots_iter48/home_tablet_1024_landscape.png",
+    "/app/test_reports/screenshots_iter48/home_mobile_390.png",
+    "/app/test_reports/screenshots_iter48/home_desktop_1440.png",
+    "/app/test_reports/screenshots_iter48/qo_smallgroup_desktop_1440.png",
+    "/app/test_reports/screenshots_iter48/qo_smallgroup_tablet_1024.png",
+    "/app/test_reports/screenshots_iter48/qo_tablet_768.png",
+    "/app/test_reports/screenshots_iter48/qo_mobile_390.png"
+  ],
+  "action_items": [
+    "OPTIONAL: Center the Small Group card on >=1024 (`mx-auto`) or bump to `max-w-3xl` to fully balance the section. Current state is acceptable for release."
+  ],
+  "critical_code_review_comments": [
+    "SoulFoodApp.js line 571: breakpoint correctly moved to `md:flex-row` with `gap-6 md:gap-10 lg:gap-14` and `text-center md:text-left`. Clean fix.",
+    "QuickOrder.js line 968: `max-w-xl` -> `max-w-2xl` applied. Could optionally add `mx-auto` to center on wide viewports."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (skipped per request)", "frontend": "Presentation re-check PASS: Fix1 verified at 768 & 1024, Fix2 verified at 1440 & 1024, no horizontal scroll regression across 8 viewport/page combos."},
+  "test_credentials": "n/a (public pages only)",
+  "seed_data_creation": "None.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Iter48 confirmed both iter47 fixes shipped. Key measurements captured: hero @ 768 = row direction, left col 428x656 at x=24, right col 252x395 at x=492. SmallGroup wrapper now 672px wide at both 1440 and 1024. Screenshots in /app/test_reports/screenshots_iter48/. No horizontal scroll anywhere. Only remaining cosmetic note is some right-side whitespace next to the Small Group card at 1024 — optional polish, not a blocker.",
+  "rca of the issue": "n/a — verification pass only; both prior issues resolved."
+}

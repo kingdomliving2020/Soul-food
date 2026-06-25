@@ -965,7 +965,7 @@ const QuickOrder = () => {
           <p className="text-sm text-slate-600 mb-5 max-w-2xl">
             SOFU is designed for group learning, discussion, and discipleship. Start your ministry team, study group, homeschool circle, or church class with everything they need in one place.
           </p>
-          <div className="max-w-xl">
+          <div className="max-w-2xl">
             <SmallGroupBundleCard onOpen={() => setSgbModalOpen(true)} />
           </div>
         </section>

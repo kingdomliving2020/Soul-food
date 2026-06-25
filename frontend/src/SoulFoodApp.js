@@ -568,9 +568,9 @@ const SoulFoodLanding = () => {
         </div>
         
         <div className="relative z-10 container mx-auto max-w-5xl">
-          <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-14">
+          <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 lg:gap-14">
             {/* Left — Message */}
-            <div className="flex-1 text-center lg:text-left">
+            <div className="flex-1 text-center md:text-left">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-5 leading-tight text-white" data-testid="hero-headline">
                 Bible Study That Sticks —<br />
                 <span className="bg-gradient-to-r from-amber-400 to-orange-400 bg-clip-text text-transparent">
@@ -578,7 +578,7 @@ const SoulFoodLanding = () => {
                 </span>
               </h1>
               
-              <ul className="space-y-3 mb-6 text-base sm:text-lg text-purple-100 max-w-lg mx-auto lg:mx-0" data-testid="hero-benefits">
+              <ul className="space-y-3 mb-6 text-base sm:text-lg text-purple-100 max-w-lg mx-auto md:mx-0" data-testid="hero-benefits">
                 <li className="flex items-start gap-3">
                   <span className="mt-1 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0 text-xs font-bold text-white">1</span>
                   <span>Interactive workbooks with built-in discussion guides</span>
@@ -593,7 +593,7 @@ const SoulFoodLanding = () => {
                 </li>
               </ul>
               
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start mb-5" data-testid="hero-ctas">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start mb-5" data-testid="hero-ctas">
                 <Button
                   onClick={() => document.getElementById('bundle-offer')?.scrollIntoView({ behavior: 'smooth' })}
                   className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-8 py-4 rounded-xl text-lg font-bold shadow-2xl hover:shadow-orange-400/30 transform hover:scale-105 transition-all"
