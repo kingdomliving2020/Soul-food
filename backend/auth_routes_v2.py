@@ -1194,6 +1194,34 @@ async def login(credentials: UserLogin, request: Request):
     elif needs_2fa and tfa_enabled:
         response_data["requires_2fa_verification"] = True
         response_data["message"] = "Please verify with your 2FA code"
+        # Auto-send the verification code immediately for email-based 2FA so the
+        # first attempt succeeds without requiring a manual resend. TOTP users
+        # already have a rolling code in their authenticator app — no email needed.
+        tfa_method = (user.get("tfa_method") or "email").lower()
+        response_data["tfa_method"] = tfa_method
+        if tfa_method == "email":
+            try:
+                code = generate_2fa_code()
+                expires_at = datetime.now(timezone.utc) + timedelta(minutes=10)
+                # Invalidate any prior pending login codes for this user
+                await db.tfa_codes.delete_many({"user_id": user["id"], "purpose": "login"})
+                await db.tfa_codes.insert_one({
+                    "user_id": user["id"],
+                    "code": code,
+                    "method": "email",
+                    "expires_at": expires_at.isoformat(),
+                    "used": False,
+                    "purpose": "login",
+                    "created_at": datetime.now(timezone.utc).isoformat(),
+                })
+                await send_2fa_email(user["email"], code, user.get("name", "User"))
+                response_data["tfa_code_sent"] = True
+                response_data["tfa_code_expires_in_minutes"] = 10
+            except Exception as e:
+                # Don't fail the login response if email send hiccups — frontend
+                # can still call /2fa/resend. Surface a hint for UI to show.
+                print(f"[login] auto-send 2FA email failed for {user.get('email')}: {e}")
+                response_data["tfa_code_sent"] = False
     else:
         response_data["message"] = f"Welcome back, {user.get('name', 'User')}!"
     
