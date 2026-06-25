@@ -290,7 +290,7 @@ const SmallGroupBundleModal = ({ open, onClose }) => {
             data-testid="sgb-add-to-cart"
             className="bg-emerald-600 hover:bg-emerald-700 text-white"
           >
-            Add Bundle to Cart · ${tier.price.toFixed(2)}
+            Add to Cart · ${tier.price.toFixed(2)}
           </Button>
         </div>
       </div>

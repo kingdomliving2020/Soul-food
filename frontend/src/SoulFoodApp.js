@@ -684,11 +684,11 @@ const SoulFoodLanding = () => {
               data-testid="journey-tile-smallgroup"
             >
               <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5">
-                <div className="relative aspect-square overflow-hidden bg-slate-100">
+                <div className="relative aspect-square overflow-hidden bg-white">
                   <img
                     src="/covers/tile-smallgroup.png?v=trio2026"
                     alt="Small group gathered around a table with Bibles and fellowship"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
                   <span className="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full shadow-lg">
@@ -1270,7 +1270,7 @@ const SoulFoodLanding = () => {
               <div className="flex flex-col lg:flex-row gap-8 items-start">
                 {/* Left — Bundle Details */}
                 <div className="flex-1">
-                  <Badge className="bg-amber-100 text-amber-800 mb-3 text-xs font-semibold">Starter Bundle</Badge>
+                  <Badge className="bg-amber-100 text-amber-800 mb-3 text-xs font-semibold">Starter Collection</Badge>
                   <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2" data-testid="bundle-title">
                     4C's + Break*fast Starter Bundle
                   </h3>

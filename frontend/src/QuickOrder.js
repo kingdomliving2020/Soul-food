@@ -620,10 +620,10 @@ const QuickOrder = () => {
       subtitle: 'Best value (both included)',
       isGameStore: true,
       images: { adult: '/covers/game-group-play.png', youth: '/covers/game-group-play.png' },
-      features: ['Bingo + Trek Included', 'Save $10 Bundle', 'Best Value Pack', 'Play Multiple Ways'],
+      features: ['Bingo + Trek Included', 'Save $10 Together', 'Best Value Pack', 'Play Multiple Ways'],
       editions: ['adult', 'youth'],
       gamePackages: [
-        { id: 'bundle', name: 'GRinCH Bingo + Passport Trek', price: 29.99, preOrder: true, badge: 'Bundle · Save $10' },
+        { id: 'bundle', name: 'GRinCH Bingo + Passport Trek', price: 29.99, preOrder: true, badge: 'Save $10' },
       ],
       description: 'Both games at a discount. Ships together when Passport Trek releases.'
     },
@@ -989,7 +989,7 @@ const QuickOrder = () => {
                 />
               </div>
               <CardContent className="p-5">
-                <Badge className="mb-3 bg-purple-600 text-white text-xs">Bundle — Save $4</Badge>
+                <Badge className="mb-3 bg-purple-600 text-white text-xs">Collection · Save $4</Badge>
                 <h4 className="text-lg font-bold text-slate-800 mb-2">Holiday Table Bundle</h4>
                 <ul className="space-y-1 mb-3" data-testid="holiday-bundle-features">
                   <li className="flex items-start gap-2 text-xs text-slate-700">
@@ -1064,7 +1064,7 @@ const QuickOrder = () => {
                 />
               </div>
               <CardContent className="p-5">
-                <Badge className="mb-3 bg-amber-600 text-white text-xs">Bundle — Save $9</Badge>
+                <Badge className="mb-3 bg-amber-600 text-white text-xs">Teaching Kit · Save $9</Badge>
                 <h4 className="text-lg font-bold text-slate-800 mb-2">Full Table Experience</h4>
                 <ul className="space-y-1 mb-3" data-testid="full-table-features">
                   <li className="flex items-start gap-2 text-xs text-slate-700">
@@ -1131,7 +1131,7 @@ const QuickOrder = () => {
                 <img
                   src="/covers/holiday-ae-front-new.png"
                   alt="Holiday ePub — 4 C's of Christianity Adult Edition"
-                  className="h-full w-auto object-contain py-3"
+                  className="max-w-[88%] max-h-[92%] object-contain"
                   loading="lazy"
                 />
               </div>
