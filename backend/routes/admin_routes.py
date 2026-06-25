@@ -1089,6 +1089,163 @@ async def update_inventory(
 # ORDERS MANAGEMENT
 # =============================================================================
 
+
+# =============================================================================
+# ORDER LIFECYCLE — three independent dimensions (P2)
+#   Financial   : pending_payment | paid | processing | completed | refunded |
+#                 partial_refund | refund_pending | chargeback | cancelled | archived
+#   Entitlement : not_granted | granted | revoked | admin_override
+#   Fulfillment : (digital) not_granted | delivered | downloaded | revoked
+#                 (physical) not_shipped | packed | shipped | delivered
+# Plus computed needs_action + is_closed (Definition of Done).
+# =============================================================================
+_PHYSICAL_SKU_CACHE = None
+
+
+def _physical_skus():
+    global _PHYSICAL_SKU_CACHE
+    if _PHYSICAL_SKU_CACHE is None:
+        skus, pids = set(), set()
+        try:
+            from payment_routes import PRODUCTS
+            for pid, meta in PRODUCTS.items():
+                if meta.get("physical"):
+                    pids.add(pid)
+                    if meta.get("sku"):
+                        skus.add(meta["sku"])
+        except Exception:
+            pass
+        _PHYSICAL_SKU_CACHE = (skus, pids)
+    return _PHYSICAL_SKU_CACHE
+
+
+def _order_has_physical(items):
+    skus, pids = _physical_skus()
+    for it in items or []:
+        if it.get("physical"):
+            return True
+        if (it.get("product_id") or it.get("id")) in pids:
+            return True
+        if it.get("sku") in skus:
+            return True
+    return False
+
+
+def _financial_status(doc):
+    refund = (doc.get("refund_status") or "").strip().lower()
+    status = (doc.get("status") or "").strip().lower()
+    pay = (doc.get("payment_status") or "").strip().lower()
+    if doc.get("is_archived"):
+        return "archived"
+    if refund == "refunded":
+        return "refunded"
+    if refund in ("partial_refund", "partially_refunded"):
+        return "partial_refund"
+    if refund == "requested":
+        return "refund_pending"
+    if refund == "chargeback":
+        return "chargeback"
+    if status in ("cancelled", "canceled"):
+        return "cancelled"
+    if pay == "paid" or status in ("paid", "completed", "processing", "fulfilled"):
+        return "paid"
+    if pay == "pending":
+        return "pending_payment"
+    return status or pay or "unknown"
+
+
+def _entitlement_status(doc, fin):
+    es = (doc.get("entitlement_status") or "").strip().lower()
+    if es:
+        return es
+    if fin in ("refunded", "cancelled", "chargeback"):
+        return "revoked"
+    if fin in ("paid", "partial_refund"):
+        return "granted"
+    return "not_granted"
+
+
+def _fulfillment_status(doc, fin, has_physical):
+    if has_physical:
+        pf = (doc.get("physical_fulfillment") or "").strip().lower()
+        return pf if pf in ("packed", "shipped", "delivered") else "not_shipped"
+    # digital
+    if fin in ("refunded", "cancelled", "chargeback"):
+        return "revoked"
+    if (doc.get("downloads_count") or 0) > 0:
+        return "downloaded"
+    if doc.get("download_links_generated") or fin == "paid":
+        return "delivered"
+    return "not_granted"
+
+
+def _compute_lifecycle(doc):
+    items = doc.get("items", [])
+    has_physical = _order_has_physical(items)
+    fin = _financial_status(doc)
+    ent = _entitlement_status(doc, fin)
+    ful = _fulfillment_status(doc, fin, has_physical)
+
+    # Definition of Done (Closed) + needs_action
+    needs_action = False
+    is_closed = False
+    if fin in ("refunded", "cancelled", "chargeback"):
+        is_closed = ent == "revoked"        # terminal once access pulled
+        needs_action = ent != "revoked"
+    elif fin == "refund_pending":
+        needs_action = True                  # admin must process refund
+    elif fin == "pending_payment":
+        needs_action = False                 # waiting on customer, not admin
+    elif fin in ("paid", "partial_refund"):
+        if has_physical:
+            is_closed = ful == "delivered"
+            needs_action = ful in ("not_shipped", "packed", "shipped")
+        else:
+            is_closed = ful in ("delivered", "downloaded")
+            needs_action = ful == "not_granted"
+    elif fin == "archived":
+        is_closed = True
+
+    # primary at-a-glance label
+    if fin == "refunded":
+        stage = "Refunded"
+    elif fin == "partial_refund":
+        stage = "Partially Refunded"
+    elif fin == "refund_pending":
+        stage = "Refund Pending"
+    elif fin == "chargeback":
+        stage = "Chargeback"
+    elif fin == "cancelled":
+        stage = "Cancelled"
+    elif fin == "archived":
+        stage = "Archived"
+    elif fin == "pending_payment":
+        stage = "Pending Payment"
+    elif has_physical and ful == "shipped":
+        stage = "Shipped"
+    elif has_physical and ful == "packed":
+        stage = "Packed"
+    elif needs_action:
+        stage = "Needs Action"
+    elif is_closed:
+        stage = "Closed"
+    else:
+        stage = "Processing"
+
+    return {
+        "financial_status": fin,
+        "entitlement_status": ent,
+        "fulfillment_status": ful,
+        "has_physical": has_physical,
+        "needs_action": needs_action,
+        "is_closed": is_closed,
+        "lifecycle_stage": stage,
+        "tracking_number": doc.get("tracking_number"),
+        "carrier": doc.get("carrier"),
+        "shipping_notified": bool(doc.get("shipping_notified", False)),
+    }
+
+
 @router.get("/orders")
 async def get_orders_list(
     search: Optional[str] = None,
@@ -1136,6 +1293,8 @@ async def get_orders_list(
 
     items = []
     for tx in txns:
+        lc = _compute_lifecycle(tx)
+        ptype = (tx.get("purchase_type") or "self").strip().lower()
         items.append({
             "order_number": tx.get("order_number", ""),
             "customer_email": tx.get("customer_email", ""),
@@ -1150,11 +1309,16 @@ async def get_orders_list(
             "items": tx.get("items", []),
             "items_count": len(tx.get("items", [])),
             "claimed_by_user_id": tx.get("claimed_by_user_id"),
-            "purchase_type": tx.get("purchase_type", "self"),
+            "purchase_type": ptype,
             "digital_recipient_email": tx.get("digital_recipient_email"),
+            "purchased_by": tx.get("customer_email"),
+            "granted_to": (tx.get("digital_recipient_email") if ptype == "gift" else tx.get("customer_email")),
+            "manual_override": bool(tx.get("manual_override", False)),
             "is_archived": bool(tx.get("is_archived", False)),
             "tag": tx.get("tag"),
             "created_at": tx.get("created_at").isoformat() if hasattr(tx.get("created_at"), "isoformat") else str(tx.get("created_at", "")),
+            # P2 computed lifecycle (3 dimensions + Definition of Done)
+            "lifecycle": lc,
         })
 
     return {
@@ -1164,6 +1328,121 @@ async def get_orders_list(
         "limit": limit,
         "pages": max(1, (total + limit - 1) // limit),
     }
+
+
+@router.get("/orders/summary")
+async def get_orders_summary(admin: AdminUser = Depends(get_current_admin)):
+    """Operational dashboard: at-a-glance counts + revenue (excludes archived/test)."""
+    q = {
+        "$and": [
+            {"$or": [{"is_archived": {"$exists": False}}, {"is_archived": False}]},
+            {"$or": [{"tag": {"$exists": False}}, {"tag": {"$ne": "test"}}]},
+        ]
+    }
+    docs = await db.payment_transactions.find(q, {"_id": 0}).to_list(5000)
+    counts = {k: 0 for k in [
+        "needs_action", "pending_payment", "processing", "shipped", "delivered",
+        "completed", "refunded", "cancelled", "archived", "closed", "total",
+    ]}
+    rev = {"gross_sales": 0.0, "refunds": 0.0, "net_revenue": 0.0, "outstanding": 0.0, "pending": 0.0}
+    for d in docs:
+        lc = _compute_lifecycle(d)
+        fin = lc["financial_status"]
+        amt = float(d.get("total_amount") or 0)
+        counts["total"] += 1
+        if lc["needs_action"]:
+            counts["needs_action"] += 1
+        if lc["is_closed"]:
+            counts["closed"] += 1
+        if fin == "pending_payment":
+            counts["pending_payment"] += 1
+            rev["pending"] += amt
+        elif fin in ("refunded", "partial_refund"):
+            counts["refunded"] += 1
+            rev["gross_sales"] += amt
+            rev["refunds"] += amt
+        elif fin == "cancelled":
+            counts["cancelled"] += 1
+        elif fin == "chargeback":
+            counts["refunded"] += 1
+            rev["gross_sales"] += amt
+            rev["refunds"] += amt
+        elif fin == "paid":
+            rev["gross_sales"] += amt
+            if lc["is_closed"]:
+                counts["completed"] += 1
+            else:
+                counts["outstanding"] += 0  # placeholder for clarity
+                rev["outstanding"] += amt
+            if lc["has_physical"]:
+                if lc["fulfillment_status"] == "shipped":
+                    counts["shipped"] += 1
+                elif lc["fulfillment_status"] == "delivered":
+                    counts["delivered"] += 1
+                else:
+                    counts["processing"] += 1
+    rev["net_revenue"] = round(rev["gross_sales"] - rev["refunds"], 2)
+    for k in rev:
+        rev[k] = round(rev[k], 2)
+    return {"counts": counts, "revenue": rev}
+
+
+class FulfillmentUpdate(BaseModel):
+    fulfillment_status: str  # not_shipped | packed | shipped | delivered
+    tracking_number: Optional[str] = None
+    carrier: Optional[str] = None
+    notify: bool = False
+
+
+@router.post("/orders/{order_number}/fulfillment")
+async def admin_set_fulfillment(
+    order_number: str,
+    payload: FulfillmentUpdate,
+    admin: AdminUser = Depends(get_current_admin),
+):
+    """Advance a physical order through its fulfillment lifecycle. Tracking number
+    and shipping notification are both optional."""
+    status = payload.fulfillment_status.strip().lower()
+    allowed = {"not_shipped", "packed", "shipped", "delivered"}
+    if status not in allowed:
+        raise HTTPException(status_code=400, detail=f"Invalid fulfillment_status. Allowed: {sorted(allowed)}")
+
+    order, txn = await _find_order_sources(order_number)
+    if not order and not txn:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    now = datetime.now(timezone.utc).isoformat()
+    set_fields = {"physical_fulfillment": status, "fulfillment_updated_at": now}
+    if payload.tracking_number is not None:
+        set_fields["tracking_number"] = payload.tracking_number.strip() or None
+    if payload.carrier is not None:
+        set_fields["carrier"] = payload.carrier.strip() or None
+    if status == "shipped":
+        set_fields["shipped_at"] = now
+    if status == "delivered":
+        set_fields["delivered_at"] = now
+
+    notified = False
+    if payload.notify and status == "shipped":
+        src = txn or order or {}
+        to_email = src.get("digital_recipient_email") or src.get("customer_email")
+        if to_email:
+            try:
+                from email_service import send_shipping_notification
+                await send_shipping_notification(
+                    to_email, order_number,
+                    payload.tracking_number or "", payload.carrier or ""
+                )
+                notified = True
+            except Exception:
+                notified = False
+        set_fields["shipping_notified"] = notified
+
+    filter_q = {"$or": [{"order_number": order_number}, {"order_id": order_number}, {"session_id": order_number}]}
+    await db.orders.update_many(filter_q, {"$set": set_fields})
+    await db.payment_transactions.update_many(filter_q, {"$set": set_fields})
+    await log_admin_action("set_fulfillment", admin.id, "order", f"{order_number} -> {status}")
+    return {"success": True, "order_number": order_number, "fulfillment_status": status, "notified": notified}
 
 
 @router.get("/orders/{order_number}/detail")

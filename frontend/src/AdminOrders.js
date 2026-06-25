@@ -12,6 +12,7 @@ import {
   RefreshCw,
   DollarSign,
   Package,
+  Truck,
   AlertCircle,
   CheckCircle,
   Clock,
@@ -55,7 +56,63 @@ const AdminOrders = () => {
   useEffect(() => {
     fetchOrders();
     fetchRefundRequests();
+    fetchSummary();
   }, [visibilityFilter]);
+
+  const [summary, setSummary] = useState(null);
+  const [fulfillInput, setFulfillInput] = useState({ tracking: '', carrier: '', notify: false });
+  const handleSetFulfillment = async (orderNumber, status) => {
+    setActionLoading(`fulfill-${orderNumber}`);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/fulfillment`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fulfillment_status: status,
+          tracking_number: fulfillInput.tracking || null,
+          carrier: fulfillInput.carrier || null,
+          notify: !!fulfillInput.notify,
+        })
+      });
+      const { ok, data } = await safeJson(res);
+      if (ok && data.success) {
+        toast.success(`Marked ${status}${data.notified ? ' · customer notified' : ''}.`);
+        fetchOrders(); fetchSummary();
+        if (expandedOrder === orderNumber) loadOrderDetail(orderNumber);
+      } else { toast.error(`Failed: ${data.detail || JSON.stringify(data)}`); }
+    } catch (err) { toast.error(`Network error: ${err.message}`); }
+    finally { setActionLoading(''); }
+  };
+  const fetchSummary = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/summary`, {
+        headers: { 'Authorization': `Bearer ${getToken()}` }
+      });
+      const { ok, data } = await safeJson(res);
+      if (ok) setSummary(data);
+    } catch (e) { /* ignore */ }
+  };
+
+  // P2 — render the three independent status dimensions as compact chips
+  const LIFECYCLE_CHIP = {
+    // financial
+    paid: 'bg-emerald-100 text-emerald-700', pending_payment: 'bg-yellow-100 text-yellow-800',
+    refunded: 'bg-blue-100 text-blue-700', partial_refund: 'bg-blue-100 text-blue-700',
+    refund_pending: 'bg-orange-100 text-orange-800', chargeback: 'bg-red-100 text-red-700',
+    cancelled: 'bg-red-100 text-red-700', archived: 'bg-slate-100 text-slate-500',
+    // entitlement
+    granted: 'bg-emerald-100 text-emerald-700', revoked: 'bg-red-100 text-red-700',
+    not_granted: 'bg-slate-100 text-slate-500', admin_override: 'bg-amber-100 text-amber-800',
+    // fulfillment
+    delivered: 'bg-emerald-100 text-emerald-700', downloaded: 'bg-emerald-100 text-emerald-700',
+    shipped: 'bg-indigo-100 text-indigo-700', packed: 'bg-purple-100 text-purple-700',
+    not_shipped: 'bg-orange-100 text-orange-800',
+  };
+  const Chip = ({ label, value }) => (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${LIFECYCLE_CHIP[value] || 'bg-slate-100 text-slate-600'}`}>
+      <span className="opacity-60 mr-1">{label}</span>{(value || '—').replace(/_/g, ' ')}
+    </span>
+  );
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -435,6 +492,44 @@ const AdminOrders = () => {
       </header>
 
       <div className="container mx-auto px-4 sm:px-6 py-6 max-w-6xl">
+        {/* P2 — Operational dashboard */}
+        {summary && (
+          <div className="mb-6" data-testid="orders-summary-dashboard">
+            <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-2 mb-3">
+              {[
+                ['Needs Action', summary.counts.needs_action, 'text-orange-600', 'orders-summary-needs-action'],
+                ['Pending', summary.counts.pending_payment, 'text-yellow-600', 'orders-summary-pending'],
+                ['Completed', summary.counts.completed, 'text-emerald-600', 'orders-summary-completed'],
+                ['Shipped', summary.counts.shipped, 'text-indigo-600', 'orders-summary-shipped'],
+                ['Delivered', summary.counts.delivered, 'text-emerald-600', 'orders-summary-delivered'],
+                ['Refunded', summary.counts.refunded, 'text-blue-600', 'orders-summary-refunded'],
+                ['Cancelled', summary.counts.cancelled, 'text-red-600', 'orders-summary-cancelled'],
+                ['Closed', summary.counts.closed, 'text-slate-600', 'orders-summary-closed'],
+                ['Total', summary.counts.total, 'text-slate-800', 'orders-summary-total'],
+              ].map(([label, val, color, tid]) => (
+                <div key={label} className="bg-white rounded-lg border p-2.5 text-center" data-testid={tid}>
+                  <p className={`text-xl font-bold ${color}`}>{val}</p>
+                  <p className="text-[10px] text-slate-500 leading-tight">{label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2" data-testid="orders-summary-revenue">
+              {[
+                ['Gross Sales', summary.revenue.gross_sales, 'text-slate-800'],
+                ['Refunds', summary.revenue.refunds, 'text-blue-600'],
+                ['Net Revenue', summary.revenue.net_revenue, 'text-emerald-600'],
+                ['Outstanding', summary.revenue.outstanding, 'text-orange-600'],
+                ['Pending', summary.revenue.pending, 'text-yellow-600'],
+              ].map(([label, val, color]) => (
+                <div key={label} className="bg-slate-50 rounded-lg border p-2.5 text-center">
+                  <p className={`text-lg font-bold ${color}`}>${Number(val).toFixed(2)}</p>
+                  <p className="text-[10px] text-slate-500">{label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Pending Refund Requests Alert */}
         {refundRequests.length > 0 && (
           <Card className="mb-6 border-orange-200 bg-orange-50">
@@ -590,7 +685,26 @@ const AdminOrders = () => {
                               Archived
                             </span>
                           )}
+                          {order.lifecycle && (
+                            <span
+                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${order.lifecycle.is_closed ? 'bg-slate-100 text-slate-600' : order.lifecycle.needs_action ? 'bg-orange-100 text-orange-700' : 'bg-indigo-50 text-indigo-700'}`}
+                              data-testid={`lifecycle-stage-${order.order_number}`}
+                            >
+                              {order.lifecycle.is_closed && <CheckCircle className="w-3 h-3 mr-1" />}
+                              {order.lifecycle.lifecycle_stage}
+                            </span>
+                          )}
                         </div>
+                        {order.lifecycle && (
+                          <div className="flex items-center gap-1.5 mb-1 flex-wrap" data-testid={`lifecycle-chips-${order.order_number}`}>
+                            <Chip label="$" value={order.lifecycle.financial_status} />
+                            <Chip label="access" value={order.lifecycle.entitlement_status} />
+                            <Chip label={order.lifecycle.has_physical ? 'ship' : 'deliver'} value={order.lifecycle.fulfillment_status} />
+                            {order.lifecycle.manual_override && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-800">override</span>
+                            )}
+                          </div>
+                        )}
                         {Array.isArray(order.fulfillment_verification_failures) && order.fulfillment_verification_failures.length > 0 && (
                           <div className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1 my-1 max-w-2xl"
                                data-testid={`verification-failures-${order.order_number}`}>
@@ -873,6 +987,42 @@ const AdminOrders = () => {
                                 </button>
                               </div>
                             </div>
+
+                            {/* P2 — Physical Fulfillment lifecycle (only for orders with physical items) */}
+                            {order.lifecycle?.has_physical && (
+                              <div className="sm:col-span-2 pt-3 border-t" data-testid={`fulfillment-panel-${order.order_number}`}>
+                                <h4 className="font-medium text-slate-700 mb-2">Physical Fulfillment</h4>
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2">
+                                  <input value={fulfillInput.tracking} onChange={e => setFulfillInput(f => ({ ...f, tracking: e.target.value }))}
+                                    placeholder="Tracking number (optional)" className="border rounded px-2 py-1 text-xs" data-testid={`tracking-input-${order.order_number}`} />
+                                  <input value={fulfillInput.carrier} onChange={e => setFulfillInput(f => ({ ...f, carrier: e.target.value }))}
+                                    placeholder="Carrier (optional)" className="border rounded px-2 py-1 text-xs" data-testid={`carrier-input-${order.order_number}`} />
+                                  <label className="flex items-center gap-2 text-xs text-slate-600">
+                                    <input type="checkbox" checked={fulfillInput.notify} onChange={e => setFulfillInput(f => ({ ...f, notify: e.target.checked }))}
+                                      data-testid={`notify-checkbox-${order.order_number}`} />
+                                    Send shipping notification
+                                  </label>
+                                </div>
+                                {order.lifecycle.tracking_number && (
+                                  <p className="text-[11px] text-slate-500 mb-2">Current tracking: <span className="font-mono">{order.lifecycle.tracking_number}</span>{order.lifecycle.carrier ? ` (${order.lifecycle.carrier})` : ''}{order.lifecycle.shipping_notified ? ' · notified ✓' : ''}</p>
+                                )}
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <button onClick={() => handleSetFulfillment(order.order_number, 'packed')} disabled={actionLoading === `fulfill-${order.order_number}`}
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-purple-200 text-purple-700 hover:bg-purple-50 disabled:opacity-40" data-testid={`mark-packed-${order.order_number}`}>
+                                    <Package className="w-3.5 h-3.5" /> Packed
+                                  </button>
+                                  <button onClick={() => handleSetFulfillment(order.order_number, 'shipped')} disabled={actionLoading === `fulfill-${order.order_number}`}
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-indigo-200 text-indigo-700 hover:bg-indigo-50 disabled:opacity-40" data-testid={`mark-shipped-${order.order_number}`}>
+                                    <Truck className="w-3.5 h-3.5" /> Shipped
+                                  </button>
+                                  <button onClick={() => handleSetFulfillment(order.order_number, 'delivered')} disabled={actionLoading === `fulfill-${order.order_number}`}
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-emerald-200 text-emerald-700 hover:bg-emerald-50 disabled:opacity-40" data-testid={`mark-delivered-${order.order_number}`}>
+                                    <CheckCircle className="w-3.5 h-3.5" /> Delivered
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
 
                           </div>
                         )}

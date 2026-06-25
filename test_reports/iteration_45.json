@@ -1,0 +1,46 @@
+{
+  "summary": "P2 Admin Orders Operational Dashboard frontend verification: page loads cleanly (no lucide icon crash), dashboard renders with all 9 count cards + 5-tile revenue row, lifecycle-stage badge + 3-chip row render per order, expanding a PAID order shows ownership-panel + all 4 P1 controls, and the Mark Refunded -> Reinstate Paid round-trip on order SF-2026-GVQVV worked end-to-end. State was successfully REVERTED — final dashboard back to Refunded=0, Net=$113.77, GVQVV stage=CLOSED. Net = Gross - Refunds invariant holds ($113.77 = $113.77 - $0.00). All non-negative. Physical Fulfillment panel did not appear (expected — dataset is all digital, per main agent context).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "AdminOrders summary dashboard",
+        "issue": "After clicking Mark Refunded / Reinstate Paid (and likely Mark Cancelled / Revoke / Reinstate Access etc.), the per-order chips and lifecycle stage update inline (good), but the top dashboard summary cards (Refunded, Completed, Closed) and revenue row (Refunds $, Net $) do NOT refresh — they keep showing pre-action values until a full page reload or the next polling tick. Observed: Refunded=0/Refunds=$0 before refund -> still 0/$0 immediately after click; only after navigating away and back did counts catch up. Root cause: action handlers in AdminOrders.js only call fetchOrders() and never fetchSummary(). Add fetchSummary() alongside every fetchOrders() in markRefunded / markCancelled / reinstatePaid / revokeAccess / refund / etc. handlers.",
+        "selector": "[data-testid='orders-summary-refunded'], [data-testid='orders-summary-revenue']",
+        "priority": "MEDIUM"
+      },
+      {
+        "component": "AdminOrders order list rendering",
+        "issue": "Console emits a steady stream of React 'Encountered two children with the same key' warnings on every render of the orders list (~14 per render cycle, fires repeatedly). Some list .map() in AdminOrders.js (likely chips array, refund-requests, or items) is using a non-unique key. Not breaking but pollutes the console and risks future render bugs.",
+        "selector": "n/a (console warning)",
+        "priority": "LOW"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "AdminOrders.js: call fetchSummary() in addition to fetchOrders() in every action handler (markRefunded, reinstatePaid, markCancelled, revokeAccess, refund handler, sync-stripe, mark-paid, refulfill, grant-access, etc.) so the operational dashboard counts and revenue stay live with each click — currently only the polling/initial-mount triggers fetchSummary.",
+    "AdminOrders.js: find the .map() emitting duplicate keys (probably the lifecycle chips array or refundRequests/items list) and switch the key to a stable unique value (e.g. `${order.order_number}-${chipName}` or refund-request id)."
+  ],
+  "critical_code_review_comments": [
+    "Action handlers desynchronize the operational dashboard from per-row state — fetchSummary() must be paired with fetchOrders() in every mutating handler. Otherwise the 'at-a-glance' dashboard misrepresents the state immediately after any admin action, which defeats the purpose of P2.",
+    "Duplicate React key warnings on the orders list should be fixed before adding more dynamic per-row features; non-unique keys can cause chips/badges to appear on the wrong row during reorder/refetch.",
+    "Visibility filter dropdown returned the same Total (71) for both 'active' and 'all' — likely correct given current dataset has no archived/test-only orders, but worth seeding 1 archived order to fully prove the filter narrows results."
+  ],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "skipped (per request)",
+    "frontend": "95%"
+  },
+  "test_credentials": "Admin overflowharvest@gmail.com / Admin123! (skip 2FA link works)",
+  "seed_data_creation": "None — used existing order SF-2026-GVQVV (CLOSED/PAID) for Refund->Reinstate round-trip; FULLY REVERTED to original CLOSED/paid/granted/downloaded state.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "P2 dashboard, lifecycle stage badge, 3-chip rows, ownership panel, and P1 refund/reinstate controls all functional. Physical Fulfillment panel was NOT exercised because the dataset is 100% digital — backend lifecycle for physical was verified by the main agent via DB script. If you need to UI-test the fulfillment panel (mark-packed/shipped/delivered, tracking-input, carrier-input, notify-checkbox), you must first seed a physical-bearing order in DB. GVQVV is back to clean CLOSED state.",
+  "rca of the issue": "Stale dashboard counts after admin actions — RCA: handlers in AdminOrders.js call fetchOrders() but omit fetchSummary(); fetchSummary is only wired into the initial useEffect and the visibilityFilter dep. Reproduction: open /admin/orders, expand a paid order, click Mark Refunded — chips update to refunded/revoked/revoked, but Refunded card stays 0 and Refunds stays $0. Mitigation: add fetchSummary() call after every successful action mutation in AdminOrders.js, or extract a `refreshAll = () => { fetchOrders(); fetchSummary(); }` helper and replace all in-handler fetchOrders() calls with refreshAll()."
+}

@@ -708,6 +708,23 @@ async def send_email(
         return {"success": False, "error": str(e)}
 
 
+async def send_shipping_notification(to_email: str, order_number: str, tracking_number: str = "", carrier: str = "") -> Dict:
+    """Optional shipping notification for physical orders."""
+    track_html = ""
+    if tracking_number:
+        track_html = f'<p style="margin:8px 0;color:#334155;">Tracking number: <strong>{tracking_number}</strong>{(" via " + carrier) if carrier else ""}</p>'
+    html = f"""
+    <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;">
+      <h2 style="color:#7c3aed;">Your Soul Food order has shipped! 📦</h2>
+      <p style="color:#334155;">Good news — your order <strong>{order_number}</strong> is on its way.</p>
+      {track_html}
+      <p style="color:#64748b;font-size:13px;margin-top:20px;">Questions? Reply to this email or contact {SUPPORT_EMAIL}.</p>
+    </div>
+    """
+    return await send_email(to_email, f"Your order {order_number} has shipped", html)
+
+
+
 async def send_order_confirmation(
     to_email: str,
     order_id: str,
