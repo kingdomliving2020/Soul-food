@@ -1,0 +1,41 @@
+{
+  "summary": "Verified buyer vs recipient (purchase_type) split end-to-end. Backend: 9/9 pytest assertions pass — gift recipient validation (empty / no @ / invalid) returns 400 with clear message, self+gift payloads are accepted past validation (reach Stripe), GET /api/payments/order/{order_number} returns purchase_type + digital_recipient_email (seeded self -> null, seeded gift -> 'recipient@test.com'), GET /api/orders/admin/list includes purchase_type + digital_recipient_email on every order with correct values for the seeded gift order. VERIFICATION GATE REMOVAL CONFIRMED: an unverified logged-in user (email_verified=false set directly in db.users) calling POST /api/payments/checkout/cart with Authorization: Bearer <jwt> does NOT receive 403 / email_not_verified — request passes through to Stripe. Frontend: /checkout (after Continue as Guest) renders data-testid='purchase-type-section', data-testid='purchase-type-self' (default selected) and data-testid='purchase-type-gift'; clicking gift reveals data-testid='digital-recipient-email-input'; data-testid='purchase-attribution' correctly renders 'Digital access will go to: recipient@test.com'; data-testid='checkout-verify-email-banner' is NOT rendered.",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "/api/payments/checkout/cart",
+        "issue": "STRIPE_SECRET_KEY in backend/.env is currently a rotation placeholder ('ROTATE_M****************6_22'). Every checkout session creation returns HTTP 500 with detail 'Stripe error: Invalid API Key provided: ROTATE_M****...'. This is an ENVIRONMENT issue, not a feature regression — the new buyer/recipient validation passes and the request reaches Stripe (proving the verification gate is removed). However, NO real checkout can complete on this preview until the live Stripe key is restored.",
+        "priority": "CRITICAL"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_purchase_type_split.py",
+    "/app/test_reports/pytest/iter38_results.xml"
+  ],
+  "action_items": [
+    "RESTORE live STRIPE_SECRET_KEY in /app/backend/.env (currently a rotation placeholder 'ROTATE_M…26_22'). Without it /api/payments/checkout/cart 500s for all callers, blocking the entire purchase flow despite the buyer/recipient feature itself being implemented correctly."
+  ],
+  "critical_code_review_comments": [
+    "payment_routes.py is ~4099 lines — should be split (cart-checkout, shipping calc, fulfillment, order-details). Borderline maintainability risk.",
+    "CartCheckoutRequest.purchase_type uses Optional[str] with free-form values; consider Literal['self','gift'] or an Enum to fail fast on garbage values at the Pydantic layer rather than via .lower() defensiveness at line 2353.",
+    "Verification gate removal is implemented as a comment-only deletion (lines 2348-2350). Consider keeping the JWT decode + email_verified read in place (still done for logging) but adding a unit test guarding against accidental re-introduction of a 403 branch in the future.",
+    "GET /api/payments/order/{order_id} returns digital_recipient_email even for purchase_type='self' orders (null in that case) — frontend should defensively handle null, which it does in OrderSuccess.js."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_purchase_type_split.py"
+  ],
+  "success_rate": {"backend": "100% (9/9 — feature logic fully verified; Stripe call blocked by env rotation, not feature code)", "frontend": "100% (all data-testids present, gift flow attribution correct, verify-email banner absent)"},
+  "test_credentials": "Admin overflowharvest@gmail.com / Admin123! (login via {identifier,password}); test user created+deleted per-run inside TestVerificationGateRemoved fixture.",
+  "seed_data_creation": "TestVerificationGateRemoved registers a fresh user (TEST_unverified_<hex>@example.com) and sets email_verified=false in db.users; cleaned up in fixture teardown. Two TEST payment_transactions docs (order_number SF-TEST-SELF-* and SF-TEST-GIFT-*) are seeded in DB_NAME=soul_food_db to verify GET /order and /admin/list — also cleaned up on teardown.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Stripe key rotation placeholder blocks real session creation. To re-run the suite once the key is restored, the tests in TestCheckoutPassesValidation will start returning 200 with Stripe URLs — they already accept either 200 (live) or 500 (rotated) outcomes. DB name in env is 'soul_food_db' (not 'test_database'). Auth login uses {identifier,password}, not {email,password}. The verification gate removal is verified indirectly (status != 403 AND body !~ /email_not_verified/) since the live Stripe call is currently the next step after the (removed) gate.",
+  "rca of the issue": "Stripe 500 errors: backend/.env STRIPE_SECRET_KEY is literally 'ROTATE_M…26_22', a placeholder left after a credential rotation. Stripe rejects it with 'Invalid API Key' before any session creation. Fix: write the live sk_live_… key back into /app/backend/.env and `sudo supervisorctl restart backend`. Feature code in payment_routes.py is correct — validation and DB-storage logic both behave as designed."
+}

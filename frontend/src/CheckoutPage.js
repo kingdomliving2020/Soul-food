@@ -700,6 +700,10 @@ const CheckoutPage = () => {
   const [isGift, setIsGift] = useState(false);
   const [shipToDifferentAddress, setShipToDifferentAddress] = useState(false);
   const [sameAsBilling, setSameAsBilling] = useState(true);
+  // Direct-purchase-to-recipient (NOT a gift certificate). When 'gift', digital access
+  // routes to digitalRecipientEmail; buyer gets receipt only. Shipping is independent.
+  const [purchaseType, setPurchaseType] = useState('self'); // 'self' | 'gift'
+  const [digitalRecipientEmail, setDigitalRecipientEmail] = useState('');
   const [giftOptions, setGiftOptions] = useState({
     recipientName: '',
     recipientEmail: '',
@@ -905,21 +909,26 @@ const CheckoutPage = () => {
     setLoading(true);
     setError(null);
 
-    // P1 hard-gate: logged-in users must have a verified email before purchase.
-    // Guests proceed normally (email collected at the field below).
-    if (isLoggedIn && user && user.email_verified === false) {
-      setError(
-        'Please verify your email before purchasing. Check your inbox for the verification link or tap "Resend verification" below.'
-      );
-      setLoading(false);
-      return;
-    }
+    // NOTE: Email-verification gate REMOVED from checkout per product policy.
+    // Logged-in users must not be interrupted during checkout. Verification, if needed,
+    // is enforced BEFORE the user reaches /checkout (not during/after payment).
 
     // Validate email is provided
     if (!customerEmail.trim()) {
       setError('Please enter your email address to receive order confirmation.');
       setLoading(false);
       return;
+    }
+
+    // Validate recipient email when sending to someone else
+    if (purchaseType === 'gift') {
+      const rcpt = (digitalRecipientEmail || '').trim();
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rcpt);
+      if (!emailOk) {
+        setError('Please enter a valid recipient email so we know where to send digital access.');
+        setLoading(false);
+        return;
+      }
     }
     
     // Validate shipping address for physical items
@@ -1032,7 +1041,9 @@ const CheckoutPage = () => {
           customer_phone: customerPhone || null,
           shipping_address: hasPhysicalItems ? shippingAddress : null,
           shipping_method: hasPhysicalItems ? shippingQuote.tier : null,
-          shipping_cost: hasPhysicalItems ? shippingQuote.cost : 0
+          shipping_cost: hasPhysicalItems ? shippingQuote.cost : 0,
+          purchase_type: purchaseType,
+          digital_recipient_email: purchaseType === 'gift' ? (digitalRecipientEmail || null) : null,
         }),
       });
 
@@ -1460,6 +1471,76 @@ const CheckoutPage = () => {
               </p>
             </div>
             
+            {/* This purchase is for: SELF or SOMEONE ELSE */}
+            <div className="mb-6 p-4 bg-purple-50 rounded-lg border border-purple-200" data-testid="purchase-type-section">
+              <p className="text-sm font-semibold text-purple-900 mb-3">This purchase is for:</p>
+              <div className="space-y-2">
+                <label className="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-purple-100 transition-colors">
+                  <input
+                    type="radio"
+                    name="purchase-type"
+                    value="self"
+                    checked={purchaseType === 'self'}
+                    onChange={() => setPurchaseType('self')}
+                    className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                    data-testid="purchase-type-self"
+                  />
+                  <span className="text-sm text-slate-800"><strong>Myself</strong> &mdash; I&apos;ll receive the digital access</span>
+                </label>
+                <label className="flex items-center gap-3 cursor-pointer p-2 rounded hover:bg-purple-100 transition-colors">
+                  <input
+                    type="radio"
+                    name="purchase-type"
+                    value="gift"
+                    checked={purchaseType === 'gift'}
+                    onChange={() => setPurchaseType('gift')}
+                    className="w-4 h-4 text-purple-600 focus:ring-purple-500"
+                    data-testid="purchase-type-gift"
+                  />
+                  <span className="text-sm text-slate-800"><strong>Someone else</strong> — Send digital access to a recipient</span>
+                </label>
+              </div>
+              {purchaseType === 'gift' && (
+                <div className="mt-4 pl-2">
+                  <label className="block text-xs font-semibold text-purple-900 mb-1.5">
+                    Send digital access to (Recipient Email) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={digitalRecipientEmail}
+                    onChange={(e) => setDigitalRecipientEmail(e.target.value)}
+                    placeholder="recipient@example.com"
+                    className="w-full px-3 py-2.5 text-sm border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    data-testid="digital-recipient-email-input"
+                  />
+                  <p className="text-xs text-purple-700 mt-2">
+                    The recipient will receive an email with their access link. You will receive a receipt only.
+                  </p>
+                </div>
+              )}
+              {/* Live attribution display */}
+              <div className="mt-4 p-3 bg-white rounded-lg border border-purple-200 text-xs text-slate-700 space-y-1" data-testid="purchase-attribution">
+                <div>
+                  <span className="font-semibold text-purple-900">Digital access will go to:</span>{' '}
+                  <span className="font-mono text-slate-900">
+                    {purchaseType === 'gift'
+                      ? (digitalRecipientEmail || <em className="text-slate-400 not-italic">recipient email pending</em>)
+                      : (customerEmail || <em className="text-slate-400 not-italic">your email pending</em>)}
+                  </span>
+                </div>
+                {hasPhysicalItems && (
+                  <div>
+                    <span className="font-semibold text-purple-900">Shipping will go to:</span>{' '}
+                    <span className="text-slate-900">
+                      {shippingAddress.street
+                        ? `${shippingAddress.street}, ${shippingAddress.city || ''} ${shippingAddress.state || ''} ${shippingAddress.zipCode || ''}`.trim().replace(/,\s*$/, '')
+                        : <em className="text-slate-400 not-italic">shipping address pending</em>}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
             {/* Gift Options */}
             <div className="mb-6 p-4 bg-pink-50 rounded-lg border border-pink-200">
               <label className="flex items-center gap-3 cursor-pointer">
@@ -1862,51 +1943,13 @@ const CheckoutPage = () => {
               </div>
             )}
 
-            {/* P1: Email verification hard-gate banner for logged-in unverified users */}
-            {isLoggedIn && user && user.email_verified === false && (
-              <div
-                className="mb-4 p-4 bg-amber-50 border-2 border-amber-300 rounded-lg"
-                data-testid="checkout-verify-email-banner"
-              >
-                <div className="flex items-start gap-3">
-                  <Mail className="w-5 h-5 text-amber-700 mt-0.5 flex-shrink-0" />
-                  <div className="flex-1">
-                    <h4 className="font-bold text-amber-900 mb-1">Verify your email to complete checkout</h4>
-                    <p className="text-sm text-amber-800 mb-2">
-                      We sent a verification link to <strong>{user.email}</strong> when you signed up. Tap the link in that email, then come back to finish your order.
-                    </p>
-                    <button
-                      type="button"
-                      data-testid="checkout-resend-verification-btn"
-                      onClick={async () => {
-                        try {
-                          const tok = localStorage.getItem('soul_food_token');
-                          const res = await fetch(`${BACKEND_URL}/api/auth/resend-verification`, {
-                            method: 'POST',
-                            headers: {
-                              'Content-Type': 'application/json',
-                              ...(tok ? { Authorization: `Bearer ${tok}` } : {}),
-                            },
-                            body: JSON.stringify({}),
-                          });
-                          const data = await res.json().catch(() => ({}));
-                          alert(data.message || (res.ok ? 'Verification email sent.' : 'Could not resend right now.'));
-                        } catch (e) {
-                          alert(`Network error: ${e.message}`);
-                        }
-                      }}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-semibold rounded-lg transition-colors"
-                    >
-                      <Mail className="w-4 h-4" /> Resend verification email
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* P1: Email verification gate REMOVED from checkout — logged-in users must
+                not be interrupted during checkout. Verification, if required, is enforced
+                BEFORE the user reaches /checkout (not during/after payment). */}
 
             <button
               onClick={handleCheckout}
-              disabled={loading || (!customerEmail && !isLoggedIn) || (isLoggedIn && user && user.email_verified === false)}
+              disabled={loading || (!customerEmail && !isLoggedIn)}
               data-testid="checkout-submit-btn"
               className="w-full bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
             >

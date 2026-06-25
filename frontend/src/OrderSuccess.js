@@ -91,7 +91,10 @@ const OrderSuccess = () => {
               items: data.items || prev?.items || [],
               downloadLinks: data.download_links || [],
               paymentStatus: data.payment_status,
-              orderType: data.order_type
+              orderType: data.order_type,
+              purchaseType: data.purchase_type || 'self',
+              digitalRecipientEmail: data.digital_recipient_email || null,
+              customerEmail: data.customer_email || null,
             }));
           } else {
           }
@@ -257,6 +260,22 @@ const OrderSuccess = () => {
             <p className="text-sm text-gray-500 mt-2">Order ID: {orderId}</p>
           )}
         </div>
+
+        {/* Recipient Attribution Banner — only when purchase_type == 'gift' */}
+        {orderData?.purchaseType === 'gift' && orderData?.digitalRecipientEmail && (
+          <div
+            className="bg-purple-50 border-2 border-purple-300 rounded-xl p-5 mb-6"
+            data-testid="recipient-attribution-banner"
+          >
+            <p className="text-xs font-bold text-purple-700 uppercase tracking-wider mb-1">Access will be sent to</p>
+            <p className="text-lg font-bold text-slate-900 break-all" data-testid="recipient-email-display">
+              {orderData.digitalRecipientEmail}
+            </p>
+            <p className="text-sm text-purple-700 mt-2">
+              If not found, check spam or junk.
+            </p>
+          </div>
+        )}
 
         {/* Access Your Content - Primary CTA */}
         <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl shadow-lg p-6 mb-6 text-white" data-testid="access-content-section">

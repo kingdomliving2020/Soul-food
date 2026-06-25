@@ -467,7 +467,9 @@ async def admin_list_orders(
                 "order_type": order.get("order_type"),
                 "items_count": len(order.get("items", [])),
                 "created_at": order.get("created_at").isoformat() if hasattr(order.get("created_at"), 'isoformat') else str(order.get("created_at", "")),
-                "source": "orders"
+                "source": "orders",
+                "purchase_type": order.get("purchase_type", "self"),
+                "digital_recipient_email": order.get("digital_recipient_email"),
             })
     
     for txn in transactions:
@@ -483,7 +485,9 @@ async def admin_list_orders(
                 "order_type": "paid",
                 "items_count": len(txn.get("items", [])),
                 "created_at": txn.get("created_at").isoformat() if hasattr(txn.get("created_at"), 'isoformat') else str(txn.get("created_at", "")),
-                "source": "transactions"
+                "source": "transactions",
+                "purchase_type": txn.get("purchase_type", "self"),
+                "digital_recipient_email": txn.get("digital_recipient_email"),
             })
     
     # Sort by created_at

@@ -20,6 +20,7 @@ import {
   ChevronDown,
   ChevronUp,
   Mail,
+  Send,
   Unlock,
   Download,
   FileText,
@@ -453,7 +454,7 @@ const AdminOrders = () => {
                             </ul>
                           </div>
                         )}
-                        <div className="flex items-center gap-4 text-sm text-slate-600">
+                        <div className="flex items-center gap-4 text-sm text-slate-600 flex-wrap">
                           <span className="flex items-center gap-1">
                             <Mail className="w-3 h-3" />
                             {order.customer_email || 'No email'}
@@ -462,6 +463,23 @@ const AdminOrders = () => {
                           <span className="font-medium text-green-600">
                             ${(order.total_amount || 0).toFixed(2)}
                           </span>
+                          {/* Buyer vs Recipient label */}
+                          {order.purchase_type === 'gift' && order.digital_recipient_email ? (
+                            <span
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[11px] font-bold uppercase tracking-wider"
+                              data-testid={`sent-to-recipient-badge-${order.order_number}`}
+                              title={`Digital recipient: ${order.digital_recipient_email}`}
+                            >
+                              <Send className="w-3 h-3" /> Sent to {order.digital_recipient_email}
+                            </span>
+                          ) : (
+                            <span
+                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-semibold uppercase tracking-wider"
+                              data-testid={`self-purchase-badge-${order.order_number}`}
+                            >
+                              Self Purchase
+                            </span>
+                          )}
                         </div>
                         <p className="text-xs text-slate-500 mt-1">
                           {new Date(order.created_at).toLocaleDateString('en-US', {

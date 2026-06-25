@@ -2036,6 +2036,11 @@ class CartCheckoutRequest(BaseModel):
     shipping_address: Optional[dict] = None
     shipping_method: Optional[str] = None  # auto-resolved from address; legacy field
     shipping_cost: float = 0  # client value is ADVISORY — backend recomputes via _calculate_shipping
+    # Direct-purchase-to-recipient (NOT a gift certificate). When purchase_type == 'gift',
+    # digital access is routed to digital_recipient_email; buyer gets receipt only.
+    # Shipping is independent and always uses shipping_address.
+    purchase_type: Optional[str] = "self"  # 'self' (buyer gets access) | 'gift' (recipient gets access)
+    digital_recipient_email: Optional[str] = None
 
 
 # =============================================================================
@@ -2340,17 +2345,18 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         except (JWTError, Exception) as e:
             print(f"[Checkout] JWT decode failed (guest checkout): {e}")
 
-    # P1 HARD-GATE: a logged-in user with unverified email cannot complete checkout.
-    # Guests proceed normally — they verify implicitly via the order receipt email.
-    if logged_in_user_id and not logged_in_user_verified:
-        raise HTTPException(
-            status_code=403,
-            detail={
-                "error": "email_not_verified",
-                "message": "Please verify your email address before completing a purchase. We sent a verification link when you signed up — check your inbox or request a new one from your account.",
-                "email": logged_in_user_email,
-            },
-        )
+    # NOTE: Email-verification hard gate REMOVED from checkout per product policy.
+    # Logged-in users must not be interrupted during checkout. If verification is
+    # required, enforce it BEFORE the user reaches /checkout (not during/after payment).
+
+    # Validate recipient email if purchase_type == 'gift'
+    if (request.purchase_type or "self").lower() == "gift":
+        rcpt = (request.digital_recipient_email or "").strip()
+        if not rcpt or "@" not in rcpt or "." not in rcpt.split("@")[-1]:
+            raise HTTPException(
+                status_code=400,
+                detail="Please provide a valid recipient email so we know who to send digital access to.",
+            )
 
     # Resolve the customer email: prefer form input, fall back to logged-in user
     resolved_email = request.customer_email or logged_in_user_email
@@ -2491,6 +2497,8 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
                 'order_notes': (request.order_notes or '')[:500],
                 'user_id': logged_in_user_id or '',
                 'customer_email': resolved_email or '',
+                'purchase_type': (request.purchase_type or 'self'),
+                'digital_recipient_email': (request.digital_recipient_email or '')[:120],
             }
         }
         # Pre-fill buyer email on the Stripe payment page
@@ -2552,6 +2560,8 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
             "shipping_address": request.shipping_address,
             "shipping_method": server_shipping_tier,
             "shipping_cost": server_shipping_cost,
+            "purchase_type": (request.purchase_type or "self"),
+            "digital_recipient_email": (request.digital_recipient_email or None),
             "created_at": datetime.utcnow(),
             "updated_at": datetime.utcnow()
         }
@@ -2599,6 +2609,11 @@ async def get_checkout_status(session_id: str):
             
             # Get customer email and order info
             customer_email = transaction.get("customer_email", "")
+            # Resolve digital recipient: if purchase_type == 'gift', route digital access
+            # to digital_recipient_email; otherwise the buyer (customer_email) receives access.
+            purchase_type = (transaction.get("purchase_type") or "self").lower()
+            digital_recipient_email = (transaction.get("digital_recipient_email") or "").strip() if purchase_type == "gift" else ""
+            digital_email = digital_recipient_email if digital_recipient_email else customer_email
             # Use stored user_id, never fall back to session_id
             user_id = transaction.get("user_id") or transaction.get("claimed_by_user_id") or ""
             order_number = transaction.get("order_number", session_id)
@@ -2760,7 +2775,7 @@ async def get_checkout_status(session_id: str):
                         token, expires_at = await create_download_link(
                             order_id=order_number,
                             user_id=user_id,
-                            user_email=customer_email or "no-email@placeholder.com",
+                            user_email=digital_email or "no-email@placeholder.com",
                             product_id=entry["file_key"],
                             product_name=entry["name"],
                             file_path=pdf_path,
@@ -2805,19 +2820,22 @@ async def get_checkout_status(session_id: str):
             )
             
             # Grant audio access for Holiday/4C series purchases
-            await _grant_audio_access_for_items(items, customer_email)
+            await _grant_audio_access_for_items(items, digital_email)
             # Grant game-pass entitlement (1hr/3hr cumulative) for any game-pass items
             try:
                 await _grant_game_pass_for_items(
                     items=items,
                     user_id=transaction.get("user_id") or "",
-                    customer_email=customer_email,
+                    customer_email=digital_email,
                     order_number=order_number,
                 )
             except Exception as gp_err:
                 print(f"[Status Check] Error granting game pass: {gp_err}")
             
-            # Send order confirmation email  
+            # Send confirmation email(s)
+            #  • Self-purchase: single email to buyer with everything (current behavior)
+            #  • Gift-to-recipient: buyer gets RECEIPT ONLY (no download links);
+            #                       recipient gets ACCESS ONLY (download links + spam note)
             if customer_email:
                 try:
                     from email_service import send_order_confirmation, send_preorder_confirmation, send_game_pass_access
@@ -2827,47 +2845,74 @@ async def get_checkout_status(session_id: str):
                     has_game_pass = any("gaming-pass" in item.get("id", "").lower() or "game" in item.get("name", "").lower() for item in items)
                     customer_name = transaction.get("customer_name", "")
                     total = transaction.get("total_amount", 0)
+                    is_gift_purchase = (purchase_type == "gift" and digital_recipient_email)
+                    dl_payload = [{"token": dl["token"], "product_name": dl["name"]} for dl in download_links_created] if download_links_created else None
                     
-                    # Send order confirmation for digital items
-                    await send_order_confirmation(
-                        to_email=customer_email,
-                        order_id=order_number,
-                        items=items,
-                        total=total,
-                        download_links=[{"token": dl["token"], "product_name": dl["name"]} for dl in download_links_created] if download_links_created else None,
-                        customer_name=customer_name
-                    )
+                    if is_gift_purchase:
+                        # 1) BUYER → receipt only (no download links). Includes attribution.
+                        await send_order_confirmation(
+                            to_email=customer_email,
+                            order_id=order_number,
+                            items=items,
+                            total=total,
+                            download_links=None,  # buyer never gets download links on a gift purchase
+                            customer_name=customer_name,
+                            recipient_email=digital_recipient_email,
+                            is_buyer_receipt_only=True,
+                        )
+                        # 2) RECIPIENT → access links + welcome message.
+                        if dl_payload:
+                            await send_order_confirmation(
+                                to_email=digital_recipient_email,
+                                order_id=order_number,
+                                items=items,
+                                total=total,
+                                download_links=dl_payload,
+                                customer_name="",
+                                gifted_by_email=customer_email,
+                                is_recipient_access=True,
+                            )
+                        print(f"[Status Check] Gift purchase emails sent — receipt to {customer_email}, access to {digital_recipient_email}")
+                    else:
+                        # Self-purchase — single combined email to buyer.
+                        await send_order_confirmation(
+                            to_email=customer_email,
+                            order_id=order_number,
+                            items=items,
+                            total=total,
+                            download_links=dl_payload,
+                            customer_name=customer_name,
+                        )
+                        print(f"[Status Check] Order confirmation email sent to {customer_email}")
                     
-                    # Send preorder confirmation if applicable
+                    # Send preorder confirmation if applicable (always to digital_email)
                     if has_preorder:
                         preorder_items = [i for i in items if i.get("preorder") or "Pre-Order" in i.get("name", "")]
                         try:
                             await send_preorder_confirmation(
-                                to_email=customer_email,
+                                to_email=digital_email,
                                 order_id=order_number,
                                 items=preorder_items,
                                 total=total,
                                 delivery_month="Spring 2026",
                                 courtesy_links=[{"token": dl["token"], "product_name": dl["name"]} for dl in download_links_created[:2]] if download_links_created else None,
-                                customer_name=customer_name
+                                customer_name="" if is_gift_purchase else customer_name
                             )
                         except Exception as pe:
                             print(f"[Status Check] Error sending preorder email: {pe}")
                     
-                    # Send game pass email if applicable
+                    # Send game pass email if applicable (always to digital_email)
                     if has_game_pass:
                         pass_type = "90-Day" if any("90" in i.get("name", "") for i in items if "game" in i.get("name", "").lower()) else "30-Day"
                         try:
                             await send_game_pass_access(
-                                to_email=customer_email,
+                                to_email=digital_email,
                                 order_id=order_number,
                                 pass_type=pass_type,
-                                customer_name=customer_name
+                                customer_name="" if is_gift_purchase else customer_name
                             )
                         except Exception as ge:
                             print(f"[Status Check] Error sending game pass email: {ge}")
-                    
-                    print(f"[Status Check] Order confirmation email(s) sent to {customer_email}")
                 except Exception as email_error:
                     print(f"[Status Check] Error sending email: {email_error}")
         
@@ -3408,6 +3453,9 @@ async def get_order_details(order_id: str):
                 "coupon_code": transaction.get("coupon_code"),
                 "discount_percent": transaction.get("discount_percent", 0),
                 "fulfillment_verification_failures": transaction.get("fulfillment_verification_failures") or [],
+                "purchase_type": transaction.get("purchase_type", "self"),
+                "digital_recipient_email": transaction.get("digital_recipient_email"),
+                "customer_email": transaction.get("customer_email"),
             }
         else:
             raise HTTPException(status_code=404, detail="Order not found")
@@ -3447,7 +3495,10 @@ async def get_order_details(order_id: str):
         "discount_percent": order.get("discount_percent", 0),
         "download_links": formatted_links,
         "fulfillment_verification_failures": order.get("fulfillment_verification_failures") or [],
-        "created_at": order.get("created_at").isoformat() if hasattr(order.get("created_at"), 'isoformat') else str(order.get("created_at", ""))
+        "created_at": order.get("created_at").isoformat() if hasattr(order.get("created_at"), 'isoformat') else str(order.get("created_at", "")),
+        "purchase_type": order.get("purchase_type", "self"),
+        "digital_recipient_email": order.get("digital_recipient_email"),
+        "customer_email": order.get("customer_email"),
     }
 
 

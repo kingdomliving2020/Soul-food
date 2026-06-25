@@ -116,7 +116,11 @@ def get_order_confirmation_template(
     coupon_code: str = None,
     download_links: List[Dict] = None,
     customer_name: str = "Valued Customer",
-    audio_codes: List[Dict] = None
+    audio_codes: List[Dict] = None,
+    recipient_email: str = None,
+    gifted_by_email: str = None,
+    is_buyer_receipt_only: bool = False,
+    is_recipient_access: bool = False,
 ) -> str:
     """Generate order confirmation email HTML"""
 
@@ -223,18 +227,36 @@ def get_order_confirmation_template(
         </div>
         """
     
-    content = f"""
-    <h2 style="margin: 0 0 20px 0; color: #1f2937; font-size: 24px;">
-        {"🎁 Free Order Confirmed!" if is_free_order else "✅ Order Confirmed!"}
-    </h2>
-    
-    <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
-        Hi {customer_name},<br><br>
-        Thank you for your order! {"Your promotional access has been activated." if is_free_order else "We're processing your order now."}
-    </p>
-    
-    {coupon_html}
-    
+    # Gift / recipient attribution banner (if applicable)
+    attribution_html = ""
+    if is_buyer_receipt_only and recipient_email:
+        attribution_html = f"""
+        <div style="margin: 0 0 24px 0; padding: 16px 18px; background-color: #f3e8ff; border-left: 4px solid #7c3aed; border-radius: 6px;">
+            <p style="margin: 0 0 6px 0; color: #5b21b6; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">You sent this order to:</p>
+            <p style="margin: 0; color: #1f2937; font-size: 17px; font-weight: 600;">{recipient_email}</p>
+            <p style="margin: 8px 0 0 0; color: #6b21a8; font-size: 13px;">Digital access has been emailed directly to them. This message is your receipt only — it does not contain download links.</p>
+        </div>
+        """
+    elif is_recipient_access and gifted_by_email:
+        attribution_html = f"""
+        <div style="margin: 0 0 24px 0; padding: 16px 18px; background-color: #ecfeff; border-left: 4px solid #0891b2; border-radius: 6px;">
+            <p style="margin: 0 0 6px 0; color: #155e75; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">A gift from {gifted_by_email}</p>
+            <p style="margin: 0; color: #1f2937; font-size: 15px;">Soul Food digital access is now ready for you below.</p>
+            <p style="margin: 8px 0 0 0; color: #075985; font-size: 13px;">If you do not see this email later, check your spam or junk folder.</p>
+        </div>
+        """
+
+    # Summary block — hide pricing/total when this is a recipient-access email
+    summary_block = ""
+    if is_recipient_access:
+        summary_block = f"""
+    <h3 style="margin: 30px 0 15px 0; color: #1f2937; font-size: 18px;">Your Soul Food Access Includes</h3>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+        {items_html}
+    </table>
+    """
+    else:
+        summary_block = f"""
     <div style="margin: 25px 0; padding: 15px; background-color: #f9fafb; border-radius: 8px;">
         <p style="margin: 0; color: #6b7280; font-size: 14px;">Order ID</p>
         <p style="margin: 5px 0 0 0; color: #1f2937; font-size: 18px; font-weight: bold;">{order_id}</p>
@@ -251,6 +273,23 @@ def get_order_confirmation_template(
             </td>
         </tr>
     </table>
+    """
+
+    content = f"""
+    <h2 style="margin: 0 0 20px 0; color: #1f2937; font-size: 24px;">
+        {"🎁 Free Order Confirmed!" if is_free_order else ("🎁 You've Been Sent Soul Food!" if is_recipient_access else "✅ Order Confirmed!")}
+    </h2>
+    
+    <p style="margin: 0 0 20px 0; color: #4b5563; font-size: 16px; line-height: 1.6;">
+        Hi {customer_name or "there"},<br><br>
+        {"Someone gifted you Soul Food digital access. Get started below!" if is_recipient_access else ("Thank you for your order! " + ("Your promotional access has been activated." if is_free_order else "We're processing your order now."))}
+    </p>
+    
+    {attribution_html}
+    
+    {coupon_html}
+    
+    {summary_block}
     
     {downloads_html}
     
@@ -678,10 +717,29 @@ async def send_order_confirmation(
     coupon_code: str = None,
     download_links: List[Dict] = None,
     customer_name: str = "Valued Customer",
-    audio_codes: List[Dict] = None
+    audio_codes: List[Dict] = None,
+    recipient_email: str = None,
+    gifted_by_email: str = None,
+    is_buyer_receipt_only: bool = False,
+    is_recipient_access: bool = False,
 ) -> Dict:
-    """Send order confirmation email with optional audio access codes"""
-    subject = f"Order Confirmed! #{order_id}" if not is_free_order else f"🎁 Free Order Activated! #{order_id}"
+    """Send order confirmation email.
+
+    Modes:
+      • Default (self-purchase): buyer gets receipt + download links + audio codes
+      • is_buyer_receipt_only=True: buyer gets receipt + recipient attribution; NO download links
+        (used when purchase_type == 'gift')
+      • is_recipient_access=True: recipient gets ONLY access (download links + spam folder note);
+        no payment/totals shown
+    """
+    # Subject + content adapters
+    if is_buyer_receipt_only and recipient_email:
+        subject = f"Receipt — You sent your order to {recipient_email} · #{order_id}"
+    elif is_recipient_access:
+        subject = f"You've been sent Soul Food access! · #{order_id}"
+    else:
+        subject = f"Order Confirmed! #{order_id}" if not is_free_order else f"🎁 Free Order Activated! #{order_id}"
+
     html = get_order_confirmation_template(
         order_id=order_id,
         items=items,
@@ -690,7 +748,11 @@ async def send_order_confirmation(
         coupon_code=coupon_code,
         download_links=download_links,
         customer_name=customer_name,
-        audio_codes=audio_codes
+        audio_codes=audio_codes,
+        recipient_email=recipient_email,
+        gifted_by_email=gifted_by_email,
+        is_buyer_receipt_only=is_buyer_receipt_only,
+        is_recipient_access=is_recipient_access,
     )
     return await send_email(to_email, subject, html)
 
