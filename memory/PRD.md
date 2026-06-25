@@ -17,6 +17,15 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### P3 — Gmail-Style Operational Filters + Bulk Actions on Admin Orders (June 25, 2026)
+- [x] **Frontend-only layer** on `/admin/orders` (`AdminOrders.js`) over already-tested backend endpoints (no backend changes — credit/risk-conscious, MVP scope).
+- [x] **16 Gmail-style filter chips** with live counts (`data-testid="admin-orders-filter-chip-<key>"`): All, Needs Review, Pending, Digital Pending, Physical Pending, Downloaded, Not Downloaded, Guest, Registered, Gift, Self, No Email, Refunded, Cancelled, Test, Archived. Predicates (`matchesGmailFilter`) run client-side over the loaded set using each row's `lifecycle` object + `claimed_by_user_id`/`purchase_type`/`customer_email`/`downloads_count`/`tag`/`is_archived`. Archived/Test chips also switch backend `visibility` scope via `selectGmailFilter`.
+- [x] **Expanded bulk actions** in the existing selection bar: Resend Email, Grant Access, Revoke Access, Mark Refunded (manual reconciliation — revokes access, no Stripe charge), plus pre-existing Mark as Test / Archive / Restore / Clear Tag. `bulkPerOrder()` loops the existing tested per-order endpoints (`/access`, `/status`, `/resend-email`).
+- [x] **CSV Export** (`exportCsv`) — client-side CSV of selected orders (or current filtered view if none selected); always-visible "Export CSV" button in the filter row + in the bulk bar.
+- [x] **Verified — iteration_46.json (ALL PASS, frontend e2e):** all 16 chips render with counts (Pending=64, Guest=62, All=71); chip filtering narrows list + header count; bulk bar reveals on selection with all 7 buttons; Export downloaded `soulfood-orders-2026-06-25.csv`; bulk Grant Access returned 200 + toast; Revoke/Mark-Refunded confirmation dialogs verified non-destructively.
+- Note: filtering is over the loaded page (limit=100; preview has ~71 active). If order volume grows past ~100 post-launch, consider server-side filter params on `GET /api/admin/orders` (deferred — not needed at MVP scale).
+
+
 ### MVP Stabilization P1 (Entitlement Integrity) + P4 (Purchasing vs Ownership) — June 25, 2026
 - [x] **Manual admin status controls (Stripe-independent)** — `POST /api/admin/orders/{n}/status` ({status, reason, sync_access}) and `POST /api/admin/orders/{n}/access` ({grant|revoke}). Changing status to refunded/cancelled instantly revokes all download links for that order (across order_number/order_id/session_id candidates); reinstating to paid restores them. Sets `entitlement_status` + `manual_override`/override_by/at/reason. Nothing deleted — refunded/cancelled remain as historical records.
 - [x] **Entitlement re-evaluation on download** — `download_protection.verify_download_token` now also blocks if the parent order is refunded/cancelled/revoked (belt-and-suspenders, even for un-revoked legacy links). Added `set_links_revoked(order_ids, revoked, reason)` multi-id revoke/restore helper. Stripe refund flow (`order_routes.admin_process_refund`) now also revokes links + sets entitlement_status=revoked.
