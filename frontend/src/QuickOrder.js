@@ -591,7 +591,8 @@ const QuickOrder = () => {
       name: 'GRinCH Bingo — Base Game',
       subtitle: 'Start here',
       isGameStore: true,
-      images: { adult: '/covers/game-gridiron-ae.png', youth: '/covers/game-gridiron-ye.png' },
+      images: { adult: '/covers/game-bingo-card.png', youth: '/covers/game-bingo-card.png' },
+      features: ['Bible Trivia Bingo', 'Group Play Ready', 'Easy to Learn', 'Instant Fun'],
       editions: ['adult', 'youth'],
       gamePackages: [
         { id: 'base-4cs', name: "4 C's of Christianity", price: 19.99, available: true, badge: 'Base Game · Available' },
@@ -606,6 +607,7 @@ const QuickOrder = () => {
       subtitle: 'Add after base game',
       isGameStore: true,
       images: { adult: '/covers/game-passport-ae.png', youth: '/covers/game-passport-ye.png' },
+      features: ['Guided Bible Journey', 'Interactive Challenge', 'Solo or Group Play', 'Progressive Levels'],
       editions: ['adult', 'youth'],
       gamePackages: [
         { id: 'base', name: 'Base Game', price: 19.99, preOrder: true, badge: 'Base Game · Pre-Order' },
@@ -617,7 +619,8 @@ const QuickOrder = () => {
       name: 'Game Bundle — Base + Trek',
       subtitle: 'Best value (both included)',
       isGameStore: true,
-      images: { adult: '/covers/game-gridiron-ae.png', youth: '/covers/game-gridiron-ye.png' },
+      images: { adult: '/covers/game-group-play.png', youth: '/covers/game-group-play.png' },
+      features: ['Bingo + Trek Included', 'Save $10 Bundle', 'Best Value Pack', 'Play Multiple Ways'],
       editions: ['adult', 'youth'],
       gamePackages: [
         { id: 'bundle', name: 'GRinCH Bingo + Passport Trek', price: 29.99, preOrder: true, badge: 'Bundle · Save $10' },
@@ -983,11 +986,11 @@ const QuickOrder = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Holiday Table Bundle */}
             <Card className="shadow-lg hover:shadow-xl transition-all border-2 border-purple-200 bg-gradient-to-br from-white to-purple-50 overflow-hidden" data-testid="holiday-table-bundle">
-              <div className="relative aspect-[4/3] bg-white overflow-hidden">
+              <div className="relative aspect-[4/3] bg-white overflow-hidden flex items-center justify-center">
                 <img
-                  src="/covers/holiday-table.png"
-                  alt="Holiday Table Bundle — 4 C's of Christianity workbook with Foundation in Christ snack pack"
-                  className="absolute inset-0 w-full h-full object-contain p-3"
+                  src="/covers/holiday-ae-front-new.png"
+                  alt="4 C's of Christianity workbook cover"
+                  className="max-w-[78%] max-h-[92%] object-contain"
                   loading="lazy"
                 />
               </div>
@@ -997,19 +1000,19 @@ const QuickOrder = () => {
                 <ul className="space-y-1 mb-3" data-testid="holiday-bundle-features">
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>4 C&apos;s of Christianity workbook</span>
+                    <span>10 Lesson Foundation</span>
                   </li>
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>Foundation in Christ snack pack</span>
+                    <span>Workbook + Snack Pack</span>
                   </li>
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>Adult or Youth edition</span>
+                    <span>Built for Groups</span>
                   </li>
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>Bite-size lessons for the season</span>
+                    <span>Ready to Start</span>
                   </li>
                 </ul>
                 <div className="flex items-baseline gap-2 mb-3">
@@ -1058,11 +1061,11 @@ const QuickOrder = () => {
               <div className="absolute -top-2 -right-2 z-10">
                 <Badge className="bg-amber-500 text-white text-xs px-3 py-1 shadow-lg">Best Value</Badge>
               </div>
-              <div className="relative aspect-[4/3] bg-white overflow-hidden">
+              <div className="relative aspect-[4/3] bg-white overflow-hidden flex items-center justify-center">
                 <img
-                  src="/covers/full-table.png"
-                  alt="Full Table Experience — 4 C's workbook + Foundation in Christ snack pack + game pass"
-                  className="absolute inset-0 w-full h-full object-contain p-3 pb-5"
+                  src="/covers/breakfast-adult-front.jpg"
+                  alt="Foundation in Christ workbook cover"
+                  className="max-w-[78%] max-h-[92%] object-contain"
                   loading="lazy"
                 />
               </div>
@@ -1072,23 +1075,19 @@ const QuickOrder = () => {
                 <ul className="space-y-1 mb-3" data-testid="full-table-features">
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>4 C&apos;s of Christianity workbook</span>
+                    <span>10 Lesson Foundation</span>
                   </li>
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>Foundation in Christ snack pack</span>
+                    <span>Workbook + Snack Pack</span>
                   </li>
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>90-Day Game Pass included</span>
+                    <span>Built for Groups</span>
                   </li>
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>Solo &amp; multiplayer trivia games</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-xs text-slate-700">
-                    <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>Adult or Youth edition</span>
+                    <span>Ready to Start</span>
                   </li>
                 </ul>
                 <div className="flex items-baseline gap-2 mb-3">
@@ -1939,28 +1938,36 @@ const QuickOrder = () => {
               const qty = sel.quantity || 1;
               const img = game.images?.[ed] || Object.values(game.images || {})[0];
               return (
-                <Card key={game.id} data-testid={`game-card-${game.id}`} className="shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full relative">
-                  <CardContent className="p-4 flex flex-col flex-1">
-                    <div className="relative w-full h-52 mb-3 rounded-lg bg-white flex items-center justify-center overflow-hidden">
-                      <img
-                        src={img}
-                        alt={game.name}
-                        className={`max-w-[88%] max-h-[88%] object-contain ${pkg.preOrder ? 'opacity-90' : ''}`}
-                      />
-                      <div className="absolute top-2 left-2">
-                        <span className={`text-white text-[10px] font-bold px-2 py-1 rounded ${pkg.preOrder ? 'bg-amber-500' : 'bg-emerald-600'}`}>
-                          {pkg.preOrder ? 'Pre-Order' : 'Available'}
-                        </span>
-                      </div>
-                      {pkg.id.startsWith('exp-') && (
-                        <div className="absolute bottom-2 right-2 bg-indigo-600/90 text-white text-[10px] font-semibold px-2 py-1 rounded shadow">
-                          {pkg.id === 'exp-foundation' ? 'Foundation in Christ (Deck)' : 'Kingdom Relationship (Deck)'}
-                        </div>
-                      )}
+                <Card key={game.id} data-testid={`game-card-${game.id}`} className="shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full relative overflow-hidden">
+                  <div className={`relative w-full h-64 flex items-center justify-center overflow-hidden ${game.id === 'game-passport-trek' ? 'bg-gradient-to-br from-amber-100 via-orange-50 to-amber-50' : 'bg-slate-50'}`}>
+                    <img
+                      src={img}
+                      alt={game.name}
+                      className={`${game.id === 'game-passport-trek' ? 'max-w-[80%] max-h-[80%] object-contain' : 'w-full h-full object-cover'} ${pkg.preOrder ? 'opacity-90' : ''}`}
+                    />
+                    <div className="absolute top-2 left-2">
+                      <span className={`text-white text-[10px] font-bold px-2 py-1 rounded ${pkg.preOrder ? 'bg-amber-500' : 'bg-emerald-600'}`}>
+                        {pkg.preOrder ? 'Pre-Order' : 'Available'}
+                      </span>
                     </div>
-
-                    <h4 className="text-base font-bold text-slate-800 mb-1">{game.name}</h4>
-                    <p className="text-xs text-slate-500 mb-3">{game.subtitle}</p>
+                    {pkg.id.startsWith('exp-') && (
+                      <div className="absolute bottom-2 right-2 bg-indigo-600/90 text-white text-[10px] font-semibold px-2 py-1 rounded shadow">
+                        {pkg.id === 'exp-foundation' ? 'Foundation in Christ (Deck)' : 'Kingdom Relationship (Deck)'}
+                      </div>
+                    )}
+                  </div>
+                  <CardContent className="p-4 flex flex-col flex-1">
+                    <h4 className="text-base font-bold text-slate-800 mb-2">{game.name}</h4>
+                    {game.features && (
+                      <ul className="space-y-1 mb-3" data-testid={`game-features-${game.id}`}>
+                        {game.features.slice(0, 4).map((feat, idx) => (
+                          <li key={idx} className="flex items-start gap-2 text-xs text-slate-700">
+                            <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
+                            <span>{feat}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
 
                     {/* Edition Selector */}
                     <div className="mb-2">
