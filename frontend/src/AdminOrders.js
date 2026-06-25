@@ -26,7 +26,9 @@ import {
   Lock,
   Download,
   FileText,
-  Eye
+  Eye,
+  FileDown,
+  Filter
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -47,6 +49,8 @@ const AdminOrders = () => {
   const [actionLoading, setActionLoading] = useState('');
   const [visibilityFilter, setVisibilityFilter] = useState('active'); // 'active' | 'test' | 'archived' | 'all'
   const [selectedOrderNumbers, setSelectedOrderNumbers] = useState([]);
+  const [activeFilter, setActiveFilter] = useState(''); // Gmail-style operational filter key
+  const [bulkLoading, setBulkLoading] = useState(false);
 
   // Get admin token
   const getToken = () => {
@@ -181,6 +185,132 @@ const AdminOrders = () => {
     } catch (e) {
       alert(`Network error: ${e.message}`);
     }
+  };
+
+  // P3 — Gmail-style operational filters (client-side over the loaded set)
+  const GMAIL_FILTERS = [
+    { key: '', label: 'All' },
+    { key: 'needs_review', label: 'Needs Review' },
+    { key: 'pending', label: 'Pending' },
+    { key: 'digital_pending', label: 'Digital Pending' },
+    { key: 'physical_pending', label: 'Physical Pending' },
+    { key: 'downloaded', label: 'Downloaded' },
+    { key: 'not_downloaded', label: 'Not Downloaded' },
+    { key: 'guest', label: 'Guest' },
+    { key: 'registered', label: 'Registered' },
+    { key: 'gift', label: 'Gift' },
+    { key: 'self', label: 'Self' },
+    { key: 'no_email', label: 'No Email' },
+    { key: 'refunded', label: 'Refunded' },
+    { key: 'cancelled', label: 'Cancelled' },
+    { key: 'test', label: 'Test' },
+    { key: 'archived', label: 'Archived' },
+  ];
+
+  const matchesGmailFilter = (order, key) => {
+    const lc = order.lifecycle || {};
+    const dl = order.downloads_count || 0;
+    switch (key) {
+      case '': return true;
+      case 'needs_review': return !!lc.needs_action;
+      case 'pending': return lc.financial_status === 'pending_payment' || order.payment_status === 'pending';
+      case 'digital_pending': return !lc.has_physical && !!lc.needs_action;
+      case 'physical_pending': return !!lc.has_physical && lc.fulfillment_status !== 'delivered';
+      case 'downloaded': return dl > 0;
+      case 'not_downloaded': return dl === 0 && lc.financial_status === 'paid' && !lc.has_physical;
+      case 'guest': return !order.claimed_by_user_id;
+      case 'registered': return !!order.claimed_by_user_id;
+      case 'gift': return order.purchase_type === 'gift';
+      case 'self': return order.purchase_type !== 'gift';
+      case 'no_email': return !order.customer_email;
+      case 'refunded': return ['refunded', 'partial_refund', 'chargeback'].includes(lc.financial_status);
+      case 'cancelled': return lc.financial_status === 'cancelled';
+      case 'test': return order.tag === 'test';
+      case 'archived': return !!order.is_archived;
+      default: return true;
+    }
+  };
+
+  // Archived/Test rows are excluded by the default 'active' visibility, so those
+  // chips also switch the backend visibility scope. All others stay 'active'.
+  const selectGmailFilter = (key) => {
+    const next = activeFilter === key ? '' : key;
+    setActiveFilter(next);
+    setVisibilityFilter(next === 'archived' ? 'archived' : next === 'test' ? 'test' : 'active');
+    setSelectedOrderNumbers([]);
+  };
+
+  // P3 — per-order bulk actions (loop existing endpoints; preview scale)
+  const bulkPerOrder = async (actionType) => {
+    if (selectedOrderNumbers.length === 0) { alert('Select at least one order'); return; }
+    const n = selectedOrderNumbers.length;
+    const confirmMsg = {
+      resend: `Resend confirmation email for ${n} order(s)?`,
+      grant: `Grant download access for ${n} order(s)?`,
+      revoke: `Revoke download access for ${n} order(s)? Customers lose access immediately.`,
+      refund: `Mark ${n} order(s) as REFUNDED? This immediately revokes access. (No Stripe charge is affected — manual reconciliation.)`,
+    }[actionType];
+    if (!window.confirm(confirmMsg)) return;
+    setBulkLoading(true);
+    let okCount = 0, failCount = 0;
+    for (const on of selectedOrderNumbers) {
+      try {
+        const base = `${BACKEND_URL}/api/admin/orders/${encodeURIComponent(on)}`;
+        let res;
+        if (actionType === 'resend') {
+          res = await fetch(`${base}/resend-email`, { method: 'POST', headers: { Authorization: `Bearer ${getToken()}` } });
+        } else if (actionType === 'grant' || actionType === 'revoke') {
+          res = await fetch(`${base}/access`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: actionType, reason: `bulk ${actionType}` }),
+          });
+        } else if (actionType === 'refund') {
+          res = await fetch(`${base}/status`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'refunded', reason: 'bulk manual refund', sync_access: true }),
+          });
+        }
+        const { ok } = await safeJson(res);
+        ok ? okCount++ : failCount++;
+      } catch { failCount++; }
+    }
+    setBulkLoading(false);
+    if (failCount === 0) toast.success(`${okCount} order(s) updated.`);
+    else toast.warning(`${okCount} succeeded, ${failCount} failed.`);
+    setSelectedOrderNumbers([]);
+    fetchOrders();
+    fetchSummary();
+  };
+
+  // P3 — CSV export of selected orders (or current filtered view if none selected)
+  const exportCsv = () => {
+    const rows = selectedOrderNumbers.length > 0
+      ? orders.filter(o => selectedOrderNumbers.includes(o.order_number))
+      : filteredOrders;
+    if (rows.length === 0) { alert('Nothing to export'); return; }
+    const cols = ['order_number', 'customer_email', 'customer_name', 'total_amount', 'payment_status',
+      'financial_status', 'entitlement_status', 'fulfillment_status', 'purchase_type', 'granted_to',
+      'downloads_count', 'tag', 'is_archived', 'created_at'];
+    const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
+    const lines = [cols.join(',')];
+    rows.forEach(o => {
+      const lc = o.lifecycle || {};
+      lines.push([o.order_number, o.customer_email, o.customer_name, o.total_amount, o.payment_status,
+        lc.financial_status, lc.entitlement_status, lc.fulfillment_status, o.purchase_type, o.granted_to,
+        o.downloads_count, o.tag, o.is_archived, o.created_at].map(esc).join(','));
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `soulfood-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${rows.length} order(s) to CSV.`);
   };
 
   const fetchRefundRequests = async () => {
@@ -464,7 +594,7 @@ const AdminOrders = () => {
       order.payment_status === filterStatus ||
       order.refund_status === filterStatus;
     
-    return matchesSearch && matchesFilter;
+    return matchesSearch && matchesFilter && matchesGmailFilter(order, activeFilter);
   });
 
   return (
@@ -597,6 +727,32 @@ const AdminOrders = () => {
                 <option value="refunded">Refunded</option>
               </select>
             </div>
+            {/* P3 — Gmail-style operational filter chips */}
+            <div className="mt-3 flex items-center gap-2 flex-wrap" data-testid="admin-orders-filter-chips">
+              <Filter className="w-4 h-4 text-slate-400" />
+              {GMAIL_FILTERS.map(f => {
+                const count = orders.filter(o => matchesGmailFilter(o, f.key)).length;
+                const active = activeFilter === f.key;
+                return (
+                  <button
+                    key={f.key || 'all'}
+                    onClick={() => selectGmailFilter(f.key)}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${active ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}`}
+                    data-testid={`admin-orders-filter-chip-${f.key || 'all'}`}
+                  >
+                    {f.label}
+                    {f.key !== '' && (
+                      <span className={`px-1.5 rounded-full text-[10px] font-bold ${active ? 'bg-white/25 text-white' : 'bg-slate-100 text-slate-500'}`}>{count}</span>
+                    )}
+                  </button>
+                );
+              })}
+              <div className="ml-auto">
+                <Button size="sm" variant="outline" onClick={exportCsv} data-testid="admin-orders-export-csv-btn">
+                  <FileDown className="w-4 h-4 mr-1" /> Export CSV
+                </Button>
+              </div>
+            </div>
             {selectedOrderNumbers.length > 0 && (
               <div className="mt-3 pt-3 border-t border-slate-200 flex items-center gap-3 flex-wrap" data-testid="admin-orders-bulk-bar">
                 <span className="text-sm font-medium text-slate-700">{selectedOrderNumbers.length} selected</span>
@@ -606,6 +762,22 @@ const AdminOrders = () => {
                 <Button size="sm" variant="outline" onClick={() => bulkTagOrders({ archive: true })} data-testid="admin-orders-bulk-archive-btn">
                   Archive
                 </Button>
+                <Button size="sm" variant="outline" disabled={bulkLoading} onClick={() => bulkPerOrder('resend')} data-testid="admin-orders-bulk-resend-btn">
+                  <Mail className="w-3.5 h-3.5 mr-1" /> Resend Email
+                </Button>
+                <Button size="sm" variant="outline" disabled={bulkLoading} onClick={() => bulkPerOrder('grant')} data-testid="admin-orders-bulk-grant-btn">
+                  <Unlock className="w-3.5 h-3.5 mr-1" /> Grant Access
+                </Button>
+                <Button size="sm" variant="outline" disabled={bulkLoading} onClick={() => bulkPerOrder('revoke')} className="text-red-700 border-red-200 hover:bg-red-50" data-testid="admin-orders-bulk-revoke-btn">
+                  <Lock className="w-3.5 h-3.5 mr-1" /> Revoke Access
+                </Button>
+                <Button size="sm" variant="outline" disabled={bulkLoading} onClick={() => bulkPerOrder('refund')} className="text-blue-700 border-blue-200 hover:bg-blue-50" data-testid="admin-orders-bulk-refund-btn">
+                  <RefreshCw className="w-3.5 h-3.5 mr-1" /> Mark Refunded
+                </Button>
+                <Button size="sm" variant="outline" onClick={exportCsv} data-testid="admin-orders-bulk-export-btn">
+                  <FileDown className="w-3.5 h-3.5 mr-1" /> Export
+                </Button>
+                {bulkLoading && <Loader2 className="w-4 h-4 animate-spin text-slate-400" />}
                 {(visibilityFilter === 'archived' || visibilityFilter === 'all' || visibilityFilter === 'test') && (
                   <>
                     <Button size="sm" variant="outline" onClick={() => bulkTagOrders({ archive: false })} data-testid="admin-orders-bulk-restore-btn">

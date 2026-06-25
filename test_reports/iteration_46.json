@@ -1,0 +1,34 @@
+{
+  "summary": "P3 Admin Orders Gmail-style filters + bulk actions frontend verification — ALL PASS. Logged in as admin overflowharvest@gmail.com, skipped 2FA, opened /admin/orders, verified all 16 filter chips render with live counts, verified chip-driven filtering (Pending=64, Guest=62, All=71, Test scope=0, Archived scope=0), verified bulk-action bar reveals on checkbox select with all 7 buttons (resend/grant/revoke/refund/export + pre-existing mark-test/archive), Export CSV downloaded soulfood-orders-2026-06-25.csv with success toast, Bulk Grant Access on SF-2026-GVQVV returned 200 and toasted '1 order(s) updated.', and both Mark Refunded and Revoke Access correctly show confirmation dialogs (which were cancelled, non-destructive).",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "/admin/orders filter row",
+        "issues": [
+          "Minor: the 'All' chip label has no count badge (other chips show e.g. 'Pending 64', 'Guest 62'); for visual consistency consider showing the total active count next to All (e.g. 'All 71'). Not blocking — Orders (N) header already conveys it."
+        ]
+      }
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Optional: add count next to 'All' chip for visual parity with the other 15 chips.",
+    "FYI for main agent: Bulk Grant on SF-2026-GVQVV mutated its access state from 'granted' to 'admin override' (this is the expected backend semantic for an explicit admin grant via /api/admin/orders/{n}/access). Customer access is unchanged; only the source/audit-trail label changed. Order remains PAID/CLOSED/downloaded. No revert needed — the order is still in a clean, accessible state — but if you want the badge back to 'granted', re-run /access with action 'reset' or similar (or just leave as 'admin override' since it's semantically correct after an explicit admin grant)."
+  ],
+  "critical_code_review_comments": [
+    "AdminOrders.js bulkPerOrder() loops N sequential awaits — fine at preview scale (~71 orders) but at 1k+ orders this serial loop will be slow. Consider Promise.all with a small concurrency cap (e.g. p-limit) for production. Not a P3 blocker.",
+    "exportCsv() builds CSV client-side from the loaded orders array — if pagination is ever added, the export will silently miss off-page rows. Today the page loads all 71 so it's fine; flag for future pagination work.",
+    "GMAIL_FILTERS 'self' filter uses `purchase_type !== 'gift'`, which counts orders with null/undefined purchase_type as Self (Self=71 = all orders today). If null purchase_type should be 'unknown' rather than 'self', tighten the predicate. Today this is harmless because no gift orders exist."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "skipped (per request)", "frontend": "100%" },
+  "test_credentials": "Admin overflowharvest@gmail.com / Admin123! (Continue without 2FA link)",
+  "seed_data_creation": "None — only mutation was Bulk Grant Access on SF-2026-GVQVV (already-paid, already-granted order). Its access badge moved from 'granted' to 'admin override'; customer access unchanged. No new orders/test data created. Mark Refunded and Revoke confirm-dialogs were dismissed (no mutation).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "P3 chips + bulk bar fully wired. Observed live chip counts (active scope, 71 orders): All=71, Needs Review=0, Pending=64, Digital Pending=0, Physical Pending=0, Downloaded=5, Not Downloaded=2, Guest=62, Registered=9, Gift=0, Self=71, No Email=20, Refunded=0, Cancelled=0, Test=0, Archived=0. Test/Archived chips correctly swap the backend visibility scope (and counts go to 0 because no test/archived rows exist in DB). SF-2026-GVQVV is the canonical paid/downloaded test order; its access badge is now 'admin override' (was 'granted' before this run). Toast system is sonner — toast text reads '1 order(s) updated.' / 'Exported N order(s) to CSV.'.",
+  "rca of the issue": "n/a — no defects found in P3."
+}
