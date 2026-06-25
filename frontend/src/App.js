@@ -2021,6 +2021,7 @@ import OrderSuccess from './OrderSuccess';
 import RedeemCode from './RedeemCode';
 import GamingCentral from './GamingCentral';
 import OrderLookup from './OrderLookup';
+import OrderHistory from './OrderHistory';
 import RefundPolicy from './RefundPolicy';
 import ShippingPolicy from './ShippingPolicy';
 import AdminOrders from './AdminOrders';
@@ -2056,6 +2057,7 @@ function App() {
             <Route path="/gift-certificate-success" element={<GiftCertificateSuccess />} />
             <Route path="/redeem-gift" element={<RedeemGift />} />
             <Route path="/orders/lookup" element={<OrderLookup />} />
+            <Route path="/order-history" element={<OrderHistory />} />
             <Route path="/refund-policy" element={<RefundPolicy />} />
             <Route path="/shipping-policy" element={<ShippingPolicy />} />
             <Route path="/admin/orders" element={<AdminOrders />} />

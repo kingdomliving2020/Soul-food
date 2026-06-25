@@ -3561,9 +3561,63 @@ async def get_order_downloads(order_id: str):
 
 
 
+# =============================================================================
+# LIBRARY vs ORDER HISTORY — shared status helpers
+# =============================================================================
+# A transaction is a usable ENTITLEMENT (My Library) only when it is paid, not
+# refunded/cancelled/revoked/expired, and not an admin hygiene record (archived
+# or tagged 'test'). Order History keeps EVERYTHING (full permanent record).
+
+# refund_status values that strip Library access
+_LIBRARY_BLOCKING_REFUND = {"refunded", "partial_refund", "partially_refunded", "chargeback"}
+# status values that strip Library access
+_LIBRARY_BLOCKING_STATUS = {"refunded", "cancelled", "canceled", "revoked", "expired", "failed"}
+
+
+def _is_active_entitlement_txn(txn: dict, user_id: str, user_email: str) -> bool:
+    """True when this transaction grants the given user usable, owned content.
+
+    Rules:
+      - Must be paid.
+      - Excludes refunded / partially-refunded / chargeback (refund_status) and
+        cancelled / revoked / expired / failed (status).
+      - Excludes admin hygiene records (is_archived or tag == 'test').
+      - Gift ownership: a 'gift' purchase belongs ONLY to the recipient
+        (digital_recipient_email). The buyer gets a receipt, not access — so a
+        gift bought for someone else never appears in the buyer's Library. (If
+        the buyer also bought a copy for themselves, that's a separate self
+        transaction and shows normally.)
+    """
+    if txn.get("payment_status") != "paid":
+        return False
+    if txn.get("is_archived"):
+        return False
+    if (txn.get("tag") or "").strip().lower() == "test":
+        return False
+    if (txn.get("refund_status") or "").strip().lower() in _LIBRARY_BLOCKING_REFUND:
+        return False
+    if (txn.get("status") or "").strip().lower() in _LIBRARY_BLOCKING_STATUS:
+        return False
+
+    ue = (user_email or "").strip().lower()
+    recipient = (txn.get("digital_recipient_email") or "").strip().lower()
+    buyer_email = (txn.get("customer_email") or "").strip().lower()
+    is_buyer = (txn.get("user_id") and txn.get("user_id") == user_id) or (ue and buyer_email == ue)
+    is_recipient = bool(recipient) and recipient == ue
+    purchase_type = (txn.get("purchase_type") or "self").strip().lower()
+
+    if purchase_type == "gift":
+        # Only the recipient owns a gift (buyer == recipient edge case still works).
+        return is_recipient
+    # Self purchase — buyer owns it. (Also honor recipient match for safety.)
+    return bool(is_buyer or is_recipient)
+
+
 @router.get("/my-purchases")
 async def get_my_purchases(request: Request):
-    """Get all purchases for the logged-in user"""
+    """MY LIBRARY — returns ONLY active, usable entitlements for the logged-in
+    user. Refunded, revoked, cancelled, expired, failed, archived and test
+    purchases are excluded. Gifts appear only in the recipient's Library."""
     from jose import jwt, JWTError
     
     # Get auth token
@@ -3589,29 +3643,29 @@ async def get_my_purchases(request: Request):
     if user:
         user_email = user.get("email")
     
-    # Find orders for this user (by user_id or email)
-    query = {"payment_status": "paid"}
+    # Broad fetch: anything where the user is buyer OR gift recipient. The
+    # _is_active_entitlement_txn filter below enforces all ownership/status rules.
+    or_clauses = [{"user_id": user_id}]
     if user_email:
-        query["$or"] = [
-            {"user_id": user_id},
-            {"customer_email": user_email}
-        ]
-    else:
-        query["user_id"] = user_id
-    
-    orders = await db.orders.find(query, {"_id": 0}).sort("created_at", -1).limit(50).to_list(50)
+        or_clauses.append({"customer_email": user_email})
+        or_clauses.append({"digital_recipient_email": user_email})
+
+    orders = await db.orders.find(
+        {"payment_status": "paid", "$or": or_clauses}, {"_id": 0}
+    ).sort("created_at", -1).limit(100).to_list(100)
     
     # Also check payment_transactions
     transactions = await db.payment_transactions.find(
-        {"payment_status": "paid", "$or": [{"user_id": user_id}, {"customer_email": user_email}] if user_email else {"user_id": user_id}},
-        {"_id": 0}
-    ).sort("created_at", -1).limit(50).to_list(50)
+        {"payment_status": "paid", "$or": or_clauses}, {"_id": 0}
+    ).sort("created_at", -1).limit(100).to_list(100)
     
     # Combine and format purchases
     purchases = []
     seen_orders = set()
     
     for order in orders:
+        if not _is_active_entitlement_txn(order, user_id, user_email):
+            continue
         order_id = order.get("order_id")
         if order_id in seen_orders:
             continue
@@ -3627,6 +3681,8 @@ async def get_my_purchases(request: Request):
             })
     
     for txn in transactions:
+        if not _is_active_entitlement_txn(txn, user_id, user_email):
+            continue
         order_id = txn.get("order_number") or txn.get("order_id") or txn.get("session_id")
         if order_id in seen_orders:
             continue
@@ -3689,6 +3745,106 @@ async def get_my_purchases(request: Request):
             })
     
     return {"purchases": purchases}
+
+
+@router.get("/my-orders")
+async def get_my_orders(request: Request):
+    """ORDER HISTORY — full permanent transaction record for the logged-in user
+    (the BUYER). Returns EVERY order they placed regardless of status: paid,
+    pending, refunded, partially refunded, cancelled, failed, and gifts they
+    sent. This is the Amazon/Kindle-style receipt archive — nothing is hidden
+    except internal admin hygiene records (archived / test-tagged)."""
+    from jose import jwt, JWTError
+
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required")
+    token = auth_header.split(" ")[1]
+    try:
+        SECRET_KEY = os.getenv("JWT_SECRET_KEY", "soul-food-secret-key-change-in-production-2024")
+        payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        user_id = payload.get("sub")
+        user_email = payload.get("email")
+    except JWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid user")
+
+    user = await db.users.find_one({"id": user_id}, {"_id": 0, "email": 1})
+    if user:
+        user_email = user.get("email")
+
+    # Buyer-centric: orders the user PLACED (received gifts live in Library, not
+    # the buyer's order history — matching Amazon/Kindle behavior).
+    or_clauses = [{"user_id": user_id}]
+    if user_email:
+        or_clauses.append({"customer_email": user_email})
+
+    txns = await db.payment_transactions.find(
+        {"$or": or_clauses}, {"_id": 0}
+    ).sort("created_at", -1).limit(200).to_list(200)
+
+    def _display_status(t):
+        refund = (t.get("refund_status") or "").strip().lower()
+        status = (t.get("status") or "").strip().lower()
+        pay = (t.get("payment_status") or "").strip().lower()
+        if refund in ("refunded",):
+            return "refunded"
+        if refund in ("partial_refund", "partially_refunded"):
+            return "partial_refund"
+        if refund == "requested":
+            return "refund_requested"
+        if status in ("cancelled", "canceled"):
+            return "cancelled"
+        if status == "revoked":
+            return "revoked"
+        if status == "expired" or pay == "expired":
+            return "expired"
+        if pay == "paid":
+            return "completed"
+        if pay == "pending":
+            return "pending"
+        return status or pay or "unknown"
+
+    orders_out = []
+    seen = set()
+    for t in txns:
+        # Skip internal admin hygiene records — not customer-facing.
+        if t.get("is_archived") or (t.get("tag") or "").strip().lower() == "test":
+            continue
+        order_number = t.get("order_number") or t.get("order_id") or t.get("session_id")
+        if not order_number or order_number in seen:
+            continue
+        seen.add(order_number)
+
+        purchase_type = (t.get("purchase_type") or "self").strip().lower()
+        created = t.get("created_at")
+        items = [{
+            "product_id": it.get("product_id") or it.get("id"),
+            "name": it.get("name", "Soul Food Product"),
+            "quantity": it.get("quantity", 1),
+            "price": it.get("salePrice", it.get("price", 0)),
+            "isSmallGroupBundle": it.get("isSmallGroupBundle", False),
+            "bundle_contents": it.get("bundle_contents"),
+        } for it in t.get("items", [])]
+
+        orders_out.append({
+            "order_number": order_number,
+            "created_at": created.isoformat() if hasattr(created, "isoformat") else str(created or ""),
+            "total_amount": t.get("total_amount", 0),
+            "payment_status": t.get("payment_status", ""),
+            "refund_status": t.get("refund_status"),
+            "status": t.get("status", ""),
+            "display_status": _display_status(t),
+            "purchase_type": purchase_type,
+            "is_gift": purchase_type == "gift",
+            "digital_recipient_email": t.get("digital_recipient_email") if purchase_type == "gift" else None,
+            "items": items,
+            "items_count": len(items),
+            "downloads_count": t.get("downloads_count", 0),
+        })
+
+    return {"orders": orders_out, "total": len(orders_out)}
 
 
 # =============================================================================

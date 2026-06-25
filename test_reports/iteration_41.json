@@ -1,0 +1,23 @@
+{
+  "summary": "Frontend-only verification of My Library vs Order History separation. Admin (overflowharvest@gmail.com) login + skip-2FA worked. /my-library 'My Content' card shows exactly 10 active entitlements (badges: 1 Processing, 1 Awaiting fulfillment, 8 Available) with the new subtitle 'Active content you own and can access right now.' plus header order-history-btn and in-card library-order-history-link both navigating to /order-history. /order-history (NEW) renders exactly 14 order rows (11 Pending + 3 Completed) with order-row-<num>, order-status-<status>, order-total-<num> testids and the subtitle 'A complete, permanent record of every order you've placed...' Bidirectional nav works: back-to-library-btn and go-to-library-link both return to /my-library; order-history-btn and library-order-history-link both go to /order-history. SEPARATION proven: 11 Pending orders appear in Order History but NONE of them are usable items in Library (Library count 10 != History count 14).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "MyLibrary.js is 842 lines — consider splitting into smaller components (header, content card, redeem card, rewards card) for maintainability. Threshold >700 lines per code review guidelines.",
+    "All required data-testids are present and stable. No hardcoded URLs detected in OrderHistory.js/MyLibrary.js navigation."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "skipped", "frontend": "100%"},
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123! (skip-2fa-link). Token key: soul_food_token. Email input requires click+type (not fill).",
+  "seed_data_creation": "None. No data mutated.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Library/Order History separation feature verified end-to-end with admin account. Library shows 10 active entitlements (mix of Processing/Awaiting/Available statuses, all owned/active per backend _is_active_entitlement_txn filter). Order History shows full 14-order record incl. 11 Pending (which are correctly NOT in Library, proving separation). All testids work: status-badge-<idx>, order-row-<num>, order-status-<status>, order-total-<num>, order-history-btn, library-order-history-link, back-to-library-btn, go-to-library-link. Login: click+type the 'Enter email or username' input, then password, submit, then click [data-testid='skip-2fa-link']. Token in localStorage as 'soul_food_token'.",
+  "rca of the issue": "N/A - feature working as designed."
+}

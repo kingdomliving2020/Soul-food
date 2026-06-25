@@ -8,7 +8,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { 
   Book, Download, Gift, Shield, User, LogOut, 
   Star, ChevronRight, Loader2, Award, Settings,
-  Music, Play, Pause, Headphones, TicketCheck, RotateCcw, Lock, Clock
+  Music, Play, Pause, Headphones, TicketCheck, RotateCcw, Lock, Clock, Receipt
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -265,6 +265,15 @@ const MyLibrary = () => {
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
+                onClick={() => navigate('/order-history')}
+                className="hidden sm:flex"
+                data-testid="order-history-btn"
+              >
+                <Receipt className="w-4 h-4 mr-2" />
+                Order History
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => navigate('/quick-order')}
                 className="hidden sm:flex"
               >
@@ -348,10 +357,21 @@ const MyLibrary = () => {
             {/* My Purchases */}
             <Card className="shadow-lg">
               <CardHeader className="border-b bg-gradient-to-r from-slate-50 to-purple-50">
-                <CardTitle className="flex items-center gap-2">
-                  <Book className="w-5 h-5 text-purple-600" />
-                  My Content
+                <CardTitle className="flex items-center justify-between gap-2">
+                  <span className="flex items-center gap-2">
+                    <Book className="w-5 h-5 text-purple-600" />
+                    My Content
+                  </span>
+                  <button
+                    onClick={() => navigate('/order-history')}
+                    className="text-xs font-medium text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+                    data-testid="library-order-history-link"
+                  >
+                    <Receipt className="w-3.5 h-3.5" />
+                    Order History
+                  </button>
                 </CardTitle>
+                <p className="text-xs text-slate-500 mt-1">Active content you own and can access right now.</p>
               </CardHeader>
               <CardContent className="p-6">
                 {purchases.length === 0 ? (
