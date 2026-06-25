@@ -1,0 +1,40 @@
+{
+  "summary": "Admin & Instructor Toolbox UIs fully verified end-to-end. ADMIN /admin/instructor-content: admin-toolbox-page renders with all 6 default sections (maps, answer-keys, question-banks, offline-game-packs, teaching-resources, facilitation-notes), each marked 'core' with no delete button. Create/Rename/Toggle/Reorder/Delete on custom section all work (TEST_Custom_Section -> renamed -> moved up -> deleted). Upload publisher asset works and shows in assets-list with 'publisher' badge; Assign Existing modal lists File Manager files (100 shown) and assign-btn-* assigns; remove-asset-* removes. INSTRUCTOR /instructor-toolbox: Overview shows all 6 managed sections PLUS Game Setup + Achievement Awards (8 cards). Disabled section (verified by disabling Facilitation Notes) is correctly HIDDEN from instructor. Answer Keys section renders section-assets-answer-keys with 'Resources' heading, publisher file, working toolbox-asset-download-*, and 'My Class Resources' upload area. Publisher rows on instructor side have NO remove button (only own rows do). Maps section keeps interactive maps-section AND shows section-assets-maps below. Question Banks keeps question-bank-section. Instructor can upload via my-resource-upload-* (file appears as 'My Class Resources') and delete via toolbox-asset-remove-*. Game Setup shows grinch-game-card + passport-game-card; Achievement Awards shows order-medallions-btn + certificates-preview-banner. No audio testids anywhere. All test data cleaned up (custom section deleted, publisher assets removed, Facilitation Notes re-enabled).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "InstructorToolbox.js is 1486 lines (was 1339 before this feature) — past the >700 line threshold; recommend splitting renderSectionAssets / renderMaps / renderQuestionBank / renderCertificates into focused modules.",
+    "AdminToolbox.js uses inline closures with eslint-disable-next-line on useCallback deps — works but suggest fixing dependency arrays properly for fetchSections/fetchAssets/load.",
+    "AdminToolbox.AssignModal lists max 100 files with hardcoded limit and only client-side filter via search query param — pagination is not implemented; could be an issue once the file count grows past 100. Not blocking."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (skipped per request)", "frontend": "100%"},
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123! (use form button[type='submit'], then click skip-2fa-link). Instructor: test_instructor_a54bf3e1@example.com / Inst123! (no 2FA).",
+  "seed_data_creation": "Temporarily created: (1) custom section 'TEST_Custom_Section' (renamed to 'TEST_Renamed'), (2) uploaded TEST_AnswerKey.txt publisher asset, (3) assigned an existing File Manager file, (4) uploaded TEST_InstructorPrivate.txt as instructor private resource. ALL CLEANED UP at end of run: custom section deleted, publisher assets removed from Maps/Answer Keys, instructor private file deleted, Facilitation Notes re-enabled.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Admin Toolbox at /admin/instructor-content (route 'instructor-content/*' in AdminConsole). Section keys are slugged from title (e.g. 'TEST_Custom_Section' -> 'test-custom-section'). Default sections have is_default=true and render a 'core' badge instead of a delete button. Rename uses Enter or blur; rename-input-<key> testid. Upload uses hidden <input type='file' data-testid='upload-asset-input'>; trigger via set_input_files. Assign modal renders 'assign-file-<id>' rows with 'assign-btn-<id>' buttons.\n\nInstructor: tabs are clicked via card click (h3:has-text). Returning to overview uses 'Back to Toolbox Overview' link. section-assets-<key> wraps both Publisher 'Resources' section + 'My Class Resources' upload area for every managed section. Publisher rows have NO toolbox-asset-remove-* (only own rows do). For Maps the maps-section AND section-assets-maps both coexist; same for Question Banks (question-bank-section + section-assets-question-banks). Download click uses authed fetch->blob (no <a href>), so just verify click does not error.\n\nVerified facts: 6 default sections seeded on first GET. Disabled sections are hidden from /api/instructor/toolbox/sections (instructor overview reflects this immediately on reload).",
+  "verified_acceptance_criteria": {
+    "admin_page_loads": "PASS - admin-toolbox-page + 6 default section-row-* + toolbox-assets-panel all present",
+    "admin_section_crud": "PASS - create/rename/disable+enable/reorder all work; default sections have no delete; custom section delete works",
+    "admin_upload_asset": "PASS - upload-asset-input accepts file, asset appears in assets-list with 'publisher' badge",
+    "admin_assign_existing": "PASS - assign-existing-btn opens assign-modal listing files; assign-btn-<id> assigns and asset appears",
+    "admin_remove_asset": "PASS - remove-asset-<id> removes the asset",
+    "instructor_overview_cards": "PASS - 8 cards visible: Maps & Visual Aids, Answer Keys, Question Banks, Offline Game Packs, Teaching Resources, Facilitation Notes, Game Setup, Achievement Awards",
+    "instructor_disabled_section_hidden": "PASS - disabling Facilitation Notes in admin hides it from instructor overview on reload",
+    "instructor_answer_keys_publisher_view": "PASS - section-assets-answer-keys + 'Resources' heading + toolbox-asset-download-* button + download click no-error",
+    "instructor_maps_preserved": "PASS - maps-section AND section-assets-maps both render",
+    "instructor_question_bank_preserved": "PASS - question-bank-section renders",
+    "instructor_upload_private": "PASS - add-my-resource-<key> + my-resource-upload-<key> accept file, appears under 'My Class Resources'",
+    "instructor_delete_own_only": "PASS - toolbox-asset-remove-* present only for own rows; publisher rows have no remove button",
+    "no_audio_in_toolbox": "PASS - 0 elements matching [data-testid*='audio']",
+    "game_setup_intact": "PASS - grinch-game-card + passport-game-card both present",
+    "achievement_awards_intact": "PASS - order-medallions-btn + certificates-preview-banner both present"
+  }
+}

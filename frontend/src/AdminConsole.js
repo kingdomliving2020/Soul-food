@@ -13,6 +13,7 @@ import { Toaster, toast } from 'sonner';
 import { safeJson } from './lib/safeFetch';
 import AdminCodesRedemptions from './AdminCodesRedemptions';
 import AdminProductsManager from './AdminProductsManager';
+import AdminToolbox from './AdminToolbox';
 import AdminCoupons from './AdminCoupons';
 
 /**
@@ -75,7 +76,7 @@ const navItems = [
   { path: '/admin', icon: LayoutDashboard, label: 'Dashboard', exact: true },
   { path: '/admin/files', icon: Upload, label: 'File Manager' },
   { path: '/admin/content', icon: FileText, label: 'Content Manager' },
-  { path: '/admin/instructor-content', icon: BookOpen, label: 'Instructor Content' },
+  { path: '/admin/instructor-content', icon: BookOpen, label: 'Instructor Toolbox' },
   { path: '/admin/media', icon: Image, label: 'Media Library' },
   { path: '/admin/products', icon: Package, label: 'Products & Inventory' },
   { path: '/admin/orders', icon: ShoppingCart, label: 'Orders' },
@@ -2073,7 +2074,7 @@ const AdminConsole = () => {
               <Routes>
                 <Route index element={<Dashboard />} />
                 <Route path="content/*" element={<ContentManager />} />
-                <Route path="instructor-content/*" element={<InstructorContentManager />} />
+                <Route path="instructor-content/*" element={<AdminToolbox />} />
                 <Route path="media/*" element={<MediaLibrary />} />
                 <Route path="products/*" element={<AdminProductsManager />} />
                 <Route path="orders/*" element={<OrdersManager />} />

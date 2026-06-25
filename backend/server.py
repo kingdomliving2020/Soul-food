@@ -177,6 +177,14 @@ try:
 except Exception as e:
     print(f"⚠️ Could not load instructor routes: {e}")
 
+try:
+    from routes.toolbox_routes import admin_router as toolbox_admin_router, instr_router as toolbox_instr_router
+    app.include_router(toolbox_admin_router)
+    app.include_router(toolbox_instr_router)
+    print("✅ Toolbox management routes loaded")
+except Exception as e:
+    print(f"⚠️ Could not load toolbox routes: {e}")
+
 # Static file serving for content images/maps
 from fastapi.staticfiles import StaticFiles
 content_images_dir = Path("/app/backend/content/images")

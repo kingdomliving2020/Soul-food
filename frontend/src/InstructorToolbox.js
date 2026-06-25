@@ -19,7 +19,8 @@ import { toast, Toaster } from 'sonner';
 import { 
   BookOpen, Key, Users, Lightbulb, Gamepad2, FileText, 
   Lock, ChevronRight, Download, Eye, ArrowLeft, Search,
-  GraduationCap, ClipboardList, Trophy, BookMarked, Map, Image
+  GraduationCap, ClipboardList, Trophy, BookMarked, Map, Image,
+  Folder, Trash2, Upload, Loader2
 } from 'lucide-react';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
@@ -41,6 +42,9 @@ const InstructorToolbox = () => {
   const [bankTotal, setBankTotal] = useState(0);
   const [bankLoading, setBankLoading] = useState(false);
   const [selectedMapIdx, setSelectedMapIdx] = useState(null);
+  const [managedSections, setManagedSections] = useState([]);
+  const [sectionAssets, setSectionAssets] = useState([]);
+  const [sectionAssetsLoading, setSectionAssetsLoading] = useState(false);
   
   // Game filtering state - which lessons have been covered
   const [coveredLessons, setCoveredLessons] = useState(() => {
@@ -75,6 +79,137 @@ const InstructorToolbox = () => {
     };
     load();
   }, [activeTab, bankFilter, bankPage]);
+
+  // Load assigned resources when a managed section opens
+  const isManagedSection = (key) => managedSections.some(s => s.key === key);
+  useEffect(() => {
+    if (!isManagedSection(activeTab)) { setSectionAssets([]); return; }
+    const token = localStorage.getItem('soul_food_token');
+    const load = async () => {
+      setSectionAssetsLoading(true);
+      try {
+        const res = await fetch(`${API_URL}/api/instructor/toolbox/sections/${activeTab}/assets`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setSectionAssets(data.assets || []);
+        }
+      } catch (e) { /* ignore */ }
+      finally { setSectionAssetsLoading(false); }
+    };
+    load();
+  }, [activeTab, managedSections]);
+
+  const reloadSectionAssets = async (key) => {
+    const token = localStorage.getItem('soul_food_token');
+    try {
+      const res = await fetch(`${API_URL}/api/instructor/toolbox/sections/${key}/assets`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) setSectionAssets((await res.json()).assets || []);
+    } catch (e) { /* ignore */ }
+  };
+
+  const downloadAsset = async (asset) => {
+    const token = localStorage.getItem('soul_food_token');
+    try {
+      const res = await fetch(`${API_URL}/api/instructor/toolbox/assets/${asset.id}/download`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (!res.ok) { toast.error('Download failed'); return; }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = asset.filename || asset.label || 'download';
+      document.body.appendChild(a); a.click(); a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (e) { toast.error('Download failed'); }
+  };
+
+  const uploadMyResource = async (sectionKey, file) => {
+    const token = localStorage.getItem('soul_food_token');
+    const fd = new FormData();
+    fd.append('section_key', sectionKey);
+    fd.append('file', file);
+    try {
+      const res = await fetch(`${API_URL}/api/instructor/toolbox/assets/upload`, {
+        method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: fd
+      });
+      if (res.ok) { toast.success('Resource added to your class'); reloadSectionAssets(sectionKey); }
+      else { const e = await res.json().catch(() => ({})); toast.error(e.detail || 'Upload failed'); }
+    } catch (e) { toast.error('Upload failed'); }
+  };
+
+  const deleteMyResource = async (sectionKey, assetId) => {
+    const token = localStorage.getItem('soul_food_token');
+    try {
+      const res = await fetch(`${API_URL}/api/instructor/toolbox/assets/${assetId}`, {
+        method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) { toast.success('Removed'); reloadSectionAssets(sectionKey); }
+      else { toast.error('Could not remove'); }
+    } catch (e) { toast.error('Could not remove'); }
+  };
+
+  const renderSectionAssets = (section) => {
+    const mine = sectionAssets.filter(a => a.is_mine);
+    const publisher = sectionAssets.filter(a => a.lane === 'publisher');
+    const AssetCard = ({ a, removable }) => (
+      <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-slate-50" data-testid={`toolbox-asset-${a.id}`}>
+        <div className="w-9 h-9 rounded bg-slate-100 flex items-center justify-center flex-shrink-0">
+          <FileText size={16} className="text-slate-500" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium text-slate-800 truncate">{a.label}</p>
+          <p className="text-[11px] text-slate-400">{a.filename}</p>
+        </div>
+        <Button size="sm" variant="outline" onClick={() => downloadAsset(a)} data-testid={`toolbox-asset-download-${a.id}`}>
+          <Download className="w-4 h-4 mr-1" /> <span className="hidden sm:inline">Download</span>
+        </Button>
+        {removable && (
+          <button onClick={() => deleteMyResource(section.key, a.id)} className="p-1.5 text-slate-400 hover:text-red-600" title="Remove" data-testid={`toolbox-asset-remove-${a.id}`}>
+            <Trash2 size={15} />
+          </button>
+        )}
+      </div>
+    );
+    return (
+      <div className="space-y-5" data-testid={`section-assets-${section.key}`}>
+        {/* Publisher resources */}
+        <div>
+          <h4 className="text-sm font-bold text-slate-700 mb-2">Resources</h4>
+          {sectionAssetsLoading ? (
+            <div className="flex justify-center py-8"><Loader2 className="w-5 h-5 animate-spin text-slate-400" /></div>
+          ) : publisher.length === 0 ? (
+            <p className="text-sm text-slate-400 py-4" data-testid={`section-no-publisher-${section.key}`}>No resources have been published to this section yet.</p>
+          ) : (
+            <div className="space-y-2">{publisher.map(a => <AssetCard key={a.id} a={a} removable={false} />)}</div>
+          )}
+        </div>
+
+        {/* Instructor's own resources */}
+        <div className="border-t pt-4">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-sm font-bold text-slate-700">My Class Resources</h4>
+            <label className="inline-flex">
+              <input type="file" className="hidden" data-testid={`my-resource-upload-${section.key}`}
+                onChange={e => { if (e.target.files?.[0]) { uploadMyResource(section.key, e.target.files[0]); e.target.value = ''; } }} />
+              <span className="inline-flex items-center cursor-pointer bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-md px-3 py-1.5" data-testid={`add-my-resource-${section.key}`}>
+                <Upload size={14} className="mr-1.5" /> Add my resource
+              </span>
+            </label>
+          </div>
+          <p className="text-[11px] text-slate-400 mb-2">Private to your classes — only you can see and manage these.</p>
+          {mine.length === 0 ? (
+            <p className="text-sm text-slate-400 py-2" data-testid={`section-no-mine-${section.key}`}>You haven't added any resources to this section.</p>
+          ) : (
+            <div className="space-y-2">{mine.map(a => <AssetCard key={a.id} a={a} removable={true} />)}</div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   // Curriculum structure - all series and their lessons
   const curriculumStructure = {
@@ -221,40 +356,40 @@ const InstructorToolbox = () => {
           setBankStats(statsData);
         }
       } catch (e) { /* stats load skipped */ }
+
+      // Load admin-managed toolbox sections (data-driven)
+      try {
+        const secRes = await fetch(`${API_URL}/api/instructor/toolbox/sections`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (secRes.ok) {
+          const secData = await secRes.json();
+          setManagedSections(secData.sections || []);
+        }
+      } catch (e) { /* sections load skipped */ }
     } catch (err) {
       console.error('Failed to load instructor content:', err);
     }
   };
 
-  // Toolbox sections — ONLY content/assets that actually exist and are usable.
-  // Placeholder areas (answer keys w/o files, facilitation notes, roster,
-  // teaching resource downloads) are intentionally hidden until source content
-  // is wired. Audio Library lives in My Library, not here.
+  // Toolbox sections are now ADMIN-MANAGED (data-driven). We render the
+  // admin-configured sections from the API, then append the two built-in
+  // functional tools (Game Setup wizard, Achievement Awards). Audio stays in
+  // My Library, not here.
+  const SECTION_ICONS = { Map, Key, BookMarked, Gamepad2, FileText, Lightbulb, Folder, Image, Trophy, Users, ClipboardList };
+  const SECTION_COLORS = ['bg-teal-500', 'bg-emerald-500', 'bg-indigo-500', 'bg-cyan-500', 'bg-rose-500', 'bg-amber-500', 'bg-sky-500', 'bg-fuchsia-500'];
   const toolboxSections = [
-    {
-      id: 'maps',
-      title: 'Maps & Visual Aids',
-      icon: Map,
-      description: 'Biblical maps for bonus rounds, daily doubles, and classroom use',
-      color: 'bg-teal-500',
-      badge: gameMaps.length > 0 ? `${gameMaps.length} Maps` : null
-    },
-    {
-      id: 'question-bank',
-      title: 'Question Bank',
-      icon: BookMarked,
-      description: 'Browse the trivia & Jeopardy-style questions parsed from across the lessons',
-      color: 'bg-indigo-500',
-      badge: bankStats?.total_questions ? `${bankStats.total_questions} Questions` : null
-    },
-    {
-      id: 'game-packs',
-      title: 'Offline Game Files',
-      icon: Image,
-      description: 'Printable Grid Iron bingo cards, Passport Trek sheets & game packs',
-      color: 'bg-cyan-500',
-      badge: '3 Files'
-    },
+    ...managedSections.map((s, i) => ({
+      id: s.key,
+      title: s.title,
+      icon: SECTION_ICONS[s.icon] || Folder,
+      description: s.description,
+      color: SECTION_COLORS[i % SECTION_COLORS.length],
+      special_view: s.special_view,
+      badge: s.key === 'maps' && gameMaps.length ? `${gameMaps.length} Maps`
+        : s.key === 'question-banks' && bankStats?.total_questions ? `${bankStats.total_questions} Questions`
+        : null
+    })),
     {
       id: 'games',
       title: 'Game Setup',
@@ -627,6 +762,19 @@ const InstructorToolbox = () => {
   };
 
   const renderContent = () => {
+    // Managed (admin-configured) section: render its built-in special view (if
+    // any) plus the assigned publisher + instructor resources.
+    const section = managedSections.find(s => s.key === activeTab);
+    if (section) {
+      return (
+        <div className="space-y-6">
+          {section.special_view === 'maps_gallery' && renderMaps()}
+          {section.special_view === 'question_bank' && renderQuestionBank()}
+          {section.special_view === 'offline_games' && renderGamePacks()}
+          {renderSectionAssets(section)}
+        </div>
+      );
+    }
     switch (activeTab) {
       case 'answer-keys':
         return (
