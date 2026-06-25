@@ -1359,7 +1359,10 @@ PRODUCTS = {
         "description": "Smooth-write pen for journaling and workbook activities—perfect companion for daily study and note-taking. Stylus with light.",
         "list_price": 9.99,
         "sale_price": 9.99,
-        "currency": "usd"
+        "currency": "usd",
+        "type": "physical",
+        "physical": True,
+        "no_digital_fulfillment": True
     },
     "pen_standard": {
         "name": "SOFU Journal Pen (Branded)",
@@ -1368,7 +1371,10 @@ PRODUCTS = {
         "description": "Smooth-write pen for journaling and workbook activities—perfect companion for daily study and note-taking.",
         "list_price": 7.99,
         "sale_price": 7.99,
-        "currency": "usd"
+        "currency": "usd",
+        "type": "physical",
+        "physical": True,
+        "no_digital_fulfillment": True
     },
     "bookmarks_set": {
         "name": "Magnetic Bookmarks (Set of 3)",
@@ -1377,7 +1383,10 @@ PRODUCTS = {
         "description": "Magnetic page markers to keep your place—durable, gift-able, and ideal for quick returns to key verses and activities.",
         "list_price": 6.99,
         "sale_price": 6.99,
-        "currency": "usd"
+        "currency": "usd",
+        "type": "physical",
+        "physical": True,
+        "no_digital_fulfillment": True
     },
     "bookmark_leather": {
         "name": "Magnetic Leather Bookmarks",
@@ -1386,7 +1395,10 @@ PRODUCTS = {
         "description": "Magnetic page markers to keep your place—durable, giftable, and ideal for quick returns to key verses and activities.",
         "list_price": 4.99,
         "sale_price": 4.99,
-        "currency": "usd"
+        "currency": "usd",
+        "type": "physical",
+        "physical": True,
+        "no_digital_fulfillment": True
     },
     "study_kit": {
         "name": "Study Kit Add-On (Pen + Bookmark Set)",
@@ -1395,7 +1407,10 @@ PRODUCTS = {
         "description": "Quick study add-on for your workbook—includes one journal pen plus a 3-pack of magnetic bookmarks.",
         "list_price": 9.99,
         "sale_price": 9.99,
-        "currency": "usd"
+        "currency": "usd",
+        "type": "physical",
+        "physical": True,
+        "no_digital_fulfillment": True
     },
     
     # ==================== FREE / BONUS LESSONS ====================
