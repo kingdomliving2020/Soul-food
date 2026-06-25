@@ -951,18 +951,7 @@ const QuickOrder = () => {
         <PalmSundayBanner />
 
         {/* ===================== SMALL GROUP BUNDLE (TOP) ===================== */}
-        <section className="mb-12 relative overflow-hidden rounded-2xl px-5 py-8 sm:px-7 sm:py-10 border border-emerald-100 bg-emerald-50/40" data-testid="small-group-section">
-          {/* Subtle background texture — very low opacity, decorative only */}
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 pointer-events-none opacity-[0.12]"
-            style={{
-              backgroundImage: "url('https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=1600&h=900&fit=crop&crop=center')",
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}
-          />
-          <div className="relative">
+        <section className="mb-12" data-testid="small-group-section">
           <div className="flex items-center gap-3 mb-4">
             <h3 className="text-2xl font-bold text-slate-800">Built for Small Groups</h3>
             <Badge className="bg-emerald-600 text-white text-xs px-2 py-0.5">Recommended</Badge>
@@ -981,7 +970,6 @@ const QuickOrder = () => {
                 Need a larger circle? Add booklets to your cart after the bundle — each one is automatically <strong>$1 off</strong>, no coupon needed.
               </p>
             </div>
-          </div>
           </div>
         </section>
 
@@ -1953,11 +1941,11 @@ const QuickOrder = () => {
               return (
                 <Card key={game.id} data-testid={`game-card-${game.id}`} className="shadow-lg hover:shadow-xl transition-shadow flex flex-col h-full relative">
                   <CardContent className="p-4 flex flex-col flex-1">
-                    <div className="relative">
+                    <div className="relative w-full h-52 mb-3 rounded-lg bg-white flex items-center justify-center overflow-hidden">
                       <img
                         src={img}
                         alt={game.name}
-                        className={`w-full h-32 ${game.id === 'game-passport-trek' ? 'object-contain p-3 scale-90' : 'object-contain p-1'} rounded-lg mb-3 bg-white ${pkg.preOrder ? 'opacity-90' : ''}`}
+                        className={`max-w-[88%] max-h-[88%] object-contain ${pkg.preOrder ? 'opacity-90' : ''}`}
                       />
                       <div className="absolute top-2 left-2">
                         <span className={`text-white text-[10px] font-bold px-2 py-1 rounded ${pkg.preOrder ? 'bg-amber-500' : 'bg-emerald-600'}`}>
