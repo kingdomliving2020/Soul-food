@@ -1,0 +1,28 @@
+{
+  "summary": "Soul Food Admin Account & Order Hygiene controls verified end-to-end through a REAL UI login (not stale bundle). Logged in via /auth form using identifier=overflowharvest@gmail.com + password Admin123!, hit the 2FA setup gate, clicked data-testid='skip-2fa-link' (Continue without 2FA), confirmed soul_food_token (len=213) was written to localStorage, then exercised every required path. Orders: default visibility=Active shows 71 rows; Test=0; Archived=0; All=71 (correct slicing). Selecting an active order (SF-2026-ARDS7) made data-testid='admin-orders-bulk-bar' appear with archive button; clicking admin-orders-bulk-archive-btn + accepting confirm dialog moved it to Archived where data-testid='order-archived-badge-SF-2026-ARDS7' rendered; admin-orders-bulk-restore-btn restored it (Active back to 71). Users: default filter=Active shows 43; Archived=1 (badge rendered, data-testid='user-archived-badge-...'); All=44 (matches backend 43+1=44). Selecting a non-admin user (user_8cd982452de5, admin overflowharvest@gmail.com explicitly skipped in selection loop) showed data-testid='users-bulk-bar', users-bulk-archive-btn archived it (badge appeared in Archived view), and users-bulk-restore-btn brought it back to the Active list (43 again). Admin account was NOT touched, all archive/tag changes were reverted — dataset is clean.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      { "screen": "/admin/orders and /admin/users", "issues": ["React 'Encountered two children with the same key' warning fires on EVERY render (dozens of times) — also flagged in iteration_39. Same root cause likely: duplicate keys in the orders or users list (or a parent layout). Affects both /admin/orders (where iter39 saw users-only) and /admin/orders. Not a functional blocker but should be deduped / unique-keyed."] }
+    ]
+  },
+  "test_report_links": ["/app/test_reports/iteration_40.json"],
+  "action_items": [
+    "(Optional, carried from iter39) Fix duplicate React keys on /admin/orders and /admin/users list rendering. Hygiene controls themselves are fully functional and reversible."
+  ],
+  "critical_code_review_comments": [
+    "AdminConsole.js is 2096 lines — past the 700-line guideline. Same recommendation as previous iterations (split Users / Orders / Codes / Audit sections into separate modules).",
+    "Bulk-archive confirmation uses window.confirm() (visible by dialog accept in test). Consider a shadcn AlertDialog for consistency with rest of admin UI.",
+    "Same duplicate-key React warning seen in iter39 still present — dedupe order/user lists by id before render."
+  ],
+  "updated_files": [],
+  "success_rate": { "backend": "n/a (skipped per request)", "frontend": "100% (17/17 assertions PASS: login, 2FA skip, token persistence, default filters Active for orders & users, Active/Test/Archived/All slices for orders, Active/Archived/All for users, bulk-bar visibility, bulk archive + badge render, bulk restore + active-count restored, on BOTH orders and users)" },
+  "test_credentials": "Admin overflowharvest@gmail.com / Admin123! (POST /api/auth/login with {identifier, password}; requires_2fa_setup=true so click data-testid='skip-2fa-link' after first redirect).",
+  "seed_data_creation": "None persisted. SF-2026-ARDS7 temporarily archived then restored. User user_8cd982452de5 temporarily archived then restored. The 1 pre-existing archived seed user from iteration 39 still exists in DB and is correctly hidden from the default Active view (43 visible, 44 total).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Hygiene controls (orders + users) are confirmed working end-to-end through the live authenticated UI on https://gifting-checkout.preview.emergentagent.com. Auth flow: POST /api/auth/login with {identifier,password}, sets data.requires_2fa_setup=true for the admin which routes to /2fa-setup — click [data-testid='skip-2fa-link'] to proceed; token is already in localStorage('soul_food_token') by then. Backend counts match: orders active=71/test=0/archived=0; users active=43/archived=1/all=44. Only standing issue is the cosmetic React duplicate-key warning (carried from iter39).",
+  "rca of the issue": "n/a — no functional bugs found. Previous stale-preview-bundle 401 issue confirmed gone: a real form login successfully writes soul_food_token and subsequent /api/admin/* calls return 200 with the expected slices."
+}
