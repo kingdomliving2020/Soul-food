@@ -35,6 +35,11 @@ const InstructorToolbox = () => {
   const [roster, setRoster] = useState([]);
   const [gameMaps, setGameMaps] = useState([]);
   const [bankStats, setBankStats] = useState(null);
+  const [bankQuestions, setBankQuestions] = useState([]);
+  const [bankFilter, setBankFilter] = useState({ game_type: '', character: '' });
+  const [bankPage, setBankPage] = useState(1);
+  const [bankTotal, setBankTotal] = useState(0);
+  const [bankLoading, setBankLoading] = useState(false);
   const [selectedMapIdx, setSelectedMapIdx] = useState(null);
   
   // Game filtering state - which lessons have been covered
@@ -49,6 +54,27 @@ const InstructorToolbox = () => {
   useEffect(() => {
     localStorage.setItem('sf_covered_lessons', JSON.stringify(coveredLessons));
   }, [coveredLessons]);
+
+  // Load Question Bank when its tab opens or filters/page change
+  useEffect(() => {
+    if (activeTab !== 'question-bank') return;
+    const load = async () => {
+      setBankLoading(true);
+      try {
+        const params = new URLSearchParams({ page: String(bankPage), per_page: '20' });
+        if (bankFilter.game_type) params.append('game_type', bankFilter.game_type);
+        if (bankFilter.character) params.append('character', bankFilter.character);
+        const res = await fetch(`${API_URL}/api/trivia/questions/browse?${params.toString()}`);
+        if (res.ok) {
+          const data = await res.json();
+          setBankQuestions(data.questions || []);
+          setBankTotal(data.total || 0);
+        }
+      } catch (e) { /* ignore */ }
+      finally { setBankLoading(false); }
+    };
+    load();
+  }, [activeTab, bankFilter, bankPage]);
 
   // Curriculum structure - all series and their lessons
   const curriculumStructure = {
@@ -200,46 +226,11 @@ const InstructorToolbox = () => {
     }
   };
 
-  // Toolbox sections
+  // Toolbox sections — ONLY content/assets that actually exist and are usable.
+  // Placeholder areas (answer keys w/o files, facilitation notes, roster,
+  // teaching resource downloads) are intentionally hidden until source content
+  // is wired. Audio Library lives in My Library, not here.
   const toolboxSections = [
-    {
-      id: 'answer-keys',
-      title: 'Answer Keys',
-      icon: Key,
-      description: 'Complete answer guides for all lessons',
-      color: 'bg-emerald-500',
-      badge: answerKeys.length > 0 ? `${answerKeys.length} Available` : null
-    },
-    {
-      id: 'facilitation',
-      title: 'Facilitation Notes',
-      icon: Lightbulb,
-      description: 'Teaching tips, discussion prompts, and group activities',
-      color: 'bg-amber-500',
-      badge: facilitationNotes.length > 0 ? `${facilitationNotes.length} Guides` : null
-    },
-    {
-      id: 'roster',
-      title: 'Group Roster',
-      icon: Users,
-      description: 'Manage your study group members and track progress',
-      color: 'bg-blue-500',
-      badge: roster.length > 0 ? `${roster.length} Members` : null
-    },
-    {
-      id: 'games',
-      title: 'Game Setup',
-      icon: Gamepad2,
-      description: 'How to run Grid Iron Challenge and Passport Trek with your group',
-      color: 'bg-purple-500'
-    },
-    {
-      id: 'resources',
-      title: 'Teaching Resources',
-      icon: BookMarked,
-      description: 'Printables, slides, and supplementary materials',
-      color: 'bg-rose-500'
-    },
     {
       id: 'maps',
       title: 'Maps & Visual Aids',
@@ -249,18 +240,33 @@ const InstructorToolbox = () => {
       badge: gameMaps.length > 0 ? `${gameMaps.length} Maps` : null
     },
     {
+      id: 'question-bank',
+      title: 'Question Bank',
+      icon: BookMarked,
+      description: 'Browse the trivia & Jeopardy-style questions parsed from across the lessons',
+      color: 'bg-indigo-500',
+      badge: bankStats?.total_questions ? `${bankStats.total_questions} Questions` : null
+    },
+    {
       id: 'game-packs',
       title: 'Offline Game Files',
       icon: Image,
-      description: 'Printable Grid Iron bingo cards, Passport Trek sheets & map reference',
+      description: 'Printable Grid Iron bingo cards, Passport Trek sheets & game packs',
       color: 'bg-cyan-500',
-      badge: '4 Files'
+      badge: '3 Files'
+    },
+    {
+      id: 'games',
+      title: 'Game Setup',
+      icon: Gamepad2,
+      description: 'How to run Grid Iron Challenge and Passport Trek with your group',
+      color: 'bg-purple-500'
     },
     {
       id: 'certificates',
       title: 'Achievement Awards',
       icon: Trophy,
-      description: 'Print certificates and order medallions for your group',
+      description: 'Order achievement medallions for your group (printable certificates coming soon)',
       color: 'bg-orange-500'
     }
   ];
@@ -455,16 +461,6 @@ const InstructorToolbox = () => {
       color: 'blue',
       icon: GraduationCap,
       thumb: '/covers/game-passport-ae.png'
-    },
-    {
-      id: 'map-reference',
-      title: 'Map & Journey Reference Index',
-      subtitle: 'Final reference index for all biblical maps in the Instructor Series',
-      file: 'map-journey-reference-index.docx',
-      pages: 'Reference doc',
-      color: 'teal',
-      icon: Map,
-      thumb: null
     }
   ];
 
@@ -528,34 +524,107 @@ const InstructorToolbox = () => {
           );
         })}
       </div>
-
-      {/* Online question bank stats (if available) */}
-      {bankStats && (
-        <Card className="bg-slate-50 mt-4">
-          <CardContent className="p-4">
-            <h4 className="font-semibold text-slate-700 mb-3 text-sm">Online Question Bank</h4>
-            <p className="text-xs text-slate-500 mb-3">These questions power the online Tricky Testaments and Trivia Mix-up games in Gaming Central.</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {Object.entries(bankStats.by_game_type || {}).map(([type, count]) => {
-                const labels = {
-                  'trivia_testament': 'Trivia Testament',
-                  'tricky_trivia': 'Tricky Trivia',
-                  'who_am_i': 'Who Am I?',
-                  'deep_cut': 'Deep Cut'
-                };
-                return (
-                  <div key={type} className="bg-white p-3 rounded-lg border text-center">
-                    <p className="text-xl font-bold text-purple-600">{count}</p>
-                    <p className="text-[10px] text-slate-500">{labels[type] || type}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
+
+  const renderQuestionBank = () => {
+    const gameTypeLabels = {
+      trivia_testament: 'Trivia Testament',
+      tricky_trivia: 'Tricky Trivia',
+      who_am_i: 'Who Am I?',
+      deep_cut: 'Deep Cut'
+    };
+    const totalPages = Math.max(1, Math.ceil(bankTotal / 20));
+    return (
+      <div className="space-y-6" data-testid="question-bank-section">
+        <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-200">
+          <h4 className="font-bold text-indigo-800 mb-1">Question Bank</h4>
+          <p className="text-sm text-indigo-600">
+            Trivia and Jeopardy-style questions parsed from across the lessons. These power Grid Iron Challenge,
+            Passport Trek, and the online review games. Browse, filter, and reference them when planning sessions.
+          </p>
+        </div>
+
+        {bankStats && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3" data-testid="bank-stats">
+            <div className="bg-white p-3 rounded-lg border text-center">
+              <p className="text-2xl font-bold text-indigo-600">{bankStats.total_questions}</p>
+              <p className="text-[11px] text-slate-500">Total Questions</p>
+            </div>
+            {Object.entries(bankStats.by_game_type || {}).map(([type, count]) => (
+              <div key={type} className="bg-white p-3 rounded-lg border text-center">
+                <p className="text-2xl font-bold text-purple-600">{count}</p>
+                <p className="text-[11px] text-slate-500">{gameTypeLabels[type] || type}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="flex flex-wrap gap-2 items-center">
+          <select
+            className="border rounded-lg p-2 text-sm bg-white"
+            value={bankFilter.game_type}
+            onChange={(e) => { setBankPage(1); setBankFilter(f => ({ ...f, game_type: e.target.value })); }}
+            data-testid="bank-gametype-filter"
+          >
+            <option value="">All Game Types</option>
+            {Object.keys(bankStats?.by_game_type || {}).map(t => (
+              <option key={t} value={t}>{gameTypeLabels[t] || t}</option>
+            ))}
+          </select>
+          <select
+            className="border rounded-lg p-2 text-sm bg-white"
+            value={bankFilter.character}
+            onChange={(e) => { setBankPage(1); setBankFilter(f => ({ ...f, character: e.target.value })); }}
+            data-testid="bank-character-filter"
+          >
+            <option value="">All Characters</option>
+            {Object.keys(bankStats?.by_character || {}).map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          {(bankFilter.game_type || bankFilter.character) && (
+            <Button size="sm" variant="ghost" onClick={() => { setBankPage(1); setBankFilter({ game_type: '', character: '' }); }} data-testid="bank-clear-filters">Clear</Button>
+          )}
+        </div>
+
+        {bankLoading ? (
+          <div className="text-center py-10 text-slate-400" data-testid="bank-loading">Loading questions…</div>
+        ) : bankQuestions.length === 0 ? (
+          <div className="text-center py-10 text-slate-400" data-testid="bank-empty">No questions match these filters.</div>
+        ) : (
+          <div className="space-y-3" data-testid="bank-question-list">
+            {bankQuestions.map((q, idx) => (
+              <Card key={q.qid || idx} className="border hover:shadow-sm transition-shadow" data-testid={`bank-question-${q.qid || idx}`}>
+                <CardContent className="p-4">
+                  <div className="flex flex-wrap items-center gap-1.5 mb-2">
+                    {q.character && <Badge className="bg-indigo-100 text-indigo-700 text-[10px]">{q.character}</Badge>}
+                    {q.game_type && <Badge variant="outline" className="text-[10px]">{gameTypeLabels[q.game_type] || q.game_type}</Badge>}
+                    {q.tier ? <Badge variant="outline" className="text-[10px]">{q.tier} pts</Badge> : null}
+                    {q.difficulty && <Badge variant="outline" className="text-[10px] capitalize">{q.difficulty}</Badge>}
+                  </div>
+                  <p className="font-medium text-slate-800 text-sm">{q.question}</p>
+                  <div className="mt-2 flex items-center gap-2 text-sm">
+                    <Key className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                    <span className="text-emerald-700 font-semibold">{q.correct_answer}</span>
+                  </div>
+                  {q.scripture && <p className="text-xs text-slate-400 mt-1 italic">{q.scripture}</p>}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {bankTotal > 20 && (
+          <div className="flex items-center justify-between pt-2">
+            <Button size="sm" variant="outline" disabled={bankPage <= 1} onClick={() => setBankPage(p => Math.max(1, p - 1))} data-testid="bank-prev-page">Previous</Button>
+            <span className="text-sm text-slate-500">Page {bankPage} of {totalPages}</span>
+            <Button size="sm" variant="outline" disabled={bankPage >= totalPages} onClick={() => setBankPage(p => p + 1)} data-testid="bank-next-page">Next</Button>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -1106,6 +1175,9 @@ const InstructorToolbox = () => {
       case 'maps':
         return renderMaps();
 
+      case 'question-bank':
+        return renderQuestionBank();
+
       case 'game-packs':
         return renderGamePacks();
 
@@ -1201,7 +1273,7 @@ const InstructorToolbox = () => {
                     Welcome, {user?.name || 'Instructor'}! 👋
                   </h2>
                   <p className="text-blue-100">
-                    Access your teaching tools, answer keys, and group management features.
+                    Access your maps, question bank, printable game packs, and game setup guides — everything you need to run a session.
                   </p>
                 </div>
                 <GraduationCap className="w-16 h-16 text-blue-200 hidden md:block" />
@@ -1239,24 +1311,20 @@ const InstructorToolbox = () => {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-4 bg-white rounded-lg border">
-                  <p className="text-3xl font-bold text-emerald-600">{sampleAnswerKeys.length}</p>
-                  <p className="text-sm text-slate-500">Answer Keys</p>
+                  <p className="text-3xl font-bold text-teal-600">{gameMaps.length}</p>
+                  <p className="text-sm text-slate-500">Maps & Visual Aids</p>
                 </div>
                 <div className="text-center p-4 bg-white rounded-lg border">
-                  <p className="text-3xl font-bold text-amber-600">{sampleFacilitationNotes.length}</p>
-                  <p className="text-sm text-slate-500">Teaching Guides</p>
+                  <p className="text-3xl font-bold text-indigo-600">{bankStats?.total_questions ?? 0}</p>
+                  <p className="text-sm text-slate-500">Bank Questions</p>
                 </div>
                 <div className="text-center p-4 bg-white rounded-lg border">
-                  <p className="text-3xl font-bold text-blue-600">{roster.length}</p>
-                  <p className="text-sm text-slate-500">Group Members</p>
-                </div>
-                <div className="text-center p-4 bg-white rounded-lg border">
-                  <p className="text-3xl font-bold text-purple-600">{gameMaps.length}</p>
-                  <p className="text-sm text-slate-500">Maps</p>
-                </div>
-                <div className="text-center p-4 bg-white rounded-lg border">
-                  <p className="text-3xl font-bold text-cyan-600">4</p>
+                  <p className="text-3xl font-bold text-cyan-600">3</p>
                   <p className="text-sm text-slate-500">Offline Game Files</p>
+                </div>
+                <div className="text-center p-4 bg-white rounded-lg border">
+                  <p className="text-3xl font-bold text-purple-600">2</p>
+                  <p className="text-sm text-slate-500">Print &amp; Play Games</p>
                 </div>
               </div>
             </CardContent>

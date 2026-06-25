@@ -1,0 +1,33 @@
+{
+  "summary": "Instructor Toolbox UI wiring verified end-to-end as instructor (no 2FA). All 8 acceptance criteria from the review request PASS: 5 section cards exactly (Maps, Question Bank, Offline Game Files, Game Setup, Achievement Awards), no Answer Keys/Facilitation Notes/Group Roster/Teaching Resources cards reachable, Quick Stats footer shows real numbers (6/383/3/2), Maps grid loads 6 real images (0 broken) with full-image modal working, Question Bank surfaces 383 questions with correct per-game-type stats (277/79/19/8), filters + Clear + pagination next/prev work, Offline Game Files has exactly 3 files with all 3 download buttons (no .docx), Game Setup shows Grid Iron + Passport cards, Achievement Awards shows live Order Medallions button + 'Preview only / not yet wired' banner + disabled certificate generator buttons, and NO audio section/testids exist anywhere in the Toolbox.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "InstructorToolbox.js is 1339 lines — past the >700 line threshold; recommend splitting renderQuestionBank / renderGamePacks / renderMaps / renderCertificates into separate files for maintainability.",
+    "Dead switch-case branches for hidden sections (answer-keys / facilitation / roster / teaching-resources) still exist in renderContent though unreachable from UI cards — safe but should be pruned in a future cleanup pass."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (skipped per request)", "frontend": "100%"},
+  "test_credentials": "Used instructor: test_instructor_a54bf3e1@example.com / Inst123! (no 2FA). Login submit selector: form button[type='submit'] (page has TWO 'Sign In' buttons — the tab pill and the form submit; only the form submit triggers auth).",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Login on /auth: use input[placeholder='Enter email or username'] + press_sequentially (controlled React input). Do NOT use get_by_role('button', name='Sign In') strictly — it matches both the Sign In tab pill and the form submit button. Use form button[type='submit'] instead. Token key in localStorage is 'soul_food_token', user in 'soul_food_user'. After login the app routes to /my-library by default.\n\nKey verified facts for Toolbox: bank-stats text = '383 Total Questions, 277 Trivia Testament, 79 Tricky Trivia, 19 Who Am I?, 8 Deep Cut'. Game-type filter values: ['', 'trivia_testament', 'tricky_trivia', 'who_am_i', 'deep_cut']. Quick Stats values: Maps=6, Bank Questions=383, Offline Game Files=3, Print & Play Games=2. Download buttons (download-grinch-game-pk / download-grinch-card-pk / download-passport-trek) use onClick handlers (not <a href>), so JS cannot extract URL via DOM — main agent already verified the PDFs return 200 via curl; do not flag 'no-url' as a bug.",
+  "verified_acceptance_criteria": {
+    "5_sections_only": "PASS — Cards observed: [Maps & Visual Aids, Question Bank, Offline Game Files, Game Setup, Achievement Awards]",
+    "no_placeholder_cards": "PASS — h3 count for Answer Keys / Facilitation Notes / Group Roster / Teaching Resources = 0",
+    "maps_section": "PASS — 6 map-card-* testids, all 6 images loaded (broken=0), map-full-image modal opens on click of map-card-0",
+    "question_bank": "PASS — bank-stats shows 383 total + 277/79/19/8 by game type; bank-question-list renders 20+ questions; bank-gametype-filter populated with 4 types; bank-clear-filters works; bank-next-page changes first-question content (pagination confirmed)",
+    "offline_game_files": "PASS — exactly 3 game-file-* entries, '.docx' not present in section body, all 3 expected download testids present",
+    "game_setup": "PASS — grinch-game-card and passport-game-card both visible",
+    "achievement_awards": "PASS — order-medallions-btn live, certificates-preview-banner reads 'Preview only. Printable certificate generator is not yet wired. Medallion ordering is fully live.', 3 disabled cert-* buttons present",
+    "no_audio_in_toolbox": "PASS — 0 elements matching [data-testid*='audio'], 0 h2/h3 with 'Audio' text",
+    "quick_stats_real_numbers": "PASS — Maps=6, Bank Questions=383, Offline Game Files=3, Print & Play Games=2 (no Answer Keys/Teaching Guides/Group Members placeholder labels)"
+  }
+}
