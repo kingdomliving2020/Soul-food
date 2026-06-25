@@ -9,7 +9,7 @@ import re
 import pytest
 import requests
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://content-durability.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://gifting-checkout.preview.emergentagent.com").rstrip("/")
 
 ADMIN_EMAIL = "overflowharvest@gmail.com"
 ADMIN_PASSWORD = "Admin123!"

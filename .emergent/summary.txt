@@ -1,37 +1,35 @@
 <analysis>**original_problem_statement**: 
-Soft-launching MVP for Soul Food (kingdom-soul.com). The core recent objectives were MVP hardening, fixing production deployment bundle omissions (missing content directories), adding internal demo/test codes, unblocking paid interactive PDFs (iPDFs), adding manual order fulfillment controls to the Admin Console, and replacing local file storage with durable Emergent Object Storage for the Content Manager.
+Soft-launching MVP for Soul Food. Recent overarching goals were to establish a high-converting storefront visual hierarchy (strictly following a PICTURE → PRICE → FEATURES → BUTTON format), implement clear digital gifting flow in checkout (Buyer receives receipt, Recipient receives access), fix a 2FA code dispatch bug, and introduce basic admin hygiene controls (archiving users and orders).
 
 **User's preferred language**: English
 (INSTRUCT NEXT AGENT: You MUST respond in English only)
 
 **what currently exists?** 
-A full-stack React/FastAPI/MongoDB app with Stripe, Resend, and recently integrated Emergent Object Storage. Features include an Admin Codes & Redemptions module (batch/demo/test), Instructor Toolbox, interactive games (Tricky Testaments, Millionaire), Admin Orders with manual fulfillment overrides, and a new durable Admin File Manager. Local content files were moved to  to ensure deployment, but are now transitioning to Object Storage for true durability across redeploys.
+A full-stack React/FastAPI/MongoDB app with Stripe and Resend. The storefront (Quick Order) is highly optimized for conversion without paragraph clutter. Checkout supports distinct digital gifts (sending access to a recipient's email while billing the buyer). The backend automatically dispatches 2FA codes immediately upon valid login credentials. The Admin dashboard includes bulk actions to archive test users and tag/archive test orders.
 
 **Last working item**:
-    - Last item agent was working: The user just requested the implementation of the legacy files migration script (to move existing local files in  to Emergent Object Storage and update DB references) and adding a Refresh button to the Content Manager tab. 
-    - Status: NOT STARTED
-    - Agent Testing Done: N
-    - Which testing method agent to use?: backend testing agent
+    - Last item agent was working: Implementing Admin Account and Order hygiene controls (adding  flags, test tags, filter dropdowns, and bulk-action checkboxes to  and ).
+    - Status: COMPLETED
+    - Agent Testing Done: Y
+    - Which testing method agent to use?: NA (already done)
     - User Testing Done: N
 
-**All Pending/In progress Issue list**:
-  None. All reported production issues from the previous deploy have been resolved.
+**All Pending/In progress Issue list**:  
+  None.
 
 **In progress Task List**:
-  Task 1: Legacy Files Migration to Object Storage & UI Polish
-     - Where to resume: Create the Python script to scan the legacy local filesystem (e.g., ), push the bytes to Emergent Object Storage via , and update the respective DB documents. Then, add a Refresh button to .
-     - What will be achieved with this?: All existing buyer downloads will survive future redeploys with zero manual re-uploading work. The Admin UI will have a quick refresh mechanism.
-     - Status: NOT STARTED
-     - Should Test frontend/backend/both after fix?: both
-     - Blocked on something: None
+  None.
 
 **Upcoming and Future Tasks**
     Upcoming Tasks:
-    - Phase 2 of Codes & Redemptions (User-Facing Redemption Flow) (P1): Awaiting user approval of Phase 1 before building a Redeem Access Code input in the My Library frontend.
+    - Phase 2 of Codes & Redemptions (User-Facing Redemption Flow in My Library). (P1)
+    - Lunch Series Pre-Order UI: Add a Featured tile or Status Band integration for the Lunch series (Image asset already prepared and shelved at ). (P1)
+    - Verify your email to complete purchase modal (Must be enforced BEFORE checkout begins, NEVER during/after payment steps). (P1)
+    - email_verified backfill script for legacy users. (P1)
     
-    Future Tasks (On HOLD):
-    - Password Reset on First Login (force change for temp credentials to meet NIST compliance). (P2)
+    Future Tasks (Post-Launch/On Hold):
     - Security Upgrade: Move auth tokens from localStorage to  cookies. (P2)
+    - Password Reset on First Login (force change for temp credentials to meet NIST compliance). (P2)
     - SMS OTP (UI/logic prep). (P2)
     - Gift Certificates. (P2)
     - Subscription/Recurring Billing backend and full UI. (P2)
@@ -40,19 +38,21 @@ A full-stack React/FastAPI/MongoDB app with Stripe, Resend, and recently integra
     - Function complexity refactoring (, , , ). (P2)
 
 **Completed work in this session**
-- Instructor 2FA friction removed (applied to Admin/Owner only) (DONE)
-- Demo and  Test Codes logic added to Codes & Redemptions (, ) (DONE)
-- Auth auto-login JWT  latent bug fixed (DONE)
-- Added  health endpoint (DONE)
-- Tricky Testaments wagers and wrong-answer point deductions fixed (DONE)
-- Added Content Health diagnostic tile to Admin Dashboard (DONE)
-- Moved local  to  to fix production deploy bundle omission (DONE)
-- Fixed Paid iPDFs (Interactive Lessons) to bypass lock screens by implementing  (DONE)
-- Added manual Sync from Stripe, Mark as Paid, Grant Access, and Resend Email buttons to Admin Orders (DONE)
-- Built durable File Manager v2 using Emergent Object Storage (, ) (DONE)
+- Enforced strict PICTURE → PRICE → 3-4 FEATURES → BUTTON visual hierarchy on Quick Order page (DONE)
+- Replaced duplicate filler images with distinct covers/visuals for Featured Tiles (DONE)
+- Hid Pen/Stylus products from Quick Order to reduce distraction () (DONE)
+- Implemented Buyer vs. Recipient logic at Checkout (Buyer gets receipt, Recipient gets access links) (DONE)
+- Removed email verification blocker from active Checkout flow to prevent interruption (DONE)
+- Fixed Webpack cache issue by removing an orphaned  comment that was silently breaking the build (DONE)
+- Fixed 2FA first-attempt failure by auto-dispatching code upon valid credential validation in  (DONE)
+- Added User/Order Hygiene controls (is_archived flags, test tags, bulk actions, and filters in Admin) (DONE)
 
 **Earlier issues found/mentioned but not fixed**
-None. Agent systematically addressed all post-deploy bugs.
+   Issue 1: Product Mapping/File Associations Data Cleanup
+   - Debug checklist: 5 physical merchandise items are missing the  flag. Duplicate file mapping exists for  and . 
+   - Why to solve this issue and what will be achieved with this? Prevents fulfillment errors where the system tries to digitally deliver a physical pen/bookmark.
+   - Should Test frontend/backend/both after fix: Backend
+   - Is recurring issue? N (User explicitly deferred this until after launch validation).
 
 **Known issue recurrence from previous fork**
   - Issue recurrence in previous fork: None
@@ -60,85 +60,78 @@ None. Agent systematically addressed all post-deploy bugs.
   - Status: RESOLVED
 
 **Code Architecture**
--  (New: Wrapper for Emergent Object Storage)
--  (New: CRUD for admin durable files)
--  (New: UI for Content Manager)
--  (Contains relocated legacy static files; target for upcoming migration)
--  (Authentication, JWT minting)
--  (Includes order manual overrides)
--  (iPDF viewer with entitlement validations)
+-  &  (Storefront logic and layout)
+-  (Checkout, Stripe integration, Cart logic, Gift routing)
+-  (Receipt vs Access email templates)
+-  (Authentication, 2FA code generation/dispatch)
+-  &  (Hygiene/bulk action endpoints)
+-  &  (Admin UI, hygiene filters)
 
 **Key Technical Concepts**
-React, FastAPI, MongoDB, Stripe (Payments/Webhooks), Resend (Emails), Emergent Object Storage, JWT Authentication. 
+React, FastAPI, MongoDB, Stripe (Payments), Resend (Emails), Emergent Object Storage, JWT Authentication, PyOTP (2FA), Webpack Hot Reloading.
 
 **key DB schema**
-  - :  (NEW)
+  - : 
   - : 
   - : 
 
 **changes in tech stack**
-  - Added Emergent Object Storage integration using the universal .
+  - None this session.
 
 **All files of reference** 
--  (Object storage integration logic)
--  (File CRUD endpoints)
--  (Admin file UI)
--  (Order sync/fulfillment UI)
--  (Contains )
+-  &  (Checkout flow and gifting UI)
+-  (Email delivery logic for buyer vs recipient)
+-  (2FA logic)
+-  (New regression test file for gifting logic)
 
 **Areas that need refactoring**
--  contains too much logic (checkout, webhooks, dictionary references, manual sync). Should be split up.
+- , ,  are bloated and need component decomposition.
 
 **key api endpoints**
--  (Upload to Object Storage)
--  (Manual webhook bypass)
--  (Manual fulfillment)
--  (Validates if a user owns an iPDF without relying on download links)
+-  (Accepts  boolean and  for recipient)
+-  (Auto-dispatches 2FA code to email before returning response)
+-  (Sets  for array of user IDs)
+-  (Archives or tags orders in bulk)
 
 **Critical Info for New Agent**
-- **Production vs. Preview:** The user frequently deploys to . Changes MUST be made in the preview environment, and the user handles the production redeploy.
-- **Emergent Object Storage:** The new File Manager relies on  in the environment to function. The backend is configured to use it.
-- **Legacy File Migration:** The user's immediate request is to migrate legacy local files (located in ) to Object Storage so they survive redeploys seamlessly.
+- **Production Environment:** The user has deployed the app to production. You are working in PREVIEW. If user reports an issue, clarify if it is in preview or production.
+- **Checkout Flow Strict Rule:** Logged-in users must *never* be interrupted with email verification during the checkout/payment process. If email verification must be enforced, it has to happen *before* the checkout flow begins.
+- **Storefront UI Rule:** The Quick Order page must strictly follow: PICTURE (large, no overflow) → PRICE → 3-4 FEATURES (bullet points, no paragraphs) → BUTTON. Do not revert to text-heavy layouts.
+- **Lunch Series Asset:** The user provided an image for the Lunch Series () but decided to shelve its UI implementation for the next sprint. It is ready for use when requested.
 
 **documents and test reports created in this job**
-  -  through 
-  -  (Updated)
-  -  (Updated)
+  -  (Gifting logic test)
+  -  (Hygiene controls test)
 
 **Last 10 User Messages and any pending HUMAN messages** 
-- (User) Deploys to prod. do the improvement suggestion with the legacy files, also add refresh button on content manager tab (Pending task)
-- (Agent) Completes Deployer Check. Mentions  requirement for Prod.
-- (User) Requests Deployer check.
-- (Agent) Finishes building File Manager v2 with Object Storage.
-- (User) Requests Content Manager to be a real operational tool with durable storage.
-- (Agent) Finishes adding Admin Orders manual override buttons.
-- (User) Asks if Stripe webhook is required for MVP and asks for manual Admin UI buttons to bypass it.
-- (Agent) Finishes fixing iPDF lock screen via entitlement endpoint.
-- (User) Reports Paid iPDFs are locked while Free iPDFs render perfectly.
-- (Agent) Finishes deploy bundle fix (moving  to ).
+- (User) Add basic account and order hygiene controls (archive users, tags, bulk actions).
+- (Agent) Completes admin hygiene backend/frontend, passes testing subagent, finishes.
+- (User) Fix 2FA first-attempt failure. Auto-send code when valid credentials submitted.
+- (Agent) Updates  to auto-dispatch code.
+- (User) Preview is not reflecting latest changes. Force build.
+- (Agent) Finds orphaned  comment breaking webpack, removes it, restores preview.
+- (User) Add clear buyer vs recipient handling in checkout flow (Myself / Someone Else).
+- (Agent) Implements checkout gifting logic, separates email routing, passes tests.
+- (User) Remove pen and stylus items from Quick Order page.
+- (Agent) Flags items with .
 
 **Project Health Check:**
-- Broken: Legacy files still sit locally in  and need migration to the new Object Storage.
-- Mocked: Phase 2 Code Redemption flow.
+- Broken: None. 
+- Mocked: PWA installation prompt in desktop.
 
 **3rd Party Integrations** 
-- Emergent Object Storage — uses Emergent LLM Key ()
+- Emergent Object Storage — uses Emergent LLM Key
 - Stripe (Payments) — requires User API Key
 - Resend (Emails) — requires User API Key
 
 **Testing status**
   - Testing agent used after significant changes: YES
   - Troubleshoot agent used after agent stuck in loop: NO
-  - Test files created: Updated various  files in 
-  - Known regressions: None currently.
+  - Test files created: 
+  - Known regressions: None.
 
 **Credentials to test flow:**
 Use credentials found in .
 
 **What agent forgot to execute**
-The agent is exactly at the point of receiving the prompt to create the legacy files migration script and UI refresh button. Nothing was overlooked.
-
-**Debugging checklist for current issue**
-    Issue: Legacy Files Migration
-    Backend files to check: Create a new script (e.g., ) that uses  to upload files from  and inserts records into . Update existing download link pointers in DB if applicable.
-    Frontend files to check:  (Add a standard  icon button that calls the existing  function).</analysis>
+Nothing was forgotten. All directives executed successfully.</analysis>

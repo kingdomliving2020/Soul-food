@@ -1,5 +1,5 @@
 {
-  "summary": "MVP launch readiness regression for Soul Food. 23 backend tests, 20 passed / 3 failed (87%). CLEAR FAIL on MVP-1 (receipt endpoint does not resolve paid orders by order_number — returns 404). P0 LATENT storage key bug discovered: Emergent Object Storage returns 503 for expired keys, but storage_service only refreshes on 403 — all downloads silently fail until backend restart. MVP-3 truly-missing case returns 502 not 404. MVP-5 BETADOLLAR79 coupon is marked expired in DB. MVP-2/4/6/7 all pass. Tests ran against PREVIEW (https://content-durability.preview.emergentagent.com).",
+  "summary": "MVP launch readiness regression for Soul Food. 23 backend tests, 20 passed / 3 failed (87%). CLEAR FAIL on MVP-1 (receipt endpoint does not resolve paid orders by order_number — returns 404). P0 LATENT storage key bug discovered: Emergent Object Storage returns 503 for expired keys, but storage_service only refreshes on 403 — all downloads silently fail until backend restart. MVP-3 truly-missing case returns 502 not 404. MVP-5 BETADOLLAR79 coupon is marked expired in DB. MVP-2/4/6/7 all pass. Tests ran against PREVIEW (https://gifting-checkout.preview.emergentagent.com).",
   "backend_issues": {
     "critical": [
       {
