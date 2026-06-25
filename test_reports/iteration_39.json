@@ -1,0 +1,33 @@
+{
+  "summary": "Soul Food admin hygiene controls verified end-to-end. Backend: 15/15 pytest assertions pass against the preview URL. POST /api/admin/users/bulk-archive correctly archives (matched=2, modified=2, archived=true) and restores (archive=false flips is_archived back); GET /api/admin/users with archived=active excludes archived seeded users, archived=archived returns only archived (and each item has is_archived=true), archived=all includes them; search='overflowharvest' works alongside archive=all and returns the admin. POST /api/admin/orders/bulk-tag correctly tags two orders with tag='test' (matched_orders+matched_transactions>=2), archives a single order (visibility=archived then includes it), and tag='clear' unsets the tag so the order reappears in visibility=active. GET /api/admin/orders response items include both is_archived (bool) and tag (string/null). Empty arrays on both bulk endpoints return 400. Frontend: live admin UI on /admin/users renders data-testid='users-archived-filter' (Active/Archived/All), data-testid='users-select-all' checkbox, data-testid='user-archived-badge-<id>' for the seeded archived user, and data-testid='users-bulk-archive-btn' shows up after selection. /admin/orders renders data-testid='admin-orders-visibility-filter' (Active/Test/Archived/All), data-testid='admin-order-select-<order>', data-testid='order-test-badge-<order>' for the tagged order, and both bulk buttons (admin-orders-bulk-mark-test-btn, admin-orders-bulk-archive-btn) when a row is selected.",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      { "screen": "/admin/users (visibility=all view)", "issues": ["React warning: 'Encountered two children with the same key' fires many times when the users list with archivedFilter='all' is rendered. Likely duplicate user.id in the merged active+archived set — not a blocker for hygiene controls but should be deduped or React keys made unique." ] }
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_admin_hygiene_iter39.py",
+    "/app/test_reports/pytest/iter39_results.xml"
+  ],
+  "action_items": [
+    "(Optional) Investigate duplicate-key React warning on /admin/users when archivedFilter='all'. Suspect: the page may render both seeded and existing TEST_ rows that share an id, or there is a pagination dedup gap. Likely fix: ensure unique React `key={user.id}` and dedupe by id when merging.",
+    "(Optional) Add DELETE /api/admin/users/{id} or document that admin cleanup uses a different endpoint — playwright cleanup got 405 when deleting the seeded archived user (it remains archived in DB, so it does not pollute default views)."
+  ],
+  "critical_code_review_comments": [
+    "OrderArchiveBulk.tag uses a magic string 'clear' to mean unset; consider an explicit boolean flag `clear_tag: bool` to avoid accidental tag named 'clear'. Currently tag='clear' literally branches to $unset.",
+    "admin_routes.py is now 2644 lines — well past the 700-line guideline. Same recommendation as iter38 (split into users/orders/codes/audit modules).",
+    "GET /api/orders/admin/list (order_routes.py, line ~429) and GET /api/admin/orders (admin_routes.py, line ~1092) are two parallel admin listing endpoints with overlapping but slightly different responses. Risk of drift; consolidate or document which one the UI uses (frontend uses /api/admin/orders).",
+    "bulk_tag_orders writes archived_at/archived_by even when archive=False (no, only when archive truthy). Restore path does not unset archived_at/archived_by — minor data-cleanliness nit.",
+    "bulk_archive_users on restore (archive=False) leaves stale archived_at/archived_by fields on the document — only adds unarchived_at/unarchived_by. Consider $unset of archive metadata for cleanliness, though it doesn't affect filter behavior since is_archived is the source of truth."
+  ],
+  "updated_files": ["/app/backend/tests/test_admin_hygiene_iter39.py"],
+  "success_rate": { "backend": "100% (15/15)", "frontend": "100% — all 9 required data-testids verified live (users-archived-filter, users-select-all, users-bulk-archive-btn, user-archived-badge-<id>, admin-orders-visibility-filter, admin-order-select-<order>, admin-orders-bulk-mark-test-btn, admin-orders-bulk-archive-btn, order-test-badge-<order>)" },
+  "test_credentials": "Admin overflowharvest@gmail.com / Admin123! via /api/auth/login {identifier,password}.",
+  "seed_data_creation": "Backend pytest seeded 2 TEST_hygiene_* users in db.users and 2 SF-TESTHYG-* payment_transactions; both cleaned up in session-scoped fixture finalizers. Playwright seeded one admin-created user (TEST UI Arch — archived) and tagged one existing live order (SF-2026-ARDS7) as 'test'; the order tag was cleared on teardown, but the archived user remains in DB (no DELETE endpoint — it stays archived so it is hidden from the default active view).",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Hygiene feature is fully working on both endpoints families: /api/admin/users (admin_routes.py) and /api/admin/orders (admin_routes.py). The orders router order_routes.py also has visibility logic at GET /api/orders/admin/list — frontend does not use it but tests can hit it if needed. Auth payload is {identifier,password}. DB_NAME=soul_food_db. Note: DELETE /api/admin/users/{id} returns 405 (no DELETE handler) — use lock/disable endpoints or direct DB cleanup if you need to remove seeded users."
+}

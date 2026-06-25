@@ -43,6 +43,8 @@ const AdminOrders = () => {
   const [orderDetail, setOrderDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState('');
+  const [visibilityFilter, setVisibilityFilter] = useState('active'); // 'active' | 'test' | 'archived' | 'all'
+  const [selectedOrderNumbers, setSelectedOrderNumbers] = useState([]);
 
   // Get admin token
   const getToken = () => {
@@ -52,12 +54,13 @@ const AdminOrders = () => {
   useEffect(() => {
     fetchOrders();
     fetchRefundRequests();
-  }, []);
+  }, [visibilityFilter]);
 
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${BACKEND_URL}/api/admin/orders?limit=100`, {
+      const params = new URLSearchParams({ limit: '100', visibility: visibilityFilter });
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders?${params}`, {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const { ok, data } = await safeJson(res);
@@ -68,11 +71,56 @@ const AdminOrders = () => {
       }
       // Canonical endpoint returns { items, total, page, limit, pages }.
       setOrders(data.items || data.orders || []);
+      setSelectedOrderNumbers([]);
     } catch (e) {
       console.error('Failed to fetch orders:', e);
       setOrders([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleSelectOrder = (orderNumber) => {
+    setSelectedOrderNumbers(prev =>
+      prev.includes(orderNumber) ? prev.filter(n => n !== orderNumber) : [...prev, orderNumber]
+    );
+  };
+
+  const toggleSelectAllOrders = () => {
+    const visibleNumbers = orders.map(o => o.order_number).filter(Boolean);
+    if (selectedOrderNumbers.length === visibleNumbers.length && visibleNumbers.length > 0) {
+      setSelectedOrderNumbers([]);
+    } else {
+      setSelectedOrderNumbers(visibleNumbers);
+    }
+  };
+
+  const bulkTagOrders = async ({ archive, tag }) => {
+    if (selectedOrderNumbers.length === 0) {
+      alert('Select at least one order');
+      return;
+    }
+    const verb = tag === 'test' ? 'mark as test' : (archive ? 'archive' : (archive === false ? 'restore' : 'update'));
+    if (!confirm(`${verb.charAt(0).toUpperCase() + verb.slice(1)} ${selectedOrderNumbers.length} order(s)? (Data is preserved.)`)) return;
+    try {
+      const body = { order_numbers: selectedOrderNumbers };
+      if (archive !== undefined) body.archive = archive;
+      if (tag !== undefined) body.tag = tag;
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/bulk-tag`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      const { ok, data } = await safeJson(res);
+      if (ok) {
+        alert(`Updated ${data.modified_total || 0} record(s).`);
+        setSelectedOrderNumbers([]);
+        fetchOrders();
+      } else {
+        alert(`Bulk update failed: ${data.detail || JSON.stringify(data)}`);
+      }
+    } catch (e) {
+      alert(`Network error: ${e.message}`);
     }
   };
 
@@ -377,16 +425,28 @@ const AdminOrders = () => {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
+                    data-testid="admin-orders-search-input"
                   />
                 </div>
               </div>
+              <select
+                value={visibilityFilter}
+                onChange={(e) => setVisibilityFilter(e.target.value)}
+                className="px-3 py-2 border rounded-lg"
+                data-testid="admin-orders-visibility-filter"
+              >
+                <option value="active">Active</option>
+                <option value="test">Test</option>
+                <option value="archived">Archived</option>
+                <option value="all">All</option>
+              </select>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
                 className="px-3 py-2 border rounded-lg"
                 data-testid="admin-orders-filter"
               >
-                <option value="">All Orders</option>
+                <option value="">All Statuses</option>
                 <option value="paid">Paid</option>
                 <option value="completed">Completed</option>
                 <option value="pending">Pending</option>
@@ -395,6 +455,30 @@ const AdminOrders = () => {
                 <option value="refunded">Refunded</option>
               </select>
             </div>
+            {selectedOrderNumbers.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-slate-200 flex items-center gap-3 flex-wrap" data-testid="admin-orders-bulk-bar">
+                <span className="text-sm font-medium text-slate-700">{selectedOrderNumbers.length} selected</span>
+                <Button size="sm" variant="outline" onClick={() => bulkTagOrders({ tag: 'test' })} data-testid="admin-orders-bulk-mark-test-btn">
+                  Mark as Test
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => bulkTagOrders({ archive: true })} data-testid="admin-orders-bulk-archive-btn">
+                  Archive
+                </Button>
+                {(visibilityFilter === 'archived' || visibilityFilter === 'all' || visibilityFilter === 'test') && (
+                  <>
+                    <Button size="sm" variant="outline" onClick={() => bulkTagOrders({ archive: false })} data-testid="admin-orders-bulk-restore-btn">
+                      Restore
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => bulkTagOrders({ tag: 'clear' })} data-testid="admin-orders-bulk-clear-tag-btn">
+                      Clear Tag
+                    </Button>
+                  </>
+                )}
+                <Button size="sm" variant="ghost" onClick={() => setSelectedOrderNumbers([])} data-testid="admin-orders-clear-selection-btn">
+                  Clear
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -419,8 +503,18 @@ const AdminOrders = () => {
               <div className="divide-y">
                 {filteredOrders.map((order) => (
                   <div key={order.order_number} className="py-4">
-                    <div 
-                      className="flex items-center justify-between cursor-pointer"
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={selectedOrderNumbers.includes(order.order_number)}
+                        onChange={(e) => { e.stopPropagation(); toggleSelectOrder(order.order_number); }}
+                        onClick={(e) => e.stopPropagation()}
+                        className="mt-2 w-4 h-4 cursor-pointer"
+                        data-testid={`admin-order-select-${order.order_number}`}
+                        aria-label={`Select order ${order.order_number}`}
+                      />
+                    <div
+                      className="flex items-center justify-between cursor-pointer flex-1"
                       onClick={() => toggleExpand(order.order_number)}
                     >
                       <div className="flex-1">
@@ -433,6 +527,22 @@ const AdminOrders = () => {
                           {(order.fulfillment_status === 'pending_verification'
                             || (Array.isArray(order.fulfillment_verification_failures) && order.fulfillment_verification_failures.length > 0)) && (
                             getStatusBadge('pending_verification')
+                          )}
+                          {order.tag === 'test' && (
+                            <span
+                              className="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-wider"
+                              data-testid={`order-test-badge-${order.order_number}`}
+                            >
+                              Test
+                            </span>
+                          )}
+                          {order.is_archived && (
+                            <span
+                              className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-wider"
+                              data-testid={`order-archived-badge-${order.order_number}`}
+                            >
+                              Archived
+                            </span>
                           )}
                         </div>
                         {Array.isArray(order.fulfillment_verification_failures) && order.fulfillment_verification_failures.length > 0 && (
@@ -550,6 +660,7 @@ const AdminOrders = () => {
                           {expandedOrder === order.order_number ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </button>
                       </div>
+                    </div>
                     </div>
                     
                     {/* Expanded Details */}

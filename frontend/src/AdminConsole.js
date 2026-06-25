@@ -664,6 +664,8 @@ const UsersManager = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('');
+  const [archivedFilter, setArchivedFilter] = useState('active'); // 'active' | 'archived' | 'all'
+  const [selectedUserIds, setSelectedUserIds] = useState([]);
   const [showInvite, setShowInvite] = useState(false);
   const [inviteData, setInviteData] = useState({ email: '', name: '', role: 'member', password: '' });
   const [inviteLoading, setInviteLoading] = useState(false);
@@ -676,6 +678,7 @@ const UsersManager = () => {
       const params = new URLSearchParams();
       if (search) params.append('search', search);
       if (roleFilter) params.append('role', roleFilter);
+      if (archivedFilter) params.append('archived', archivedFilter);
       
       const res = await fetch(`${API_URL}/api/admin/users?${params}`, {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -683,18 +686,59 @@ const UsersManager = () => {
       if (res.ok) {
         const data = await res.json();
         setUsers(data.items || []);
+        setSelectedUserIds([]); // clear selection after refresh
       }
     } catch (err) {
       toast.error('Failed to load users');
     } finally {
       setLoading(false);
     }
-  }, [token, search, roleFilter]);
+  }, [token, search, roleFilter, archivedFilter]);
   
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
-  
+
+  const toggleSelectUser = (userId) => {
+    setSelectedUserIds(prev =>
+      prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedUserIds.length === users.length && users.length > 0) {
+      setSelectedUserIds([]);
+    } else {
+      setSelectedUserIds(users.map(u => u.id).filter(Boolean));
+    }
+  };
+
+  const bulkArchive = async (archive) => {
+    if (selectedUserIds.length === 0) {
+      toast.error('Select at least one user');
+      return;
+    }
+    const verb = archive ? 'archive' : 'restore';
+    if (!window.confirm(`${verb.charAt(0).toUpperCase() + verb.slice(1)} ${selectedUserIds.length} user(s)? (Data is preserved — you can ${archive ? 'restore' : 'archive'} later.)`)) return;
+    try {
+      const res = await fetch(`${API_URL}/api/admin/users/bulk-archive`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_ids: selectedUserIds, archive }),
+      });
+      const { ok, data } = await safeJson(res);
+      if (ok) {
+        toast.success(data.message || `${selectedUserIds.length} user(s) ${verb}d`);
+        setSelectedUserIds([]);
+        fetchUsers();
+      } else {
+        toast.error(`Bulk ${verb} failed: ${data.detail || JSON.stringify(data)}`);
+      }
+    } catch (err) {
+      toast.error(`Network error: ${err.message}`);
+    }
+  };
+
   const toggleLock = async (userId, isCurrentlyDisabled) => {
     try {
       const action = isCurrentlyDisabled ? 'unlock' : 'lock';
@@ -871,6 +915,7 @@ const UsersManager = () => {
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
             className="px-3 py-2 border border-slate-200 rounded-lg text-sm"
+            data-testid="users-role-filter"
           >
             <option value="">All Roles</option>
             <option value="admin">Admin</option>
@@ -879,21 +924,51 @@ const UsersManager = () => {
             <option value="student">Student</option>
             <option value="adult">Adult</option>
           </select>
+
+          <select
+            value={archivedFilter}
+            onChange={(e) => setArchivedFilter(e.target.value)}
+            className="px-3 py-2 border border-slate-200 rounded-lg text-sm"
+            data-testid="users-archived-filter"
+          >
+            <option value="active">Active</option>
+            <option value="archived">Archived</option>
+            <option value="all">All</option>
+          </select>
           
           <div className="flex-1 min-w-[200px]">
             <Input 
-              placeholder="Search users..."
+              placeholder="Search by email or name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full"
+              data-testid="users-search-input"
             />
           </div>
           
-          <Button variant="outline" onClick={fetchUsers}>
+          <Button variant="outline" onClick={fetchUsers} data-testid="users-refresh-btn">
             <RefreshCw size={16} className="mr-2" />
             Refresh
           </Button>
         </div>
+        {selectedUserIds.length > 0 && (
+          <div className="mt-3 pt-3 border-t border-slate-200 flex items-center gap-3 flex-wrap" data-testid="users-bulk-bar">
+            <span className="text-sm font-medium text-slate-700">{selectedUserIds.length} selected</span>
+            {archivedFilter !== 'archived' && (
+              <Button size="sm" variant="outline" onClick={() => bulkArchive(true)} data-testid="users-bulk-archive-btn">
+                Archive selected
+              </Button>
+            )}
+            {archivedFilter !== 'active' && (
+              <Button size="sm" variant="outline" onClick={() => bulkArchive(false)} data-testid="users-bulk-restore-btn">
+                Restore selected
+              </Button>
+            )}
+            <Button size="sm" variant="ghost" onClick={() => setSelectedUserIds([])} data-testid="users-clear-selection-btn">
+              Clear
+            </Button>
+          </div>
+        )}
       </div>
       
       {/* Users List */}
@@ -906,6 +981,16 @@ const UsersManager = () => {
           <table className="w-full">
             <thead className="bg-slate-50 border-b">
               <tr>
+                <th className="px-3 py-3 text-left w-10">
+                  <input
+                    type="checkbox"
+                    checked={selectedUserIds.length === users.length && users.length > 0}
+                    onChange={toggleSelectAll}
+                    className="w-4 h-4 cursor-pointer"
+                    data-testid="users-select-all"
+                    aria-label="Select all users on this page"
+                  />
+                </th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">User</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">Role</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold text-slate-600">Status</th>
@@ -915,9 +1000,26 @@ const UsersManager = () => {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-slate-50">
+                <tr key={user.id} className={`hover:bg-slate-50 ${user.is_archived ? 'opacity-60' : ''}`}>
+                  <td className="px-3 py-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedUserIds.includes(user.id)}
+                      onChange={() => toggleSelectUser(user.id)}
+                      className="w-4 h-4 cursor-pointer"
+                      data-testid={`user-select-${user.id}`}
+                      aria-label={`Select user ${user.email}`}
+                    />
+                  </td>
                   <td className="px-4 py-3">
-                    <p className="font-medium text-slate-800">{user.name || 'No Name'}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="font-medium text-slate-800">{user.name || 'No Name'}</p>
+                      {user.is_archived && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 text-[10px] font-bold uppercase tracking-wider" data-testid={`user-archived-badge-${user.id}`}>
+                          Archived
+                        </span>
+                      )}
+                    </div>
                     <p className="text-xs text-slate-500">{user.email}</p>
                   </td>
                   <td className="px-4 py-3">

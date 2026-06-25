@@ -1093,11 +1093,13 @@ async def update_inventory(
 async def get_orders_list(
     search: Optional[str] = None,
     status: Optional[str] = None,
+    visibility: Optional[str] = "active",  # 'active' (default — hides archived & test), 'test', 'archived', 'all'
     page: int = 1,
     limit: int = 50,
     admin: AdminUser = Depends(get_current_admin)
 ):
-    """Get orders list from both orders and payment_transactions, with search"""
+    """Get orders list from both orders and payment_transactions, with search.
+    By default hides archived orders and orders tagged as 'test'."""
     skip = (page - 1) * limit
 
     # Build base query for payment_transactions (the primary source of paid orders)
@@ -1112,6 +1114,21 @@ async def get_orders_list(
             {"customer_email": search_re},
             {"customer_name": search_re},
         ]
+
+    # Visibility filter
+    visibility_mode = (visibility or "active").lower()
+    visibility_clauses = []
+    if visibility_mode == "active":
+        visibility_clauses = [
+            {"$or": [{"is_archived": {"$exists": False}}, {"is_archived": False}]},
+            {"$or": [{"tag": {"$exists": False}}, {"tag": {"$ne": "test"}}]},
+        ]
+    elif visibility_mode == "test":
+        visibility_clauses = [{"tag": "test"}]
+    elif visibility_mode == "archived":
+        visibility_clauses = [{"is_archived": True}]
+    if visibility_clauses:
+        tx_query["$and"] = visibility_clauses
 
     # Query payment_transactions first (most reliable for Stripe orders)
     txns = await db.payment_transactions.find(tx_query, {"_id": 0}).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
@@ -1133,6 +1150,10 @@ async def get_orders_list(
             "items": tx.get("items", []),
             "items_count": len(tx.get("items", [])),
             "claimed_by_user_id": tx.get("claimed_by_user_id"),
+            "purchase_type": tx.get("purchase_type", "self"),
+            "digital_recipient_email": tx.get("digital_recipient_email"),
+            "is_archived": bool(tx.get("is_archived", False)),
+            "tag": tx.get("tag"),
             "created_at": tx.get("created_at").isoformat() if hasattr(tx.get("created_at"), "isoformat") else str(tx.get("created_at", "")),
         })
 
@@ -1506,22 +1527,38 @@ async def get_users_list(
     role: Optional[str] = None,
     disabled: Optional[bool] = None,
     search: Optional[str] = None,
+    archived: Optional[str] = "active",  # 'active' (default — hide archived), 'archived', 'all'
     page: int = 1,
     limit: int = 50,
     admin: AdminUser = Depends(get_current_admin)
 ):
-    """Get users list"""
+    """Get users list. Archived users are hidden by default — pass archived='archived'
+    to see only archived users, or archived='all' to see everyone."""
     query = {}
     if role:
         query["role"] = role
     if disabled is not None:
         query["disabled"] = disabled
+    # Archive filter: 'active' hides archived (treats missing field as not-archived),
+    # 'archived' shows only archived, 'all' shows everyone.
+    archive_mode = (archived or "active").lower()
+    if archive_mode == "active":
+        query["$or"] = [{"is_archived": {"$exists": False}}, {"is_archived": False}]
+    elif archive_mode == "archived":
+        query["is_archived"] = True
+    # 'all' — no archive filter
     if search:
-        query["$or"] = [
+        # If we already used $or for archive, combine with $and so search applies on top.
+        search_or = [
             {"email": {"$regex": search, "$options": "i"}},
             {"name": {"$regex": search, "$options": "i"}},
-            {"username": {"$regex": search, "$options": "i"}}
+            {"username": {"$regex": search, "$options": "i"}},
         ]
+        if "$or" in query:
+            existing_or = query.pop("$or")
+            query["$and"] = [{"$or": existing_or}, {"$or": search_or}]
+        else:
+            query["$or"] = search_or
     
     skip = (page - 1) * limit
     
@@ -1703,6 +1740,112 @@ async def unlock_user_account(user_id: str, admin: AdminUser = Depends(get_curre
     await log_admin_action("unlock_account", admin.id, "user", user_id)
     
     return {"message": "Account unlocked successfully"}
+
+
+# =============================================================================
+# ARCHIVE — Users (soft-hide, NOT delete)
+# =============================================================================
+
+class UserArchiveBulk(BaseModel):
+    user_ids: List[str]
+    archive: bool = True  # True = archive, False = unarchive
+
+@router.post("/users/bulk-archive")
+async def bulk_archive_users(
+    payload: UserArchiveBulk,
+    admin: AdminUser = Depends(get_current_admin),
+):
+    """Archive or unarchive multiple users at once. Sets is_archived flag — does
+    NOT delete any data. Use archived='archived' or 'all' on GET /users to find
+    archived records again."""
+    if not payload.user_ids:
+        raise HTTPException(status_code=400, detail="No user_ids provided")
+    if len(payload.user_ids) > 500:
+        raise HTTPException(status_code=400, detail="Too many users in a single batch (max 500)")
+    now_iso = datetime.now(timezone.utc).isoformat()
+    update_fields = {
+        "is_archived": payload.archive,
+        ("archived_at" if payload.archive else "unarchived_at"): now_iso,
+        ("archived_by" if payload.archive else "unarchived_by"): admin.id,
+    }
+    result = await db.users.update_many(
+        {"id": {"$in": payload.user_ids}},
+        {"$set": update_fields},
+    )
+    await log_admin_action(
+        "archive_users" if payload.archive else "unarchive_users",
+        admin.id,
+        "user",
+        ",".join(payload.user_ids[:10]) + (f" (+{len(payload.user_ids)-10} more)" if len(payload.user_ids) > 10 else ""),
+    )
+    return {
+        "matched": result.matched_count,
+        "modified": result.modified_count,
+        "archived": payload.archive,
+        "message": f"{result.modified_count} user(s) {'archived' if payload.archive else 'restored'}",
+    }
+
+
+# =============================================================================
+# ARCHIVE / TAG — Orders (soft-hide and/or tag as test data)
+# =============================================================================
+
+class OrderArchiveBulk(BaseModel):
+    order_numbers: List[str]
+    archive: Optional[bool] = None  # True/False to set is_archived; None to leave unchanged
+    tag: Optional[str] = None       # "test" to mark as test; "" or None for no change; "clear" to wipe
+
+@router.post("/orders/bulk-tag")
+async def bulk_tag_orders(
+    payload: OrderArchiveBulk,
+    admin: AdminUser = Depends(get_current_admin),
+):
+    """Mark multiple orders as test/archived. Updates both db.orders and
+    db.payment_transactions so the admin list sees changes regardless of source.
+    NOTHING IS DELETED."""
+    if not payload.order_numbers:
+        raise HTTPException(status_code=400, detail="No order_numbers provided")
+    if len(payload.order_numbers) > 500:
+        raise HTTPException(status_code=400, detail="Too many orders in a single batch (max 500)")
+
+    set_fields = {}
+    unset_fields = {}
+    if payload.archive is not None:
+        set_fields["is_archived"] = payload.archive
+        if payload.archive:
+            set_fields["archived_at"] = datetime.now(timezone.utc).isoformat()
+            set_fields["archived_by"] = admin.id
+    if payload.tag is not None:
+        if payload.tag == "clear":
+            unset_fields["tag"] = ""
+        elif payload.tag.strip():
+            set_fields["tag"] = payload.tag.strip().lower()
+
+    if not set_fields and not unset_fields:
+        raise HTTPException(status_code=400, detail="Nothing to update — provide archive or tag")
+
+    update_doc = {}
+    if set_fields:
+        update_doc["$set"] = set_fields
+    if unset_fields:
+        update_doc["$unset"] = unset_fields
+
+    filter_q = {"order_number": {"$in": payload.order_numbers}}
+    orders_res = await db.orders.update_many(filter_q, update_doc)
+    tx_res = await db.payment_transactions.update_many(filter_q, update_doc)
+    await log_admin_action(
+        "bulk_tag_orders",
+        admin.id,
+        "order",
+        ",".join(payload.order_numbers[:10]) + (f" (+{len(payload.order_numbers)-10} more)" if len(payload.order_numbers) > 10 else ""),
+    )
+    return {
+        "matched_orders": orders_res.matched_count,
+        "matched_transactions": tx_res.matched_count,
+        "modified_total": orders_res.modified_count + tx_res.modified_count,
+        "archive": payload.archive,
+        "tag": payload.tag,
+    }
 
 
 # =============================================================================

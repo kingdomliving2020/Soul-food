@@ -430,11 +430,15 @@ class AdminRefundRequest(BaseModel):
 async def admin_list_orders(
     status: Optional[str] = None,
     refund_status: Optional[str] = None,
+    visibility: Optional[str] = "active",  # 'active' (default — hide archived & test), 'test', 'archived', 'all'
+    search: Optional[str] = None,
     limit: int = 50,
     skip: int = 0
 ):
     """
     Admin endpoint to list all orders with filtering.
+    By default hides archived orders and orders tagged as 'test'. Pass visibility=
+    'test', 'archived', or 'all' to see other slices.
     """
     query = {}
     
@@ -442,6 +446,36 @@ async def admin_list_orders(
         query["payment_status"] = status
     if refund_status:
         query["refund_status"] = refund_status
+
+    # Visibility filter — wraps archived/tag predicates into $or so missing fields
+    # are treated as not-archived / not-tagged.
+    visibility_mode = (visibility or "active").lower()
+    visibility_clauses = []
+    if visibility_mode == "active":
+        visibility_clauses = [
+            {"$or": [{"is_archived": {"$exists": False}}, {"is_archived": False}]},
+            {"$or": [{"tag": {"$exists": False}}, {"tag": {"$ne": "test"}}]},
+        ]
+    elif visibility_mode == "test":
+        visibility_clauses = [{"tag": "test"}]
+    elif visibility_mode == "archived":
+        visibility_clauses = [{"is_archived": True}]
+    # 'all' — no visibility filter
+
+    if search:
+        search_clause = {
+            "$or": [
+                {"customer_email": {"$regex": search, "$options": "i"}},
+                {"order_number": {"$regex": search, "$options": "i"}},
+            ]
+        }
+        visibility_clauses.append(search_clause)
+
+    if visibility_clauses:
+        if "$and" in query:
+            query["$and"].extend(visibility_clauses)
+        else:
+            query["$and"] = visibility_clauses
     
     # Get orders from both collections
     orders = await db.orders.find(query, {"_id": 0}).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
@@ -470,6 +504,8 @@ async def admin_list_orders(
                 "source": "orders",
                 "purchase_type": order.get("purchase_type", "self"),
                 "digital_recipient_email": order.get("digital_recipient_email"),
+                "is_archived": bool(order.get("is_archived", False)),
+                "tag": order.get("tag"),
             })
     
     for txn in transactions:
@@ -488,6 +524,8 @@ async def admin_list_orders(
                 "source": "transactions",
                 "purchase_type": txn.get("purchase_type", "self"),
                 "digital_recipient_email": txn.get("digital_recipient_email"),
+                "is_archived": bool(txn.get("is_archived", False)),
+                "tag": txn.get("tag"),
             })
     
     # Sort by created_at
