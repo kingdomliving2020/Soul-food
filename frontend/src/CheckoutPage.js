@@ -902,7 +902,6 @@ const CheckoutPage = () => {
     if (!captured?.code) return;
     autoPromoAttemptedRef.current = true;
     applyCouponByCode(captured.code);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cartItems, subtotal, couponApplied]);
 
   const handleCheckout = async () => {
