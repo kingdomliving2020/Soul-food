@@ -130,6 +130,7 @@ const AdminOrders = () => {
       // Canonical endpoint returns { items, total, page, limit, pages }.
       setOrders(data.items || data.orders || []);
       setSelectedOrderNumbers([]);
+      fetchSummary();
     } catch (e) {
       console.error('Failed to fetch orders:', e);
       setOrders([]);
@@ -642,8 +643,8 @@ const AdminOrders = () => {
               </div>
             ) : (
               <div className="divide-y">
-                {filteredOrders.map((order) => (
-                  <div key={order.order_number} className="py-4">
+                {filteredOrders.map((order, orderIdx) => (
+                  <div key={`${order.order_number || 'order'}-${orderIdx}`} className="py-4">
                     <div className="flex items-start gap-3">
                       <input
                         type="checkbox"
