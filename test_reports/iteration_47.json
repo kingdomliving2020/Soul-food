@@ -1,0 +1,69 @@
+{
+  "summary": "Presentation/responsive pass at Desktop 1440x900, Tablet 768x1024 (portrait), Tablet 1024x768 (landscape) and Mobile 390x844 for /, /quick-order, /checkout (incl. guest-checkout form) and /my-library (admin signed in, 2FA skipped). No horizontal scrollbar detected on any page at any breakpoint (document.scrollWidth equals clientWidth at all 4 viewports x 4 pages). Confirmed the user-reported homepage hero compression on TABLET PORTRAIT (768): hero stacks vertically because Tailwind `lg:flex-row` only activates at \u22651024px, so at 768 the book cover drops below a tall column of headline+benefits+CTAs+denomination note+inclusion chips+Independence Day callout, leaving the book cover (~224px) floating alone in the lower section with large empty side margins \u2014 visually disconnected from the text. Tablet landscape (1024) and mobile (390) hero render well. Also found Quick Order \u2018Small Group Options\u2019 card is constrained by `max-w-xl` (576px) on a much wider parent on desktop/landscape \u2014 causing a large empty band on the right of the card.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Homepage hero (SoulFoodApp.js ~line 571)", "issue": "At tablet portrait 768, hero stacks (col) because breakpoint is `lg:flex-row` (\u22651024px). Stack order is headline -> 3 benefits -> CTAs -> denomination note -> Catholic/Protestant/Orthodox/Evangelical chips -> Independence Day callout -> ~600px of vertical space before the book cover (224px) sits centered with large empty space around it. Matches the user-reported 'compressed / stacking too tightly' complaint. The book cover feels disconnected from the message.", "selector": "[data-testid='hero-section'] .flex.flex-col.lg\\:flex-row", "priority": "HIGH"},
+      {"component": "Quick Order \u2018Small Group Options\u2019 card wrapper (QuickOrder.js line 968)", "issue": "Card wrapped in `<div className=\"max-w-xl\">` (576px) but parent section is ~960px wide on desktop and 1024 tablet landscape \u2014 leaves a large empty band on the right (~400px) making the section look unfinished/unbalanced. At 768 portrait the empty space is smaller but still noticeable.", "selector": "[data-testid='small-group-section'] .max-w-xl", "priority": "MEDIUM"},
+      {"component": "Checkout guest form \u2018Your Items\u2019 card @ mobile 390", "issue": "Item row (name + qty selector + price + trash icon) packs tightly at 390 \u2014 the red `$9.99` and delete icon sit at the very right edge with `$9.99 each` overlap risk for longer product names. Quantity buttons (- 1 +) and price share one cramped row.", "selector": "Checkout 'Your Items' first product row", "priority": "MEDIUM"},
+      {"component": "Checkout coupon row @ tablet 768 single column", "issue": "`COUPON OR GIFT CERTIFICATE` input + `Apply` button share one tight row; placeholder text gets visually truncated to 'CERTIFICATI' when Apply takes its share. Still functional but tight.", "selector": "Order Summary > coupon row", "priority": "LOW"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Homepage hero @ tablet 768 portrait", "issues": [
+        "Vertical stack is too long before the book cover appears (headline 3-line + 3 benefits + 2 CTAs + 3-line italic note + 4 chips + campaign callout, then cover)",
+        "Book cover floats alone in the lower band with large empty side gutters \u2014 feels detached from the message",
+        "Recommendation: switch breakpoint to `md:flex-row` (\u2265768px) so iPad portrait gets the two-column layout, or shorten the left column at \u2264lg by hiding chips/denomination note in a collapsed form"
+      ]},
+      {"screen": "Homepage July4 banner tiles @ tablet 768", "issues": [
+        "Tiles wrap to 2x2 (sm:grid-cols-4 falls back to grid-cols-2 below sm). 'Foundation in Christ' / 'BOOKLETS AVAILABLE NOW' wraps to 2 lines while other tiles\u2019 sub-labels are 1 line, creating uneven tile heights (cosmetic)"
+      ]},
+      {"screen": "Quick Order /quick-order @ desktop 1440 and tablet 1024", "issues": [
+        "'Small Group Options' card is left-aligned and only ~576px wide on a 960\u2013992px container, leaving a large empty band on the right. Either remove the `max-w-xl` wrapper, increase to `max-w-3xl`, or center the card on wider viewports."
+      ]},
+      {"screen": "Checkout /checkout @ tablet 768", "issues": [
+        "Two-column layout collapses to single column at 768 (md:grid-cols-2 likely triggers at \u22651024 or has md gating). The grid stacks rather than going 2-up at iPad portrait \u2014 matches brief\u2019s intent, no action needed."
+      ]}
+    ]
+  },
+  "test_report_links": [
+    "/app/test_reports/screenshots_iter47/home_desktop_1440.png",
+    "/app/test_reports/screenshots_iter47/home_tablet_768.png",
+    "/app/test_reports/screenshots_iter47/home_tablet_1024.png",
+    "/app/test_reports/screenshots_iter47/home_mobile_390.png",
+    "/app/test_reports/screenshots_iter47/home_hero_tablet_768_tall.png",
+    "/app/test_reports/screenshots_iter47/qo_smallgroup_tablet_768.png",
+    "/app/test_reports/screenshots_iter47/qo_smallgroup_tablet_1024.png",
+    "/app/test_reports/screenshots_iter47/qo_featured_tablet_768.png",
+    "/app/test_reports/screenshots_iter47/qo_featured_tablet_1024.png",
+    "/app/test_reports/screenshots_iter47/qo_featured_mobile_390.png",
+    "/app/test_reports/screenshots_iter47/checkout_form_desktop_1440.png",
+    "/app/test_reports/screenshots_iter47/checkout_form_tablet_768_top.png",
+    "/app/test_reports/screenshots_iter47/checkout_form_tablet_1024_top.png",
+    "/app/test_reports/screenshots_iter47/checkout_form_mobile_390_top.png",
+    "/app/test_reports/screenshots_iter47/library_desktop_1440_v2.png",
+    "/app/test_reports/screenshots_iter47/library_tablet_768_v2.png",
+    "/app/test_reports/screenshots_iter47/library_tablet_1024_v2.png",
+    "/app/test_reports/screenshots_iter47/library_mobile_390_v2.png"
+  ],
+  "action_items": [
+    "PRIMARY: Fix homepage hero compression on tablet portrait. Change `flex flex-col lg:flex-row` to `flex flex-col md:flex-row` (SoulFoodApp.js line 571) so the iPad-portrait 768 breakpoint gets the two-column layout (text left, book right) instead of stacking. Also review `gap-8 lg:gap-14` -> `gap-6 md:gap-10 lg:gap-14`.",
+    "SECONDARY: In QuickOrder.js line 968, remove the `max-w-xl` wrapper around `<SmallGroupBundleCard />` or change to `max-w-3xl` so the Small Group Options card uses the available section width (especially on \u22651024). Optionally center it: `mx-auto`.",
+    "MINOR: At mobile 390 the Checkout 'Your Items' product row is tight; consider stacking qty controls under the title or shrinking the trash icon padding so the price doesn\u2019t touch the edge.",
+    "OPTIONAL: Even-out July4 banner tile sub-label heights so 'BOOKLETS AVAILABLE NOW' (2 lines) doesn\u2019t make Foundation tile taller than its neighbors."
+  ],
+  "critical_code_review_comments": [
+    "Hero responsive breakpoint mismatch: the hero uses `lg:flex-row` (1024px) while almost every adjacent section already responds at `sm`/`md`. This is the single largest cause of the reported tablet-portrait compression.",
+    "QuickOrder.js wraps SmallGroupBundleCard in a hard `max-w-xl` which contradicts the section heading\u2019s full-width treatment \u2014 causes visual whitespace imbalance on wider viewports.",
+    "No horizontal scroll anywhere \u2014 good. All cards/grids stack cleanly. Badges, headings, prices remain readable at all four viewports.",
+    "Login button selector ambiguity (tab 'Sign In' vs submit 'Sign In') made automation fragile. Adding `data-testid=\"login-submit-button\"` on the auth form\u2019s submit button would harden tests."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "n/a (not tested per request)", "frontend": "Presentation pass: 4 pages \u00d7 4 viewports captured. 2 high/medium presentation issues (hero@768, Small Group card max-width), 2 low-priority cosmetic findings."},
+  "test_credentials": "Admin overflowharvest@gmail.com / Admin123! used; 2FA-setup screen auto-skipped via 'Skip' link \u2014 successfully reached /my-library.",
+  "seed_data_creation": "None. Added Holiday ePub ($9.99) to cart in browser session only (no DB writes \u2014 cart is localStorage).",
+  "retest_needed": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Screenshots stored under /app/test_reports/screenshots_iter47/. Primary user complaint = homepage hero compression at tablet 768. Confirmed it stems from `lg:flex-row` (1024 breakpoint). All other pages render without horizontal scroll. Login flow: POST identifier=overflowharvest@gmail.com, then click `button[type='submit']` (not 'Sign In' tab), then click 'Skip' on /2fa-setup. After fix, re-shoot home @ 768 and confirm the book cover sits beside the text rather than below the campaign callout.",
+  "rca of the issue": "RCA \u2014 Homepage hero tablet-portrait compression: SoulFoodApp.js line 571 uses `flex flex-col lg:flex-row`. Tailwind\u2019s `lg` is 1024px, so at iPad-portrait 768 the layout stays in a column. The left column contains: 3-line headline, 3 numbered benefits, 2 CTAs, italic 4-line denomination note, 4 inclusion chips, and the Independence Day callout block \u2014 totaling ~900px tall. Only then does the right column (book cover 224px) appear. Result: visually the cover floats alone with empty side gutters, perceived as 'compressed/disconnected'. Reproduction: set viewport to 768x1024, navigate to /, scroll to y\u2248770, observe stacked hero. Mitigation: switch the breakpoint to `md:flex-row` (768) so iPad portrait splits into text|cover, mirroring the working 1024 landscape layout. Verified at 1024 landscape the same DOM renders correctly with two columns."
+}
