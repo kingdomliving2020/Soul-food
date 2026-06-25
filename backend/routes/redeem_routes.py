@@ -218,11 +218,22 @@ async def resend_access_email(req: ResendAccessRequest, request: Request):
     if tx.get("payment_status") not in ("paid", "completed"):
         raise HTTPException(status_code=400, detail="This order has not been paid.")
 
-    # Verify email matches
-    if tx.get("customer_email", "").lower().strip() != email:
+    # Verify email matches the order's fulfillment target(s).
+    # For a GIFT, the recipient (digital_recipient_email) is the fulfillment
+    # target — so the resend must accept the recipient email as well as the
+    # buyer's. Previously only customer_email was accepted, which rejected the
+    # gift recipient shown on the Order Complete page.
+    purchase_type = (tx.get("purchase_type") or "self").lower()
+    buyer_email = (tx.get("customer_email") or "").strip().lower()
+    gift_recipient = (tx.get("digital_recipient_email") or "").strip().lower() if purchase_type == "gift" else ""
+
+    is_buyer_match = bool(buyer_email) and email == buyer_email
+    is_recipient_match = bool(gift_recipient) and email == gift_recipient
+
+    if not (is_buyer_match or is_recipient_match):
         raise HTTPException(
             status_code=403,
-            detail="Email does not match the order. Use the email from your receipt.",
+            detail="Email does not match the order. Use the email shown on your order confirmation.",
         )
 
     # Record the request for rate limiting
@@ -239,15 +250,42 @@ async def resend_access_email(req: ResendAccessRequest, request: Request):
         {"_id": 0, "token_hash": 0},
     ).to_list(100)
 
-    # Send the email
-    result = await send_order_confirmation(
-        to_email=email,
-        order_id=order_number,
-        items=tx.get("items", []),
-        total=tx.get("total_amount", 0),
-        download_links=download_links,
-        customer_name=tx.get("customer_name", "Valued Customer"),
-    )
+    # Send the right email to whoever requested.
+    if is_recipient_match:
+        # Gift recipient → access email (works with or without download links;
+        # online/entitlement items access via Redeem → My Library).
+        result = await send_order_confirmation(
+            to_email=email,
+            order_id=order_number,
+            items=tx.get("items", []),
+            total=tx.get("total_amount", 0),
+            download_links=download_links or None,
+            customer_name="",
+            gifted_by_email=buyer_email,
+            is_recipient_access=True,
+        )
+    elif gift_recipient and is_buyer_match:
+        # Buyer of a gift → receipt only (no download links), with attribution.
+        result = await send_order_confirmation(
+            to_email=email,
+            order_id=order_number,
+            items=tx.get("items", []),
+            total=tx.get("total_amount", 0),
+            download_links=None,
+            customer_name=tx.get("customer_name", "Valued Customer"),
+            recipient_email=gift_recipient,
+            is_buyer_receipt_only=True,
+        )
+    else:
+        # Self-purchase → standard confirmation with links.
+        result = await send_order_confirmation(
+            to_email=email,
+            order_id=order_number,
+            items=tx.get("items", []),
+            total=tx.get("total_amount", 0),
+            download_links=download_links,
+            customer_name=tx.get("customer_name", "Valued Customer"),
+        )
 
     if result.get("success"):
         return {"success": True, "message": "Access email sent! Check your inbox (and spam folder)."}

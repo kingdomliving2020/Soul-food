@@ -602,20 +602,34 @@ def is_deliverable(product_id: str) -> tuple:
 
 
 # =============================================================================
-# EXPECTED DELIVERY MESSAGING (Item 3)
+# FULFILLMENT MESSAGING (dynamic, per-item)
 # =============================================================================
-# When an item is gated, surface an expected-delivery hint to the customer
-# instead of silent absence. Single global date for now per Q1=a; tighten later.
-EXPECTED_DELIVERY_DEFAULT = "Expected by Mother's Day (May 10, 2026)"
+# For any item that is not an immediate file download, surface accurate,
+# NON-STALE fulfillment messaging on receipts based on WHY it is gated.
+# (Replaces the old static "Expected by Mother's Day" placeholder.)
+def fulfillment_note_for(product_id: str) -> tuple:
+    """Return (status, message) for receipt display.
+
+    status ∈ {"deliverable", "online", "physical", "pending"}
+    message: human-readable fulfillment note ("" when immediately deliverable).
+    """
+    ok, reason = is_deliverable(product_id)
+    if ok:
+        return ("deliverable", "")
+    if reason == "no_digital_fulfillment_flag":
+        return ("online", "Access in your Soul Food Library after you sign in")
+    if reason == "physical_only_no_digital":
+        return ("physical", "Ships to your address — tracking will be emailed when it leaves our facility")
+    if reason == "inactive_or_deprecated_sku":
+        return ("pending", "Temporarily unavailable — our team will follow up by email")
+    # no_file_mapping / file_missing_on_disk / empty_product_id / pre-orders
+    return ("pending", "We'll email your access as soon as it's ready")
 
 
 def expected_delivery_for(product_id: str) -> str:
-    """Return a human-readable expected-delivery hint for a gated/missing item.
-    Returns "" if the item is fully deliverable today."""
-    ok, _ = is_deliverable(product_id)
-    if ok:
-        return ""
-    return EXPECTED_DELIVERY_DEFAULT
+    """Backward-compatible helper: returns the fulfillment note string for a
+    gated/missing item, or "" if the item is immediately deliverable today."""
+    return fulfillment_note_for(product_id)[1]
 
 
 # =============================================================================
@@ -675,20 +689,20 @@ def expand_items_for_receipt(items: list) -> list:
         deliverables = []
         if bundle_key in BUNDLE_EXPANSIONS:
             for sub_id in BUNDLE_EXPANSIONS[bundle_key]:
-                ok, _reason = is_deliverable(sub_id)
+                status, note = fulfillment_note_for(sub_id)
                 deliverables.append({
                     "product_id": sub_id,
                     "label": display_label_for(sub_id),
-                    "status": "deliverable" if ok else "pending",
-                    "expected_by": "" if ok else EXPECTED_DELIVERY_DEFAULT,
+                    "status": status,
+                    "expected_by": note,
                 })
         else:
-            ok, _reason = is_deliverable(raw_id) if raw_id else (False, "empty")
+            status, note = fulfillment_note_for(raw_id) if raw_id else ("pending", "We'll email your access as soon as it's ready")
             deliverables.append({
                 "product_id": raw_id or normalized,
                 "label": display_label_for(raw_id, item_name),
-                "status": "deliverable" if ok else "pending",
-                "expected_by": "" if ok else EXPECTED_DELIVERY_DEFAULT,
+                "status": status,
+                "expected_by": note,
             })
 
         rows.append({
@@ -2878,19 +2892,24 @@ async def get_checkout_status(session_id: str):
                             recipient_email=digital_recipient_email,
                             is_buyer_receipt_only=True,
                         )
-                        # 2) RECIPIENT → access links + welcome message.
-                        if dl_payload:
-                            await send_order_confirmation(
-                                to_email=digital_recipient_email,
-                                order_id=order_number,
-                                items=items,
-                                total=total,
-                                download_links=dl_payload,
-                                customer_name="",
-                                gifted_by_email=customer_email,
-                                is_recipient_access=True,
-                            )
-                        print(f"[Status Check] Gift purchase emails sent — receipt to {customer_email}, access to {digital_recipient_email}")
+                        # 2) RECIPIENT → ALWAYS notified, with or without file
+                        #    download links. Entitlement/online items (e.g. IHI
+                        #    interactive lessons) generate NO download links, but
+                        #    the recipient still must receive the gift notification
+                        #    + access instructions (Redeem → My Library). Previously
+                        #    this was gated behind `if dl_payload`, so recipients of
+                        #    online-access gifts never got an email.
+                        await send_order_confirmation(
+                            to_email=digital_recipient_email,
+                            order_id=order_number,
+                            items=items,
+                            total=total,
+                            download_links=dl_payload,  # may be None for online-access items
+                            customer_name="",
+                            gifted_by_email=customer_email,
+                            is_recipient_access=True,
+                        )
+                        print(f"[Status Check] Gift purchase emails sent — receipt to {customer_email}, access to {digital_recipient_email} (download_links={len(dl_payload) if dl_payload else 0})")
                     else:
                         # Self-purchase — single combined email to buyer.
                         await send_order_confirmation(

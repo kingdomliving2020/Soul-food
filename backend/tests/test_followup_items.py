@@ -19,7 +19,7 @@ from payment_routes import (
     expand_items_for_receipt,
     expected_delivery_for,
     display_label_for,
-    EXPECTED_DELIVERY_DEFAULT,
+    fulfillment_note_for,
     _detect_game_pass_in_item,
 )
 
@@ -41,26 +41,27 @@ ie_entry = next((d for d in deliverables if d["product_id"] == "holiday_ie"), No
 expect("holiday_ie entry exists", ie_entry is not None)
 expect("holiday_ie status deliverable (file exists on disk)", ie_entry and ie_entry["status"] == "deliverable")
 
-# Single gated item (full Breakfast) shows pending + expected_by
+# Single gated item (full Breakfast) shows pending + a dynamic (non-stale) note
 rows = expand_items_for_receipt([{"product_id": "breakfast_ae_digital", "name": "Full Breakfast AE"}])
 expect("Full Breakfast AE single item: 1 deliverable row, status=pending",
        len(rows[0]["deliverables"]) == 1 and rows[0]["deliverables"][0]["status"] == "pending")
-expect("expected_by populated for gated item",
-       rows[0]["deliverables"][0]["expected_by"] == EXPECTED_DELIVERY_DEFAULT)
+expect("expected_by populated (dynamic, non-empty) for gated item",
+       bool(rows[0]["deliverables"][0]["expected_by"]) and "Mother" not in rows[0]["deliverables"][0]["expected_by"])
 
 # Holiday nibble (gated, no substitution)
 rows = expand_items_for_receipt([{"product_id": "holiday-nibble-ae-covenant-digital", "name": "Holiday Nibble Covenant"}])
 expect("Holiday nibble gated → status=pending", rows[0]["deliverables"][0]["status"] == "pending")
-expect("Holiday nibble expected_by populated", rows[0]["deliverables"][0]["expected_by"] == EXPECTED_DELIVERY_DEFAULT)
+expect("Holiday nibble expected_by populated (dynamic)", bool(rows[0]["deliverables"][0]["expected_by"]))
 
 # =============================================================================
-# Item 3 — Expected delivery framing
+# Item 3 — Dynamic fulfillment framing (no stale dated text)
 # =============================================================================
 print("\n=== Item 3: expected_delivery_for() ===")
 expect("holiday_ae deliverable → no expected_by string", expected_delivery_for("holiday_ae") == "")
 expect("snack_pack_ae_m1 deliverable → no expected_by", expected_delivery_for("snack_pack_ae_m1") == "")
-expect("breakfast_ae_digital gated → expected_by present", expected_delivery_for("breakfast_ae_digital") == EXPECTED_DELIVERY_DEFAULT)
-expect("holiday-nibble-* gated → expected_by present", expected_delivery_for("holiday-nibble-ae-covenant-digital") == EXPECTED_DELIVERY_DEFAULT)
+expect("breakfast_ae_digital gated → dynamic note present", bool(expected_delivery_for("breakfast_ae_digital")))
+expect("no stale 'Mother's Day' text anywhere", "Mother" not in expected_delivery_for("breakfast_ae_digital"))
+expect("holiday-nibble-* gated → dynamic note present", bool(expected_delivery_for("holiday-nibble-ae-covenant-digital")))
 
 # =============================================================================
 # Item 4 — Game pass detection

@@ -108,6 +108,19 @@ def get_base_template(content: str, preheader: str = "") -> str:
 # EMAIL TEMPLATES
 # =============================================================================
 
+def _fulfillment_tag(d: Dict) -> str:
+    """Inline status tag for a receipt deliverable line (dynamic, non-stale)."""
+    status = d.get("status")
+    note = d.get("expected_by", "")
+    if status in ("deliverable", None, "") or not note:
+        return ""
+    if status == "online":
+        return f' <span style="color:#0891b2;font-weight:600;">— {note}</span>'
+    if status == "physical":
+        return f' <span style="color:#b45309;font-weight:600;">— 📦 {note}</span>'
+    return f' <span style="color:#b45309;font-weight:600;">— Pending · {note}</span>'
+
+
 def get_order_confirmation_template(
     order_id: str,
     items: List[Dict],
@@ -150,18 +163,19 @@ def get_order_confirmation_template(
         if not sub_html and row and (row.get("is_bundle") or len(row.get("deliverables", [])) > 1):
             sub_html = '<ul style="margin: 8px 0 0 18px; padding: 0; color: #4b5563; font-size: 13px;">'
             for d in row.get("deliverables", []):
-                pending_tag = (
-                    f' <span style="color:#b45309;font-weight:600;">— Pending ({d.get("expected_by","")})</span>'
-                    if d.get("status") == "pending" else ""
-                )
-                sub_html += f'<li>{d.get("label","")}{pending_tag}</li>'
+                sub_html += f'<li>{d.get("label","")}{_fulfillment_tag(d)}</li>'
             sub_html += '</ul>'
-        elif not sub_html and row and row.get("deliverables") and row["deliverables"][0].get("status") == "pending":
+        elif not sub_html and row and row.get("deliverables") and row["deliverables"][0].get("status") not in ("deliverable", None, ""):
             d = row["deliverables"][0]
-            sub_html = (
-                f'<div style="margin-top:6px;color:#b45309;font-size:13px;font-weight:600;">'
-                f'Pending — {d.get("expected_by","")}</div>'
-            )
+            note = d.get("expected_by", "")
+            if note:
+                st = d.get("status")
+                color = "#0891b2" if st == "online" else "#b45309"
+                prefix = "Pending — " if st == "pending" else ("📦 " if st == "physical" else "")
+                sub_html = (
+                    f'<div style="margin-top:6px;color:{color};font-size:13px;font-weight:600;">'
+                    f'{prefix}{note}</div>'
+                )
         items_html += f"""
         <tr>
             <td style="padding: 12px 0; border-bottom: 1px solid #e5e7eb;">

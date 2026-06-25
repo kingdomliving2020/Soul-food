@@ -1560,7 +1560,13 @@ async def admin_resend_order_email(
 
     # If still no links after the auto-refulfill attempt, surface a CLEAR error
     # to the admin instead of silently sending an empty email.
-    if not download_links and not skip_auto_refulfill:
+    # EXCEPTION: gift orders of online/entitlement items (e.g. interactive
+    # lessons) legitimately have NO download links — the recipient is notified
+    # and accesses via Redeem → My Library. Never block those resends.
+    purchase_type = (tx.get("purchase_type") or "self").lower()
+    gift_recipient = (tx.get("digital_recipient_email") or "").strip() if purchase_type == "gift" else ""
+
+    if not download_links and not skip_auto_refulfill and not gift_recipient:
         await db.delivery_logs.insert_one({
             "id": secrets.token_hex(8),
             "order_id": order_number,
@@ -1579,6 +1585,61 @@ async def admin_resend_order_email(
                 "Open Admin → File Manager, attach/fix the file for the failing product, then click Refulfill on this order before resending."
             ),
         )
+
+    dl_payload = (
+        [{"token": dl["token"], "product_name": dl.get("name") or dl.get("product_name", "Download")} for dl in download_links]
+        if download_links else None
+    )
+
+    # GIFT order → resend BOTH the buyer receipt AND the recipient access email
+    # (previously this endpoint only re-sent to the buyer, so a missing gift
+    # notification could never be recovered for the actual recipient).
+    if gift_recipient:
+        buyer_res = await send_order_confirmation(
+            to_email=email,
+            order_id=order_number,
+            items=tx.get("items", []),
+            total=tx.get("total_amount", 0),
+            download_links=None,
+            customer_name=tx.get("customer_name", "Valued Customer"),
+            recipient_email=gift_recipient,
+            is_buyer_receipt_only=True,
+        )
+        recip_res = await send_order_confirmation(
+            to_email=gift_recipient,
+            order_id=order_number,
+            items=tx.get("items", []),
+            total=tx.get("total_amount", 0),
+            download_links=dl_payload,
+            customer_name="",
+            gifted_by_email=email,
+            is_recipient_access=True,
+        )
+        await db.delivery_logs.insert_one({
+            "id": secrets.token_hex(8),
+            "order_id": order_number,
+            "type": "admin_resend_email_gift",
+            "recipient": f"{email} + {gift_recipient}",
+            "status": "success" if (buyer_res.get("success") and recip_res.get("success")) else "partial_or_failed",
+            "details": {
+                "buyer_ok": buyer_res.get("success"),
+                "recipient_ok": recip_res.get("success"),
+                "links_sent": len(download_links),
+                "auto_refulfilled": auto_refulfilled,
+            },
+            "triggered_by": admin.id,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        })
+        await log_admin_action("resend_order_email", admin.id, "order", order_number)
+        if recip_res.get("success"):
+            return {
+                "success": True,
+                "message": f"Gift emails resent — receipt → {email}, access → {gift_recipient} ({len(download_links)} link(s))",
+                "links_sent": len(download_links),
+                "auto_refulfilled": auto_refulfilled,
+                "recipient": gift_recipient,
+            }
+        raise HTTPException(status_code=500, detail=f"Buyer receipt sent, but recipient access email FAILED to {gift_recipient}: {recip_res.get('error', 'unknown error')}")
 
     result = await send_order_confirmation(
         to_email=email,
