@@ -988,9 +988,9 @@ const QuickOrder = () => {
             <Card className="shadow-lg hover:shadow-xl transition-all border-2 border-purple-200 bg-gradient-to-br from-white to-purple-50 overflow-hidden" data-testid="holiday-table-bundle">
               <div className="relative aspect-[4/3] bg-white overflow-hidden flex items-center justify-center">
                 <img
-                  src="/covers/holiday-ae-front-new.png"
-                  alt="4 C's of Christianity workbook cover"
-                  className="max-w-[78%] max-h-[92%] object-contain"
+                  src="/covers/holiday-4cs-mosaic.png"
+                  alt="4 C's of Christianity — Covenant, Cradle, Cross, Comforter mosaic cover"
+                  className="max-w-[88%] max-h-[96%] object-contain"
                   loading="lazy"
                 />
               </div>
@@ -1063,9 +1063,9 @@ const QuickOrder = () => {
               </div>
               <div className="relative aspect-[4/3] bg-white overflow-hidden flex items-center justify-center">
                 <img
-                  src="/covers/breakfast-adult-front.jpg"
-                  alt="Foundation in Christ workbook cover"
-                  className="max-w-[78%] max-h-[92%] object-contain"
+                  src="/covers/full-table-games.png"
+                  alt="Full Table Experience — Trivia Mix-up, Tricky Testaments, 90-Day Game Pass"
+                  className="max-w-[94%] max-h-[94%] object-contain"
                   loading="lazy"
                 />
               </div>
