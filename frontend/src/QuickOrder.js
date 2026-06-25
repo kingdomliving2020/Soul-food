@@ -963,7 +963,7 @@ const QuickOrder = () => {
             <Badge className="bg-emerald-600 text-white text-xs px-2 py-0.5">Recommended</Badge>
           </div>
           <p className="text-sm text-slate-600 mb-5 max-w-2xl">
-            SOFU is designed for group learning, discussion, and discipleship. Start your ministry team, study group, homeschool circle, or church class with everything they need in one bundle.
+            SOFU is designed for group learning, discussion, and discipleship. Start your ministry team, study group, homeschool circle, or church class with everything they need in one place.
           </p>
           <div className="max-w-xl">
             <SmallGroupBundleCard onOpen={() => setSgbModalOpen(true)} />

@@ -301,11 +301,11 @@ const SmallGroupBundleModal = ({ open, onClose }) => {
 // The storefront product card you click to open the modal.
 export const SmallGroupBundleCard = ({ onOpen }) => (
   <Card data-testid="sgb-card" className="shadow-xl border-2 border-emerald-200 hover:border-emerald-400 transition-colors h-full flex flex-col overflow-hidden">
-    <div className="relative w-full aspect-[4/3] bg-white flex items-center justify-center overflow-hidden border-b border-emerald-100">
+    <div className="relative w-full aspect-[4/3] bg-slate-100 flex items-center justify-center overflow-hidden border-b border-emerald-100">
       <img
-        src="/covers/tile-smallgroup.png"
-        alt="Small Group Bundle — instructor and student booklets"
-        className="max-w-[80%] max-h-[92%] object-contain"
+        src="/covers/tile-smallgroup-community.png"
+        alt="Small group gathered in fellowship around God's Word"
+        className="w-full h-full object-cover object-center"
         loading="lazy"
       />
       <span className="absolute top-2 left-2 bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow">
@@ -313,7 +313,7 @@ export const SmallGroupBundleCard = ({ onOpen }) => (
       </span>
     </div>
     <CardContent className="p-5 flex flex-col flex-1">
-      <h3 className="text-xl font-bold text-slate-900 mb-2">Small Group Bundles</h3>
+      <h3 className="text-xl font-bold text-slate-900 mb-2">Small Group Options</h3>
       <div className="flex items-baseline gap-2 mb-3">
         <span className="text-3xl font-bold text-emerald-700">From ${BUNDLE_PRICE.toFixed(2)}</span>
         <span className="text-xs text-slate-500">4 · 5 · 10 · 15 seats</span>
