@@ -962,17 +962,8 @@ const QuickOrder = () => {
           <p className="text-sm text-slate-600 mb-5 max-w-2xl">
             SOFU is designed for group learning, discussion, and discipleship. Start your ministry team, study group, homeschool circle, or church class with everything they need in one bundle.
           </p>
-          <div className="grid md:grid-cols-2 gap-6 items-stretch">
+          <div className="max-w-xl">
             <SmallGroupBundleCard onOpen={() => setSgbModalOpen(true)} />
-            <div className="bg-white border-2 border-dashed border-slate-200 rounded-2xl p-6 flex flex-col justify-center">
-              <h4 className="font-bold text-slate-800 mb-2">Why a bundle?</h4>
-              <p className="text-sm text-slate-600 mb-3">
-                Buying individually adds up fast. The Small Group Bundle saves you up to $39.96 and bakes in the structure most leaders want anyway: <em>one teacher, four learners.</em>
-              </p>
-              <p className="text-sm text-slate-600">
-                Need a larger circle? Add booklets to your cart after the bundle — each one is automatically <strong>$1 off</strong>, no coupon needed.
-              </p>
-            </div>
           </div>
         </section>
 
