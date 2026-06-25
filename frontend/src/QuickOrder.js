@@ -951,7 +951,18 @@ const QuickOrder = () => {
         <PalmSundayBanner />
 
         {/* ===================== SMALL GROUP BUNDLE (TOP) ===================== */}
-        <section className="mb-12" data-testid="small-group-section">
+        <section className="mb-12 relative overflow-hidden rounded-2xl px-5 py-8 sm:px-7 sm:py-10 border border-emerald-100 bg-emerald-50/40" data-testid="small-group-section">
+          {/* Subtle background texture — very low opacity, decorative only */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 pointer-events-none opacity-[0.12]"
+            style={{
+              backgroundImage: "url('https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=1600&h=900&fit=crop&crop=center')",
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          />
+          <div className="relative">
           <div className="flex items-center gap-3 mb-4">
             <h3 className="text-2xl font-bold text-slate-800">Built for Small Groups</h3>
             <Badge className="bg-emerald-600 text-white text-xs px-2 py-0.5">Recommended</Badge>
@@ -971,6 +982,7 @@ const QuickOrder = () => {
               </p>
             </div>
           </div>
+          </div>
         </section>
 
         {/* ===================== FEATURED SECTION ===================== */}
@@ -983,11 +995,11 @@ const QuickOrder = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Holiday Table Bundle */}
             <Card className="shadow-lg hover:shadow-xl transition-all border-2 border-purple-200 bg-gradient-to-br from-white to-purple-50 overflow-hidden" data-testid="holiday-table-bundle">
-              <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
+              <div className="relative aspect-[4/3] bg-white overflow-hidden">
                 <img
                   src="/covers/holiday-table.png"
                   alt="Holiday Table Bundle — 4 C's of Christianity workbook with Foundation in Christ snack pack"
-                  className="w-full h-full object-cover object-center scale-110"
+                  className="absolute inset-0 w-full h-full object-contain p-3"
                   loading="lazy"
                 />
               </div>
@@ -1058,11 +1070,11 @@ const QuickOrder = () => {
               <div className="absolute -top-2 -right-2 z-10">
                 <Badge className="bg-amber-500 text-white text-xs px-3 py-1 shadow-lg">Best Value</Badge>
               </div>
-              <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
+              <div className="relative aspect-[4/3] bg-white overflow-hidden">
                 <img
                   src="/covers/full-table.png"
                   alt="Full Table Experience — 4 C's workbook + Foundation in Christ snack pack + game pass"
-                  className="w-full h-full object-cover object-top scale-110"
+                  className="absolute inset-0 w-full h-full object-contain p-3 pb-5"
                   loading="lazy"
                 />
               </div>
