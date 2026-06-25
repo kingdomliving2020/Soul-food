@@ -473,7 +473,7 @@ const MyLibrary = () => {
                             {status === 'available' ? (
                               <>
                                 <Button
-                                  onClick={() => window.open(purchase.download_url, '_blank')}
+                                  onClick={() => window.open(purchase.download_url, '_blank', 'noopener,noreferrer')}
                                   className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white w-full sm:w-auto"
                                   data-testid={`download-btn-${idx}`}
                                 >

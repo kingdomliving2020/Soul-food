@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "@/App.css";
+import DOMPurify from "dompurify";
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Toaster } from "@/components/ui/sonner";
@@ -1867,7 +1868,7 @@ const LessonViewer = () => {
     return parts.map((part, index) => (
       <React.Fragment key={index}>
         <div dangerouslySetInnerHTML={{ 
-          __html: part
+          __html: DOMPurify.sanitize(part
             .replace(/\n/g, '<br />')
             .replace(/### /g, '<h3>')
             .replace(/<h3>(.*?)<br \/>/g, '<h3>$1</h3>')
@@ -1877,6 +1878,7 @@ const LessonViewer = () => {
             .replace(/<h1>(.*?)<br \/>/g, '<h1>$1</h1>')
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/---<br \/>/g, '<hr />')
+          )
         }} />
         {textareas[index] && (
           <textarea

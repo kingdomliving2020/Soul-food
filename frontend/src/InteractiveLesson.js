@@ -677,7 +677,7 @@ const InteractiveLesson = () => {
             onClick={() => {
               // Download PDF
               const downloadUrl = `${API}/interactive-lessons/download/nibble/${nibbleId}`;
-              window.open(downloadUrl, '_blank');
+              window.open(downloadUrl, '_blank', 'noopener,noreferrer');
               toast.success('PDF download started!');
             }}
             variant="outline"

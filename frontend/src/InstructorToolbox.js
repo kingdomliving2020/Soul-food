@@ -647,7 +647,7 @@ const InstructorToolbox = () => {
                   className={`${c.icon} text-white flex-shrink-0`}
                   data-testid={`download-${item.id}`}
                   onClick={() => {
-                    window.open(`${API_URL}/api/content/games/${item.file}`, '_blank');
+                    window.open(`${API_URL}/api/content/games/${item.file}`, '_blank', 'noopener,noreferrer');
                     toast.success(`Downloading ${item.title}...`);
                   }}
                 >
