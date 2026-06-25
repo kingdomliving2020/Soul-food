@@ -3839,6 +3839,12 @@ async def get_my_orders(request: Request):
             "purchase_type": purchase_type,
             "is_gift": purchase_type == "gift",
             "digital_recipient_email": t.get("digital_recipient_email") if purchase_type == "gift" else None,
+            # P4 — purchasing vs ownership. The buyer never "owns" a gift entitlement.
+            "purchased_by": t.get("customer_email"),
+            "granted_to": (t.get("digital_recipient_email") if purchase_type == "gift" else t.get("customer_email")),
+            "owned_by_me": purchase_type != "gift",
+            "entitlement_status": t.get("entitlement_status"),
+            "manual_override": bool(t.get("manual_override", False)),
             "items": items,
             "items_count": len(items),
             "downloads_count": t.get("downloads_count", 0),

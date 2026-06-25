@@ -123,6 +123,12 @@ async def verify_download_token(token: str) -> Tuple[bool, Optional[Dict], str]:
     if record.get("revoked"):
         return False, None, "This download link has been revoked"
     
+    # Entitlement integrity: deny if the parent order is refunded/cancelled/revoked,
+    # even if the individual link was not explicitly revoked. Keeps Library, Order
+    # status, and Downloads telling the same story.
+    if await _order_blocks_download(record.get("order_id")):
+        return False, None, "Access to this item has been revoked because the order was refunded or cancelled. Please contact support@kingdom-soul.com."
+    
     # Check expiry - handle both timezone-aware and naive datetimes
     expires_at = record["expires_at"]
     now = datetime.now(timezone.utc)
@@ -416,6 +422,55 @@ async def revoke_download_links(order_id: str, reason: str = ""):
         details={"reason": reason, "links_revoked": result.modified_count}
     )
     
+    return result.modified_count
+
+
+# A transaction may be referenced by order_number / order_id / session_id in
+# different places; download_links.order_id can hold any of them. These helpers
+# operate across all candidate ids so entitlement state stays consistent.
+def _order_id_candidates(*ids) -> list:
+    return [i for i in {x for x in ids if x}]
+
+
+async def _order_blocks_download(order_id) -> bool:
+    """True if the order/transaction tied to this link is refunded/cancelled/revoked."""
+    if not order_id:
+        return False
+    blocking_refund = {"refunded", "partial_refund", "partially_refunded", "chargeback"}
+    blocking_status = {"refunded", "cancelled", "canceled", "revoked", "expired"}
+    q = {"$or": [{"order_number": order_id}, {"order_id": order_id}, {"session_id": order_id}]}
+    for coll in (db.payment_transactions, db.orders):
+        doc = await coll.find_one(q, {"_id": 0, "refund_status": 1, "status": 1, "entitlement_status": 1})
+        if not doc:
+            continue
+        if (doc.get("refund_status") or "").strip().lower() in blocking_refund:
+            return True
+        if (doc.get("status") or "").strip().lower() in blocking_status:
+            return True
+        if (doc.get("entitlement_status") or "").strip().lower() == "revoked":
+            return True
+    return False
+
+
+async def set_links_revoked(order_ids: list, revoked: bool, reason: str = "") -> int:
+    """Revoke or restore all download links across a set of candidate order ids.
+    Restoring also refreshes expiry so the customer regains usable access."""
+    ids = _order_id_candidates(*order_ids)
+    if not ids:
+        return 0
+    update = {
+        "revoked": revoked,
+        "revoked_at": datetime.now(timezone.utc).isoformat() if revoked else None,
+        "revoke_reason": reason if revoked else None,
+    }
+    if not revoked:
+        update["expires_at"] = datetime.now(timezone.utc) + timedelta(hours=DOWNLOAD_LINK_EXPIRY_HOURS)
+    result = await db.download_links.update_many({"order_id": {"$in": ids}}, {"$set": update})
+    await log_download_event(
+        event_type="download_links_revoked_admin" if revoked else "download_links_restored_admin",
+        order_id=ids[0],
+        details={"reason": reason, "links_affected": result.modified_count, "order_ids": ids},
+    )
     return result.modified_count
 
 

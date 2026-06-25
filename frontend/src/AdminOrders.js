@@ -22,6 +22,7 @@ import {
   Mail,
   Send,
   Unlock,
+  Lock,
   Download,
   FileText,
   Eye
@@ -219,6 +220,51 @@ const AdminOrders = () => {
       setActionLoading('');
     }
   };
+
+  // P1 — manual status reconciliation (Stripe-independent) with instant entitlement sync
+  const handleSetStatus = async (orderNumber, status) => {
+    const labels = { refunded: 'mark as REFUNDED', cancelled: 'mark as CANCELLED', paid: 'reinstate as PAID' };
+    if (!window.confirm(`Are you sure you want to ${labels[status] || status} order ${orderNumber}? This will immediately ${status === 'paid' ? 'restore' : 'revoke'} download access. (No Stripe charge is affected.)`)) return;
+    setActionLoading(`status-${orderNumber}`);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/status`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, reason: `admin manual ${status}`, sync_access: true })
+      });
+      const { ok, data } = await safeJson(res);
+      if (ok && data.success) {
+        toast.success(`Order ${status}. Entitlement: ${data.entitlement_status || 'unchanged'} (${data.links_changed} links).`);
+        fetchOrders();
+        if (expandedOrder === orderNumber) loadOrderDetail(orderNumber);
+      } else {
+        toast.error(`Failed: ${data.detail || JSON.stringify(data)}`);
+      }
+    } catch (err) { toast.error(`Network error: ${err.message}`); }
+    finally { setActionLoading(''); }
+  };
+
+  // P1 — manual entitlement override (no financial status change)
+  const handleSetAccess = async (orderNumber, action) => {
+    setActionLoading(`access-${orderNumber}`);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/access`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, reason: `admin manual ${action}` })
+      });
+      const { ok, data } = await safeJson(res);
+      if (ok && data.success) {
+        toast.success(`Access ${action === 'revoke' ? 'revoked' : 'granted'} (${data.links_changed} links).`);
+        fetchOrders();
+        if (expandedOrder === orderNumber) loadOrderDetail(orderNumber);
+      } else {
+        toast.error(`Failed: ${data.detail || JSON.stringify(data)}`);
+      }
+    } catch (err) { toast.error(`Network error: ${err.message}`); }
+    finally { setActionLoading(''); }
+  };
+
 
   const handleSyncStripe = async (orderNumber) => {
     setActionLoading(`sync-${orderNumber}`);
@@ -656,7 +702,7 @@ const AdminOrders = () => {
                           {actionLoading === `grant-${order.order_number}` ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Unlock className="w-3.5 h-3.5" />}
                           <span>Grant Access</span>
                         </button>
-                        <button onClick={() => toggleExpand(order.order_number)} className="p-2 rounded-lg hover:bg-slate-100 text-slate-400">
+                        <button onClick={() => toggleExpand(order.order_number)} className="p-2 rounded-lg hover:bg-slate-100 text-slate-400" data-testid={`expand-order-${order.order_number}`}>
                           {expandedOrder === order.order_number ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                         </button>
                       </div>
@@ -779,6 +825,55 @@ const AdminOrders = () => {
                                 </div>
                               </div>
                             )}
+
+                            {/* P4 — Purchasing vs Ownership + P1 entitlement controls */}
+                            <div className="sm:col-span-2 pt-3 border-t" data-testid={`ownership-panel-${order.order_number}`}>
+                              <h4 className="font-medium text-slate-700 mb-2">Ownership & Entitlement</h4>
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs mb-3">
+                                <div className="bg-white border rounded p-2">
+                                  <p className="text-slate-400">Purchased By</p>
+                                  <p className="font-medium text-slate-700 truncate" data-testid={`purchased-by-${order.order_number}`}>{orderDetail?.ownership?.purchased_by || '—'}</p>
+                                </div>
+                                <div className="bg-white border rounded p-2">
+                                  <p className="text-slate-400">Granted To {orderDetail?.ownership?.is_gift && <span className="text-pink-600 font-semibold">(gift)</span>}</p>
+                                  <p className="font-medium text-slate-700 truncate" data-testid={`granted-to-${order.order_number}`}>{orderDetail?.ownership?.granted_to || '—'}</p>
+                                </div>
+                                <div className="bg-white border rounded p-2">
+                                  <p className="text-slate-400">Entitlement</p>
+                                  <p className={`font-semibold ${orderDetail?.ownership?.entitlement_status === 'revoked' ? 'text-red-600' : 'text-emerald-600'}`} data-testid={`entitlement-status-${order.order_number}`}>
+                                    {orderDetail?.ownership?.entitlement_status || (orderDetail?.ownership?.active_links > 0 ? 'granted' : '—')}
+                                  </p>
+                                </div>
+                                <div className="bg-white border rounded p-2">
+                                  <p className="text-slate-400">Links</p>
+                                  <p className="font-medium text-slate-700">{orderDetail?.ownership?.active_links || 0} active / {orderDetail?.ownership?.revoked_links || 0} revoked</p>
+                                </div>
+                              </div>
+                              {orderDetail?.ownership?.manual_override && (
+                                <div className="bg-amber-50 border border-amber-200 rounded p-2 text-xs text-amber-800 mb-3" data-testid={`override-note-${order.order_number}`}>
+                                  ⚠️ Manual admin override active{orderDetail?.ownership?.override_reason ? ` — "${orderDetail.ownership.override_reason}"` : ''}{orderDetail?.ownership?.override_at ? ` (${new Date(orderDetail.ownership.override_at).toLocaleString()})` : ''}
+                                </div>
+                              )}
+                              <div className="flex flex-wrap items-center gap-2">
+                                <button onClick={() => handleSetStatus(order.order_number, 'refunded')} disabled={actionLoading === `status-${order.order_number}`}
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-blue-200 text-blue-700 hover:bg-blue-50 disabled:opacity-40" data-testid={`mark-refunded-${order.order_number}`}>
+                                  <RefreshCw className="w-3.5 h-3.5" /> Mark Refunded
+                                </button>
+                                <button onClick={() => handleSetStatus(order.order_number, 'cancelled')} disabled={actionLoading === `status-${order.order_number}`}
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-40" data-testid={`mark-cancelled-${order.order_number}`}>
+                                  <XCircle className="w-3.5 h-3.5" /> Mark Cancelled
+                                </button>
+                                <button onClick={() => handleSetAccess(order.order_number, 'revoke')} disabled={actionLoading === `access-${order.order_number}`}
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-slate-200 text-slate-600 hover:bg-red-50 hover:text-red-700 disabled:opacity-40" data-testid={`revoke-access-${order.order_number}`}>
+                                  <Lock className="w-3.5 h-3.5" /> Revoke Access
+                                </button>
+                                <button onClick={() => handleSetStatus(order.order_number, 'paid')} disabled={actionLoading === `status-${order.order_number}`}
+                                  className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-emerald-200 text-emerald-700 hover:bg-emerald-50 disabled:opacity-40" data-testid={`reinstate-paid-${order.order_number}`}>
+                                  <CheckCircle className="w-3.5 h-3.5" /> Reinstate (Paid)
+                                </button>
+                              </div>
+                            </div>
+
                           </div>
                         )}
                         

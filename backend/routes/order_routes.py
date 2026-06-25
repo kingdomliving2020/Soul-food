@@ -639,6 +639,24 @@ async def admin_process_refund(request: AdminRefundRequest):
             {"$or": [{"order_number": order_number}, {"session_id": order_number}]},
             {"$set": update_data}
         )
+
+        # Entitlement integrity: revoke downloads immediately on full refund so
+        # Library, Downloads and Order status all agree.
+        if refund_status == "refunded":
+            try:
+                from download_protection import set_links_revoked
+                cand = [order_number, source.get("order_number"), source.get("order_id"), source.get("session_id")]
+                await set_links_revoked(cand, True, f"Stripe refund {refund.id}")
+                await db.orders.update_one(
+                    {"$or": [{"order_number": order_number}, {"order_id": order_number}]},
+                    {"$set": {"entitlement_status": "revoked", "status": "refunded"}}
+                )
+                await db.payment_transactions.update_one(
+                    {"$or": [{"order_number": order_number}, {"session_id": order_number}]},
+                    {"$set": {"entitlement_status": "revoked", "status": "refunded"}}
+                )
+            except Exception as _e:
+                pass
         
         # Update refund request if exists
         await db.refund_requests.update_one(
@@ -730,9 +748,25 @@ async def admin_get_order_details(order_number: str):
         {"_id": 0, "token_hash": 0}
     ).to_list(100)
     
+    src = transaction or order or {}
+    ptype = (src.get("purchase_type") or "self").strip().lower()
+    ownership = {
+        "purchased_by": src.get("customer_email"),
+        "granted_to": (src.get("digital_recipient_email") if ptype == "gift" else src.get("customer_email")),
+        "recipient": src.get("digital_recipient_email"),
+        "is_gift": ptype == "gift",
+        "entitlement_status": src.get("entitlement_status"),
+        "manual_override": bool(src.get("manual_override", False)),
+        "override_by": src.get("override_by"),
+        "override_at": src.get("override_at"),
+        "override_reason": src.get("override_reason"),
+        "active_links": sum(1 for dl in download_links if not dl.get("revoked")),
+        "revoked_links": sum(1 for dl in download_links if dl.get("revoked")),
+    }
     return {
         "order": order,
         "transaction": transaction,
         "refund_request": refund_request,
-        "download_links": download_links
+        "download_links": download_links,
+        "ownership": ownership,
     }

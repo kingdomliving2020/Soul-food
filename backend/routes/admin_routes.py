@@ -1207,12 +1207,30 @@ async def get_order_detail(order_number: str, admin: AdminUser = Depends(get_cur
     except Exception:
         expanded_items = []
 
+    # P4 — purchasing vs ownership summary + P1 entitlement state
+    src = transaction or order or {}
+    ptype = (src.get("purchase_type") or "self").strip().lower()
+    ownership = {
+        "purchased_by": src.get("customer_email"),
+        "granted_to": (src.get("digital_recipient_email") if ptype == "gift" else src.get("customer_email")),
+        "recipient": src.get("digital_recipient_email"),
+        "is_gift": ptype == "gift",
+        "entitlement_status": src.get("entitlement_status"),
+        "manual_override": bool(src.get("manual_override", False)),
+        "override_by": src.get("override_by"),
+        "override_at": src.get("override_at"),
+        "override_reason": src.get("override_reason"),
+        "active_links": sum(1 for dl in download_links if not dl.get("revoked")),
+        "revoked_links": sum(1 for dl in download_links if dl.get("revoked")),
+    }
+
     return {
         "transaction": transaction,
         "order": order,
         "download_links": download_links,
         "delivery_logs": delivery_logs,
         "expanded_items": expanded_items,
+        "ownership": ownership,
     }
 
 
@@ -1846,6 +1864,158 @@ async def bulk_tag_orders(
         "archive": payload.archive,
         "tag": payload.tag,
     }
+
+
+# =============================================================================
+# ORDER STATUS & ENTITLEMENT RECONCILIATION (manual admin controls)
+# =============================================================================
+# Separates FINANCIAL status (paid/refunded/cancelled...) from ENTITLEMENT
+# status (granted/revoked). Changing status here instantly syncs Library,
+# Downloads, Order History and Admin views. Stripe-independent so dev/test
+# "ghost" records can be reconciled without a payment intent.
+
+class OrderStatusUpdate(BaseModel):
+    status: str  # paid | completed | processing | cancelled | refunded | refund_pending | chargeback
+    reason: Optional[str] = ""
+    sync_access: bool = True  # auto grant/revoke downloads to match financial status
+
+
+class OrderAccessUpdate(BaseModel):
+    action: str  # grant | revoke
+    reason: Optional[str] = ""
+
+
+# Financial statuses that should REVOKE entitlement when sync_access is on
+_REVOKING_STATUSES = {"refunded", "cancelled", "canceled", "chargeback", "revoked", "expired"}
+# Financial statuses that should (re)GRANT entitlement
+_GRANTING_STATUSES = {"paid", "completed", "processing"}
+_ALLOWED_ORDER_STATUSES = {
+    "pending", "paid", "processing", "completed", "cancelled",
+    "refund_pending", "refunded", "chargeback", "archived",
+}
+
+
+async def _find_order_sources(order_number: str):
+    """Return (orders_doc, txn_doc) for an order_number/order_id/session_id."""
+    q = {"$or": [{"order_number": order_number}, {"order_id": order_number}, {"session_id": order_number}]}
+    order = await db.orders.find_one(q, {"_id": 0})
+    txn = await db.payment_transactions.find_one(q, {"_id": 0})
+    return order, txn
+
+
+@router.post("/orders/{order_number}/status")
+async def admin_set_order_status(
+    order_number: str,
+    payload: OrderStatusUpdate,
+    admin: AdminUser = Depends(get_current_admin),
+):
+    """Manually set an order's financial status and (optionally) sync entitlement.
+    Does NOT call Stripe — use the dedicated refund flow for real Stripe refunds.
+    NOTHING IS DELETED; refunded/cancelled orders remain as historical records."""
+    status = payload.status.strip().lower()
+    if status not in _ALLOWED_ORDER_STATUSES:
+        raise HTTPException(status_code=400, detail=f"Invalid status. Allowed: {sorted(_ALLOWED_ORDER_STATUSES)}")
+
+    order, txn = await _find_order_sources(order_number)
+    if not order and not txn:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    now = datetime.now(timezone.utc).isoformat()
+    from download_protection import set_links_revoked
+    set_fields = {
+        "status": status,
+        "manual_override": True,
+        "override_by": admin.id,
+        "override_at": now,
+        "override_reason": payload.reason or "",
+        "status_updated_at": now,
+    }
+    # Map financial status onto refund/payment fields so every view agrees.
+    if status == "refunded":
+        set_fields["refund_status"] = "refunded"
+        set_fields["refunded_at"] = now
+    elif status == "refund_pending":
+        set_fields["refund_status"] = "requested"
+    elif status == "chargeback":
+        set_fields["refund_status"] = "chargeback"
+    elif status == "cancelled":
+        set_fields["cancelled_at"] = now
+    elif status in ("paid", "completed", "processing"):
+        set_fields["payment_status"] = "paid"
+        # clear prior refund markers when reinstating
+        set_fields["refund_status"] = None
+
+    # Sync entitlement
+    entitlement = None
+    links_changed = 0
+    if payload.sync_access:
+        cand = [order_number]
+        for d in (order, txn):
+            if d:
+                cand += [d.get("order_number"), d.get("order_id"), d.get("session_id")]
+        if status in _REVOKING_STATUSES:
+            entitlement = "revoked"
+            links_changed = await set_links_revoked(cand, True, payload.reason or f"order status set to {status}")
+        elif status in _GRANTING_STATUSES:
+            entitlement = "granted"
+            links_changed = await set_links_revoked(cand, False, payload.reason or f"order status set to {status}")
+        if entitlement:
+            set_fields["entitlement_status"] = entitlement
+
+    filter_q = {"$or": [{"order_number": order_number}, {"order_id": order_number}, {"session_id": order_number}]}
+    o_res = await db.orders.update_many(filter_q, {"$set": set_fields})
+    t_res = await db.payment_transactions.update_many(filter_q, {"$set": set_fields})
+
+    await log_admin_action("set_order_status", admin.id, "order", f"{order_number} -> {status}")
+    return {
+        "success": True,
+        "order_number": order_number,
+        "status": status,
+        "entitlement_status": entitlement,
+        "links_changed": links_changed,
+        "matched": o_res.matched_count + t_res.matched_count,
+    }
+
+
+@router.post("/orders/{order_number}/access")
+async def admin_set_order_access(
+    order_number: str,
+    payload: OrderAccessUpdate,
+    admin: AdminUser = Depends(get_current_admin),
+):
+    """Manually grant or revoke download entitlement for an order WITHOUT changing
+    its financial status (admin override). Clearly recorded as a manual override."""
+    action = payload.action.strip().lower()
+    if action not in ("grant", "revoke"):
+        raise HTTPException(status_code=400, detail="action must be 'grant' or 'revoke'")
+
+    order, txn = await _find_order_sources(order_number)
+    if not order and not txn:
+        raise HTTPException(status_code=404, detail="Order not found")
+
+    cand = [order_number]
+    for d in (order, txn):
+        if d:
+            cand += [d.get("order_number"), d.get("order_id"), d.get("session_id")]
+
+    now = datetime.now(timezone.utc).isoformat()
+    revoke = action == "revoke"
+    from download_protection import set_links_revoked
+    links_changed = await set_links_revoked(cand, revoke, payload.reason or f"admin {action}")
+    set_fields = {
+        "entitlement_status": "revoked" if revoke else "admin_override",
+        "manual_override": True,
+        "override_by": admin.id,
+        "override_at": now,
+        "override_reason": payload.reason or "",
+    }
+    filter_q = {"$or": [{"order_number": order_number}, {"order_id": order_number}, {"session_id": order_number}]}
+    await db.orders.update_many(filter_q, {"$set": set_fields})
+    await db.payment_transactions.update_many(filter_q, {"$set": set_fields})
+
+    await log_admin_action(f"order_access_{action}", admin.id, "order", order_number)
+    return {"success": True, "order_number": order_number, "action": action, "links_changed": links_changed}
+
 
 
 # =============================================================================

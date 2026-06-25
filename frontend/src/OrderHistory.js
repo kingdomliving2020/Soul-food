@@ -134,6 +134,12 @@ const OrderHistory = () => {
                   </div>
                 </CardHeader>
                 <CardContent className="p-4">
+                  {o.is_gift && (
+                    <div className="mb-3 bg-pink-50 border border-pink-200 rounded-lg px-3 py-2 text-xs text-pink-800" data-testid={`ownership-note-${o.order_number}`}>
+                      <Gift className="w-3.5 h-3.5 inline mr-1" />
+                      Purchased by you · <span className="font-semibold">Granted to {o.granted_to || 'recipient'}</span>. This is a gift — the recipient owns the access, not your account.
+                    </div>
+                  )}
                   <div className="divide-y divide-slate-100">
                     {o.items.map((it, idx) => (
                       <div key={it.product_id || `${o.order_number}-${idx}`} className="flex items-start justify-between py-2 gap-3">
