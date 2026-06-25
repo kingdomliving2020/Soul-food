@@ -633,7 +633,8 @@ const QuickOrder = () => {
       subtitle: 'Pen + Magnetic Bookmark Set',
       image: '/covers/soul-food-pen.png',
       price: 9.99,
-      preOrder: true
+      preOrder: true,
+      hidden: true
     },
     {
       id: 'pen-lighted',
@@ -641,7 +642,8 @@ const QuickOrder = () => {
       subtitle: 'Branded lighted journal pen with stylus',
       image: '/covers/soul-food-pen.png',
       price: 9.99,
-      preOrder: true
+      preOrder: true,
+      hidden: true
     },
     {
       id: 'pen-standard',
@@ -649,7 +651,8 @@ const QuickOrder = () => {
       subtitle: 'Branded journal pen',
       image: '/covers/soul-food-pen.png',
       price: 7.99,
-      preOrder: true
+      preOrder: true,
+      hidden: true
     },
     {
       id: 'bookmarks-set',
