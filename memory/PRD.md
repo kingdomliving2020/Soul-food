@@ -17,6 +17,14 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Product Data Cleanup — Physical Flags + BONUS Merge (June 25, 2026)
+- [x] **Verified** Admin Account & Order hygiene controls end-to-end via real authenticated UI login (iteration_40.json, 17/17 PASS). Archived users hidden by default (43 active/1 archived/44 all); test+archived orders hidden by default (71 active/0 test/0 archived); Active/Test/Archived/All filters all correct; bulk archive + tag + restore reversible; admin account never touched.
+- [x] **5 physical merch items flagged** in `payment_routes.py PRODUCTS` — `pen_lighted` (MERCH-PEN-LIT), `pen_standard` (MERCH-PEN-STD), `bookmarks_set` (MAG-BMK-3PK), `bookmark_leather` (MAG-LEA-BMK), `study_kit` (MERCH-STUDYKIT) now carry `type:"physical"`, `physical:True`, `no_digital_fulfillment:True`. `is_deliverable()` returns `(False,'no_digital_fulfillment_flag')` for all 5 → system no longer attempts to digitally deliver a pen/bookmark. Synced matching `db.products` rows so the live catalog reflects physical=True (db overrides code by SKU).
+- [x] **BONUS-NOG / BONUS-TAS de-duplicated (merged into one)** — both previously mapped to the single combined PDF `holiday-bonus-names-seasons.pdf`. `bonus_names_of_god` (BONUS-NOG) renamed to **"Bonus Lessons: Names of God & Times and Seasons (Combined)"**; `bonus_times_seasons` (BONUS-TAS) marked `deprecated:True`+`inactive:True` (also `db.products` status=inactive) → removed from public catalog + blocked by `is_deliverable` (`inactive_or_deprecated_sku`). Removed the duplicate `bonus_times_seasons` line from `PRODUCT_FILES`. One file = one product; no double-delivery.
+- [x] **No regressions** — `tests/test_bundle_rules.py` (11 pre-existing FAILs) and `tests/test_followup_items.py` (6 pre-existing FAILs) counts identical before/after (confirmed via git stash); those failures are a separate pre-existing nibble-gating issue, untouched by this work. Catalog serves 200.
+- [ ] Note: BONUS-NOG combined file delivery shows `file_missing_on_disk` (combined PDF lives in `lesson_pdfs/`, not `content/downloads/` PDF_DIR). PRE-EXISTING free-bonus delivery gap, not introduced here — attach via File Manager if paid delivery of this free bonus is ever needed.
+
+
 ### Storefront Visual Cleanup (Feb 24, 2026) — Pre-Launch Conversion Polish
 - [x] **Top Card Row simplified** — removed "In His Image" and "Bible Games" tiles from `SoulFoodApp.js` Ministry Journey section. Reduced 4-tile grid to 2-tile (Small Group Bundle + Foundation in Christ). New headline: "Start with a Lesson — or grow as a Group."
 - [x] **Featured Row balanced** — `QuickOrder.js` third Featured tile (Holiday ePub) now matches the first two visually: added Holiday AE cover image, emerald gradient background, matching CTA style.

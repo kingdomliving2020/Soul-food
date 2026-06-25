@@ -166,7 +166,6 @@ PRODUCT_FILES = {
     "breakfast-nibble-l12-ye": "nibbles/breakfast-ye-l12-nibble.pdf",
     # Free bonus lessons - Adult Edition (FREE)
     "bonus_names_of_god": "holiday-bonus-names-seasons.pdf",
-    "bonus_times_seasons": "holiday-bonus-names-seasons.pdf",
     "bonus_in_his_image": "in-his-image-adult-full.pdf",
     # Holiday Bonus Lessons - by edition
     "bonus-ae-holiday": "bonus-ae-holiday.pdf",
@@ -1415,24 +1414,28 @@ PRODUCTS = {
     
     # ==================== FREE / BONUS LESSONS ====================
     "bonus_names_of_god": {
-        "name": "Bonus Lessons: Names of God",
+        "name": "Bonus Lessons: Names of God & Times and Seasons (Combined)",
         "sku": "BONUS-NOG",
         "stripe_id": "prod_Tl7I5X9MoZQt1S",
-        "description": "These lessons are great to help readers understand the attributes of God and the importance of how God has ordained seasons and times.",
+        "description": "Two bonus lessons in one combined download — great for helping readers understand the attributes of God and the importance of how God has ordained seasons and times.",
         "list_price": 0.00,
         "sale_price": 0.00,
         "currency": "usd",
         "free": True
     },
+    # BONUS-TAS merged into BONUS-NOG (Jun 25, 2026) — the single combined PDF
+    # covers both lessons. Deprecated so it never sells or double-delivers.
     "bonus_times_seasons": {
-        "name": "Bonus Lessons: Times and Seasons",
+        "name": "Bonus Lessons: Times and Seasons (merged into Names of God & Times and Seasons)",
         "sku": "BONUS-TAS",
         "stripe_id": "prod_Tl7J55jWsk72EY",
-        "description": "These lessons are great to help readers understand the attributes of God and the importance of how God has ordained seasons and times.",
+        "description": "Merged into the combined Names of God & Times and Seasons bonus. No longer sold separately.",
         "list_price": 0.00,
         "sale_price": 0.00,
         "currency": "usd",
-        "free": True
+        "free": True,
+        "deprecated": True,
+        "inactive": True
     },
     "bonus_in_his_image": {
         "name": "Bonus Lesson: In His Image",
