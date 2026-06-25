@@ -684,11 +684,11 @@ const SoulFoodLanding = () => {
               data-testid="journey-tile-smallgroup"
             >
               <div className="bg-white rounded-2xl shadow-md hover:shadow-2xl border border-slate-200 overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5">
-                <div className="relative aspect-square overflow-hidden bg-white">
+                <div className="relative aspect-square overflow-hidden bg-slate-100">
                   <img
-                    src="/covers/tile-smallgroup.png?v=trio2026"
-                    alt="Small group gathered around a table with Bibles and fellowship"
-                    className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500"
+                    src="/covers/tile-smallgroup-community.png"
+                    alt="Multi-ethnic small group gathered in fellowship with Bibles"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                     loading="lazy"
                   />
                   <span className="absolute top-3 left-3 bg-emerald-600 text-white text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full shadow-lg">
