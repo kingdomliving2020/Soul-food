@@ -17,6 +17,17 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Format-Aware Fulfillment + ePub Files (June 25, 2026)
+Full workbooks now support **three distinct deliverables**: Interactive (i-PDF, unchanged), **Fillable PDF** (new), and **ePub** (ebook, non-fillable). ePub is priced Fillable − $1.50.
+- [x] **Backend format-aware delivery** (`payment_routes.py`): `resolve_item_to_file_entries_async` now reads the cart item's `format`; for `epub`/`fillable` it routes to a synthetic file_key derived from the workbook's PDF stem (e.g. `breakfast-ae-full` → `breakfast-ae-full-epub`) **only if a file is attached to that exact key**, else falls through (no regression). `get_pdf_path_async` gained an **EXACT-attachment-first** branch (before alias/normalize expansion) so format-specific files never collapse into the shared PDF alias set. Added `_has_exact_attachment()`. Interactive delivery is 100% untouched.
+- [x] **4 ePub files uploaded to Object Storage + attached** to exact keys: `breakfast-ae-full-epub`, `breakfast-ye-full-epub`, `holiday-ae-full-epub`, `holiday-ye-full-epub`. **Holiday IE held back** per user (awaiting logo/content fix). Added all 4 records to `seed_files_manifest.json` (106 items) so they autoseed into production on redeploy (blobs already in shared Object Storage).
+- [x] **Frontend** (`QuickOrder.js`): added `fillable` to Breakfast (`meal`) and Holiday (`full`) formats + pricing across all their packages; ePub = Fillable − $1.50 (Breakfast full: fillable 14.99 → ePub 13.49; Holiday full: fillable 9.99 → ePub 8.49; IE fillable 34.99 → ePub 33.49). Added "Fillable PDF" dropdown label. Interactive price/label ("i-PDF") unchanged.
+- [x] **Verified**: resolver serves EPUB for ePub, PDF for Interactive, interim PDF for Fillable (until fillable files arrive) and for the held-back Holiday IE ePub — no cross-contamination.
+- INTERIM: Fillable PDF format sells now but delivers the existing full PDF until the real fillable PDFs are attached (to `*-full-fillable` keys) — same content, not yet fillable-enabled.
+- ⚠️ PREVIEW-only until redeploy. After redeploy, prod autoseeds the 4 ePub records and format-aware code goes live.
+- OPEN (unconfirmed, not implemented): Lunch card relabel to "Kingdom Relationships" + meal call-out (awaiting user confirmation).
+
+
 ### Gift Fulfillment Workflow + Dynamic Messaging (June 25, 2026 — Golden Transaction CR)
 Scope (per user): gift notification generation, recipient delivery, resend behavior for gift recipients, dynamic fulfillment messaging. NO iPDF work, NO address-capture/mapping changes, NO fulfillment redesign. All backend-only.
 - [x] **ROOT CAUSE — gift recipient never emailed** (`payment_routes.py` status-check ~2882): the recipient access email was gated behind `if dl_payload:`, so gifts of online/entitlement items (e.g. In-His-Image interactive lessons) that generate NO PDF download links sent the buyer a receipt but the recipient nothing. Removed the gate → recipient is ALWAYS notified (with or without download links; access via Redeem → My Library).

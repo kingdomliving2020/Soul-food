@@ -811,6 +811,24 @@ async def _has_product_attachment(product_id: str) -> bool:
     return doc is not None
 
 
+async def _has_exact_attachment(target_id: str) -> bool:
+    """True iff db.files has a non-deleted file attached to EXACTLY target_id
+    (no alias/normalize expansion). Used for format-specific deliverables
+    (ePub / Fillable PDF) so they never collapse into the shared PDF."""
+    if not target_id:
+        return False
+    try:
+        from server import db
+    except Exception:
+        return False
+    doc = await db.files.find_one(
+        {"is_deleted": False,
+         "attachments": {"$elemMatch": {"target_type": "product", "target_id": target_id}}},
+        {"_id": 0, "id": 1},
+    )
+    return doc is not None
+
+
 async def resolve_item_to_file_entries_async(item: dict) -> list:
     """Attachment-first resolver — the May 2026 spec.
 
@@ -863,6 +881,24 @@ async def resolve_item_to_file_entries_async(item: dict) -> list:
             else:
                 print(f"[Fulfillment] Bundle '{bundle_key}': skipping '{sub_id}' (no attachment + legacy gate: {reason})")
         return entries
+
+    # Single item — FORMAT-AWARE delivery first.
+    # ePub (ebook) and Fillable PDF are DISTINCT deliverables from the
+    # Interactive/legacy file. We route them to a synthetic, format-specific
+    # file_key derived from the workbook's canonical filename (e.g.
+    # "breakfast-ae-full" + "-epub" -> "breakfast-ae-full-epub"). That key is
+    # intentionally NOT in PRODUCT_FILES, so get_pdf_path_async() will NOT
+    # alias-merge it with the shared PDF — it resolves ONLY to the file an admin
+    # attached to that exact key. If no format-specific file is attached yet, we
+    # fall through to the existing behavior (no regression for Interactive).
+    fmt = (item.get("format") or "").lower().strip()
+    if fmt in ("epub", "fillable"):
+        base_pdf = PRODUCT_FILES.get(resolved) or (PRODUCT_FILES.get(raw_id) if raw_id else None)
+        if base_pdf:
+            fmt_key = f"{os.path.splitext(base_pdf)[0]}-{fmt}"  # e.g. breakfast-ae-full-epub
+            if await _has_exact_attachment(fmt_key):
+                print(f"[Fulfillment] format='{fmt}' → format-specific file_key '{fmt_key}'")
+                return [{"product_id": fmt_key, "name": item_name, "file_key": fmt_key}]
 
     # Single item — attachment first
     if await _has_product_attachment(resolved):
@@ -932,6 +968,25 @@ async def get_pdf_path_async(product_id: str) -> Optional[str]:
     Use the ``objstore:`` prefix to distinguish durable references from disk
     paths in download_links records and in download_routes.py.
     """
+    # EXACT attachment wins FIRST — no alias merge. This is what makes
+    # format-specific deliverables possible: an ePub attached to the exact
+    # key "breakfast-ae-full-epub" is served ONLY for that key, and never
+    # collapses into the shared Interactive/PDF alias set. Existing SKUs are
+    # attached to their exact ids by the migration, so this is a no-op for them.
+    try:
+        from server import db
+        exact = await db.files.find_one(
+            {"is_deleted": False,
+             "attachments": {"$elemMatch": {"target_type": "product", "target_id": product_id}}},
+            {"_id": 0, "storage_path": 1, "original_filename": 1},
+            sort=[("created_at", -1)],
+        )
+        if exact and exact.get("storage_path"):
+            print(f"[PDF Path] {product_id} → EXACT Object Storage attachment ({exact.get('original_filename')})")
+            return f"objstore:{exact['storage_path']}"
+    except Exception as _e:
+        print(f"[PDF Path] exact-attachment lookup skipped: {_e}")
+
     normalized_id = normalize_product_id(product_id)
 
     # Build alias set — any product_id pointing to the same legacy filename is

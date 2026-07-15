@@ -266,26 +266,26 @@ const QuickOrder = () => {
       description: 'Covenant, Cradle, Cross, Comforter - celebrating faith through the seasons',
       available: true,
       editions: ['adult', 'youth', 'instructor'],
-      formats: ['interactive', 'epub', 'physical'],
+      formats: ['interactive', 'fillable', 'epub', 'physical'],
       packages: [
         { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, selectLesson: true, available: true },
         { id: 'full', name: 'Full Series (4 + 2 FREE)', lessons: 6, badge: '2 Bonus FREE!', available: true }
       ],
       pricing: {
         nibble: {
-          listPrices: { adult: { interactive: 3.99, epub: 3.99 }, youth: { interactive: 3.99, epub: 3.99 }, instructor: { interactive: 3.99, epub: 3.99 } },
-          prices: { adult: { interactive: 3.99, epub: 3.99 }, youth: { interactive: 3.99, epub: 3.99 }, instructor: { interactive: 3.99, epub: 3.99 } }
+          listPrices: { adult: { interactive: 3.99, fillable: 3.99, epub: 3.99 }, youth: { interactive: 3.99, fillable: 3.99, epub: 3.99 }, instructor: { interactive: 3.99, fillable: 3.99, epub: 3.99 } },
+          prices: { adult: { interactive: 3.99, fillable: 3.99, epub: 3.99 }, youth: { interactive: 3.99, fillable: 3.99, epub: 3.99 }, instructor: { interactive: 3.99, fillable: 3.99, epub: 3.99 } }
         },
         full: {
           listPrices: { 
-            adult: { physical: 24.99, interactive: 14.99, epub: 14.99 }, 
-            youth: { physical: 24.99, interactive: 14.99, epub: 14.99 },
-            instructor: { physical: 44.99, interactive: 44.99, epub: 44.99 }
+            adult: { physical: 24.99, interactive: 14.99, fillable: 14.99, epub: 13.49 }, 
+            youth: { physical: 24.99, interactive: 14.99, fillable: 14.99, epub: 13.49 },
+            instructor: { physical: 44.99, interactive: 44.99, fillable: 44.99, epub: 43.49 }
           },
           prices: { 
-            adult: { physical: 19.99, interactive: 9.99, epub: 9.99 }, 
-            youth: { physical: 19.99, interactive: 9.99, epub: 9.99 },
-            instructor: { physical: 34.99, interactive: 34.99, epub: 34.99 }
+            adult: { physical: 19.99, interactive: 9.99, fillable: 9.99, epub: 8.49 }, 
+            youth: { physical: 19.99, interactive: 9.99, fillable: 9.99, epub: 8.49 },
+            instructor: { physical: 34.99, interactive: 34.99, fillable: 34.99, epub: 33.49 }
           }
         }
       },
@@ -299,7 +299,7 @@ const QuickOrder = () => {
       description: '48 lessons across 12 months of spiritual growth',
       available: true,
       editions: ['adult', 'youth'],
-      formats: ['interactive', 'epub'],
+      formats: ['interactive', 'fillable', 'epub'],
       packages: [
         { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, selectLesson: true, available: true },
         { id: 'snack', name: 'Snack Pack (4 Lessons)', lessons: 4, selectMonth: true, available: true, note: 'Includes Prayer Month 1 (available now). Additional content in future updates.' },
@@ -307,16 +307,16 @@ const QuickOrder = () => {
       ],
       pricing: {
         nibble: {
-          listPrices: { adult: { interactive: 3.99, epub: 3.99 }, youth: { interactive: 3.99, epub: 3.99 } },
-          prices: { adult: { interactive: 3.99, epub: 3.99 }, youth: { interactive: 3.99, epub: 3.99 } }
+          listPrices: { adult: { interactive: 3.99, fillable: 3.99, epub: 3.99 }, youth: { interactive: 3.99, fillable: 3.99, epub: 3.99 } },
+          prices: { adult: { interactive: 3.99, fillable: 3.99, epub: 3.99 }, youth: { interactive: 3.99, fillable: 3.99, epub: 3.99 } }
         },
         snack: {
-          listPrices: { adult: { interactive: 8.99, epub: 8.99 }, youth: { interactive: 8.99, epub: 8.99 } },
-          prices: { adult: { interactive: 8.99, epub: 8.99 }, youth: { interactive: 8.99, epub: 8.99 } }
+          listPrices: { adult: { interactive: 8.99, fillable: 8.99, epub: 8.99 }, youth: { interactive: 8.99, fillable: 8.99, epub: 8.99 } },
+          prices: { adult: { interactive: 8.99, fillable: 8.99, epub: 8.99 }, youth: { interactive: 8.99, fillable: 8.99, epub: 8.99 } }
         },
         meal: {
-          listPrices: { adult: { interactive: 19.99, epub: 19.99 }, youth: { interactive: 19.99, epub: 19.99 } },
-          prices: { adult: { interactive: 14.99, epub: 14.99 }, youth: { interactive: 14.99, epub: 14.99 } }
+          listPrices: { adult: { interactive: 19.99, fillable: 19.99, epub: 18.49 }, youth: { interactive: 19.99, fillable: 19.99, epub: 18.49 } },
+          prices: { adult: { interactive: 14.99, fillable: 14.99, epub: 13.49 }, youth: { interactive: 14.99, fillable: 14.99, epub: 13.49 } }
         }
       },
       monthOptions: breakfastMonths,
@@ -1540,6 +1540,7 @@ const QuickOrder = () => {
                                   <option key={fmt} value={fmt}>
                                     {fmt === 'physical' ? 'Paperback' :
                                      fmt === 'interactive' ? 'i-PDF' :
+                                     fmt === 'fillable' ? 'Fillable PDF' :
                                      fmt === 'epub' ? 'ePub' :
                                      fmt === 'digital' ? 'Digital' :
                                      fmt === 'subscription_monthly' ? 'Monthly' :
@@ -1751,6 +1752,8 @@ const QuickOrder = () => {
                                fmt === 'subscription_annual' ? 'Annual Sub' :
                                fmt === 'ebook' ? 'eBook' :
                                fmt === 'physical' ? 'Paperback' :
+                               fmt === 'interactive' ? 'i-PDF' :
+                               fmt === 'fillable' ? 'Fillable PDF' :
                                fmt === 'pdf' ? 'Interactive PDF' :
                                fmt === 'epub' ? 'ePub' : fmt}
                             </option>
