@@ -1537,10 +1537,10 @@ const QuickOrder = () => {
                                 onChange={(e) => updateSelection(meal.id, 'format', e.target.value)}
                               >
                                 {availableFormats.map(fmt => (
-                                  <option key={fmt} value={fmt}>
+                                  <option key={fmt} value={fmt} disabled={fmt === 'fillable'}>
                                     {fmt === 'physical' ? 'Paperback' :
                                      fmt === 'interactive' ? 'i-PDF' :
-                                     fmt === 'fillable' ? 'Fillable PDF' :
+                                     fmt === 'fillable' ? 'Fillable PDF (Coming Soon)' :
                                      fmt === 'epub' ? 'ePub' :
                                      fmt === 'digital' ? 'Digital' :
                                      fmt === 'subscription_monthly' ? 'Monthly' :
@@ -1747,13 +1747,13 @@ const QuickOrder = () => {
                           onChange={(e) => updateSelection(product.id, 'format', e.target.value)}
                         >
                           {product.formats.map(fmt => (
-                            <option key={fmt} value={fmt}>
+                            <option key={fmt} value={fmt} disabled={fmt === 'fillable'}>
                               {fmt === 'subscription_monthly' ? 'Monthly Sub' :
                                fmt === 'subscription_annual' ? 'Annual Sub' :
                                fmt === 'ebook' ? 'eBook' :
                                fmt === 'physical' ? 'Paperback' :
                                fmt === 'interactive' ? 'i-PDF' :
-                               fmt === 'fillable' ? 'Fillable PDF' :
+                               fmt === 'fillable' ? 'Fillable PDF (Coming Soon)' :
                                fmt === 'pdf' ? 'Interactive PDF' :
                                fmt === 'epub' ? 'ePub' : fmt}
                             </option>
