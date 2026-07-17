@@ -892,10 +892,10 @@ async def resolve_item_to_file_entries_async(item: dict) -> list:
     # attached to that exact key. If no format-specific file is attached yet, we
     # fall through to the existing behavior (no regression for Interactive).
     fmt = (item.get("format") or "").lower().strip()
-    if fmt in ("epub", "fillable"):
+    if fmt in ("epub", "ipdf"):
         base_pdf = PRODUCT_FILES.get(resolved) or (PRODUCT_FILES.get(raw_id) if raw_id else None)
         if base_pdf:
-            fmt_key = f"{os.path.splitext(base_pdf)[0]}-{fmt}"  # e.g. breakfast-ae-full-epub
+            fmt_key = f"{os.path.splitext(base_pdf)[0]}-{fmt}"  # e.g. breakfast-ae-full-epub / -ipdf
             if await _has_exact_attachment(fmt_key):
                 print(f"[Fulfillment] format='{fmt}' → format-specific file_key '{fmt_key}'")
                 return [{"product_id": fmt_key, "name": item_name, "file_key": fmt_key}]

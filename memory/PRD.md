@@ -17,6 +17,14 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Format Terminology — LOCKED (June 25, 2026) — apply to all current & future builds
+- **Interactive** = online web-form lessons (fill in browser, print/save/email, NO download). Exclusive to **Nibbles (single-lesson) + free content**. NOT offered on Full Wkbk or SP. Existing workflow untouched.
+- **iPDF** = downloadable PDF with fillable form fields (offline, no cloud). This is the RENAME of the former "Fillable PDF" label — same product, corrected name. Internal format key = `ipdf`; synthetic delivery key = `<pdf-stem>-ipdf`. Update all SKU titles / product pages / file-manager tags accordingly.
+- **ePub** = read-only ebook (no fill fields). Delivery key `<pdf-stem>-epub`.
+- **Full Wkbk + SP lineup = iPDF + ePub only** (no Interactive). ePub priced iPDF − $1.50.
+- File naming token: `..._iPDF.pdf` (PDFs) and `....epub` (no token). Bulk importer parses `{PRODUCT}_{EDITION}_{PACKAGE}_{FORMAT}`.
+- STATUS: label/key renamed to `ipdf` in FE + BE (June 25); iPDF kept "Coming Soon"/disabled until iPDF files arrive (~next day). Retiring "Interactive" on Full Wkbk+SP + full go-live is SEQUENCED with the bulk file import (to avoid half-finished gaps). ePubs still uploading; only BKFT AE/YE + HOL AE/YE ePubs attached so far. HOL IE held. POD/paperback available for all BKFT+HOL (unblock). Only pre-order line = Lunch full wkbk.
+
 ### Format-Aware Fulfillment + ePub Files (June 25, 2026)
 Full workbooks now support **three distinct deliverables**: Interactive (i-PDF, unchanged), **Fillable PDF** (new), and **ePub** (ebook, non-fillable). ePub is priced Fillable − $1.50.
 - [x] **Backend format-aware delivery** (`payment_routes.py`): `resolve_item_to_file_entries_async` now reads the cart item's `format`; for `epub`/`fillable` it routes to a synthetic file_key derived from the workbook's PDF stem (e.g. `breakfast-ae-full` → `breakfast-ae-full-epub`) **only if a file is attached to that exact key**, else falls through (no regression). `get_pdf_path_async` gained an **EXACT-attachment-first** branch (before alias/normalize expansion) so format-specific files never collapse into the shared PDF alias set. Added `_has_exact_attachment()`. Interactive delivery is 100% untouched.
