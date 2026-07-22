@@ -391,6 +391,30 @@ const QuickOrder = () => {
       salePercent: 0
     },
     {
+      id: 'offline-game-master-bkft',
+      name: 'Offline Game Master — Breakfast Edition',
+      tagline: 'Instructor & Facilitator Game Resource',
+      description: 'Print-and-play OR physical game pack for the Break*fast series — GRinCH Grid Iron Challenge + Passport Trek, 96 total bingo cards. Choose a module (BM1–BM3) or the full 3-module set.',
+      available: true,
+      preOrder: true,
+      comingSoon: 'Ships next week',
+      editions: ['all'],
+      formats: ['digital', 'physical'],
+      formatLabels: { digital: 'PDF (Print & Play)', physical: 'Physical Pack (ships + S&H)' },
+      packages: [
+        { id: 'bm1', name: 'BM1 — Prayer is the First Resort', available: true, preOrder: true, note: 'Ships next week' },
+        { id: 'bm2', name: 'BM2 — The Art of Through', available: true, preOrder: true, note: 'Ships next week' },
+        { id: 'bm3', name: 'BM3 — Faith & Foresight', available: true, preOrder: true, note: 'Ships next week' },
+        { id: 'bundle', name: 'All 3 Modules (BM1–BM3)', available: true, preOrder: true, note: 'Best value · Ships next week' },
+      ],
+      pricing: {
+        bm1: { listPrices: { all: { digital: 10.00, physical: 10.00 } }, prices: { all: { digital: 10.00, physical: 10.00 } } },
+        bm2: { listPrices: { all: { digital: 10.00, physical: 10.00 } }, prices: { all: { digital: 10.00, physical: 10.00 } } },
+        bm3: { listPrices: { all: { digital: 10.00, physical: 10.00 } }, prices: { all: { digital: 10.00, physical: 10.00 } } },
+        bundle: { listPrices: { all: { digital: 25.99, physical: 25.99 } }, prices: { all: { digital: 25.99, physical: 25.99 } } },
+      },
+    },
+    {
       id: 'in-his-image',
       name: 'In His Image Series',
       tagline: 'Companion Booklets for Group Study',
@@ -1336,6 +1360,13 @@ const QuickOrder = () => {
                               if (selectedEdition === 'instructor') return '/covers/holiday-ie-front.jpg';
                               return '/covers/holiday-ae-front-new.png';
                             }
+                            if (meal.id === 'offline-game-master-bkft') {
+                              const pkg = pkgData?.id || '';
+                              if (pkg === 'bm1') return '/covers/ogm-bkft-bm1.jpg';
+                              if (pkg === 'bm2') return '/covers/ogm-bkft-bm2.jpg';
+                              if (pkg === 'bm3') return '/covers/ogm-bkft-bm3.jpg';
+                              return '/covers/ogm-bkft-overview.jpg';
+                            }
                             if (meal.id === 'breakfast') {
                               if (selectedEdition === 'youth') return '/covers/breakfast-youth-front.jpg';
                               if (selectedEdition === 'instructor') return '/covers/breakfast-instructor-front.jpg';
@@ -1546,7 +1577,8 @@ const QuickOrder = () => {
                               >
                                 {availableFormats.map(fmt => (
                                   <option key={fmt} value={fmt} disabled={fmt === 'ipdf' && pkgData?.selectLesson}>
-                                    {fmt === 'physical' ? 'Paperback' :
+                                    {meal.formatLabels?.[fmt] ? meal.formatLabels[fmt] :
+                                     fmt === 'physical' ? 'Paperback' :
                                      fmt === 'interactive' ? 'i-PDF' :
                                      fmt === 'ipdf' ? (pkgData?.selectLesson ? 'iPDF (n/a for Nibbles)' : 'iPDF') :
                                      fmt === 'epub' ? 'ePub' :
