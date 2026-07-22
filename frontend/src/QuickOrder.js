@@ -1545,10 +1545,10 @@ const QuickOrder = () => {
                                 onChange={(e) => updateSelection(meal.id, 'format', e.target.value)}
                               >
                                 {availableFormats.map(fmt => (
-                                  <option key={fmt} value={fmt} disabled={fmt === 'ipdf'}>
+                                  <option key={fmt} value={fmt} disabled={fmt === 'ipdf' && pkgData?.selectLesson}>
                                     {fmt === 'physical' ? 'Paperback' :
                                      fmt === 'interactive' ? 'i-PDF' :
-                                     fmt === 'ipdf' ? 'iPDF (Coming Soon)' :
+                                     fmt === 'ipdf' ? (pkgData?.selectLesson ? 'iPDF (n/a for Nibbles)' : 'iPDF') :
                                      fmt === 'epub' ? 'ePub' :
                                      fmt === 'digital' ? 'Digital' :
                                      fmt === 'subscription_monthly' ? 'Monthly' :
@@ -1756,13 +1756,13 @@ const QuickOrder = () => {
                           onChange={(e) => updateSelection(product.id, 'format', e.target.value)}
                         >
                           {product.formats.map(fmt => (
-                            <option key={fmt} value={fmt} disabled={fmt === 'ipdf'}>
+                            <option key={fmt} value={fmt}>
                               {fmt === 'subscription_monthly' ? 'Monthly Sub' :
                                fmt === 'subscription_annual' ? 'Annual Sub' :
                                fmt === 'ebook' ? 'eBook' :
                                fmt === 'physical' ? 'Paperback' :
                                fmt === 'interactive' ? 'i-PDF' :
-                               fmt === 'ipdf' ? 'iPDF (Coming Soon)' :
+                               fmt === 'ipdf' ? 'iPDF' :
                                fmt === 'pdf' ? 'Interactive PDF' :
                                fmt === 'epub' ? 'ePub' : fmt}
                             </option>
