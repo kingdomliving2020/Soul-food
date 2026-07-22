@@ -290,6 +290,27 @@ PRODUCT_FILES = {
     "workbooks-holiday-ie-digital-instructor-epub": "holiday-ie-full.pdf",
     "workbooks-breakfast-ae-digital-adult-epub": "breakfast-ae-full.pdf",
     "workbooks-breakfast-ye-digital-youth-epub": "breakfast-ye-full.pdf",
+    # =============== iPDF FORMAT MAPPINGS ===============
+    # Frontend sends "-ipdf" for downloadable fillable-PDF selections.
+    # These mirror the -epub base-PDF mappings so the format-aware resolver can
+    # derive the synthetic "<stem>-ipdf" delivery key. iPDF is offered ONLY on
+    # Full Workbooks + Snack Packs (never Nibbles, which stay Interactive-only).
+    "breakfast-snack-month-1-adult-ipdf": "breakfast-ae-month1-snackpack.pdf",
+    "breakfast-snack-month-2-adult-ipdf": "breakfast-ae-month2-snackpack.pdf",
+    "breakfast-snack-month-3-adult-ipdf": "breakfast-ae-month3-snackpack.pdf",
+    "breakfast-snack-month-1-youth-ipdf": "breakfast-ye-month1-snackpack.pdf",
+    "breakfast-snack-month-2-youth-ipdf": "breakfast-ye-month2-snackpack.pdf",
+    "breakfast-snack-month-3-youth-ipdf": "breakfast-ye-month3-snackpack.pdf",
+    "breakfast-meal-adult-ipdf": "breakfast-ae-full.pdf",
+    "breakfast-meal-youth-ipdf": "breakfast-ye-full.pdf",
+    "workbooks-breakfast-ae-digital-adult-ipdf": "breakfast-ae-full.pdf",
+    "workbooks-breakfast-ye-digital-youth-ipdf": "breakfast-ye-full.pdf",
+    "holiday-full-adult-ipdf": "holiday-ae-full.pdf",
+    "holiday-full-youth-ipdf": "holiday-ye-full.pdf",
+    "holiday-full-instructor-ipdf": "holiday-ie-full.pdf",
+    "workbooks-holiday-ae-digital-adult-ipdf": "holiday-ae-full.pdf",
+    "workbooks-holiday-ye-digital-youth-ipdf": "holiday-ye-full.pdf",
+    "workbooks-holiday-ie-digital-instructor-ipdf": "holiday-ie-full.pdf",
 }
 
 import re as _re

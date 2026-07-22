@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-21T23:59:19.714179+00:00",
+  "generated_at": "2026-07-22T02:06:00.446860+00:00",
   "source": "preview-db-export",
-  "count": 107,
+  "count": 112,
   "items": [
     {
       "id": "0ea39d66-258d-4ae3-bd80-5cdba5592313",
@@ -3972,6 +3972,131 @@
           "role": "epub",
           "attached_at": "2026-07-21T23:59:19.714179+00:00",
           "attached_by_admin": "epub-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "671cc060-391c-46a3-9600-ce1fca831147",
+      "storage_path": "soul-food/downloads/9234e5d1-579e-4924-a5c6-397b94b7db85.epub",
+      "category": "downloads",
+      "original_filename": "BKFT_AE_SnackPack_Month3.epub",
+      "content_type": "application/epub+zip",
+      "size_bytes": 3177852,
+      "etag": "\"ed8f69e44b02ca5a865f2cd910976b4e\"",
+      "description": "Snack Pack EPUB for breakfast-ae-month3-snackpack-epub",
+      "is_deleted": false,
+      "uploaded_by_admin": "snackpack-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:06:00.446860+00:00",
+      "updated_at": "2026-07-22T02:06:00.446860+00:00",
+      "attachments": [
+        {
+          "id": "6dcb8373-4825-4079-9033-43578a29d809",
+          "target_type": "product",
+          "target_id": "breakfast-ae-month3-snackpack-epub",
+          "role": "epub",
+          "attached_at": "2026-07-22T02:06:00.446860+00:00",
+          "attached_by_admin": "snackpack-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "9b14c18d-eb9a-494e-b3f8-de90dc94722d",
+      "storage_path": "soul-food/downloads/596dfbad-93e5-429f-8e7b-a989b5c098ff.epub",
+      "category": "downloads",
+      "original_filename": "BKFT_YE_SnackPack_Month1.epub",
+      "content_type": "application/epub+zip",
+      "size_bytes": 6408279,
+      "etag": "\"d300ed8dc907f9f265aa5c60008af3db\"",
+      "description": "Snack Pack EPUB for breakfast-ye-month1-snackpack-epub",
+      "is_deleted": false,
+      "uploaded_by_admin": "snackpack-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:06:00.446860+00:00",
+      "updated_at": "2026-07-22T02:06:00.446860+00:00",
+      "attachments": [
+        {
+          "id": "76e4dba8-1dce-4f17-9804-ec6cc934028e",
+          "target_type": "product",
+          "target_id": "breakfast-ye-month1-snackpack-epub",
+          "role": "epub",
+          "attached_at": "2026-07-22T02:06:00.446860+00:00",
+          "attached_by_admin": "snackpack-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "9704f910-670b-4e02-991a-d102e9825c0b",
+      "storage_path": "soul-food/downloads/033ebd88-ba53-4c8e-a3fb-2acdd41dfbf3.epub",
+      "category": "downloads",
+      "original_filename": "BKFT_YE_SnackPack_Month2.epub",
+      "content_type": "application/epub+zip",
+      "size_bytes": 7249531,
+      "etag": "\"2dcf348d035d3fc23016aeaeba5d9a33\"",
+      "description": "Snack Pack EPUB for breakfast-ye-month2-snackpack-epub",
+      "is_deleted": false,
+      "uploaded_by_admin": "snackpack-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:06:00.446860+00:00",
+      "updated_at": "2026-07-22T02:06:00.446860+00:00",
+      "attachments": [
+        {
+          "id": "bbd8320d-02d4-459c-8770-fbf4387b83a7",
+          "target_type": "product",
+          "target_id": "breakfast-ye-month2-snackpack-epub",
+          "role": "epub",
+          "attached_at": "2026-07-22T02:06:00.446860+00:00",
+          "attached_by_admin": "snackpack-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "7cff1162-b3e9-463c-8772-f758a343730e",
+      "storage_path": "soul-food/downloads/4f41c146-96d2-4622-9b63-84324897b1e6.epub",
+      "category": "downloads",
+      "original_filename": "BKFT_YE_SnackPack_Month3.epub",
+      "content_type": "application/epub+zip",
+      "size_bytes": 6679576,
+      "etag": "\"781d2f0fe2f12d838c332add8b01cf89\"",
+      "description": "Snack Pack EPUB for breakfast-ye-month3-snackpack-epub",
+      "is_deleted": false,
+      "uploaded_by_admin": "snackpack-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:06:00.446860+00:00",
+      "updated_at": "2026-07-22T02:06:00.446860+00:00",
+      "attachments": [
+        {
+          "id": "70753f0b-151a-4ed9-8cb3-284d5856fd50",
+          "target_type": "product",
+          "target_id": "breakfast-ye-month3-snackpack-epub",
+          "role": "epub",
+          "attached_at": "2026-07-22T02:06:00.446860+00:00",
+          "attached_by_admin": "snackpack-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "96bdf8c9-bb92-42b6-8942-ca7368231309",
+      "storage_path": "soul-food/downloads/facaf719-00f0-4f76-bfc9-f0fc18e3781e.pdf",
+      "category": "downloads",
+      "original_filename": "BKFT_AE_SnackPack_Month3.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 7025352,
+      "etag": "\"b67a9b27ac158bfe838e64dcf2551ef4\"",
+      "description": "Snack Pack IPDF for breakfast-ae-month3-snackpack-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "snackpack-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:06:00.446860+00:00",
+      "updated_at": "2026-07-22T02:06:00.446860+00:00",
+      "attachments": [
+        {
+          "id": "72db30f8-e83a-4f9b-9120-b9c8033b4d29",
+          "target_type": "product",
+          "target_id": "breakfast-ae-month3-snackpack-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:06:00.446860+00:00",
+          "attached_by_admin": "snackpack-batch-2026-07"
         }
       ]
     }
