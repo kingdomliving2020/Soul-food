@@ -17,6 +17,12 @@ Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Di
 - Game routes: /gaming-central, /game/tricky-testament, /game/mixup
 
 ## What's Implemented
+### Full-Workbook ePub Replacement + Holiday IE ePub Attached (July 21, 2026)
+- [x] User uploaded fresh versions of all 5 Full-Workbook ePubs. Replaced the 4 existing (`breakfast-ae-full-epub`, `breakfast-ye-full-epub`, `holiday-ae-full-epub`, `holiday-ye-full-epub`) by **overwriting the same Object Storage blob path** (shared prod/preview storage → both serve new bytes; autoseed dedupes by storage_path and never overwrites, so no prod DB change needed) and **attached the new `holiday-ie-full-epub`** (previously held back). Sizes: BKFT_AE 10.8MB, BKFT_YE 29.0MB, HOL_AE 11.5MB, HOL_YE 13.5MB, HOL_IE 9.8MB.
+- [x] Script: `/app/backend/scripts/replace_attach_epubs.py`. Updated `seed_files_manifest.json` in place (count 106→107; IE appended, 4 existing updated with new size/etag/filename, storage_path unchanged).
+- [x] Verified: all 5 blobs fetch from Object Storage with PK/`application/epub+zip` signature; resolver routes all 5 (`resolve_item_to_file_entries_async` + `get_pdf_path_async`) to the correct EXACT attachment — Holiday IE full ePub (`holiday-full-instructor-epub` cart id) now delivers the ePub instead of collapsing to the base PDF. Frontend already exposes IE ePub (enabled, $33.49) — no FE change needed. iPDF remains "Coming Soon" (no iPDF files yet).
+- ⚠️ PREVIEW blobs already updated; production needs a **Redeploy** to autoseed the new Holiday IE record (the 4 overwritten blobs serve new bytes immediately without redeploy since storage is shared).
+
 ### Format Terminology — LOCKED (June 25, 2026) — apply to all current & future builds
 - **Interactive** = online web-form lessons (fill in browser, print/save/email, NO download). Exclusive to **Nibbles (single-lesson) + free content**. NOT offered on Full Wkbk or SP. Existing workflow untouched.
 - **iPDF** = downloadable PDF with fillable form fields (offline, no cloud). This is the RENAME of the former "Fillable PDF" label — same product, corrected name. Internal format key = `ipdf`; synthetic delivery key = `<pdf-stem>-ipdf`. Update all SKU titles / product pages / file-manager tags accordingly.

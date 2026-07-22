@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-05-01T04:31:21.680153Z",
+  "generated_at": "2026-07-21T23:59:19.714179+00:00",
   "source": "preview-db-export",
-  "count": 106,
+  "count": 107,
   "items": [
     {
       "id": "0ea39d66-258d-4ae3-bd80-5cdba5592313",
@@ -3856,14 +3856,14 @@
       "category": "downloads",
       "original_filename": "BKFT_AE_FullWorkbook.epub",
       "content_type": "application/epub+zip",
-      "size_bytes": 10829026,
-      "etag": "\"fd89f788b7b19e6f14551e2db7511304\"",
+      "size_bytes": 10830608,
+      "etag": "\"27723231d773d75b9b360d8bf94a0af3\"",
       "description": "Full-workbook EPUB (ebook, non-fillable) for breakfast-ae-full-epub",
       "is_deleted": false,
       "uploaded_by_admin": "epub-batch-2026-06",
       "uploaded_by_email": "system@migration",
       "created_at": "2026-07-15T22:00:32.183000",
-      "updated_at": "2026-07-15T22:00:32.183000",
+      "updated_at": "2026-07-21T23:59:19.714179+00:00",
       "attachments": [
         {
           "id": "d9269ff4-430a-4366-b5aa-49dbb84cc6ac",
@@ -3881,14 +3881,14 @@
       "category": "downloads",
       "original_filename": "BKFT_YE_FullWorkbook.epub",
       "content_type": "application/epub+zip",
-      "size_bytes": 28954266,
-      "etag": "\"7db4b4d84fe2b80db3d966223f2b9a3e\"",
+      "size_bytes": 28955457,
+      "etag": "\"0b5328eb4ae3765eb2199a982729db72\"",
       "description": "Full-workbook EPUB (ebook, non-fillable) for breakfast-ye-full-epub",
       "is_deleted": false,
       "uploaded_by_admin": "epub-batch-2026-06",
       "uploaded_by_email": "system@migration",
       "created_at": "2026-07-15T22:00:33.640000",
-      "updated_at": "2026-07-15T22:00:33.640000",
+      "updated_at": "2026-07-21T23:59:19.714179+00:00",
       "attachments": [
         {
           "id": "57dc5bfd-5945-4d4a-ae8f-c192f0ab2d1e",
@@ -3906,14 +3906,14 @@
       "category": "downloads",
       "original_filename": "HOL_4C_AE_FullWorkbook.epub",
       "content_type": "application/epub+zip",
-      "size_bytes": 11484449,
-      "etag": "\"76d4fa62a6b5ce5c27d8e1cc2fd33532\"",
+      "size_bytes": 11485913,
+      "etag": "\"aa81ad218f1f4b885b4132c319a813cf\"",
       "description": "Full-workbook EPUB (ebook, non-fillable) for holiday-ae-full-epub",
       "is_deleted": false,
       "uploaded_by_admin": "epub-batch-2026-06",
       "uploaded_by_email": "system@migration",
       "created_at": "2026-07-15T22:00:34.686000",
-      "updated_at": "2026-07-15T22:00:34.686000",
+      "updated_at": "2026-07-21T23:59:19.714179+00:00",
       "attachments": [
         {
           "id": "44ea23a4-84ff-4b36-ba83-a3db7b692b06",
@@ -3931,14 +3931,14 @@
       "category": "downloads",
       "original_filename": "HOL_4C_YE_FullWorkbook.epub",
       "content_type": "application/epub+zip",
-      "size_bytes": 13533305,
-      "etag": "\"b3c3a309a8c6923fd6ecdd4b1e7b27ba\"",
+      "size_bytes": 13534523,
+      "etag": "\"854929cacd09ce3eb360c5081da003c0\"",
       "description": "Full-workbook EPUB (ebook, non-fillable) for holiday-ye-full-epub",
       "is_deleted": false,
       "uploaded_by_admin": "epub-batch-2026-06",
       "uploaded_by_email": "system@migration",
       "created_at": "2026-07-15T22:00:35.731000",
-      "updated_at": "2026-07-15T22:00:35.731000",
+      "updated_at": "2026-07-21T23:59:19.714179+00:00",
       "attachments": [
         {
           "id": "44026c9e-46bb-42cd-9b8e-bf5b7a56d3a4",
@@ -3947,6 +3947,31 @@
           "role": "epub",
           "attached_at": "2026-07-15T22:00:35.731807+00:00",
           "attached_by_admin": "epub-batch-2026-06"
+        }
+      ]
+    },
+    {
+      "id": "9253bb9e-c23f-4bca-8d14-cf250d79c23b",
+      "storage_path": "soul-food/downloads/2b744ac9-781c-4f03-b6a1-f9b868ce0c2d.epub",
+      "category": "downloads",
+      "original_filename": "HOL_4C_IE_FullWorkbook.epub",
+      "content_type": "application/epub+zip",
+      "size_bytes": 9788427,
+      "etag": "\"57f90a3bb71ae9a7f8020d2222c80cd3\"",
+      "description": "Full-workbook EPUB (ebook, non-fillable) for holiday-ie-full-epub",
+      "is_deleted": false,
+      "uploaded_by_admin": "epub-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-21T23:59:19.714179+00:00",
+      "updated_at": "2026-07-21T23:59:19.714179+00:00",
+      "attachments": [
+        {
+          "id": "5d5d8155-7176-4ac2-b97d-ae0198a01389",
+          "target_type": "product",
+          "target_id": "holiday-ie-full-epub",
+          "role": "epub",
+          "attached_at": "2026-07-21T23:59:19.714179+00:00",
+          "attached_by_admin": "epub-batch-2026-07"
         }
       ]
     }
