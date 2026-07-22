@@ -412,10 +412,18 @@ const QuickOrder = () => {
           note: '3 lessons + group worksheets · companion to AE',
         },
         {
-          id: 'ihi-ae-pro-digital', name: 'AE-Pro Leader Guide (Digital)',
+          id: 'ihi-ae-pro-ipdf', name: 'AE-Pro Leader Guide (iPDF)',
           price: 11.99, edition: 'pro', format: 'digital',
+          deliverKey: 'ihi-ae-pro-ipdf',
           available: true, image: '/covers/ihi-ae-pro.png',
-          note: 'Group leader support · digital download',
+          note: 'Fillable PDF · digital download',
+        },
+        {
+          id: 'ihi-ae-pro-epub', name: 'AE-Pro Leader Guide (ePub)',
+          price: 10.49, edition: 'pro', format: 'digital',
+          deliverKey: 'ihi-ae-pro-epub',
+          available: true, image: '/covers/ihi-ae-pro.png',
+          note: 'Ebook (ePub) · digital download',
         },
         {
           id: 'ihi-ae-pro-pod', name: 'AE-Pro Leader Guide (Print)',
@@ -1616,12 +1624,13 @@ const QuickOrder = () => {
                                     const qty = sel.quantity || 1;
                                     
                                     addToCart({
-                                      id: `${meal.id}-${selectedPkg}${pkgData?.selectMonth ? `-${selectedMonth}` : ''}${pkgData?.selectLesson ? `-${selectedLesson}` : ''}-${selectedEdition}-${selectedFormat}`,
+                                      id: pkgData?.deliverKey || `${meal.id}-${selectedPkg}${pkgData?.selectMonth ? `-${selectedMonth}` : ''}${pkgData?.selectLesson ? `-${selectedLesson}` : ''}-${selectedEdition}-${selectedFormat}`,
+                                      product_id: pkgData?.deliverKey || undefined,
                                       name: isPreOrder 
                                         ? `[PRE-ORDER] ${itemName}${shipNote}` 
                                         : `${itemName}${shipNote}`,
                                       edition: selectedEdition,
-                                      format: selectedFormat,
+                                      format: pkgData?.deliverKey ? (pkgData?.format || 'digital') : selectedFormat,
                                       price: price,
                                       quantity: qty,
                                       isPreOrder: isPreOrder

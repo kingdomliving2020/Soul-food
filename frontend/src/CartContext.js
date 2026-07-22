@@ -115,6 +115,8 @@ export const CartProvider = ({ children }) => {
         productId: customItem.productId || customItem.id,
         uniqueKey: uniqueKey,
         id: customItem.id,
+        product_id: customItem.product_id || customItem.deliverKey || undefined,
+        format: customItem.format || undefined,
         name: customItem.name,
         salePrice: customItem.salePrice ?? customItem.price,
         listPrice: customItem.listPrice ?? customItem.price,
