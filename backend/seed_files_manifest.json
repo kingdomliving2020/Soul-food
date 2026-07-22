@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-22T02:06:00.446860+00:00",
+  "generated_at": "2026-07-22T02:09:14.594976+00:00",
   "source": "preview-db-export",
-  "count": 112,
+  "count": 117,
   "items": [
     {
       "id": "0ea39d66-258d-4ae3-bd80-5cdba5592313",
@@ -4097,6 +4097,131 @@
           "role": "ipdf",
           "attached_at": "2026-07-22T02:06:00.446860+00:00",
           "attached_by_admin": "snackpack-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "c240a161-7af7-427c-8a3d-c48b89720dd2",
+      "storage_path": "soul-food/downloads/f0eef5ed-5dff-4bf5-8ee0-11a3a29b7f11.epub",
+      "category": "downloads",
+      "original_filename": "BKFT_AE_SnackPack_Month1.epub",
+      "content_type": "application/epub+zip",
+      "size_bytes": 8247896,
+      "etag": "\"6601e1d093e528074bd58295b2314cd5\"",
+      "description": "ePub deliverable for breakfast-ae-month1-snackpack-epub",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:09:14.594976+00:00",
+      "updated_at": "2026-07-22T02:09:14.594976+00:00",
+      "attachments": [
+        {
+          "id": "cb77a086-022d-4611-b35a-4a578df050f6",
+          "target_type": "product",
+          "target_id": "breakfast-ae-month1-snackpack-epub",
+          "role": "epub",
+          "attached_at": "2026-07-22T02:09:14.594976+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "120e46c8-4bc8-4307-bf13-9cae6d12f0f6",
+      "storage_path": "soul-food/downloads/76c228a2-892b-4a2c-a4a2-d4d6c3aad20f.epub",
+      "category": "downloads",
+      "original_filename": "BKFT_AE_SnackPack_Month2.epub",
+      "content_type": "application/epub+zip",
+      "size_bytes": 10420142,
+      "etag": "\"d5a675f528eb872ed36e2faf2a78db0d\"",
+      "description": "ePub deliverable for breakfast-ae-month2-snackpack-epub",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:09:14.594976+00:00",
+      "updated_at": "2026-07-22T02:09:14.594976+00:00",
+      "attachments": [
+        {
+          "id": "e50a04eb-f2e0-4afe-bf14-ab4374920a90",
+          "target_type": "product",
+          "target_id": "breakfast-ae-month2-snackpack-epub",
+          "role": "epub",
+          "attached_at": "2026-07-22T02:09:14.594976+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "b2e32697-241d-48dd-b516-05d8dfa08aab",
+      "storage_path": "soul-food/downloads/07c02bab-12a6-4cec-8b0d-6f29db36541d.pdf",
+      "category": "downloads",
+      "original_filename": "BKFT_YE_SnackPack_Month2.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 3578498,
+      "etag": "\"4c5850892ff038bb84b8c78912a36e6c\"",
+      "description": "iPDF deliverable for breakfast-ye-month2-snackpack-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:09:14.594976+00:00",
+      "updated_at": "2026-07-22T02:09:14.594976+00:00",
+      "attachments": [
+        {
+          "id": "677c88e3-44ad-4596-b71a-ae7faa87299b",
+          "target_type": "product",
+          "target_id": "breakfast-ye-month2-snackpack-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:09:14.594976+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "ceb18a39-49d8-4d38-9fd1-7572b41cb87b",
+      "storage_path": "soul-food/downloads/fdc53a5e-7ba0-4ad2-9d56-135d921fb7fc.epub",
+      "category": "downloads",
+      "original_filename": "BKFT_IE_FullWorkbook.epub",
+      "content_type": "application/epub+zip",
+      "size_bytes": 4999879,
+      "etag": "\"a5ce601bdec58bd1a411d1034e792d97\"",
+      "description": "ePub deliverable for breakfast-ie-full-epub",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:09:14.594976+00:00",
+      "updated_at": "2026-07-22T02:09:14.594976+00:00",
+      "attachments": [
+        {
+          "id": "0933a86b-5323-4d55-9ad3-a347ec640608",
+          "target_type": "product",
+          "target_id": "breakfast-ie-full-epub",
+          "role": "epub",
+          "attached_at": "2026-07-22T02:09:14.594976+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "22a2c1aa-5fcc-4cc0-b753-719622154ed7",
+      "storage_path": "soul-food/downloads/992ec440-255f-4c5e-9116-926da49c6c0c.pdf",
+      "category": "downloads",
+      "original_filename": "BKFT_IE_FullWorkbook.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 9413288,
+      "etag": "\"c6dd2984df544c360927d07e5132e5cf\"",
+      "description": "iPDF deliverable for breakfast-ie-full-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:09:14.594976+00:00",
+      "updated_at": "2026-07-22T02:09:14.594976+00:00",
+      "attachments": [
+        {
+          "id": "b0136725-ac2b-4a55-a2b4-dc5926372843",
+          "target_type": "product",
+          "target_id": "breakfast-ie-full-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:09:14.594976+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
         }
       ]
     }
