@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-22T02:09:14.594976+00:00",
+  "generated_at": "2026-07-22T02:17:59.506877+00:00",
   "source": "preview-db-export",
-  "count": 117,
+  "count": 126,
   "items": [
     {
       "id": "0ea39d66-258d-4ae3-bd80-5cdba5592313",
@@ -4083,12 +4083,12 @@
       "content_type": "application/pdf",
       "size_bytes": 7025352,
       "etag": "\"b67a9b27ac158bfe838e64dcf2551ef4\"",
-      "description": "Snack Pack IPDF for breakfast-ae-month3-snackpack-ipdf",
+      "description": "iPDF deliverable for breakfast-ae-month3-snackpack-ipdf",
       "is_deleted": false,
       "uploaded_by_admin": "snackpack-batch-2026-07",
       "uploaded_by_email": "system@migration",
       "created_at": "2026-07-22T02:06:00.446860+00:00",
-      "updated_at": "2026-07-22T02:06:00.446860+00:00",
+      "updated_at": "2026-07-22T02:17:19.220760+00:00",
       "attachments": [
         {
           "id": "72db30f8-e83a-4f9b-9120-b9c8033b4d29",
@@ -4221,6 +4221,231 @@
           "target_id": "breakfast-ie-full-ipdf",
           "role": "ipdf",
           "attached_at": "2026-07-22T02:09:14.594976+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "d3975700-67dd-47e5-b987-e31ed07e856f",
+      "storage_path": "soul-food/downloads/2504bd71-e11d-4742-9de7-de6a9013be9e.pdf",
+      "category": "downloads",
+      "original_filename": "BKFT_AE_FullWorkbook.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 9449105,
+      "etag": "\"ee5f5830568ebf452447531069feb671\"",
+      "description": "iPDF deliverable for breakfast-ae-full-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:17:19.220760+00:00",
+      "updated_at": "2026-07-22T02:17:19.220760+00:00",
+      "attachments": [
+        {
+          "id": "8325c787-78a3-4515-bacc-3edfdefbe528",
+          "target_type": "product",
+          "target_id": "breakfast-ae-full-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:17:19.220760+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "94920a8d-204f-45c8-bc8b-2a9c8c786a13",
+      "storage_path": "soul-food/downloads/d21dda95-8510-40fd-a627-6c0a3c956003.pdf",
+      "category": "downloads",
+      "original_filename": "BKFT_AE_SnackPack_Month1.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 13101607,
+      "etag": "\"7339107bbd6ef2db351c29a33903bc9a\"",
+      "description": "iPDF deliverable for breakfast-ae-month1-snackpack-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:17:19.220760+00:00",
+      "updated_at": "2026-07-22T02:17:19.220760+00:00",
+      "attachments": [
+        {
+          "id": "cddd67c7-d19c-4a63-8a13-2f54faf3abb7",
+          "target_type": "product",
+          "target_id": "breakfast-ae-month1-snackpack-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:17:19.220760+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "a6d0aa00-ee2f-4fbe-922f-2aceb8f18f61",
+      "storage_path": "soul-food/downloads/7cfcbecc-0e60-41eb-959f-049ae39abc9d.pdf",
+      "category": "downloads",
+      "original_filename": "BKFT_AE_SnackPack_Month2.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 8048000,
+      "etag": "\"8a720a285eabe5ae553e442e65b5b4f7\"",
+      "description": "iPDF deliverable for breakfast-ae-month2-snackpack-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:17:19.220760+00:00",
+      "updated_at": "2026-07-22T02:17:19.220760+00:00",
+      "attachments": [
+        {
+          "id": "b792ead1-3020-4132-99d7-6d4e96d02f4c",
+          "target_type": "product",
+          "target_id": "breakfast-ae-month2-snackpack-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:17:19.220760+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "a6431c14-22c4-4932-b5bd-82fd279cc86c",
+      "storage_path": "soul-food/downloads/175b2d4a-c190-483f-a6c3-376013ce29f9.pdf",
+      "category": "downloads",
+      "original_filename": "BKFT_YE_FullWorkbook.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 3145814,
+      "etag": "\"2ae608d7df3cefc5da95cff166d34d84\"",
+      "description": "iPDF deliverable for breakfast-ye-full-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:17:19.220760+00:00",
+      "updated_at": "2026-07-22T02:17:19.220760+00:00",
+      "attachments": [
+        {
+          "id": "5f763e26-451c-4747-9405-2f09f92ec6cc",
+          "target_type": "product",
+          "target_id": "breakfast-ye-full-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:17:19.220760+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "976b328a-56c5-4e00-b520-8bf843a47973",
+      "storage_path": "soul-food/downloads/49131688-72b0-4f7d-9d24-e14ef1d75b51.pdf",
+      "category": "downloads",
+      "original_filename": "BKFT_YE_SnackPack_Month1.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 3130912,
+      "etag": "\"576ab935564894230159b70af85a96b1\"",
+      "description": "iPDF deliverable for breakfast-ye-month1-snackpack-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:17:59.506877+00:00",
+      "updated_at": "2026-07-22T02:17:59.506877+00:00",
+      "attachments": [
+        {
+          "id": "0087deac-2333-4433-8b82-6d984c09ac93",
+          "target_type": "product",
+          "target_id": "breakfast-ye-month1-snackpack-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:17:59.506877+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "bd20bd13-ee94-46be-9047-3e1dfef03cdf",
+      "storage_path": "soul-food/downloads/bfcfaeec-5bb2-4416-8c10-db47c0d7115e.pdf",
+      "category": "downloads",
+      "original_filename": "BKFT_YE_SnackPack_Month3.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 1742742,
+      "etag": "\"1b3f0921012d71532de2d535f48a8e44\"",
+      "description": "iPDF deliverable for breakfast-ye-month3-snackpack-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:17:59.506877+00:00",
+      "updated_at": "2026-07-22T02:17:59.506877+00:00",
+      "attachments": [
+        {
+          "id": "74b63b93-6f1b-4e26-a690-b8bb348b0a08",
+          "target_type": "product",
+          "target_id": "breakfast-ye-month3-snackpack-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:17:59.506877+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "c844e462-69aa-41ff-84bc-6e02bb306adc",
+      "storage_path": "soul-food/downloads/3f02a949-e85d-498c-b433-b5b1d751a8d9.pdf",
+      "category": "downloads",
+      "original_filename": "HOL_4C_AE_FullWorkbook.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 9052647,
+      "etag": "\"6238bdf3d0e0ffdf5dac8375a7981d37\"",
+      "description": "iPDF deliverable for holiday-ae-full-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:17:59.506877+00:00",
+      "updated_at": "2026-07-22T02:17:59.506877+00:00",
+      "attachments": [
+        {
+          "id": "646ac4ba-2960-498c-ae1d-60f69431a8d3",
+          "target_type": "product",
+          "target_id": "holiday-ae-full-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:17:59.506877+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "1d2d6e23-2a30-4970-9f8c-57ef8d3ff840",
+      "storage_path": "soul-food/downloads/352dc871-6c60-46f6-ad3a-222b041db61d.pdf",
+      "category": "downloads",
+      "original_filename": "HOL_4C_IE_FullWorkbook.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 8668403,
+      "etag": "\"127eff358db818c1475fba6b85545319\"",
+      "description": "iPDF deliverable for holiday-ie-full-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:17:59.506877+00:00",
+      "updated_at": "2026-07-22T02:17:59.506877+00:00",
+      "attachments": [
+        {
+          "id": "f0c18fe4-40ff-4d5c-96e8-b818b9a6c3b0",
+          "target_type": "product",
+          "target_id": "holiday-ie-full-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:17:59.506877+00:00",
+          "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "0d6da31a-5aa6-43d5-8584-b6f2277b8413",
+      "storage_path": "soul-food/downloads/59e513f8-294f-4504-81ab-5a10a9cf67b6.pdf",
+      "category": "downloads",
+      "original_filename": "HOL_4C_YE_FullWorkbook.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 2785927,
+      "etag": "\"d93efb796bfcd48bd21fb275fae8c399\"",
+      "description": "iPDF deliverable for holiday-ye-full-ipdf",
+      "is_deleted": false,
+      "uploaded_by_admin": "deliverable-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T02:17:59.506877+00:00",
+      "updated_at": "2026-07-22T02:17:59.506877+00:00",
+      "attachments": [
+        {
+          "id": "8036a616-d3e3-4da9-88d6-e0086fdfc636",
+          "target_type": "product",
+          "target_id": "holiday-ye-full-ipdf",
+          "role": "ipdf",
+          "attached_at": "2026-07-22T02:17:59.506877+00:00",
           "attached_by_admin": "deliverable-batch-2026-07"
         }
       ]
