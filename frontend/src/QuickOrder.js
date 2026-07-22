@@ -1339,7 +1339,12 @@ const QuickOrder = () => {
               
               const price = getPackagePrice();
               const listPrice = getPackageListPrice();
-              
+
+              // Format-aware pre-order: Game Master digital PDFs deliver instantly
+              // (available now); physical packs remain pre-order (ship next week).
+              const isGameMasterDigitalNow = meal.id === 'offline-game-master-bkft' && selectedFormat === 'digital';
+              const effectivePreOrder = (meal.preOrder || pkgData?.preOrder) && !isGameMasterDigitalNow;
+
               // Available formats for selected package
               const availableFormats = pkgData?.isSubscription 
                 ? ['subscription_monthly', 'subscription_annual']
@@ -1405,14 +1410,19 @@ const QuickOrder = () => {
                             return '/covers/breakfast-adult-front.jpg';
                           })()} 
                           alt={meal.name}
-                          className={`w-24 h-32 object-contain rounded-lg border border-slate-200 shadow-sm bg-white ${meal.preOrder ? 'opacity-80' : ''} transition-all duration-300`}
+                          className={`w-24 h-32 object-contain rounded-lg border border-slate-200 shadow-sm bg-white ${effectivePreOrder ? 'opacity-80' : ''} transition-all duration-300`}
                         />
-                        {meal.preOrder && (
+                        {effectivePreOrder && (
                           <Badge className="absolute top-2 left-2 bg-amber-500 text-xs">
                             Pre-Order
                           </Badge>
                         )}
-                        {pkgData?.badge && !meal.preOrder && (
+                        {isGameMasterDigitalNow && (
+                          <Badge className="absolute top-2 left-2 bg-emerald-600 text-xs" data-testid="gm-digital-instant-badge">
+                            Instant Download
+                          </Badge>
+                        )}
+                        {pkgData?.badge && !effectivePreOrder && (
                           <Badge className="mt-2 bg-emerald-500 text-xs w-full justify-center">
                             {pkgData.badge}
                           </Badge>
@@ -1449,7 +1459,7 @@ const QuickOrder = () => {
                                 disabled={pkg.available === false}
                                 className={pkg.available === false ? 'text-slate-400' : ''}
                               >
-                                {pkg.name} {pkg.note ? `(${pkg.note})` : ''}
+                                {pkg.name} {(pkg.note && !isGameMasterDigitalNow) ? `(${pkg.note})` : ''}
                               </option>
                             ))}
                           </select>
@@ -1607,7 +1617,9 @@ const QuickOrder = () => {
                                 </span>
                               )}
                             </span>
-                            {pkgData?.note && (
+                            {isGameMasterDigitalNow ? (
+                              <span className="text-xs text-emerald-700 font-semibold ml-2" data-testid="gm-digital-note">Instant download · Available now</span>
+                            ) : pkgData?.note && (
                               <span className="text-xs text-slate-500 ml-2">({pkgData.note})</span>
                             )}
                           </div>
@@ -1651,8 +1663,8 @@ const QuickOrder = () => {
                                       ? `${meal.name} - ${meal.lessonOptions.find(l => l.id === selectedLesson)?.name}`
                                       : `${meal.name} - ${pkgData?.name}`;
                                     
-                                    const isPreOrder = meal.preOrder || pkgData?.preOrder;
-                                    const shipNote = pkgData?.note ? ` (${pkgData.note})` : '';
+                                    const isPreOrder = effectivePreOrder;
+                                    const shipNote = (pkgData?.note && !isGameMasterDigitalNow) ? ` (${pkgData.note})` : '';
                                     const qty = sel.quantity || 1;
                                     
                                     addToCart({
@@ -1674,11 +1686,11 @@ const QuickOrder = () => {
                                       toast.success(`Added ${qty}x ${itemName} to cart!`);
                                     }
                                   }}
-                                  className={`flex-1 text-xs py-2 ${meal.preOrder || pkgData?.preOrder 
+                                  className={`flex-1 text-xs py-2 ${effectivePreOrder 
                                     ? "bg-amber-500 hover:bg-amber-600" 
                                     : "bg-gradient-to-r from-orange-600 to-purple-600 hover:from-orange-700 hover:to-purple-700"}`}
                                 >
-                                  {meal.preOrder || pkgData?.preOrder ? '🛒 Pre-Order' : '🛒 Add to Cart'}
+                                  {effectivePreOrder ? '🛒 Pre-Order' : '🛒 Add to Cart'}
                                 </Button>
                               </>
                             )}

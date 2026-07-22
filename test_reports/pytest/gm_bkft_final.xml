@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="13" skipped="0" tests="18" time="5.666" timestamp="2026-07-22T21:54:16.695559+00:00" hostname="agent-env-9c9aa87b-258c-4f35-88fa-b99a7756628c"><testcase classname="tests.test_game_master_bkft_download" name="test_download_endpoint_serves_correct_pdf[offline-game-master-bkft-bm1-all-digital-SOFU_BKFT_BM1_GM_v9.pdf-4055139]" time="1.274" /><testcase classname="tests.test_game_master_bkft_download" name="test_download_endpoint_serves_correct_pdf[offline-game-master-bkft-bm2-all-digital-SOFU_BKFT_BM2_GM_v9.pdf-4123112]" time="0.446" /><testcase classname="tests.test_game_master_bkft_download" name="test_download_endpoint_serves_correct_pdf[offline-game-master-bkft-bm3-all-digital-SOFU_BKFT_BM3_GM_v9.pdf-4063857]" time="0.467" /><testcase classname="tests.test_game_master_bkft_download" name="test_download_endpoint_serves_correct_pdf[offline-game-master-bkft-bundle-all-digital-SOFU_BKFT_MAIN_GM_v9.pdf-4868510]" time="0.639" /><testcase classname="tests.test_game_master_bkft_download" name="test_all_four_downloads_are_distinct" time="1.822" /><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_resolver_returns_correct_file_key[offline-game-master-bkft-bm1-all-digital-expected0]" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:58: in test_resolver_returns_correct_file_key
+    entries = event_loop.run_until_complete(
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+payment_routes.py:932: in resolve_item_to_file_entries_async
+    if raw_id and await _has_exact_attachment(raw_id):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+payment_routes.py:849: in _has_exact_attachment
+    doc = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_resolver_returns_correct_file_key[offline-game-master-bkft-bm2-all-digital-expected1]" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:58: in test_resolver_returns_correct_file_key
+    entries = event_loop.run_until_complete(
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+payment_routes.py:932: in resolve_item_to_file_entries_async
+    if raw_id and await _has_exact_attachment(raw_id):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+payment_routes.py:849: in _has_exact_attachment
+    doc = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_resolver_returns_correct_file_key[offline-game-master-bkft-bm3-all-digital-expected2]" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:58: in test_resolver_returns_correct_file_key
+    entries = event_loop.run_until_complete(
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+payment_routes.py:932: in resolve_item_to_file_entries_async
+    if raw_id and await _has_exact_attachment(raw_id):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+payment_routes.py:849: in _has_exact_attachment
+    doc = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_resolver_returns_correct_file_key[offline-game-master-bkft-bundle-all-digital-expected3]" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:58: in test_resolver_returns_correct_file_key
+    entries = event_loop.run_until_complete(
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+payment_routes.py:932: in resolve_item_to_file_entries_async
+    if raw_id and await _has_exact_attachment(raw_id):
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+payment_routes.py:849: in _has_exact_attachment
+    doc = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_get_pdf_path_returns_correct_storage[offline-game-master-bkft-bm1-all-digital-expected0]" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:74: in test_get_pdf_path_returns_correct_storage
+    path = event_loop.run_until_complete(get_pdf_path_async(cart_id))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+payment_routes.py:1036: in get_pdf_path_async
+    obj = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_get_pdf_path_returns_correct_storage[offline-game-master-bkft-bm2-all-digital-expected1]" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:74: in test_get_pdf_path_returns_correct_storage
+    path = event_loop.run_until_complete(get_pdf_path_async(cart_id))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+payment_routes.py:1036: in get_pdf_path_async
+    obj = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_get_pdf_path_returns_correct_storage[offline-game-master-bkft-bm3-all-digital-expected2]" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:74: in test_get_pdf_path_returns_correct_storage
+    path = event_loop.run_until_complete(get_pdf_path_async(cart_id))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+payment_routes.py:1036: in get_pdf_path_async
+    obj = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_get_pdf_path_returns_correct_storage[offline-game-master-bkft-bundle-all-digital-expected3]" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:74: in test_get_pdf_path_returns_correct_storage
+    path = event_loop.run_until_complete(get_pdf_path_async(cart_id))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+payment_routes.py:1036: in get_pdf_path_async
+    obj = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_object_storage_serves_correct_file[offline-game-master-bkft-bm1-all-digital-expected0]" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:106: in test_object_storage_serves_correct_file
+    event_loop.run_until_complete(_fetch())
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/test_game_master_bkft_fulfillment.py:86: in _fetch
+    doc = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_object_storage_serves_correct_file[offline-game-master-bkft-bm2-all-digital-expected1]" time="0.002"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:106: in test_object_storage_serves_correct_file
+    event_loop.run_until_complete(_fetch())
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/test_game_master_bkft_fulfillment.py:86: in _fetch
+    doc = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_object_storage_serves_correct_file[offline-game-master-bkft-bm3-all-digital-expected2]" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:106: in test_object_storage_serves_correct_file
+    event_loop.run_until_complete(_fetch())
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/test_game_master_bkft_fulfillment.py:86: in _fetch
+    doc = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_object_storage_serves_correct_file[offline-game-master-bkft-bundle-all-digital-expected3]" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:106: in test_object_storage_serves_correct_file
+    event_loop.run_until_complete(_fetch())
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/test_game_master_bkft_fulfillment.py:86: in _fetch
+    doc = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase><testcase classname="tests.test_game_master_bkft_fulfillment" name="test_all_four_files_are_distinct" time="0.001"><failure message="RuntimeError: Event loop is closed">tests/test_game_master_bkft_fulfillment.py:124: in test_all_four_files_are_distinct
+    paths = event_loop.run_until_complete(_fetch_all())
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:654: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/test_game_master_bkft_fulfillment.py:116: in _fetch_all
+    doc = await db.files.find_one(
+/root/.venv/lib/python3.11/site-packages/motor/metaprogramming.py:74: in method
+    return framework.run_on_executor(
+/root/.venv/lib/python3.11/site-packages/motor/frameworks/asyncio/__init__.py:85: in run_on_executor
+    return loop.run_in_executor(_EXECUTOR, functools.partial(fn, *args, **kwargs))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.11/asyncio/base_events.py:817: in run_in_executor
+    self._check_closed()
+/usr/local/lib/python3.11/asyncio/base_events.py:520: in _check_closed
+    raise RuntimeError('Event loop is closed')
+E   RuntimeError: Event loop is closed</failure></testcase></testsuite></testsuites>

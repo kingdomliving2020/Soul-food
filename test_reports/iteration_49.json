@@ -1,0 +1,54 @@
+{
+  "summary": "Verified Game Master — Breakfast Edition fulfillment fix end-to-end. All 4 cart ids (BM1/BM2/BM3/bundle digital) resolve to their correct distinct PDFs and the /api/downloads/file/{token} public endpoint serves the exact bytes (sizes match spec: 4,055,139 / 4,123,112 / 4,063,857 / 4,868,510). None serve the Break*fast full workbook. Storefront format-aware UI (Instant Download badge, Add to Cart button) verified via Playwright. FULL Stripe UI checkout was BLOCKED by an invalid Stripe secret key placeholder in backend/.env (STRIPE_SECRET_KEY=ROTATE_ME_revoked_2026_06_22) — cannot complete a real hosted-checkout flow until this key is rotated. However, fulfillment correctness (the actual bug fix) is definitively proven via the production code path (resolve_item_to_file_entries_async → get_pdf_path_async → create_download_link → download endpoint → Object Storage streaming).",
+  "backend_issues": {
+    "critical": [
+      {
+        "endpoint": "/api/payments/checkout (Stripe)",
+        "issue": "STRIPE_SECRET_KEY in /app/backend/.env is a placeholder value 'ROTATE_ME_revoked_2026_06_22'. Any attempt to click 'Proceed to Payment' returns 500 and shows 'Stripe error: Invalid API Key provided: ROTATE_M****************6_22' in the UI. Blocks ALL real checkouts (not specific to Game Master).",
+        "priority": "CRITICAL"
+      }
+    ],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {
+        "flow": "Checkout — digital-only cart still shows a physical shipping-address requirement",
+        "issue": "For a cart containing only a DIGITAL Game Master item, the checkout page renders a 'Billing Address' block AND initially blocks 'Proceed to Payment' with 'Please enter your complete shipping address for physical items.' Also shows an unrelated 'Bonus: Free Audio Access! Your physical book purchase includes a free audio access code…' banner. Filling the address unblocks the button (then Stripe error surfaces). This is a UX/logic bug — digital-only orders should not require a shipping address or show physical-only bonuses.",
+        "affected_selectors": ["Billing Address inputs on /checkout"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_game_master_bkft_fulfillment.py",
+    "/app/backend/tests/test_game_master_bkft_download.py",
+    "/app/test_reports/pytest/gm_bkft_results.xml",
+    "/app/test_reports/pytest/gm_bkft_download_results.xml"
+  ],
+  "action_items": [
+    "URGENT: Rotate STRIPE_SECRET_KEY in /app/backend/.env (currently 'ROTATE_ME_revoked_2026_06_22'). Without this, NO Stripe checkout can complete in preview. Main agent must provision a valid sk_test_… key and restart backend.",
+    "Fix digital-only checkout UX: don't require billing/shipping address and don't show 'physical book Free Audio Access' bonus when the cart has zero physical items. Currently blocks 'Proceed to Payment' with 'Please enter your complete shipping address for physical items.' for a BM1-digital-only cart.",
+    "After Stripe key is rotated, re-run BM1/BM3/bundle Stripe UI checkouts end-to-end to confirm the confirmation email + /my-library entry + download-link click all resolve to the correct per-module PDF (resolver+download-endpoint layer is already proven correct)."
+  ],
+  "critical_code_review_comments": [
+    "Resolver bug fix (payment_routes.py:932) is correctly placed AFTER the format-aware epub/ipdf branch and BEFORE the normalize/alias branch — this ordering is what prevents 'bkft' from being aliased into 'breakfast_ae_digital'. Any future refactor must preserve this ordering; consider adding an inline invariant comment.",
+    "Content-Disposition filename in /api/downloads/file/{token} is derived from the product display-name (SoulFood_Offline_Game_Master___Breakfast_Edition__<cart_id>_.pdf), NOT the underlying original_filename in db.files. Bytes served are correct, but the browser 'Save As' name doesn't reflect SOFU_BKFT_BM1_GM_v9.pdf. Minor UX nit — consider using db.files.original_filename when available.",
+    "STRIPE_SECRET_KEY sitting as a plaintext placeholder in .env after rotation is risky — add a startup guard in server.py that logs a loud warning if the key matches r'^ROTATE_'."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_game_master_bkft_fulfillment.py (new)",
+    "/app/backend/tests/test_game_master_bkft_download.py (new)"
+  ],
+  "success_rate": {
+    "backend": "100% (18/18 tests pass: 13 resolver/storage + 5 end-to-end download-endpoint)",
+    "frontend": "50% (storefront format-aware UI + coupon flow verified; full Stripe checkout blocked by invalid API key)"
+  },
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123! (2FA skipped via 'Continue without 2FA'). Coupon OFH_INTERNAL_$1 confirmed working, drives total to $1.00.",
+  "seed_data_creation": "Tests create ephemeral download_links tagged user_id='TEST_USER_GM' and clean them up via fixture teardown. No production data touched.",
+  "retest_needed": true,
+  "main_agent_can_self_test": false,
+  "context_for_next_testing_agent": "The Game Master resolver + fulfillment mapping is 100% verified via /app/backend/tests/test_game_master_bkft_{fulfillment,download}.py — run each file separately (combining them causes a benign event_loop fixture-scope collision; not a real bug). Do NOT retest the resolver layer unless payment_routes.py:857-951 changes. The remaining unverified piece is the LIVE Stripe UI leg (Stripe test key was invalid at test time). Once STRIPE_SECRET_KEY is rotated, a single full BM1 checkout is sufficient to close the loop.",
+  "rca of the issue": "Original bug root cause (already fixed): normalize_product_id's display-name heuristic mapped any id containing 'bkft' → 'breakfast_ae_digital', which then aliased BM1/BM2/BM3/bundle to the shared Break*fast full workbook PDF. Fix in payment_routes.py:932 adds an exact-attachment-on-raw-id short-circuit BEFORE the normalize/alias branch: `if raw_id and await _has_exact_attachment(raw_id): return [file_key=raw_id]`. Verified: each of the 4 cart ids now resolves to itself, get_pdf_path_async returns 4 distinct objstore: storage paths, and the /api/downloads/file/{token} endpoint streams the correct per-module PDF with the correct byte-size. Anti-regression assertion in tests confirms none of the 4 storage_paths equal the Break*fast full workbook path."
+}
