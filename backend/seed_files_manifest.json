@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-22T14:30:20.412194+00:00",
+  "generated_at": "2026-07-22T21:27:47.430120+00:00",
   "source": "preview-db-export",
-  "count": 128,
+  "count": 132,
   "items": [
     {
       "id": "0ea39d66-258d-4ae3-bd80-5cdba5592313",
@@ -4497,6 +4497,106 @@
           "role": "ipdf",
           "attached_at": "2026-07-22T14:30:20.412194+00:00",
           "attached_by_admin": "deliverable-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "c9b6b4c5-e984-49ce-a28e-efdfe3c92bb7",
+      "storage_path": "soul-food/downloads/1fc76630-902d-44c3-8b0c-58a40a66ee26.pdf",
+      "category": "downloads",
+      "original_filename": "SOFU_BKFT_BM1_GM_v9.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 4055139,
+      "etag": "\"89c52879190468141f9bdeb215cfeda0\"",
+      "description": "Game Master (Breakfast) digital PDF for offline-game-master-bkft-bm1-all-digital",
+      "is_deleted": false,
+      "uploaded_by_admin": "gm-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T21:27:47.430120+00:00",
+      "updated_at": "2026-07-22T21:27:47.430120+00:00",
+      "attachments": [
+        {
+          "id": "9eb419e8-8a27-47b6-82f5-2d257687ca0d",
+          "target_type": "product",
+          "target_id": "offline-game-master-bkft-bm1-all-digital",
+          "role": "download",
+          "attached_at": "2026-07-22T21:27:47.430120+00:00",
+          "attached_by_admin": "gm-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "9063086a-57f7-4a9e-a3e2-fe4953331fb0",
+      "storage_path": "soul-food/downloads/a897e2e4-7df0-414c-8786-a52d9bac8b8f.pdf",
+      "category": "downloads",
+      "original_filename": "SOFU_BKFT_BM2_GM_v9.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 4123112,
+      "etag": "\"7c79c3d3c8bdbf042f93701b26594972\"",
+      "description": "Game Master (Breakfast) digital PDF for offline-game-master-bkft-bm2-all-digital",
+      "is_deleted": false,
+      "uploaded_by_admin": "gm-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T21:27:47.430120+00:00",
+      "updated_at": "2026-07-22T21:27:47.430120+00:00",
+      "attachments": [
+        {
+          "id": "8e186ebf-f7d0-440a-90a1-4902d45326fa",
+          "target_type": "product",
+          "target_id": "offline-game-master-bkft-bm2-all-digital",
+          "role": "download",
+          "attached_at": "2026-07-22T21:27:47.430120+00:00",
+          "attached_by_admin": "gm-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "af51bf75-525f-41be-80df-6be279743a60",
+      "storage_path": "soul-food/downloads/e317d8dd-24ef-47c5-95fb-7000d79128b7.pdf",
+      "category": "downloads",
+      "original_filename": "SOFU_BKFT_BM3_GM_v9.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 4063857,
+      "etag": "\"1afe2be3ddc85260a159eb94b90ebe64\"",
+      "description": "Game Master (Breakfast) digital PDF for offline-game-master-bkft-bm3-all-digital",
+      "is_deleted": false,
+      "uploaded_by_admin": "gm-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T21:27:47.430120+00:00",
+      "updated_at": "2026-07-22T21:27:47.430120+00:00",
+      "attachments": [
+        {
+          "id": "516000f8-f939-41e1-87da-08a53251b029",
+          "target_type": "product",
+          "target_id": "offline-game-master-bkft-bm3-all-digital",
+          "role": "download",
+          "attached_at": "2026-07-22T21:27:47.430120+00:00",
+          "attached_by_admin": "gm-batch-2026-07"
+        }
+      ]
+    },
+    {
+      "id": "78794f28-f781-4a29-855d-e1bc5288a9a4",
+      "storage_path": "soul-food/downloads/cf927d20-5844-4d66-af38-910fb2a1961a.pdf",
+      "category": "downloads",
+      "original_filename": "SOFU_BKFT_MAIN_GM_v9.pdf",
+      "content_type": "application/pdf",
+      "size_bytes": 4868510,
+      "etag": "\"94d966d94b162239888f2bfecf3f64d2\"",
+      "description": "Game Master (Breakfast) digital PDF for offline-game-master-bkft-bundle-all-digital",
+      "is_deleted": false,
+      "uploaded_by_admin": "gm-batch-2026-07",
+      "uploaded_by_email": "system@migration",
+      "created_at": "2026-07-22T21:27:47.430120+00:00",
+      "updated_at": "2026-07-22T21:27:47.430120+00:00",
+      "attachments": [
+        {
+          "id": "e0c3a0f1-2e7f-4e5f-8b39-45488b20ba1f",
+          "target_type": "product",
+          "target_id": "offline-game-master-bkft-bundle-all-digital",
+          "role": "download",
+          "attached_at": "2026-07-22T21:27:47.430120+00:00",
+          "attached_by_admin": "gm-batch-2026-07"
         }
       ]
     }

@@ -925,6 +925,13 @@ async def resolve_item_to_file_entries_async(item: dict) -> list:
                 print(f"[Fulfillment] format='{fmt}' → format-specific file_key '{fmt_key}'")
                 return [{"product_id": fmt_key, "name": item_name, "file_key": fmt_key}]
 
+    # Exact-attachment on the raw cart id wins before normalization aliasing.
+    # Guards structured cart ids (e.g. 'offline-game-master-bkft-bm1-all-digital')
+    # that normalize_product_id's display-name heuristics would otherwise hijack
+    # to a different SKU (e.g. 'bkft' → 'breakfast_ae_digital').
+    if raw_id and await _has_exact_attachment(raw_id):
+        return [{"product_id": raw_id, "name": item_name, "file_key": raw_id}]
+
     # Single item — attachment first
     if await _has_product_attachment(resolved):
         return [{"product_id": resolved, "name": item_name, "file_key": resolved}]
