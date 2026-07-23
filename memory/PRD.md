@@ -1,5 +1,17 @@
 # Soul Food - Product Requirements Document
 
+## Feature — Email-based Admin Invites + Pending Invites view (July 23, 2026)
+- **Report:** admin created invites but couldn't find them after redeploy. Diagnosis: (1) preview & production have SEPARATE databases (their 2 invites — temiajoyevents@gmail.com, jafaribrownsha@gmail.com — are NOT in preview → they live in production, still there since a redeploy never wipes users); (2) the OLD "Invite User" only created a db.users row + showed a one-time temp-password toast — it NEVER emailed anyone and there was no way to view/track pending invites.
+- **Fix (approved a+b):**
+  - `admin_routes.py create_user`: when no password is given → INVITE mode. Creates the user (`invite_pending`, `invited_by_email`, `invite_email_sent`), generates a 7-day single-use token (`security.create_reset_token`, now accepts `expiry_minutes`), and emails a "Set my password" link `{origin}/reset-password?token=...&invite=1` via Resend (`email_service.send_admin_invite`). Link base derives from the request Origin (preview invites → preview, live → live), SITE_URL fallback.
+  - `POST /users/{id}/resend-invite`: regenerates token + re-emails; 400 if already accepted; 502 if email send fails.
+  - `get_users_list` gained `invite_pending` filter.
+  - `auth_routes_v2 /reset-password`: on success also clears `invite_pending` (accepting an invite activates the account) — it already auto-issues a JWT with the user's role (auto-login).
+  - `AdminConsole.js` UsersManager: amber **Pending Invites** panel (data-testid `pending-invites-panel`) listing invited-but-not-activated users with role badge, invited date, "email not sent" warning, and a **Resend invite** button (`resend-invite-<email>`). Invite success toast now reflects email-sent behavior; modal password label clarified ("leave blank to email an invite link").
+- **Verified — iteration_52.json (backend 6/6 + frontend 5/5 PASS):** invite emails a 7-day set-password link (invite_email_sent=true for resend.dev); Pending Invites panel + Resend work; accepting via /reset-password auto-logs-in with correct role and clears invite_pending; manual-password path still creates a normal (non-pending) user. Cleaned 11 stale @example.com test invites from preview.
+- **Note:** invited role vocabulary — UI offers admin/instructor/member/adult/student; ROLES map lacks "member" (pre-existing, non-blocking). No Cancel/Delete-invite UI yet (only Resend) — candidate enhancement.
+
+
 ## Bug Fix — Admin console showed empty/"static" UI for some admins (July 23, 2026)
 - **Report:** "Another admin doesn't show anything on their DevOps admin UI — it looks static."
 - **Root cause (confirmed by code review):** `AdminConsole.js` only checked that a token STRING existed (never the role), and every data loader did `if(res.ok){...}` with no else — so 401/403 were swallowed silently. Backend `get_current_admin` authorizes on the role baked into the JWT AT LOGIN, so an admin whose token was expired, or who was promoted to admin AFTER their last login (stale role in token), got 403 on every admin call → full console chrome with zero data and no error.
