@@ -671,7 +671,42 @@ const UsersManager = () => {
   const [inviteData, setInviteData] = useState({ email: '', name: '', role: 'member', password: '' });
   const [inviteLoading, setInviteLoading] = useState(false);
   const [editingRole, setEditingRole] = useState(null);
+  const [pendingInvites, setPendingInvites] = useState([]);
+  const [resendingId, setResendingId] = useState('');
   const { token } = useAdmin();
+
+  const fetchPendingInvites = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/admin/users?invite_pending=true&limit=100`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setPendingInvites(data.items || []);
+      }
+    } catch (err) { /* non-fatal */ }
+  }, [token]);
+
+  const handleResendInvite = async (userId) => {
+    setResendingId(userId);
+    try {
+      const res = await fetch(`${API_URL}/api/admin/users/${userId}/resend-invite`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const { ok, data } = await safeJson(res);
+      if (ok) {
+        toast.success(data.message || 'Invite re-sent');
+        fetchPendingInvites();
+      } else {
+        toast.error(`Resend failed: ${data.detail || JSON.stringify(data)}`);
+      }
+    } catch (err) {
+      toast.error(`Network error: ${err.message}`);
+    } finally {
+      setResendingId('');
+    }
+  };
   
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -698,7 +733,8 @@ const UsersManager = () => {
   
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
+    fetchPendingInvites();
+  }, [fetchUsers, fetchPendingInvites]);
 
   const toggleSelectUser = (userId) => {
     setSelectedUserIds(prev =>
@@ -793,10 +829,19 @@ const UsersManager = () => {
       });
       const { ok, status, data } = await safeJson(res);
       if (ok) {
-        toast.success(`User created! ${data.temporary_password ? `Temp password: ${data.temporary_password}` : ''}`);
+        if (data.invite) {
+          toast.success(
+            data.invite_email_sent
+              ? `Invite emailed to ${inviteData.email} — they'll set their own password.`
+              : `User created, but the invite email failed to send. Use "Resend invite" in Pending Invites.`
+          );
+        } else {
+          toast.success(`User created!${data.temporary_password ? ` Temp password: ${data.temporary_password}` : ''}`);
+        }
         setShowInvite(false);
         setInviteData({ email: '', name: '', role: 'member', password: '' });
         fetchUsers();
+        fetchPendingInvites();
       } else {
         toast.error(`Create failed (${status}): ${data.detail || data.message || JSON.stringify(data)}`);
       }
@@ -851,6 +896,44 @@ const UsersManager = () => {
         </Button>
       </div>
 
+      {/* Pending Invites — invited users who haven't set a password yet */}
+      {pendingInvites.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4" data-testid="pending-invites-panel">
+          <div className="flex items-center gap-2 mb-3">
+            <Mail size={18} className="text-amber-600" />
+            <h2 className="font-semibold text-amber-900">Pending Invites ({pendingInvites.length})</h2>
+            <span className="text-xs text-amber-700">— invited, awaiting password setup</span>
+          </div>
+          <div className="space-y-2">
+            {pendingInvites.map(u => (
+              <div key={u.id} className="flex items-center justify-between bg-white rounded-lg px-3 py-2 border border-amber-100" data-testid={`pending-invite-${u.email}`}>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-slate-800 truncate">
+                    {u.name || u.email}
+                    <span className={`ml-2 inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold ${roleColors[u.role] || 'bg-slate-100 text-slate-700'}`}>{u.role}</span>
+                    {u.invite_email_sent === false && (
+                      <span className="ml-2 inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold bg-red-100 text-red-700">email not sent</span>
+                    )}
+                  </p>
+                  <p className="text-xs text-slate-500 truncate">{u.email}{u.invited_at ? ` · invited ${new Date(u.invited_at).toLocaleDateString()}` : ''}</p>
+                </div>
+                <Button
+                  variant="outline"
+                  className="text-xs border-amber-300 text-amber-700 hover:bg-amber-100 shrink-0"
+                  disabled={resendingId === u.id}
+                  onClick={() => handleResendInvite(u.id)}
+                  data-testid={`resend-invite-${u.email}`}
+                >
+                  <RefreshCw size={14} className={`mr-1 ${resendingId === u.id ? 'animate-spin' : ''}`} />
+                  Resend invite
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+
       {/* Invite User Modal */}
       {showInvite && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowInvite(false)}>
@@ -889,7 +972,7 @@ const UsersManager = () => {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Password (leave blank for auto-generated)</label>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Password <span className="text-slate-400 font-normal">(leave blank to email an invite link)</span></label>
                 <Input
                   type="password"
                   value={inviteData.password}

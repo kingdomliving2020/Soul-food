@@ -690,6 +690,44 @@ async def send_email_verification(to_email: str, name: str, token: str) -> Dict:
     return await send_email(to_email, subject, html)
 
 
+async def send_admin_invite(to_email: str, name: str, role: str, invite_url: str, invited_by: str = "") -> Dict:
+    """Send an admin/staff invitation with a secure set-your-password link."""
+    role_label = {"admin": "Administrator", "instructor": "Instructor"}.get(role, role.title())
+    subject = f"You've been invited to the Soul Food {role_label} console"
+    by_line = f" by {invited_by}" if invited_by else ""
+    content = f"""
+    <h2 style="margin:0 0 18px 0;color:#1f2937;font-size:24px;">You're invited, {name or 'there'}!</h2>
+    <p style="margin:0 0 18px 0;color:#374151;font-size:16px;line-height:1.6;">
+        You've been invited{by_line} to join the Soul Food back office as a
+        <strong>{role_label}</strong>. Set your password below to activate your
+        account and sign in.
+    </p>
+
+    <div style="margin:24px 0;padding:24px;background:#ffffff;border-radius:10px;border:2px solid #c2410c;text-align:center;">
+        <a href="{invite_url}"
+           style="display:inline-block;padding:16px 36px;background-color:#c2410c;background-image:linear-gradient(135deg,#ea580c 0%,#c2410c 100%);color:#ffffff !important;text-decoration:none;border-radius:8px;font-weight:700;font-size:16px;letter-spacing:0.3px;border:2px solid #9a3412;box-shadow:0 2px 6px rgba(194,65,12,0.35);">
+            Set my password &rarr;
+        </a>
+        <p style="margin:14px 0 0 0;color:#6b7280;font-size:13px;">
+            This invite link is good for 7 days.
+        </p>
+    </div>
+
+    <p style="margin:18px 0 0 0;color:#6b7280;font-size:13px;line-height:1.6;">
+        Button not working? Copy and paste this URL into your browser:<br>
+        <span style="font-family:monospace;color:#374151;word-break:break-all;">{invite_url}</span>
+    </p>
+
+    <p style="margin:24px 0 0 0;color:#9ca3af;font-size:12px;">
+        Weren&rsquo;t expecting this? You can safely ignore this email.
+    </p>
+    """
+    preheader = f"Set your password to activate your Soul Food {role_label} account."
+    html = get_base_template(content, preheader)
+    return await send_email(to_email, subject, html)
+
+
+
 async def send_email(
     to: str,
     subject: str,

@@ -298,11 +298,11 @@ def hash_token(token: str) -> str:
     return hashlib.sha256(token.encode()).hexdigest()
 
 
-async def create_reset_token(user_id: str, email: str) -> str:
+async def create_reset_token(user_id: str, email: str, expiry_minutes: int = RESET_TOKEN_EXPIRY_MINUTES) -> str:
     """
-    Create a new password reset token
+    Create a new password reset / invite token
     - Single use
-    - Expires in 60 minutes
+    - Expires in `expiry_minutes` (default 60 min for resets; longer for admin invites)
     - Stored hashed
     """
     # Invalidate any existing tokens for this user
@@ -321,7 +321,7 @@ async def create_reset_token(user_id: str, email: str) -> str:
         "user_id": user_id,
         "email": email.lower(),
         "token_hash": token_hash,
-        "expires_at": datetime.now(timezone.utc) + timedelta(minutes=RESET_TOKEN_EXPIRY_MINUTES),
+        "expires_at": datetime.now(timezone.utc) + timedelta(minutes=expiry_minutes),
         "used": False,
         "created_at": datetime.now(timezone.utc)
     })

@@ -1426,7 +1426,8 @@ async def reset_password(req: ResetPasswordRequest):
         {"$set": {
             "password_hash": hashed,
             "updated_at": datetime.now(timezone.utc).isoformat(),
-            "force_password_change": False
+            "force_password_change": False,
+            "invite_pending": False
         },
         "$push": {"password_history": {"$each": [hashed], "$slice": -5}}
         }

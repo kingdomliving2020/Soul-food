@@ -1,0 +1,54 @@
+{
+  "summary": "Admin Invite (email-based) flow — backend (pytest 6/6 PASS) + frontend UI end-to-end verified. Invite via UI emails the invitee, Pending Invites panel lists them, Resend works, manual-password path still creates a normal user (no invite email, not pending).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Users & Roles / Pending Invites panel", "issues": ["Pending Invites panel is polluted with 12 stale @example.com invitations left by prior test iterations (write-test-1/2/3, test_ui_*, test_unlock_*, test_lock_*, test_reset_*, test_rolechange_*, test_instructor_a54bf3e1, test_user_5c491fc5, debug-test, test-invite). Cosmetic only — recommend the app add a bulk-delete / auto-expire action, or the team should manually clean via db.users.delete_many({email: /example.com$/, invite_pending: true})."]}
+    ]
+  },
+  "backend_tests_run": {
+    "file": "/app/backend/tests/test_admin_invite_iter52.py",
+    "results": "6 passed in 3.07s",
+    "cases": [
+      "POST /api/admin/users (no password) → invite:true, invite_email_sent:true, temporary_password:null; db.users has invite_pending=true, invited_by_email set; password_reset_tokens row created",
+      "GET /api/admin/users?invite_pending=true → returns delivered@resend.dev",
+      "POST /api/admin/users/{id}/resend-invite for pending → 200 {success:true, invite_email_sent:true}",
+      "POST /api/auth/reset-password with 7-day invite token → 200, access_token issued, user.role=instructor preserved, invite_pending flips to false, login with new password succeeds",
+      "POST /api/admin/users/{id}/resend-invite AFTER accept → 400 'already accepted'",
+      "POST /api/admin/users with password → invite:false, temporary_password echoed, invite_pending:false, absent from ?invite_pending=true list"
+    ]
+  },
+  "frontend_tests_run": {
+    "1_invite_via_ui_blank_password": "PASS — Filled email delivered@resend.dev + name (leaving password blank) and clicked invite-submit. Success toast observed: 'Invite emailed to delivered@resend.dev — they\\'ll set their own password.'",
+    "2_pending_invites_panel": "PASS — data-testid='pending-invites-panel' visible ('Pending Invites (13)' after add). Entry data-testid='pending-invite-delivered@resend.dev' present with member role badge, invited-date, NO 'email not sent' badge.",
+    "3_resend_invite_button": "PASS (with caveat) — data-testid='resend-invite-delivered@resend.dev' button visible + clickable; POST /api/admin/users/{id}/resend-invite backend confirmed 200 with success message. UI toast dismissed before capture in the automation harness, but no error was raised and no error toast appeared.",
+    "4_manual_password_invite": "PASS — qa_manual@resend.dev with typed password produced toast 'User created! Temp password: ManualUIPass123!' and the user does NOT appear in the Pending Invites panel (invite_pending=false).",
+    "5_regression_admin_gate": "PASS — Valid admin (overflowharvest@gmail.com) reaches /admin/users, no admin-access-denied element. Sidebar Dashboard/File Manager/… all render. (Non-admin gate not re-run — was PASS in iteration_51.)"
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_admin_invite_iter52.py",
+    "/app/test_reports/pytest/iter52_invite.xml",
+    "/app/test_reports/iter52_users_page.png",
+    "/app/test_reports/iter52_after_invite.png",
+    "/app/test_reports/iter52_after_manual.png"
+  ],
+  "action_items": [
+    "Optional: add a bulk 'Delete pending invite' action in the Pending Invites panel to help admins clean out stale test/typo invites (currently only Resend is available; no Cancel/Delete UI). Recommend adding DELETE /api/admin/users/{id} usage or a dedicated cancel-invite endpoint accessible from the panel.",
+    "Optional cosmetic: consider auto-expiring invites in the panel after the 7-day token expiry (right now they linger indefinitely until manually deleted)."
+  ],
+  "critical_code_review_comments": [
+    "admin_routes.py resend_invite raises 502 with a generic message when Resend fails — good, but consider surfacing the underlying error (currently only logged via print). A structured error dict would help debug production email failures.",
+    "_invite_base_url derives from request Origin header only; if an admin hits the API via curl/postman with no Origin, it falls back to SITE_URL. That's correct, but noting so future refactors don't accidentally point preview invites at production.",
+    "admin_routes.py file is 3485 lines — significantly over the 700-line guideline. Recommend splitting (users/orders/products/media/content each into own module). Not blocking this feature but flagged for future refactor.",
+    "In UserCreate the default role is 'adult' (models) but the frontend invite modal shows 'member' as default — verify role vocabulary consistency across UI/backend/roles map (ROLES dict has admin/instructor/student/adult; 'member' is not in that map)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100% (6/6)", "frontend": "100% (5/5)"},
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123! (via /api/auth/login identifier field, token injected into localStorage as soul_food_token + soul_food_user)",
+  "seed_data_creation": "Created 2 test users during backend tests and 2 more during UI tests — ALL 4 CLEANED UP at end (delivered@resend.dev, qa_manual@resend.dev). Pre-existing @example.com pending invites (from prior iterations) were NOT touched.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Admin Invite (email + Pending Invites panel + Resend) is fully working end-to-end on preview. Backend regression file: /app/backend/tests/test_admin_invite_iter52.py — safe to re-run (has autouse cleanup of resend.dev users). If UI-testing again, note toast auto-dismisses in ~3s; wrap resend-click and toast query in <1s window or increase toast duration for testability. Existing example.com pending pollution is cosmetic and pre-dates this iteration."
+}

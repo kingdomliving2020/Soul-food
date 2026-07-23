@@ -2152,18 +2152,22 @@ async def get_users_list(
     role: Optional[str] = None,
     disabled: Optional[bool] = None,
     search: Optional[str] = None,
+    invite_pending: Optional[bool] = None,
     archived: Optional[str] = "active",  # 'active' (default — hide archived), 'archived', 'all'
     page: int = 1,
     limit: int = 50,
     admin: AdminUser = Depends(get_current_admin)
 ):
     """Get users list. Archived users are hidden by default — pass archived='archived'
-    to see only archived users, or archived='all' to see everyone."""
+    to see only archived users, or archived='all' to see everyone. Pass
+    invite_pending=true to list only users who were invited but haven't set a password."""
     query = {}
     if role:
         query["role"] = role
     if disabled is not None:
         query["disabled"] = disabled
+    if invite_pending is True:
+        query["invite_pending"] = True
     # Archive filter: 'active' hides archived (treats missing field as not-archived),
     # 'archived' shows only archived, 'all' shows everyone.
     archive_mode = (archived or "active").lower()
@@ -2203,27 +2207,33 @@ async def get_users_list(
     }
 
 @router.post("/users")
-async def create_user(user_data: UserCreate, admin: AdminUser = Depends(get_current_admin)):
-    """Create a new user (admin invite)"""
+async def create_user(user_data: UserCreate, request: Request, admin: AdminUser = Depends(get_current_admin)):
+    """Create a new user. If no password is provided, this is an INVITE: the user
+    is emailed a secure 'set your password' link (7-day expiry) and marked
+    invite_pending until they set a password."""
     from passlib.context import CryptContext
+    from security import create_reset_token
+    from email_service import send_admin_invite
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    
+
+    email = user_data.email.lower()
     # Check if email exists
-    existing = await db.users.find_one({"email": user_data.email.lower()})
+    existing = await db.users.find_one({"email": email})
     if existing:
         raise HTTPException(status_code=400, detail="Email already exists")
-    
+
     user_id = secrets.token_hex(16)
     now = datetime.now(timezone.utc)
-    
-    # Generate password if not provided
-    password = user_data.password or secrets.token_urlsafe(12)
+
+    is_invite = not user_data.password
+    # Generate a random placeholder password for invites (unusable until they set one)
+    password = user_data.password or secrets.token_urlsafe(24)
     password_hash = pwd_context.hash(password)
-    
+
     user_doc = {
         "id": user_id,
-        "email": user_data.email.lower(),
-        "username": user_data.email.split("@")[0].lower(),
+        "email": email,
+        "username": email.split("@")[0].lower(),
         "name": user_data.name,
         "password_hash": password_hash,
         "password_history": [password_hash],
@@ -2233,19 +2243,73 @@ async def create_user(user_data: UserCreate, admin: AdminUser = Depends(get_curr
         "created_at": now.isoformat(),
         "created_by": admin.id,
         "disabled": False,
-        "invite_pending": True if not user_data.password else False
+        "invite_pending": is_invite,
+        "invited_at": now.isoformat() if is_invite else None,
+        "invited_by_email": admin.email if is_invite else None,
+        "invite_email_sent": False,
     }
-    
+
     await db.users.insert_one(user_doc)
-    
-    await log_admin_action("create_user", admin.id, "user", user_id, 
-                          {"email": user_data.email, "role": user_data.role})
-    
+
+    invite_email_sent = False
+    if is_invite:
+        invite_email_sent = await _send_invite_email(user_id, email, user_data.name, user_data.role, admin.email, request)
+        await db.users.update_one({"id": user_id}, {"$set": {"invite_email_sent": invite_email_sent}})
+
+    await log_admin_action("create_user", admin.id, "user", user_id,
+                          {"email": user_data.email, "role": user_data.role, "invite": is_invite})
+
     return {
         "id": user_id,
-        "message": "User created successfully",
-        "temporary_password": password if not user_data.password else None
+        "message": "Invite sent successfully" if is_invite else "User created successfully",
+        "invite": is_invite,
+        "invite_email_sent": invite_email_sent,
+        "temporary_password": password if not is_invite else None
     }
+
+
+def _invite_base_url(request: Request) -> str:
+    """Prefer the origin the admin is using (so preview invites are testable and
+    live invites point live), falling back to SITE_URL (production domain)."""
+    origin = (request.headers.get("origin") or "").strip()
+    if origin.startswith("http"):
+        return origin.rstrip("/")
+    return os.environ.get("SITE_URL", "https://kingdom-soul.com").rstrip("/")
+
+
+async def _send_invite_email(user_id, email, name, role, invited_by_email, request):
+    from security import create_reset_token
+    from email_service import send_admin_invite
+    try:
+        raw_token = await create_reset_token(user_id, email, expiry_minutes=7 * 24 * 60)
+        invite_url = f"{_invite_base_url(request)}/reset-password?token={raw_token}&invite=1"
+        result = await send_admin_invite(email, name, role, invite_url, invited_by_email)
+        return bool(result.get("success"))
+    except Exception as e:
+        print(f"[Admin] Failed to send invite email to {email}: {e}")
+        return False
+
+
+@router.post("/users/{user_id}/resend-invite")
+async def resend_invite(user_id: str, request: Request, admin: AdminUser = Depends(get_current_admin)):
+    """Regenerate the invite token and re-send the invitation email."""
+    existing = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not existing:
+        raise HTTPException(status_code=404, detail="User not found")
+    if not existing.get("invite_pending"):
+        raise HTTPException(status_code=400, detail="This user has already accepted their invite")
+    sent = await _send_invite_email(
+        user_id, existing["email"], existing.get("name", ""),
+        existing.get("role", "member"), admin.email, request
+    )
+    await db.users.update_one({"id": user_id}, {"$set": {
+        "invite_email_sent": sent,
+        "invite_resent_at": datetime.now(timezone.utc).isoformat(),
+    }})
+    await log_admin_action("resend_invite", admin.id, "user", user_id, {"sent": sent})
+    if not sent:
+        raise HTTPException(status_code=502, detail="Could not send invite email (email service error). Check Resend configuration.")
+    return {"success": True, "message": f"Invite re-sent to {existing['email']}", "invite_email_sent": sent}
 
 @router.put("/users/{user_id}")
 async def update_user(
