@@ -2487,35 +2487,86 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
     
     stripe.api_key = api_key
     
-    # Calculate total from cart items
+    # ============================================================
+    # SERVER-AUTHORITATIVE PRICING (launch-critical revenue integrity)
+    # - Per-item prices are FLOORED to the server catalog when the SKU is known
+    #   (client can never pay less than catalog for a catalogued product).
+    # - ALL discounts/overrides are derived server-side from a re-validated
+    #   coupon. Client-sent discount_percent / discount_dollars / override_total
+    #   are IGNORED to prevent tampering (pay-$0.01 / 99%-off / override exploits).
+    # ============================================================
+    from datetime import date as _date
+    _today_iso = _date.today().isoformat()
+
+    def _catalog_price_for(it):
+        """Return the promo-aware effective price for a cart item if it maps to a
+        canonical PRODUCTS entry (by product_id / id / sku); else None (dynamic SKU)."""
+        keys = {str(it.get('product_id') or '').strip(),
+                str(it.get('id') or '').strip(),
+                str(it.get('sku') or '').strip()}
+        keys.discard('')
+        for k in keys:
+            p = PRODUCTS.get(k) or next((v for v in PRODUCTS.values() if v.get('sku') == k), None)
+            if p:
+                eff = p.get('sale_price', p.get('list_price', 0))
+                pu = p.get('promo_until')
+                if pu and _today_iso <= pu and p.get('promo_sale_price') is not None:
+                    eff = p['promo_sale_price']
+                return float(eff)
+        return None
+
     line_items = []
-    total_amount = 0
+    subtotal = 0.0
+    total_qty = 0
     item_names = []
-    
+    resolved_pids = []
+
     for item in request.items:
-        item_price = item.get('salePrice', item.get('price', 0))
-        item_qty = item.get('quantity', 1)
-        item_name = item.get('name', 'Soul Food Product')
-        
-        total_amount += item_price * item_qty
-        item_names.append(f"{item_name} x{item_qty}")
-    
-    # Apply discount if coupon provided
+        try:
+            item_qty = int(item.get('quantity', 1) or 1)
+        except (TypeError, ValueError):
+            item_qty = 1
+        if item_qty < 1:
+            item_qty = 1
+        client_price = float(item.get('salePrice', item.get('price', 0)) or 0)
+        auth_price = _catalog_price_for(item)
+        unit_price = max(client_price, auth_price) if auth_price is not None else max(0.0, client_price)
+        item['_server_unit_price'] = unit_price
+        item['_server_qty'] = item_qty
+        subtotal += unit_price * item_qty
+        total_qty += item_qty
+        item_names.append(f"{item.get('name', 'Soul Food Product')} x{item_qty}")
+        for k in (item.get('product_id'), item.get('id'), item.get('sku')):
+            if k:
+                resolved_pids.append(str(k))
+
+    subtotal = round(subtotal, 2)
+
+    # ---- Server-side coupon authority (client discount fields are ignored) ----
     discount_multiplier = 1.0
+    server_discount_dollars = 0.0
     override_total_cents = None
-    
-    if request.override_total is not None and request.override_total > 0:
-        # Override total: set the entire cart to this fixed amount
-        override_total_cents = max(50, int(request.override_total * 100))  # min $0.50
-    elif request.discount_percent > 0:
-        discount_multiplier = (100 - request.discount_percent) / 100
-        total_amount = total_amount * discount_multiplier
-    elif request.discount_dollars > 0:
-        total_amount = round(max(0.50, total_amount - request.discount_dollars), 2)
-    
-    # Build line items with discount applied to each item
+    applied_discount_percent = 0
+    if request.coupon_code:
+        from coupon_routes import validate_coupon, CouponValidateRequest
+        cres = await validate_coupon(CouponValidateRequest(
+            code=request.coupon_code.strip(),
+            product_ids=resolved_pids,
+            cart_total=subtotal,
+            quantity=total_qty,
+        ))
+        if not cres.valid:
+            raise HTTPException(status_code=400, detail=cres.message or "Invalid coupon code")
+        if cres.override_total is not None and cres.override_total > 0:
+            override_total_cents = max(50, int(round(cres.override_total * 100)))
+        elif cres.discount_percent and cres.discount_percent > 0:
+            applied_discount_percent = int(cres.discount_percent)
+            discount_multiplier = (100 - cres.discount_percent) / 100
+        elif cres.discount_dollars and cres.discount_dollars > 0:
+            server_discount_dollars = min(float(cres.discount_dollars), subtotal)
+
+    # Build Stripe line items from SERVER-DERIVED prices
     if override_total_cents:
-        # For override_total: create a single line item with the override amount
         line_items.append({
             'price_data': {
                 'currency': 'usd',
@@ -2529,23 +2580,17 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         })
     else:
         for item in request.items:
-            item_price = item.get('salePrice', item.get('price', 0))
-            item_qty = item.get('quantity', 1)
+            unit_price = item.get('_server_unit_price', 0.0)
+            item_qty = item.get('_server_qty', 1)
             item_name = item.get('name', 'Soul Food Product')
-            
-            # Apply discount to item price
-            discounted_price = item_price * discount_multiplier
-            if request.discount_dollars > 0 and len(request.items) == 1:
-                discounted_price = max(0.50, item_price - request.discount_dollars)
-            
-            # Add discount indicator to name if coupon applied
+            discounted_price = unit_price * discount_multiplier
+            if server_discount_dollars > 0 and len(request.items) == 1:
+                discounted_price = max(0.0, unit_price - server_discount_dollars)
             display_name = item_name
-            if request.discount_percent > 0:
-                display_name = f"{item_name} ({request.discount_percent}% off)"
-            elif request.discount_dollars > 0:
-                display_name = f"{item_name} (${request.discount_dollars:.0f} off)"
-            
-            # Create line item for Stripe with discounted price
+            if applied_discount_percent > 0:
+                display_name = f"{item_name} ({applied_discount_percent}% off)"
+            elif server_discount_dollars > 0:
+                display_name = f"{item_name} (${server_discount_dollars:.0f} off)"
             line_items.append({
                 'price_data': {
                     'currency': 'usd',
@@ -2553,7 +2598,7 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
                         'name': display_name,
                         'description': item.get('description', 'Soul Food Digital Content'),
                     },
-                    'unit_amount': max(1, int(discounted_price * 100)),  # Stripe uses cents, min 1 cent
+                    'unit_amount': max(1, int(round(discounted_price * 100))),
                 },
                 'quantity': item_qty,
             })
@@ -2611,7 +2656,7 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
                 'source': 'soul_food_cart',
                 'items': ', '.join(item_names)[:500],
                 'coupon': request.coupon_code or '',
-                'discount': str(request.discount_percent),
+                'discount': str(applied_discount_percent),
                 'is_gift': 'true' if request.is_gift else 'false',
                 'order_notes': (request.order_notes or '')[:500],
                 'user_id': logged_in_user_id or '',
@@ -2636,8 +2681,8 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         random_part = ''.join(secrets.choice(chars) for _ in range(5))
         order_number = f"SF-{year}-{random_part}"
         
-        # Actual charged amount (accounts for override)
-        actual_amount = request.override_total if request.override_total is not None else total_amount
+        # Actual charged amount = the true server-computed Stripe total (incl. shipping)
+        actual_amount = round(calculated_total / 100, 2)
         
         # Normalize product IDs in stored items for reliable fulfillment
         stored_items = []
@@ -2662,14 +2707,14 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
             "order_number": order_number,
             "items": stored_items,
             "total_amount": actual_amount,
-            "original_subtotal": sum(item.get('salePrice', item.get('price', 0)) * item.get('quantity', 1) for item in request.items),
+            "original_subtotal": subtotal,
             "currency": "usd",
             "payment_status": "pending",
             "status": "initiated",
             "coupon_code": request.coupon_code,
-            "discount_percent": request.discount_percent,
-            "discount_dollars": request.discount_dollars,
-            "override_total": request.override_total,
+            "discount_percent": applied_discount_percent,
+            "discount_dollars": server_discount_dollars,
+            "override_total": (round(override_total_cents / 100, 2) if override_total_cents else None),
             "is_gift": request.is_gift,
             "order_notes": request.order_notes,
             "customer_email": resolved_email,

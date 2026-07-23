@@ -1432,6 +1432,9 @@ async def reset_password(req: ResetPasswordRequest):
         "$push": {"password_history": {"$each": [hashed], "$slice": -5}}
         }
     )
+
+    # Consume the token so it can't be replayed (single-use guarantee)
+    await mark_token_used(req.token)
     
     # Auto-login: generate token and return user data so frontend can skip re-login
     user = await db.users.find_one({"id": user_id}, {"_id": 0, "password_hash": 0, "password_history": 0})

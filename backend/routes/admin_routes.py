@@ -1263,6 +1263,11 @@ def _digital_lane(doc, fin):
     (an actual download is NOT required — Q3)."""
     if fin in ("refunded", "cancelled", "chargeback"):
         return "revoked"
+    # Partial-fulfillment guard: if any paid item failed link creation/verification,
+    # the digital lane is NOT fully delivered — keep it pending so the order can't
+    # be marked complete while a customer is missing files.
+    if doc.get("fulfillment_verification_failures"):
+        return "pending"
     links = bool(doc.get("download_links_generated"))
     downloaded = (doc.get("downloads_count") or 0) > 0
     # Links are generated together with the fulfillment email at delivery time,
