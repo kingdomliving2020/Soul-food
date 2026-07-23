@@ -12,6 +12,11 @@
 - Role: instructor
 - Note: 2FA is now Admin-only. Instructors log in with no 2FA friction.
 
+## Member (non-admin) Test Account — for admin-access-gate testing (Jul 23, 2026)
+- Email: `qa_member@example.com`
+- Password: `MemberTest123!`
+- Role: member (NO admin access; hitting /admin returns 403 → "Admin sign-in required" gate)
+
 ## Registration
 Use `/register` to create new test accounts.
 

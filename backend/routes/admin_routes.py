@@ -1264,11 +1264,11 @@ def _digital_lane(doc, fin):
     if fin in ("refunded", "cancelled", "chargeback"):
         return "revoked"
     links = bool(doc.get("download_links_generated"))
-    emailed = bool(doc.get("fulfillment_email_sent") or doc.get("confirmation_email_sent"))
     downloaded = (doc.get("downloads_count") or 0) > 0
-    if fin in ("paid", "partial_refund") and (downloaded or (links and (emailed or True))):
-        # email is sent together with link generation at fulfillment time; legacy
-        # orders may lack the explicit flag, so links-generated is sufficient.
+    # Links are generated together with the fulfillment email at delivery time,
+    # so links-generated is the reliable "delivered" signal (an actual download
+    # is NOT required — Q3). Legacy orders may lack an explicit email flag.
+    if fin in ("paid", "partial_refund") and (downloaded or links):
         return "delivered"
     return "pending"
 
@@ -1322,7 +1322,16 @@ def _compute_lifecycle(doc):
     elif fin in ("pending_payment",):
         payment_status = "pending"
     elif fin in ("cancelled",):
-        payment_status = "refunded" if (doc.get("payment_status") == "paid") else "pending"
+        # Cancelled ≠ refunded. If money was collected but not refunded, it's
+        # still "paid" (a refund obligation surfaces via order_status), otherwise
+        # "pending". Only show "refunded" when a refund actually occurred.
+        refunded_flag = (doc.get("refund_status") in ("refunded", "partial_refund")) or bool(doc.get("refunded_at"))
+        if refunded_flag:
+            payment_status = "refunded"
+        elif doc.get("payment_status") == "paid":
+            payment_status = "paid"
+        else:
+            payment_status = "pending"
     else:
         payment_status = fin
 

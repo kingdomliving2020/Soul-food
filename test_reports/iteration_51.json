@@ -1,0 +1,33 @@
+{
+  "summary": "Frontend-only verification of admin console auth gate fix. All 5 scenarios PASS. Bug (static/empty admin UI for non-admin or expired token) is fixed: AdminConsole now probes /api/admin/dashboard on mount and gates the UI appropriately.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results": {
+    "1_valid_admin_loads_console": "PASS — /admin renders Dashboard with real data (Total Users 45, Total Orders 78, Revenue $303.64, Total Products 57). No admin-access-denied element present.",
+    "2_non_admin_sees_gate": "PASS — Member token qa_member@example.com produced 403 on /api/admin/dashboard; UI shows data-testid='admin-access-denied' with 'Admin sign-in required' copy and 'Sign in again' (data-testid='admin-relogin-btn'). No empty console chrome/sidebar shown.",
+    "3_relogin_button": "PASS — Clicking 'Sign in again' cleared soul_food_token from localStorage (null) and navigated to /auth.",
+    "4_invalid_token": "PASS — Setting soul_food_token='expired.invalid.token' triggered 401 on probe and rendered the admin-access-denied gate.",
+    "5_regression_admin_orders": "PASS — /admin/orders loads with 78 lifecycle-axes-<order> badges rendered (first: lifecycle-axes-QA-FUL-DIGITAL). Order Management UI intact."
+  },
+  "test_report_links": [
+    "/app/test_reports/screenshots_iter51_admin.png",
+    "/app/test_reports/screenshots_iter51_member.png",
+    "/app/test_reports/screenshots_iter51_invalid.png",
+    "/app/test_reports/screenshots_iter51_orders.png"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Unrelated global console error observed on all pages: 'Failed to load products: TypeError: Failed to fetch' plus later 500s from /api/products in a global useEffect at bundle line ~120730 / index.js:131303. Not caused by this fix and does not block admin gate behavior, but worth investigating (likely a stale fetch race or a products endpoint hiccup during navigation)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped per request)", "frontend": "100% (5/5)"},
+  "test_credentials": "Admin: overflowharvest@gmail.com / Admin123! · Member: qa_member@example.com / MemberTest123!",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Admin auth gate (data-testids: admin-access-denied, admin-relogin-btn, admin-auth-checking, admin-auth-error) is working end-to-end. If retesting, inject soul_food_token via localStorage from POST /api/auth/login response (identifier field). The unrelated /api/products fetch error appears on many pages and should be triaged separately."
+}

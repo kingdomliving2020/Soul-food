@@ -2018,30 +2018,95 @@ const AuditLogs = () => {
 const AdminConsole = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [token, setToken] = useState(localStorage.getItem('soul_food_token') || '');
+  // 'checking' | 'ok' | 'denied' | 'error'
+  const [authState, setAuthState] = useState('checking');
   const navigate = useNavigate();
-  
+
   useEffect(() => {
-    // Check if user has admin access
-    if (!token) {
-      // Redirect to login
-      navigate('/auth');
-    }
-  }, [token, navigate]);
-  
-  if (!token) {
+    let cancelled = false;
+    const verifyAdminAccess = async () => {
+      if (!token) { setAuthState('denied'); return; }
+      setAuthState('checking');
+      try {
+        // Probe a real admin endpoint so we validate AUTHORIZATION (role in the
+        // token), not just that a token string exists. A stale-role token (user
+        // promoted after login) or an expired token returns 401/403 here.
+        const res = await fetch(`${API_URL}/api/admin/dashboard`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        if (cancelled) return;
+        if (res.ok) {
+          setAuthState('ok');
+        } else if (res.status === 401 || res.status === 403) {
+          setAuthState('denied');
+        } else {
+          setAuthState('error');
+        }
+      } catch (e) {
+        if (!cancelled) setAuthState('error');
+      }
+    };
+    verifyAdminAccess();
+    return () => { cancelled = true; };
+  }, [token]);
+
+  const handleReLogin = () => {
+    localStorage.removeItem('soul_food_token');
+    localStorage.removeItem('soul_food_user');
+    setToken('');
+    navigate('/auth');
+  };
+
+  if (authState === 'checking') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-100">
+      <div className="min-h-screen flex items-center justify-center bg-slate-100" data-testid="admin-auth-checking">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-slate-800 mb-4">Admin Access Required</h1>
-          <p className="text-slate-600 mb-4">Please log in with an admin account to access the console.</p>
-          <Button onClick={() => navigate('/auth')} className="bg-orange-600 hover:bg-orange-700">
-            Go to Login
+          <RefreshCw className="w-8 h-8 text-orange-600 animate-spin mx-auto mb-4" />
+          <p className="text-slate-600">Verifying admin access…</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (authState === 'denied') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-100 px-4" data-testid="admin-access-denied">
+        <div className="text-center max-w-md">
+          <Lock className="w-10 h-10 text-orange-600 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-slate-800 mb-2">Admin sign-in required</h1>
+          <p className="text-slate-600 mb-6">
+            Your session has expired or your admin access was updated recently.
+            Please sign in again to load the console. If you were just granted admin
+            access, signing in again refreshes your permissions.
+          </p>
+          <Button onClick={handleReLogin} className="bg-orange-600 hover:bg-orange-700" data-testid="admin-relogin-btn">
+            Sign in again
           </Button>
         </div>
       </div>
     );
   }
-  
+
+  if (authState === 'error') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-100 px-4" data-testid="admin-auth-error">
+        <div className="text-center max-w-md">
+          <AlertTriangle className="w-10 h-10 text-amber-500 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-slate-800 mb-2">Couldn't reach the server</h1>
+          <p className="text-slate-600 mb-6">We couldn't verify your admin access. Check your connection and try again.</p>
+          <div className="flex items-center justify-center gap-3">
+            <Button onClick={() => setToken(localStorage.getItem('soul_food_token') || '')} className="bg-orange-600 hover:bg-orange-700" data-testid="admin-retry-btn">
+              Retry
+            </Button>
+            <Button onClick={handleReLogin} variant="outline" data-testid="admin-relogin-btn">
+              Sign in again
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <AdminContext.Provider value={{ token, setToken }}>
       <div className="min-h-screen bg-slate-100">
