@@ -1,5 +1,14 @@
 # Soul Food - Product Requirements Document
 
+## Pre-launch HIGH-severity fixes (July 23, 2026) — verified iteration_53.json (100%)
+Scope: launch-critical correctness only (pricing / checkout / fulfillment / auth). No new features, no UI changes.
+- [x] **HIGH — Pricing integrity / checkout (`payment_routes.py` create_cart_checkout_session ~2490-2560):** cart checkout previously charged CLIENT-supplied prices and honored client `discount_percent`/`discount_dollars`/`override_total` with no server coupon validation (pay-$0.01 exploit). Now: `_catalog_price_for()` floors any catalogued SKU to its promo-aware catalog price (client can't underpay); ALL discounts/overrides are derived server-side from a re-validated coupon (`coupon_routes.validate_coupon`), and client discount fields are ignored; invalid coupon → 400; charged amount stored = true server `calculated_total`. Regression test `tests/test_checkout_pricing.py` (Stripe mocked) — 4/4 pass.
+- [x] **HIGH — Auth token replay (`auth_routes_v2.py` reset_password ~1430):** password-reset/invite tokens were reusable until expiry. Now `mark_token_used()` is called on success → single-use (verified: 1st reset 200, replay 400 "already been used").
+- [x] **HIGH — Fulfillment false-complete (`admin_routes.py` _digital_lane ~1262):** `_compute_lifecycle` digital lane returns `pending` (order stays open, not complete) when `fulfillment_verification_failures` is non-empty, so a multi-item order can't read as complete while a customer is missing files. lifecycle tests 12/12 pass.
+- Note: `JWT_SECRET_KEY` is set (non-default) in preview — ensure it's also set in the PRODUCTION deploy env. Out of scope (deferred, per user "HIGH only"): MEDIUM 2FA server-side enforcement; MEDIUM partial-refund revenue math; LOW jwt fallback/get_current_admin.
+- Action: user to **Save to GitHub** + **Redeploy**, then validate on live.
+
+
 ## Feature — Email-based Admin Invites + Pending Invites view (July 23, 2026)
 - **Report:** admin created invites but couldn't find them after redeploy. Diagnosis: (1) preview & production have SEPARATE databases (their 2 invites — temiajoyevents@gmail.com, jafaribrownsha@gmail.com — are NOT in preview → they live in production, still there since a redeploy never wipes users); (2) the OLD "Invite User" only created a db.users row + showed a one-time temp-password toast — it NEVER emailed anyone and there was no way to view/track pending invites.
 - **Fix (approved a+b):**
