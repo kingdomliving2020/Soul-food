@@ -20,6 +20,7 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone, timedelta
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
+import re
 import secrets
 import hashlib
 import json
@@ -1119,16 +1120,93 @@ def _physical_skus():
     return _PHYSICAL_SKU_CACHE
 
 
-def _order_has_physical(items):
+def _item_is_physical(it):
     skus, pids = _physical_skus()
-    for it in items or []:
-        if it.get("physical"):
+    if it.get("physical"):
+        return True
+    if (it.get("product_id") or it.get("id")) in pids:
+        return True
+    if it.get("sku") in skus:
+        return True
+    fmt = (it.get("format") or "").lower()
+    medium = ((it.get("metadata") or {}).get("medium") or "").lower()
+    name = (it.get("name") or "").lower()
+    if medium == "physical":
+        return True
+    if any(k in fmt for k in ("physical", "paperback", "print", "pod")):
+        return True
+    if "paperback" in name or "physical pack" in name:
+        return True
+    return False
+
+
+def _item_is_digital(it):
+    """An item carries a digital obligation unless it is a purely physical SKU."""
+    fmt = (it.get("format") or "").lower()
+    medium = ((it.get("metadata") or {}).get("medium") or "").lower()
+    name = (it.get("name") or "").lower()
+    if it.get("no_digital_fulfillment"):
+        return False
+    if any(k in fmt for k in ("digital", "epub", "ipdf", "interactive", "ebook")) or fmt == "pdf":
+        return True
+    if medium in ("pdf", "digital", "epub", "ipdf", "ebook"):
+        return True
+    if any(k in name for k in ("epub", "ipdf", "ebook", "e-book", "(pdf", "digital")):
+        return True
+    # A print/paperback-only item is not digital.
+    if _item_is_physical(it):
+        return False
+    # Default: catalog is predominantly digital.
+    return True
+
+
+def _order_has_physical(items):
+    return any(_item_is_physical(it) for it in (items or []))
+
+
+def _order_has_digital(items):
+    return any(_item_is_digital(it) for it in (items or []))
+
+
+def _is_ie_item(it):
+    ed = (it.get("edition") or "").lower()
+    if ed in ("ie", "instructor"):
+        return True
+    blob = " ".join(str(it.get(k) or "") for k in ("id", "product_id", "sku", "name")).lower()
+    if "instructor" in blob:
+        return True
+    if re.search(r"(^|[-_ ])ie([-_ ]|$)", blob):
+        return True
+    return False
+
+
+def _is_group_bundle_item(it):
+    if it.get("isSmallGroupBundle") or it.get("isBookClub"):
+        return True
+    blob = " ".join(str(it.get(k) or "") for k in ("id", "product_id", "sku", "name")).lower()
+    return any(k in blob for k in ("small group", "small-group", "sgb", "book club", "book-club", "bookclub"))
+
+
+def _order_requires_manual_review(items, has_physical, has_digital):
+    """Organizational / high-touch orders that an admin must explicitly clear:
+      * Instructor Edition (IE) SKU
+      * Small Group / Book Club bundle
+      * quantity >= 5 of any curriculum item
+      * mixed order (both physical AND digital obligations)
+    """
+    if has_physical and has_digital:
+        return True
+    for it in (items or []):
+        try:
+            qty = int(it.get("quantity") or 1)
+        except Exception:
+            qty = 1
+        if qty >= 5:
             return True
-        if (it.get("product_id") or it.get("id")) in pids:
-            return True
-        if it.get("sku") in skus:
+        if _is_ie_item(it) or _is_group_bundle_item(it):
             return True
     return False
+
 
 
 def _financial_status(doc):
@@ -1179,60 +1257,159 @@ def _fulfillment_status(doc, fin, has_physical):
     return "not_granted"
 
 
+def _digital_lane(doc, fin):
+    """(applicable, status) for the digital delivery lane.
+    Delivered = access granted + links generated + fulfillment email sent
+    (an actual download is NOT required — Q3)."""
+    if fin in ("refunded", "cancelled", "chargeback"):
+        return "revoked"
+    links = bool(doc.get("download_links_generated"))
+    emailed = bool(doc.get("fulfillment_email_sent") or doc.get("confirmation_email_sent"))
+    downloaded = (doc.get("downloads_count") or 0) > 0
+    if fin in ("paid", "partial_refund") and (downloaded or (links and (emailed or True))):
+        # email is sent together with link generation at fulfillment time; legacy
+        # orders may lack the explicit flag, so links-generated is sufficient.
+        return "delivered"
+    return "pending"
+
+
+def _physical_lane(doc, fin):
+    if fin in ("refunded", "cancelled", "chargeback"):
+        return "cancelled"
+    pf = (doc.get("physical_fulfillment") or "").strip().lower()
+    if pf in ("packed", "shipped", "delivered"):
+        return pf
+    return "pending"
+
+
+def _manual_lane(doc, fin):
+    if fin in ("refunded", "cancelled", "chargeback"):
+        return "cancelled"
+    ms = (doc.get("manual_fulfillment_status") or "").strip().lower()
+    return "fulfilled" if ms == "fulfilled" else "pending_review"
+
+
+def _recipient_lane(doc, fin):
+    """Recipient access auto-confirms when the recipient claims/downloads;
+    admins can also confirm manually (Q2)."""
+    if fin in ("refunded", "cancelled", "chargeback"):
+        return "revoked"
+    if doc.get("recipient_access_confirmed"):
+        return "confirmed"
+    if (doc.get("downloads_count") or 0) > 0:
+        return "confirmed"
+    if doc.get("claimed_by_user_id"):
+        return "confirmed"
+    return "pending"
+
+
 def _compute_lifecycle(doc):
     items = doc.get("items", [])
     has_physical = _order_has_physical(items)
+    has_digital = _order_has_digital(items)
+    ptype = (doc.get("purchase_type") or "self").strip().lower()
+    is_gift = ptype == "gift"
     fin = _financial_status(doc)
     ent = _entitlement_status(doc, fin)
-    ful = _fulfillment_status(doc, fin, has_physical)
+    ful = _fulfillment_status(doc, fin, has_physical)  # legacy single axis (kept for filters)
+    requires_manual = _order_requires_manual_review(items, has_physical, has_digital)
 
-    # Definition of Done (Closed) + needs_action
+    # Simplified money-only payment status (Q: Pending | Paid | Refunded)
+    if fin in ("refunded", "partial_refund", "chargeback"):
+        payment_status = "refunded"
+    elif fin in ("paid",):
+        payment_status = "paid"
+    elif fin in ("pending_payment",):
+        payment_status = "pending"
+    elif fin in ("cancelled",):
+        payment_status = "refunded" if (doc.get("payment_status") == "paid") else "pending"
+    else:
+        payment_status = fin
+
+    # Per-lane fulfillment
+    digital = {"applicable": has_digital, "status": _digital_lane(doc, fin) if has_digital else "n_a"}
+    physical = {"applicable": has_physical, "status": _physical_lane(doc, fin) if has_physical else "n_a"}
+    manual = {"applicable": requires_manual, "status": _manual_lane(doc, fin) if requires_manual else "n_a"}
+    recipient = {"applicable": is_gift, "status": _recipient_lane(doc, fin) if is_gift else "n_a"}
+
+    pending_obligations = []
+    if digital["applicable"] and digital["status"] == "pending":
+        pending_obligations.append("Digital delivery")
+    if physical["applicable"] and physical["status"] != "delivered" and physical["status"] != "cancelled":
+        pending_obligations.append(f"Physical: {physical['status']}")
+    if recipient["applicable"] and recipient["status"] == "pending":
+        pending_obligations.append("Recipient access")
+    if manual["applicable"] and manual["status"] == "pending_review":
+        pending_obligations.append("Admin fulfillment review")
+
+    # Overall order status — COMPLETE only when every applicable lane is satisfied.
+    def lane_ok(lane, done_values):
+        return (not lane["applicable"]) or (lane["status"] in done_values)
+
+    all_satisfied = (
+        lane_ok(digital, ("delivered",))
+        and lane_ok(physical, ("delivered",))
+        and lane_ok(manual, ("fulfilled",))
+        and lane_ok(recipient, ("confirmed",))
+    )
+
     needs_action = False
-    is_closed = False
-    if fin in ("refunded", "cancelled", "chargeback"):
-        is_closed = ent == "revoked"        # terminal once access pulled
+    if fin == "archived":
+        order_status = "archived"
+    elif fin in ("refunded", "cancelled", "chargeback"):
+        order_status = fin if fin != "chargeback" else "refunded"
         needs_action = ent != "revoked"
     elif fin == "refund_pending":
-        needs_action = True                  # admin must process refund
+        order_status = "refund_pending"
+        needs_action = True
     elif fin == "pending_payment":
-        needs_action = False                 # waiting on customer, not admin
+        order_status = "pending_payment"
+        needs_action = False
     elif fin in ("paid", "partial_refund"):
-        if has_physical:
-            is_closed = ful == "delivered"
-            needs_action = ful in ("not_shipped", "packed", "shipped")
+        if all_satisfied:
+            order_status = "complete"
         else:
-            is_closed = ful in ("delivered", "downloaded")
-            needs_action = ful == "not_granted"
-    elif fin == "archived":
-        is_closed = True
+            order_status = "open"
+            needs_action = True
+    else:
+        order_status = "processing"
 
-    # primary at-a-glance label
-    if fin == "refunded":
-        stage = "Refunded"
-    elif fin == "partial_refund":
-        stage = "Partially Refunded"
-    elif fin == "refund_pending":
-        stage = "Refund Pending"
-    elif fin == "chargeback":
-        stage = "Chargeback"
-    elif fin == "cancelled":
-        stage = "Cancelled"
-    elif fin == "archived":
-        stage = "Archived"
-    elif fin == "pending_payment":
-        stage = "Pending Payment"
-    elif has_physical and ful == "shipped":
+    is_closed = order_status in ("complete", "archived") or (
+        fin in ("refunded", "cancelled", "chargeback") and ent == "revoked"
+    )
+
+    # Backward-compatible primary label
+    label_map = {
+        "refunded": "Refunded", "partial_refund": "Partially Refunded",
+        "refund_pending": "Refund Pending", "cancelled": "Cancelled",
+        "archived": "Archived", "pending_payment": "Pending Payment",
+        "complete": "Complete",
+    }
+    if order_status in label_map:
+        stage = label_map[order_status]
+    elif has_physical and physical["status"] == "shipped":
         stage = "Shipped"
-    elif has_physical and ful == "packed":
+    elif has_physical and physical["status"] == "packed":
         stage = "Packed"
     elif needs_action:
         stage = "Needs Action"
-    elif is_closed:
-        stage = "Closed"
     else:
-        stage = "Processing"
+        stage = "Open"
+
+    # Human summary of what's delivered vs pending
+    summary_parts = []
+    if digital["applicable"]:
+        summary_parts.append(f"Digital: {digital['status']}")
+    if physical["applicable"]:
+        summary_parts.append(f"Physical: {physical['status']}")
+    if manual["applicable"]:
+        summary_parts.append(f"Review: {manual['status']}")
+    if recipient["applicable"]:
+        summary_parts.append(f"Recipient: {recipient['status']}")
+    fulfillment_summary = " · ".join(summary_parts) if summary_parts else "—"
 
     return {
+        # backward-compatible keys (filters, CSV, existing UI)
         "financial_status": fin,
         "entitlement_status": ent,
         "fulfillment_status": ful,
@@ -1243,7 +1420,25 @@ def _compute_lifecycle(doc):
         "tracking_number": doc.get("tracking_number"),
         "carrier": doc.get("carrier"),
         "shipping_notified": bool(doc.get("shipping_notified", False)),
+        "manual_override": bool(doc.get("manual_override", False)),
+        # NEW — 3-axis separation
+        "payment_status": payment_status,
+        "has_digital": has_digital,
+        "is_gift": is_gift,
+        "purchase_type": ptype,
+        "requires_manual_review": requires_manual,
+        "fulfillment": {
+            "digital": digital,
+            "physical": physical,
+            "manual": manual,
+            "recipient": recipient,
+        },
+        "order_status": order_status,
+        "order_status_label": stage,
+        "pending_obligations": pending_obligations,
+        "fulfillment_summary": fulfillment_summary,
     }
+
 
 
 @router.get("/orders")
@@ -1443,6 +1638,69 @@ async def admin_set_fulfillment(
     await db.payment_transactions.update_many(filter_q, {"$set": set_fields})
     await log_admin_action("set_fulfillment", admin.id, "order", f"{order_number} -> {status}")
     return {"success": True, "order_number": order_number, "fulfillment_status": status, "notified": notified}
+
+
+class ManualFulfillmentUpdate(BaseModel):
+    status: str  # pending_review | fulfilled
+    note: Optional[str] = None
+
+
+@router.post("/orders/{order_number}/manual-fulfillment")
+async def admin_set_manual_fulfillment(
+    order_number: str,
+    payload: ManualFulfillmentUpdate,
+    admin: AdminUser = Depends(get_current_admin),
+):
+    """Mark the manual/organizational (bulk / church / instructor / mixed) review
+    lane as fulfilled or reopen it. Does NOT touch payment or entitlement."""
+    status = payload.status.strip().lower()
+    if status not in ("pending_review", "fulfilled"):
+        raise HTTPException(status_code=400, detail="Invalid status. Allowed: pending_review, fulfilled")
+    order, txn = await _find_order_sources(order_number)
+    if not order and not txn:
+        raise HTTPException(status_code=404, detail="Order not found")
+    now = datetime.now(timezone.utc).isoformat()
+    set_fields = {
+        "manual_fulfillment_status": status,
+        "manual_fulfillment_at": now,
+        "manual_fulfillment_by": admin.email,
+    }
+    if payload.note is not None:
+        set_fields["manual_fulfillment_note"] = payload.note.strip() or None
+    filter_q = {"$or": [{"order_number": order_number}, {"order_id": order_number}, {"session_id": order_number}]}
+    await db.orders.update_many(filter_q, {"$set": set_fields})
+    await db.payment_transactions.update_many(filter_q, {"$set": set_fields})
+    await log_admin_action("set_manual_fulfillment", admin.id, "order", f"{order_number} -> {status}")
+    return {"success": True, "order_number": order_number, "manual_fulfillment_status": status}
+
+
+class RecipientAccessUpdate(BaseModel):
+    confirmed: bool
+
+
+@router.post("/orders/{order_number}/recipient-access")
+async def admin_set_recipient_access(
+    order_number: str,
+    payload: RecipientAccessUpdate,
+    admin: AdminUser = Depends(get_current_admin),
+):
+    """Manually confirm (or un-confirm) that a gift/third-party recipient has
+    received access. Recipients also auto-confirm on claim/login/download."""
+    order, txn = await _find_order_sources(order_number)
+    if not order and not txn:
+        raise HTTPException(status_code=404, detail="Order not found")
+    now = datetime.now(timezone.utc).isoformat()
+    set_fields = {
+        "recipient_access_confirmed": bool(payload.confirmed),
+        "recipient_access_confirmed_at": now if payload.confirmed else None,
+        "recipient_access_confirmed_by": admin.email if payload.confirmed else None,
+    }
+    filter_q = {"$or": [{"order_number": order_number}, {"order_id": order_number}, {"session_id": order_number}]}
+    await db.orders.update_many(filter_q, {"$set": set_fields})
+    await db.payment_transactions.update_many(filter_q, {"$set": set_fields})
+    await log_admin_action("set_recipient_access", admin.id, "order", f"{order_number} -> confirmed={payload.confirmed}")
+    return {"success": True, "order_number": order_number, "recipient_access_confirmed": bool(payload.confirmed)}
+
 
 
 @router.get("/orders/{order_number}/detail")

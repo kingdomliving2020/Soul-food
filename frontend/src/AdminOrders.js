@@ -87,6 +87,40 @@ const AdminOrders = () => {
     } catch (err) { toast.error(`Network error: ${err.message}`); }
     finally { setActionLoading(''); }
   };
+  const handleSetManualFulfillment = async (orderNumber, status) => {
+    setActionLoading(`manual-${orderNumber}`);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/manual-fulfillment`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      const { ok, data } = await safeJson(res);
+      if (ok && data.success) {
+        toast.success(status === 'fulfilled' ? 'Marked admin fulfillment complete.' : 'Reopened for review.');
+        fetchOrders(); fetchSummary();
+        if (expandedOrder === orderNumber) loadOrderDetail(orderNumber);
+      } else { toast.error(`Failed: ${data.detail || JSON.stringify(data)}`); }
+    } catch (err) { toast.error(`Network error: ${err.message}`); }
+    finally { setActionLoading(''); }
+  };
+  const handleSetRecipientAccess = async (orderNumber, confirmed) => {
+    setActionLoading(`recipient-${orderNumber}`);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/admin/orders/${encodeURIComponent(orderNumber)}/recipient-access`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirmed })
+      });
+      const { ok, data } = await safeJson(res);
+      if (ok && data.success) {
+        toast.success(confirmed ? 'Recipient access confirmed.' : 'Recipient confirmation cleared.');
+        fetchOrders(); fetchSummary();
+        if (expandedOrder === orderNumber) loadOrderDetail(orderNumber);
+      } else { toast.error(`Failed: ${data.detail || JSON.stringify(data)}`); }
+    } catch (err) { toast.error(`Network error: ${err.message}`); }
+    finally { setActionLoading(''); }
+  };
   const fetchSummary = async () => {
     try {
       const res = await fetch(`${BACKEND_URL}/api/admin/orders/summary`, {
@@ -111,6 +145,12 @@ const AdminOrders = () => {
     delivered: 'bg-emerald-100 text-emerald-700', downloaded: 'bg-emerald-100 text-emerald-700',
     shipped: 'bg-indigo-100 text-indigo-700', packed: 'bg-purple-100 text-purple-700',
     not_shipped: 'bg-orange-100 text-orange-800',
+    // NEW lane statuses (3-axis model)
+    pending: 'bg-orange-100 text-orange-800', pending_review: 'bg-orange-100 text-orange-800',
+    fulfilled: 'bg-emerald-100 text-emerald-700', confirmed: 'bg-emerald-100 text-emerald-700',
+    complete: 'bg-emerald-100 text-emerald-700', open: 'bg-orange-100 text-orange-700',
+    needs_action: 'bg-orange-100 text-orange-700', n_a: 'bg-slate-100 text-slate-400',
+    paid_status: 'bg-emerald-100 text-emerald-700',
   };
   const Chip = ({ label, value }) => (
     <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold ${LIFECYCLE_CHIP[value] || 'bg-slate-100 text-slate-600'}`}>
@@ -860,19 +900,42 @@ const AdminOrders = () => {
                           )}
                           {order.lifecycle && (
                             <span
-                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${order.lifecycle.is_closed ? 'bg-slate-100 text-slate-600' : order.lifecycle.needs_action ? 'bg-orange-100 text-orange-700' : 'bg-indigo-50 text-indigo-700'}`}
+                              className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${order.lifecycle.order_status === 'complete' ? 'bg-emerald-100 text-emerald-700' : order.lifecycle.needs_action ? 'bg-orange-100 text-orange-700' : 'bg-indigo-50 text-indigo-700'}`}
                               data-testid={`lifecycle-stage-${order.order_number}`}
                             >
-                              {order.lifecycle.is_closed && <CheckCircle className="w-3 h-3 mr-1" />}
-                              {order.lifecycle.lifecycle_stage}
+                              {order.lifecycle.order_status === 'complete' && <CheckCircle className="w-3 h-3 mr-1" />}
+                              {order.lifecycle.order_status_label || order.lifecycle.lifecycle_stage}
                             </span>
                           )}
                         </div>
                         {order.lifecycle && (
-                          <div className="flex items-center gap-1.5 mb-1 flex-wrap" data-testid={`lifecycle-chips-${order.order_number}`}>
-                            <Chip label="$" value={order.lifecycle.financial_status} />
-                            <Chip label="access" value={order.lifecycle.entitlement_status} />
-                            <Chip label={order.lifecycle.has_physical ? 'ship' : 'deliver'} value={order.lifecycle.fulfillment_status} />
+                          <div className="flex items-center gap-3 mb-1 flex-wrap" data-testid={`lifecycle-axes-${order.order_number}`}>
+                            {/* AXIS 1 — PAYMENT (money only) */}
+                            <div className="flex items-center gap-1">
+                              <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold">Payment</span>
+                              <Chip label="" value={order.lifecycle.payment_status} />
+                            </div>
+                            {/* AXIS 2 — FULFILLMENT (per delivery lane) */}
+                            <div className="flex items-center gap-1 flex-wrap">
+                              <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold">Fulfillment</span>
+                              {order.lifecycle.fulfillment?.digital?.applicable && (
+                                <Chip label="digital" value={order.lifecycle.fulfillment.digital.status} />
+                              )}
+                              {order.lifecycle.fulfillment?.physical?.applicable && (
+                                <Chip label="physical" value={order.lifecycle.fulfillment.physical.status} />
+                              )}
+                              {order.lifecycle.fulfillment?.recipient?.applicable && (
+                                <Chip label="recipient" value={order.lifecycle.fulfillment.recipient.status} />
+                              )}
+                              {order.lifecycle.fulfillment?.manual?.applicable && (
+                                <Chip label="review" value={order.lifecycle.fulfillment.manual.status} />
+                              )}
+                            </div>
+                            {/* AXIS 3 — ORDER STATUS (overall) */}
+                            <div className="flex items-center gap-1">
+                              <span className="text-[9px] uppercase tracking-wider text-slate-400 font-bold">Order</span>
+                              <Chip label="" value={order.lifecycle.order_status} />
+                            </div>
                             {order.lifecycle.manual_override && (
                               <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-100 text-amber-800">override</span>
                             )}
@@ -1191,6 +1254,49 @@ const AdminOrders = () => {
                                   <button onClick={() => handleSetFulfillment(order.order_number, 'delivered')} disabled={actionLoading === `fulfill-${order.order_number}`}
                                     className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-emerald-200 text-emerald-700 hover:bg-emerald-50 disabled:opacity-40" data-testid={`mark-delivered-${order.order_number}`}>
                                     <CheckCircle className="w-3.5 h-3.5" /> Delivered
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Recipient Access lane (gift / third-party) */}
+                            {order.lifecycle?.fulfillment?.recipient?.applicable && (
+                              <div className="sm:col-span-2 pt-3 border-t" data-testid={`recipient-panel-${order.order_number}`}>
+                                <h4 className="font-medium text-slate-700 mb-2">Recipient Access <span className="text-pink-600 text-xs font-semibold">(gift / third-party)</span></h4>
+                                <p className="text-xs text-slate-500 mb-2">
+                                  Status: <span className="font-semibold" data-testid={`recipient-status-${order.order_number}`}>{(order.lifecycle.fulfillment.recipient.status || '').replace(/_/g, ' ')}</span>
+                                  {' '}· Recipient: <span className="font-mono">{order.digital_recipient_email || orderDetail?.ownership?.granted_to || '—'}</span>
+                                  <br/>Auto-confirms when the recipient claims/logs-in/downloads. Order stays open until confirmed.
+                                </p>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <button onClick={() => handleSetRecipientAccess(order.order_number, true)} disabled={actionLoading === `recipient-${order.order_number}` || order.lifecycle.fulfillment.recipient.status === 'confirmed'}
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-emerald-200 text-emerald-700 hover:bg-emerald-50 disabled:opacity-40" data-testid={`confirm-recipient-${order.order_number}`}>
+                                    <CheckCircle className="w-3.5 h-3.5" /> Mark Access Confirmed
+                                  </button>
+                                  <button onClick={() => handleSetRecipientAccess(order.order_number, false)} disabled={actionLoading === `recipient-${order.order_number}` || order.lifecycle.fulfillment.recipient.status !== 'confirmed'}
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40" data-testid={`clear-recipient-${order.order_number}`}>
+                                    <XCircle className="w-3.5 h-3.5" /> Clear
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Manual / Organizational review lane (bulk / church / instructor / mixed) */}
+                            {order.lifecycle?.fulfillment?.manual?.applicable && (
+                              <div className="sm:col-span-2 pt-3 border-t" data-testid={`manual-panel-${order.order_number}`}>
+                                <h4 className="font-medium text-slate-700 mb-2">Admin Fulfillment Review <span className="text-amber-600 text-xs font-semibold">(bulk / church / instructor / mixed)</span></h4>
+                                <p className="text-xs text-slate-500 mb-2">
+                                  Status: <span className="font-semibold" data-testid={`manual-status-${order.order_number}`}>{(order.lifecycle.fulfillment.manual.status || '').replace(/_/g, ' ')}</span>
+                                  {' '}· This organizational order needs an admin to confirm all obligations are met before it can complete.
+                                </p>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <button onClick={() => handleSetManualFulfillment(order.order_number, 'fulfilled')} disabled={actionLoading === `manual-${order.order_number}` || order.lifecycle.fulfillment.manual.status === 'fulfilled'}
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-emerald-200 text-emerald-700 hover:bg-emerald-50 disabled:opacity-40" data-testid={`mark-fulfilled-${order.order_number}`}>
+                                    <CheckCircle className="w-3.5 h-3.5" /> Mark Fulfilled
+                                  </button>
+                                  <button onClick={() => handleSetManualFulfillment(order.order_number, 'pending_review')} disabled={actionLoading === `manual-${order.order_number}` || order.lifecycle.fulfillment.manual.status !== 'fulfilled'}
+                                    className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs border border-orange-200 text-orange-700 hover:bg-orange-50 disabled:opacity-40" data-testid={`reopen-manual-${order.order_number}`}>
+                                    <RefreshCw className="w-3.5 h-3.5" /> Reopen
                                   </button>
                                 </div>
                               </div>
