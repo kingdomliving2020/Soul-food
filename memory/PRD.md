@@ -1,5 +1,11 @@
 # Soul Food - Product Requirements Document
 
+## Digital-Only Checkout — No Shipping Friction (July 23, 2026)
+- [x] **Root cause fixed:** `CartContext.js addToCart` defaulted EVERY custom cart item's `metadata.medium` to `'physical'` when not explicitly set (line ~133). So digital products (Game Master PDFs, ePubs, iPDFs) were tagged physical → `CheckoutPage.hasPhysicalItems` returned true → checkout demanded a shipping address, showed the "Free Audio Access (physical book)" bonus, phone-for-shipping field, billing address, and "Shipping will go to" line for a purely digital cart.
+- [x] **Fix:** Added `deriveMediumFromItem(customItem)` in `CartContext.js` — derives `medium` from the item's `format`/`name`: physical signals (physical/paperback/print/pod) → `'physical'`; digital signals (digital/epub/ipdf/interactive/ebook/pdf/subscription*) → `'pdf'`; ambiguous merch keeps the conservative `'physical'` default (unchanged). Only the medium default changed — no ownership/gift/recipient logic touched, no verification prompt reintroduced.
+- [x] **Verified (screenshots):** Digital-only GM cart → checkout shows NO shipping-tier section, NO billing address, NO Free Audio bonus, NO shipping-phone field, NO "Shipping will go to" line (only "Digital access will go to: <email>"). Physical GM pack → checkout still shows Shipping Timeline + shipping tier + billing address + Free Audio bonus + "Ship to a different address". Buyer/recipient ("This purchase is for") panel intact for both.
+
+
 ## Original Problem Statement
 Full-stack e-commerce and learning platform "Soul Food" for kingdom-soul.com. Digital/physical Bible study workbooks via Stripe, guest checkout, My Library, interactive games, instructor toolbox.
 

@@ -2,6 +2,26 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 
 const CartContext = createContext();
 
+// Derive a cart item's fulfillment "medium" from its format/name when the
+// caller didn't set one explicitly. Digital products (Game Master PDFs, ePubs,
+// iPDFs, interactive, subscriptions) must NOT be tagged 'physical' — otherwise
+// checkout wrongly demands a shipping address. Ambiguous merch keeps the
+// conservative 'physical' default so its shipping flow is unchanged.
+const deriveMediumFromItem = (customItem) => {
+  const fmt = (customItem.format || '').toLowerCase();
+  const nm = (customItem.name || '').toLowerCase();
+  const physicalSignal =
+    ['physical', 'paperback', 'print', 'pod'].some((f) => fmt.includes(f)) ||
+    nm.includes('paperback') || nm.includes(' print ') || nm.includes('(print') || nm.includes('physical pack');
+  if (physicalSignal) return 'physical';
+  const digitalSignal =
+    ['digital', 'epub', 'ipdf', 'interactive', 'ebook'].some((f) => fmt.includes(f)) ||
+    fmt === 'pdf' || fmt.startsWith('subscription') ||
+    nm.includes('epub') || nm.includes('ipdf') || nm.includes('e-book') || nm.includes('ebook') || nm.includes('(pdf');
+  if (digitalSignal) return 'pdf';
+  return 'physical';
+};
+
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
@@ -130,7 +150,7 @@ export const CartProvider = ({ children }) => {
           series: customItem.series || null,
           seriesName: customItem.seriesName || null,
           edition: customItem.edition || 'standard',
-          medium: customItem.medium || (customItem.isSmallGroupBundle ? 'bundle' : 'physical'),
+          medium: customItem.medium || (customItem.isSmallGroupBundle ? 'bundle' : deriveMediumFromItem(customItem)),
           unit_price: customItem.price,
           // Preserve any custom metadata the caller passed (bundle mix, summary, tier, etc.)
           ...(customItem.metadata || {})
