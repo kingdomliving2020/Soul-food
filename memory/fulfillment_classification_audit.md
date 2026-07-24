@@ -21,7 +21,7 @@ and `routes/admin_routes.py` (`_item_is_physical`, `_item_is_digital`,
   medallions (single+packs), Game Master physical (pre-order).
 - PENDING: BKFT-EXP-GAME (pre-order), full breakfast digital (gated personal-study).
 
-## FINDINGS / GAPS (launch risks)
+## FINDINGS / GAPS (launch risks) — #1-#4 RESOLVED July 24, 2026; #5 kept as-is per user
 1. HYBRID bundles classified physical-only → digital half untracked; order auto-completes on
    physical delivery without confirming digital. `_item_is_digital` ignores hybrid_fulfillment &
    bundle_contents.digital. Affects IHI-AE-PRO-BUNDLE (LIVE), BUNDLE-FAMILY/CHURCH-STARTER/MINISTRY

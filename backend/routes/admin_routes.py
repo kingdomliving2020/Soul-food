@@ -1120,8 +1120,66 @@ def _physical_skus():
     return _PHYSICAL_SKU_CACHE
 
 
+_HYBRID_SKU_CACHE = None
+
+
+def _hybrid_skus():
+    """Product ids + SKUs flagged hybrid_fulfillment in the canonical catalog
+    (ship a physical copy AND deliver a digital file — e.g. IHI-AE-PRO-BUNDLE,
+    the Family / Church / Ministry bundles)."""
+    global _HYBRID_SKU_CACHE
+    if _HYBRID_SKU_CACHE is None:
+        skus, pids = set(), set()
+        try:
+            from payment_routes import PRODUCTS
+            for pid, meta in PRODUCTS.items():
+                if meta.get("hybrid_fulfillment"):
+                    pids.add(pid)
+                    if meta.get("sku"):
+                        skus.add(meta["sku"])
+        except Exception:
+            pass
+        _HYBRID_SKU_CACHE = (skus, pids)
+    return _HYBRID_SKU_CACHE
+
+
+def _item_is_hybrid(it):
+    """True when the item ships physically AND delivers a digital component, so
+    BOTH a physical and a digital fulfillment obligation must be tracked."""
+    if it.get("hybrid_fulfillment"):
+        return True
+    hyb_skus, hyb_pids = _hybrid_skus()
+    if (it.get("product_id") or it.get("id")) in hyb_pids:
+        return True
+    if it.get("sku") in hyb_skus:
+        return True
+    bc = it.get("bundle_contents")
+    if isinstance(bc, dict) and bc.get("digital"):
+        return True
+    return False
+
+
+def _is_merch_or_medallion(it):
+    """Physical trinkets (pens, bookmarks, medallions, study kits). These must
+    NOT be pulled into the Instructor-Edition review workflow even if they carry
+    an 'IE' edition tag — only instructional curriculum warrants that oversight."""
+    blob = " ".join(str(it.get(k) or "") for k in ("id", "product_id", "sku", "name")).lower()
+    return any(k in blob for k in (
+        "medal", "medallion", "merch", "pen", "bookmark", "study kit", "study-kit", "mag-",
+    ))
+
+
+def _is_materials_bundle_item(it):
+    """Small Group / Book Club bundles: ship physical participant materials."""
+    return _is_group_bundle_item(it)
+
+
 def _item_is_physical(it):
     skus, pids = _physical_skus()
+    # Hybrid bundles and physical-materials bundles (Small Group / Book Club)
+    # always ship something physical.
+    if _item_is_hybrid(it) or _is_materials_bundle_item(it):
+        return True
     if it.get("physical"):
         return True
     if (it.get("product_id") or it.get("id")) in pids:
@@ -1145,6 +1203,15 @@ def _item_is_digital(it):
     fmt = (it.get("format") or "").lower()
     medium = ((it.get("metadata") or {}).get("medium") or "").lower()
     name = (it.get("name") or "").lower()
+    # Hybrid bundles ALWAYS carry a digital obligation (the digital half), even
+    # though they also ship a physical copy — so the order stays mixed and can't
+    # close on physical delivery alone.
+    if _item_is_hybrid(it):
+        return True
+    # Small Group / Book Club bundles are physical-materials bundles — no digital
+    # obligation (their fulfillment is physical shipping + manual review).
+    if _is_materials_bundle_item(it):
+        return False
     if it.get("no_digital_fulfillment"):
         return False
     if any(k in fmt for k in ("digital", "epub", "ipdf", "interactive", "ebook")) or fmt == "pdf":
@@ -1169,6 +1236,10 @@ def _order_has_digital(items):
 
 
 def _is_ie_item(it):
+    # Physical trinkets (medallions/merch) may carry an 'IE' edition tag but are
+    # NOT instructor curriculum — never route them through the IE review workflow.
+    if _is_merch_or_medallion(it):
+        return False
     ed = (it.get("edition") or "").lower()
     if ed in ("ie", "instructor"):
         return True
@@ -1188,22 +1259,17 @@ def _is_group_bundle_item(it):
 
 
 def _order_requires_manual_review(items, has_physical, has_digital):
-    """Organizational / high-touch orders that an admin must explicitly clear:
-      * Instructor Edition (IE) SKU
-      * Small Group / Book Club bundle
-      * quantity >= 5 of any curriculum item
-      * mixed order (both physical AND digital obligations)
+    """Manual review is driven by actual fulfillment COMPLEXITY, never by raw
+    quantity alone (a pure-digital self-purchase auto-fulfills at any quantity):
+      * mixed-medium order (both physical AND digital obligations)
+      * Instructor Edition (IE) curriculum
+      * Small Group / Book Club bundle (physical participant materials)
+      * hybrid bundle (ships + delivers digital)
     """
     if has_physical and has_digital:
         return True
     for it in (items or []):
-        try:
-            qty = int(it.get("quantity") or 1)
-        except Exception:
-            qty = 1
-        if qty >= 5:
-            return True
-        if _is_ie_item(it) or _is_group_bundle_item(it):
+        if _is_ie_item(it) or _is_group_bundle_item(it) or _item_is_hybrid(it):
             return True
     return False
 

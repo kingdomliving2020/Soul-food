@@ -48,6 +48,9 @@ ORDERS = [
          items=[{"id": "sgb-4", "name": "Small Group Bundle (1 IE + 4)", "isSmallGroupBundle": True, "format": "physical", "quantity": 1}]),
     base(f"{PREFIX}BULK", total_amount=69.93,
          items=[{"id": "holiday-ae-digital", "name": "Holiday AE (ePub)", "format": "digital", "quantity": 10}]),
+    base(f"{PREFIX}HYBRID",
+         items=[{"id": "ihi_ae_pro_bundle", "sku": "IHI-AE-PRO-BUNDLE", "name": "AE-Pro Bundle (Print + Digital)",
+                 "physical": True, "hybrid_fulfillment": True, "format": "physical", "quantity": 1}]),
 ]
 
 
