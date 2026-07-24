@@ -1,5 +1,15 @@
 # Soul Food - Product Requirements Document
 
+## Launch Validation — Entitlement / Library / Buyer-vs-Recipient (July 24, 2026) — 17/17 PASS on live preview endpoints
+Verified via `scripts/validate_entitlements.py` (seeds VAL- txns, hits live `/api/payments/my-purchases`, `/my-orders`, `/download-links`, cleans up):
+- Library (`my-purchases`) shows ONLY active owned entitlements: includes paid self; EXCLUDES refunded, cancelled, test-tagged, and gift-sent (buyer never owns a gift they sent).
+- Order History (`my-orders`) is the permanent record: includes self, refunded (kept), gift-sent; EXCLUDES test-tagged. Received gifts intentionally DON'T appear in recipient's own history (they live in the recipient's Library — Amazon/Kindle pattern).
+- Gift ownership: recipient's Library HAS the gift; buyer's does NOT. `download-links` for a gift returns `is_gift:true, count:0, recipient_email` (buyer never sees recipient tokens); self order returns real tokens.
+- Combined with fulfillment audit: 12/12 lifecycle + 8/8 classification + 8 live admin UI scenarios.
+- ⚠️ ALL verified on PREVIEW only. Production (kingdom-soul.com) requires **Save to GitHub + Redeploy** to reflect these approved changes — redeploy is user-initiated.
+
+
+
 ## Fulfillment-Classification Audit + Fixes (July 24, 2026) — verified: 12/12 lifecycle + 8/8 new regression + live UI (6 scenarios)
 Full-catalog audit of SKU → Entitlement → Library → Fulfillment → Completion. Matrix + gaps in `/app/memory/fulfillment_classification_audit.md`. Fixed 4 misclassifications in `routes/admin_routes.py` classifier (`_item_is_physical`/`_item_is_digital`/`_is_ie_item`/`_order_requires_manual_review`); left #5 (gated full Break*fast digital) intentionally untouched per user.
 - [x] **#1 Hybrid bundles register BOTH obligations.** New `_hybrid_skus()`/`_item_is_hybrid()` (reads `hybrid_fulfillment` flag + `bundle_contents.digital` from catalog). Hybrid item → has_physical AND has_digital → mixed → manual review. Order can NO LONGER close on digital delivery alone. Affects LIVE `IHI-AE-PRO-BUNDLE` + dormant BUNDLE-FAMILY/CHURCH-STARTER/MINISTRY. Verified: hybrid stays `open` after digital delivered; `complete` only after digital+physical+manual all done.

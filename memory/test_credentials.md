@@ -17,6 +17,12 @@
 - Password: `MemberTest123!`
 - Role: member (NO admin access; hitting /admin returns 403 → "Admin sign-in required" gate)
 
+## Recipient Test Account — for gift buyer-vs-recipient validation (Jul 24, 2026)
+- Email: `qa_recipient@example.com`
+- Username: `qa_recipient`
+- Password: `RecipTest123!`
+- Role: member. Used as the gift recipient in `scripts/validate_entitlements.py`.
+
 ## Registration
 Use `/register` to create new test accounts.
 
