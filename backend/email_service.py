@@ -760,20 +760,95 @@ async def send_email(
         return {"success": False, "error": str(e)}
 
 
-async def send_shipping_notification(to_email: str, order_number: str, tracking_number: str = "", carrier: str = "") -> Dict:
-    """Optional shipping notification for physical orders."""
+async def send_shipping_notification(to_email: str, order_number: str, tracking_number: str = "", carrier: str = "", is_gift_recipient: bool = False, gifted_by: str = "") -> Dict:
+    """Shipping notification for physical orders (buyer and/or gift recipient)."""
     track_html = ""
     if tracking_number:
         track_html = f'<p style="margin:8px 0;color:#334155;">Tracking number: <strong>{tracking_number}</strong>{(" via " + carrier) if carrier else ""}</p>'
+    if is_gift_recipient:
+        intro = f"A gift{(' from ' + gifted_by) if gifted_by else ''} is on its way to you! 🎁"
+    else:
+        intro = f"Good news — your order <strong>{order_number}</strong> is on its way."
     html = f"""
     <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;">
       <h2 style="color:#7c3aed;">Your Soul Food order has shipped! 📦</h2>
-      <p style="color:#334155;">Good news — your order <strong>{order_number}</strong> is on its way.</p>
+      <p style="color:#334155;">{intro}</p>
       {track_html}
       <p style="color:#64748b;font-size:13px;margin-top:20px;">Questions? Reply to this email or contact {SUPPORT_EMAIL}.</p>
     </div>
     """
     return await send_email(to_email, f"Your order {order_number} has shipped", html)
+
+
+async def send_delivery_confirmation(to_email: str, order_number: str, is_gift_recipient: bool = False, gifted_by: str = "") -> Dict:
+    """Delivery confirmation for physical orders (buyer and/or gift recipient)."""
+    if is_gift_recipient:
+        msg = f"Your gift{(' from ' + gifted_by) if gifted_by else ''} has been delivered — enjoy! 🎉"
+    else:
+        msg = f"Your order <strong>{order_number}</strong> has been delivered. We hope you love it! 🎉"
+    content = f"""
+    <h2 style="margin:0 0 16px 0;color:#1f2937;font-size:22px;">Delivered ✅</h2>
+    <p style="margin:0 0 16px 0;color:#374151;font-size:16px;line-height:1.6;">{msg}</p>
+    <p style="margin:16px 0 0 0;color:#6b7280;font-size:13px;">Something not right? Reply to this email or contact {SUPPORT_EMAIL} and we'll make it right.</p>
+    """
+    html = get_base_template(content, f"Your Soul Food order {order_number} was delivered.")
+    return await send_email(to_email, f"Your order {order_number} has been delivered", html)
+
+
+async def send_gift_accessed_to_buyer(buyer_email: str, buyer_name: str, recipient_email: str, order_number: str, item_names: str = "") -> Dict:
+    """Courtesy note to the BUYER when their gift recipient first accesses their digital copies."""
+    items_line = f"<p style='margin:0 0 16px 0;color:#6b7280;font-size:14px;'>{item_names}</p>" if item_names else ""
+    content = f"""
+    <div style="text-align:center;font-size:40px;margin-bottom:8px;">🎁</div>
+    <h2 style="margin:0 0 16px 0;color:#1f2937;font-size:22px;text-align:center;">Your gift was opened!</h2>
+    <p style="margin:0 0 16px 0;color:#374151;font-size:16px;line-height:1.6;">
+        Great news, {buyer_name or 'friend'} — <strong>{recipient_email}</strong> has just accessed the
+        Soul Food gift you sent (order <strong>{order_number}</strong>). Thank you for sharing the table.
+    </p>
+    {items_line}
+    <p style="margin:16px 0 0 0;color:#6b7280;font-size:13px;">Questions? Contact {SUPPORT_EMAIL}.</p>
+    """
+    html = get_base_template(content, f"{recipient_email} accessed the gift you sent.")
+    return await send_email(buyer_email, f"🎁 {recipient_email} opened your gift · #{order_number}", html)
+
+
+async def send_digital_download_reminder(to_email: str, name: str, order_number: str, item_names: str = "", is_gift_recipient: bool = False, gifted_by: str = "") -> Dict:
+    """Day-7 nudge to download digital copies not yet retrieved (recipient for gifts, buyer for self)."""
+    lookup_url = f"{SITE_URL}/orders/lookup"
+    if is_gift_recipient:
+        headline = "You have a Soul Food gift waiting 🎁"
+        body = f"You were sent Soul Food digital content{(' by ' + gifted_by) if gifted_by else ''}, but it looks like you haven't downloaded it yet."
+    else:
+        headline = "Your Soul Food downloads are waiting 📥"
+        body = "We noticed you haven't downloaded your digital copies yet — they're ready whenever you are."
+    items_line = f"<p style='margin:0 0 16px 0;color:#6b7280;font-size:14px;'>{item_names}</p>" if item_names else ""
+    content = f"""
+    <h2 style="margin:0 0 16px 0;color:#1f2937;font-size:22px;">{headline}</h2>
+    <p style="margin:0 0 12px 0;color:#374151;font-size:16px;line-height:1.6;">Hi {name or 'there'}, {body}</p>
+    {items_line}
+    <div style="margin:24px 0;text-align:center;">
+        <a href="{lookup_url}" style="display:inline-block;padding:14px 32px;background-color:#c2410c;color:#ffffff !important;text-decoration:none;border-radius:8px;font-weight:700;">Get my downloads &rarr;</a>
+        <p style="margin:12px 0 0 0;color:#6b7280;font-size:13px;">Use order <strong>{order_number}</strong> and this email address.</p>
+    </div>
+    <p style="margin:8px 0 0 0;color:#9ca3af;font-size:12px;">Need help? Contact {SUPPORT_EMAIL}.</p>
+    """
+    html = get_base_template(content, "Your Soul Food digital copies are ready to download.")
+    return await send_email(to_email, f"Reminder: your Soul Food downloads are ready · #{order_number}", html)
+
+
+async def send_buyer_gift_unclaimed_notice(buyer_email: str, buyer_name: str, recipient_email: str, order_number: str) -> Dict:
+    """Day-7 note to the BUYER when their gift recipient hasn't claimed yet (we've nudged the recipient)."""
+    content = f"""
+    <h2 style="margin:0 0 16px 0;color:#1f2937;font-size:22px;">A quick heads-up on your gift 🎁</h2>
+    <p style="margin:0 0 16px 0;color:#374151;font-size:16px;line-height:1.6;">
+        Hi {buyer_name or 'friend'}, the Soul Food gift you sent to <strong>{recipient_email}</strong>
+        (order <strong>{order_number}</strong>) hasn't been opened yet. We've just sent them a friendly
+        reminder with their access link — no action needed from you.
+    </p>
+    <p style="margin:16px 0 0 0;color:#6b7280;font-size:13px;">Want to reach them directly, or have questions? Contact {SUPPORT_EMAIL}.</p>
+    """
+    html = get_base_template(content, f"{recipient_email} hasn't opened your gift yet — we've nudged them.")
+    return await send_email(buyer_email, f"Your gift to {recipient_email} is still waiting · #{order_number}", html)
 
 
 
