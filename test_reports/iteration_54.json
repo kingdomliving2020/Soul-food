@@ -1,0 +1,35 @@
+{
+  "summary": "Independent backend verification of two RECURRING bugs. BUG A (YE bundle → adult SKU) and BUG B (buyer's confirmation exposing gift downloads) — BOTH FIXES CONFIRMED WORKING. 6/6 pytest cases pass in /app/backend/tests/test_bug_ab_iter54.py.",
+  "results": {
+    "bug_a_resolver_ye": "resolve_item_to_file_entries_async(full-table-experience-ye) -> ['holiday_ye', 'breakfast-snack-month-1-youth-interactive'] — no 'holiday_ae' / no 'adult' entries",
+    "bug_a_resolver_ae": "resolve_item_to_file_entries_async(full-table-experience-ae) -> ['holiday_ae', 'breakfast-snack-month-1-adult-interactive'] — no 'holiday_ye' / no 'youth' entries",
+    "bug_a_normalize_preserve_bundle_keys": "normalize_product_id preserves all 6 edition-specific bundle keys (full-table-experience-{ae,ye}, holiday-table-bundle-{ae,ye}, starter-bundle-4cs-bkft-{ae,ye}) — new `if normalized in BUNDLE_EXPANSIONS: return normalized` early-return works as designed",
+    "bug_a_normalize_regression": "Non-bundle -ipdf variants still collapse: 'holiday-ae-ipdf' -> 'holiday_ae'; 'breakfast-snack-month-1-adult-interactive-ipdf' -> 'breakfast-snack-month-1-adult-interactive'. 'holiday_ae' unchanged. No single-product regression",
+    "bug_b_gift_endpoint": "GET /api/payments/download-links/QA-GIFT-DL2 -> 200 {is_gift:true, count:0, links:[], recipient_email:'friend@y.com', message:'This was sent as a gift...'}",
+    "bug_b_self_endpoint": "GET /api/payments/download-links/QA-SELF-DL2 -> 200 {is_gift:false, links:[{product_id:'holiday_ae', token:'tok_s2', max_downloads:3, download_count:0}]}",
+    "bug_b_ui_code_review": "PaymentSuccess.js:62 sets giftInfo when dlData.is_gift; render (line 166) conditionally renders gift-confirmation-panel (data-testid='gift-confirmation-panel') INSTEAD of Your Downloads block (line 182 else-if). Correct gating confirmed. Cannot drive full success page without a real Stripe session (no valid Stripe key in preview) — endpoint contract verification is sufficient per review request."
+  },
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_bug_ab_iter54.py",
+    "/app/test_reports/pytest/iter54_bugs_ab.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "payment_routes.py normalize_product_id early-return for BUNDLE_EXPANSIONS is correct but BUNDLE_EXPANSIONS is referenced before it is defined in the module (defined at line ~546, function at ~457). This works only because normalize_product_id runs at call-time and the module is fully loaded first — noting in case future refactors invoke normalize during module import.",
+    "payment_routes.py is 4462 lines — significantly over the 700-line guideline (same call-out as iter52 for admin_routes.py). Recommend splitting resolver / bundle-expansion / download-links / stripe-webhook into modules. Not blocking.",
+    "get_download_links endpoint uses transaction lookup via $or [order_number, session_id, order_id] and then falls through to order_number retry for self orders (lines 3479-3483). This is defensive and correct, but consider consolidating on a single canonical key going forward.",
+    "The generic 'full-table-experience' bundle key (no edition) still maps to ['holiday_ae'] (line 559). If a caller ever sends that raw key from a non-edition-aware code path, they'd still get adult files. The BUG A fix intercepts the -ye / -ae variants, but the underlying 'edition-less default is adult' footgun remains. Consider making the plain key raise or return an empty expansion so callers must explicitly pick an edition."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_bug_ab_iter54.py (new pytest file with 6 cases; autouse fixture cleans QA-GIFT-DL2 / QA-SELF-DL2 before AND after)"
+  ],
+  "success_rate": {"backend": "100% (6/6)"},
+  "test_credentials": "N/A — /api/payments/download-links/{order} is public per review request; no auth used",
+  "seed_data_creation": "Seeded 2 payment_transactions (QA-GIFT-DL2 gift buyer@x.com->friend@y.com paid; QA-SELF-DL2 self buyer@x.com paid) + 2 download_links (tok_g2 holiday_ye; tok_s2 holiday_ae). ALL 4 records deleted in fixture teardown — verified 0 remaining in DB.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Both fixes independently confirmed. Regression suite file /app/backend/tests/test_bug_ab_iter54.py is safe to re-run (idempotent seed + teardown). For UI-level Bug B verification the review request explicitly says endpoint contract is sufficient — no valid Stripe key in preview means /payment-success?session_id=... cannot resolve a real paid session. If Stripe keys are provisioned later, wrap the success-page test with a mocked /api/payments/checkout/status/{sid} returning payment_status='paid' to drive the branch.",
+  "rca of the issue": "BUG A root cause: normalize_product_id used to unconditionally fall through to display-name heuristics (lower/dash-to-underscore/strip_display_noise), which caused 'full-table-experience-ye' to be collapsed to 'full-table-experience' which BUNDLE_EXPANSIONS maps to ['holiday_ae'] (adult). Fix (line 474): early-return when the lowered id is already an exact BUNDLE_EXPANSIONS key. BUG B root cause: get_download_links previously served all links for any order_id and PaymentSuccess.js unconditionally rendered them, exposing the recipient's tokens to the buyer of a gift. Fix: endpoint now loads the payment_transaction, computes is_gift = (purchase_type=='gift' OR is_gift flag OR recipient!=buyer), and returns {links:[], count:0, is_gift:true, recipient_email:...} for gifts; PaymentSuccess.js renders gift-confirmation-panel instead of Your Downloads when is_gift."
+}

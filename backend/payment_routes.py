@@ -466,6 +466,13 @@ def normalize_product_id(product_id: str) -> str:
     
     # Try common transformations
     normalized = product_id.lower().strip()
+
+    # Never collapse an exact bundle key. Edition-specific bundles such as
+    # 'full-table-experience-ye' must NOT be shortened to the generic
+    # 'full-table-experience' (which maps to the ADULT edition). BUNDLE_EXPANSIONS
+    # is defined later in the module but resolved at call time.
+    if normalized in BUNDLE_EXPANSIONS:
+        return normalized
     
     if normalized in PRODUCT_FILES:
         return normalized
@@ -3427,32 +3434,57 @@ async def get_products():
 
 @router.get("/download-links/{order_id}")
 async def get_download_links(order_id: str):
-    """Get download links for an order - returns tokens for actual file downloads"""
-    
-    # Find download links for this order
+    """Get download links for an order — returns tokens for actual file downloads.
+    For GIFT / third-party orders the buyer does NOT receive download tokens here;
+    access belongs to the recipient (delivered via their own email link)."""
+
+    # Always resolve the transaction so we know if this is a gift/third-party order.
+    transaction = await db.payment_transactions.find_one({
+        "$or": [
+            {"order_number": order_id},
+            {"session_id": order_id},
+            {"order_id": order_id},
+        ]
+    })
+    order_number = (transaction.get("order_number") if transaction else None) or order_id
+
+    is_gift = False
+    recipient_email = None
+    if transaction:
+        ptype = (transaction.get("purchase_type") or "self").strip().lower()
+        recipient_email = transaction.get("digital_recipient_email")
+        buyer_email = (transaction.get("customer_email") or "").strip().lower()
+        is_gift = (
+            ptype == "gift"
+            or bool(transaction.get("is_gift"))
+            or (recipient_email and recipient_email.strip().lower() != buyer_email)
+        )
+
+    if is_gift:
+        # Buyer confirmation must NOT expose the recipient's downloadable tokens.
+        return {
+            "order_id": order_id,
+            "links": [],
+            "count": 0,
+            "is_gift": True,
+            "recipient_email": recipient_email,
+            "message": "This was sent as a gift. Access was delivered to the recipient by email.",
+        }
+
+    # Self purchase — return the buyer's own download links.
     links = await db.download_links.find(
         {"order_id": order_id, "revoked": False},
-        {"_id": 0, "token_hash": 0, "file_path": 0}  # Don't expose sensitive data
+        {"_id": 0, "token_hash": 0, "file_path": 0}
     ).to_list(100)
-    
-    if not links:
-        # Try to find by session_id as well
-        transaction = await db.payment_transactions.find_one({
-            "$or": [
-                {"order_number": order_id},
-                {"session_id": order_id}
-            ]
-        })
-        
-        if transaction:
-            order_number = transaction.get("order_number", order_id)
-            links = await db.download_links.find(
-                {"order_id": order_number, "revoked": False},
-                {"_id": 0, "token_hash": 0, "file_path": 0}
-            ).to_list(100)
-    
+    if not links and order_number != order_id:
+        links = await db.download_links.find(
+            {"order_id": order_number, "revoked": False},
+            {"_id": 0, "token_hash": 0, "file_path": 0}
+        ).to_list(100)
+
     return {
         "order_id": order_id,
+        "is_gift": False,
         "links": [{
             "product_id": link.get("product_id"),
             "product_name": link.get("product_name"),

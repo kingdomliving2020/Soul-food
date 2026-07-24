@@ -13,6 +13,7 @@ const PaymentSuccess = () => {
   const [status, setStatus] = useState('checking');
   const [paymentData, setPaymentData] = useState(null);
   const [downloadLinks, setDownloadLinks] = useState([]);
+  const [giftInfo, setGiftInfo] = useState(null);
   const [error, setError] = useState(null);
   const [attempts, setAttempts] = useState(0);
   
@@ -58,7 +59,9 @@ const PaymentSuccess = () => {
             const dlResponse = await fetch(`${BACKEND_URL}/api/payments/download-links/${orderId}`);
             if (dlResponse.ok) {
               const dlData = await dlResponse.json();
-              if (dlData.links && dlData.links.length > 0) {
+              if (dlData.is_gift) {
+                setGiftInfo({ recipient: dlData.recipient_email, message: dlData.message });
+              } else if (dlData.links && dlData.links.length > 0) {
                 setDownloadLinks(dlData.links);
               } else if (retries > 0) {
                 setTimeout(() => fetchDownloads(retries - 1), 3000);
@@ -160,7 +163,23 @@ const PaymentSuccess = () => {
             )}
 
             {/* Download Links Section */}
-            {downloadLinks.length > 0 ? (
+            {giftInfo ? (
+              <div className="bg-pink-50 border border-pink-200 rounded-lg p-6 mb-6" data-testid="gift-confirmation-panel">
+                <div className="flex items-start gap-3">
+                  <div className="text-2xl">🎁</div>
+                  <div>
+                    <h4 className="font-semibold text-pink-800 mb-1">Sent as a gift</h4>
+                    <p className="text-pink-700 text-sm">
+                      {giftInfo.message || 'Access was delivered to the recipient by email.'}
+                      {giftInfo.recipient ? <> The recipient (<span className="font-semibold">{giftInfo.recipient}</span>) will receive their download links.</> : null}
+                    </p>
+                    <p className="text-pink-600 text-xs mt-3">
+                      This purchase was for someone else, so the downloads aren&rsquo;t attached to your account.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : downloadLinks.length > 0 ? (
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
                 <div className="flex items-center gap-2 mb-4">
                   <Download className="w-5 h-5 text-blue-600" />
