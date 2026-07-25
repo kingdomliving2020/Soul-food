@@ -988,6 +988,25 @@ const QuickOrder = () => {
         {/* 🌿 LAUNCH BANNER */}
         <PalmSundayBanner />
 
+        {/* ===================== 25 DAYS OF FREEDOM PROMO ===================== */}
+        <section className="mb-10" data-testid="freedom25-promo">
+          <div className="rounded-2xl bg-gradient-to-r from-indigo-950 via-indigo-900 to-purple-950 border border-amber-400/40 px-5 sm:px-8 py-5 shadow-lg">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+              <div>
+                <p className="text-amber-400 text-[11px] font-bold uppercase tracking-[0.2em] mb-1">★ 25 Days of Freedom ★</p>
+                <p className="text-white font-extrabold text-lg sm:text-xl leading-tight">25% Off Orders $100+</p>
+                <p className="text-amber-100/90 text-sm mt-0.5">
+                  Use code <span className="font-bold text-amber-300 tracking-wide">FREEDOM25</span> at checkout — on select Soul Food resources, for a limited time.
+                </p>
+                <p className="text-indigo-200/80 text-xs mt-1.5">Featured: Foundation in Christ · Small Group Bundles · Game Master Bundle · In His Image</p>
+              </div>
+              <div className="bg-amber-400 text-indigo-950 font-extrabold text-xl px-5 py-2.5 rounded-xl whitespace-nowrap shadow-sm">
+                FREEDOM25
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* ===================== SMALL GROUP BUNDLE (TOP) ===================== */}
         <section className="mb-12" data-testid="small-group-section">
           <div className="flex items-center gap-3 mb-4">

@@ -1377,6 +1377,12 @@ const CheckoutPage = () => {
               <label className="block text-sm font-semibold text-purple-700 mb-2">
                 Have a coupon or gift certificate? <span className="text-xs font-normal text-slate-500">(one per order)</span>
               </label>
+              {!couponApplied && (
+                <div className="mb-3 rounded-lg bg-indigo-950 border border-amber-400/40 px-3 py-2 text-center" data-testid="freedom25-checkout-reminder">
+                  <span className="text-amber-300 font-bold text-sm tracking-wide">FREEDOM25</span>
+                  <span className="text-amber-50 text-xs sm:text-sm ml-2">25% Off Orders $100+ · 25 Days of Freedom</span>
+                </div>
+              )}
               {couponApplied ? (
                 <div className="flex items-center justify-between bg-green-100 p-3 rounded-lg">
                   <div>

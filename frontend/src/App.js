@@ -261,6 +261,26 @@ const LandingPage = () => {
         </div>
       </header>
 
+      {/* ===== 25 Days of Freedom — site-wide campaign bar ===== */}
+      <section className="bg-gradient-to-r from-indigo-950 via-indigo-900 to-purple-950 border-b border-amber-400/40" data-testid="freedom25-banner">
+        <div className="container mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-center gap-x-4 gap-y-2 text-center">
+          <span className="text-white font-extrabold text-base sm:text-lg tracking-tight whitespace-nowrap">
+            <span className="text-amber-400">★</span> 25 Days of Freedom
+          </span>
+          <span className="hidden sm:inline text-amber-300/40" aria-hidden="true">|</span>
+          <span className="text-amber-50 text-sm sm:text-base font-medium">
+            25% Off Orders $100+ with Code <span className="font-bold text-amber-300 tracking-wide">FREEDOM25</span>
+          </span>
+          <button
+            onClick={() => window.location.href = '/quick-order'}
+            data-testid="freedom25-banner-cta"
+            className="bg-amber-400 hover:bg-amber-300 text-indigo-950 font-bold text-sm px-5 py-1.5 rounded-full transition-colors shadow-sm"
+          >
+            Shop Now →
+          </button>
+        </div>
+      </section>
+
       {/* Hero Section with Multicultural Background */}
       <section className="relative py-12 sm:py-20 px-4 sm:px-6">
         <div className="absolute inset-0 z-0">
@@ -882,12 +902,21 @@ const LandingPage = () => {
                 <p className="text-sm text-slate-600">4 C&apos;s of Christianity available now. <span className="whitespace-nowrap">Foundation in Christ</span> &amp; Lunch pre-orders open — save up to $10 on workbooks!</p>
               </div>
             </div>
-            <div className="inline-flex items-center gap-3 bg-purple-50/80 backdrop-blur-sm px-6 py-3 rounded-2xl shadow-md border border-purple-200">
-              <span className="text-xl">🎮</span>
-              <div className="text-left">
-                <p className="font-bold text-purple-800">Game Passes 20% Off — No Coupon Needed!</p>
-                <p className="text-xs text-purple-600">Independence Day Campaign — code FREEDOM10 through July 6</p>
-              </div>
+            <div className="inline-flex flex-col items-center gap-2 bg-gradient-to-br from-indigo-950 to-purple-950 px-8 py-6 rounded-2xl shadow-xl border border-amber-400/40 max-w-2xl" data-testid="freedom25-landing">
+              <span className="text-amber-400 text-xs font-bold uppercase tracking-[0.2em]">★ Limited-Time Campaign ★</span>
+              <h3 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">25 Days of Freedom</h3>
+              <p className="text-amber-50 text-sm sm:text-base font-medium">Grow your faith. Equip your family. Strengthen your ministry.</p>
+              <p className="text-amber-100/90 text-sm">
+                Use code <span className="font-bold text-amber-300 tracking-wide">FREEDOM25</span> for <span className="font-semibold">25% off orders $100+</span> on select Soul Food resources — for a limited time.
+              </p>
+              <p className="text-xs text-indigo-200/80">Featured: Foundation in Christ · Small Group Bundles · Game Master Bundle · In His Image</p>
+              <button
+                onClick={() => window.location.href = '/quick-order'}
+                data-testid="freedom25-landing-cta"
+                className="mt-1 bg-amber-400 hover:bg-amber-300 text-indigo-950 font-bold text-sm px-6 py-2 rounded-full transition-colors shadow-sm"
+              >
+                Shop the Campaign →
+              </button>
             </div>
           </div>
         </div>
