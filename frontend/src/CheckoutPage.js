@@ -1698,8 +1698,8 @@ const CheckoutPage = () => {
                   <div className="flex items-start gap-2">
                     <span className="text-lg">🎧</span>
                     <div>
-                      <p className="text-sm font-semibold text-purple-800">Bonus: Free Audio Access!</p>
-                      <p className="text-xs text-purple-600">Your physical book purchase includes a free audio access code. You'll receive it in your order confirmation email.</p>
+                      <p className="text-sm font-semibold text-purple-800">Exclusive Audio Companion Included</p>
+                      <p className="text-xs text-purple-600">Your paperback purchase includes Exclusive Audio Companion Access — lesson highlights, key takeaways, and a closing prayer. You'll receive your access details in your order confirmation email.</p>
                     </div>
                   </div>
                 </div>
