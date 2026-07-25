@@ -1,6 +1,24 @@
 # Launch-Critical Review — July 24, 2026
 
-## 1. SERVER-SIDE PRICING VALIDATION — ❌ LAUNCH-CRITICAL GAP (needs decision)
+## 1. SERVER-SIDE PRICING VALIDATION — ✅ FIXED (two-phase, July 24 2026)
+- Built `backend/price_catalog.py` = server-authoritative price catalog mirroring the frontend
+  storefront (FLAT_PRICES + composite SERIES_PRICING). Wired into `/api/payments/checkout/cart`
+  via `_catalog_price_for` (catalog first, then PRODUCTS fallback). Floor = `max(client, auth)`.
+- Coupons unchanged & server-validated; floor applies to pre-discount base (discounts can't stack below catalog).
+- Rollout flag `PRICING_FAIL_CLOSED` (env, default false):
+  * PHASE 1 (now): floors when resolved; logs any unresolved priced item to `db.pricing_unresolved`
+    + logger WARNING; never blocks (gift certificates whitelisted as dynamic).
+  * PHASE 2: set `PRICING_FAIL_CLOSED=true` to reject checkout for any unresolved priced item.
+- Verified: 24/24 storefront cart-ids floor to exact price; tampered $0.50 for a $19.99 item floored to
+  $19.99 (live, only failing at Stripe revoked-key step — pricing NOT bypassed); fake SKU logged to
+  pricing_unresolved. Tests: `tests/test_price_catalog.py` (all pass).
+- ⚠️ ACTION before flipping PHASE 2: run real preview/prod traffic, review `db.pricing_unresolved` for gaps,
+  add any missing SKUs, THEN set PRICING_FAIL_CLOSED=true. Full checkout can only be validated with a live
+  Stripe key (revoked in preview).
+
+## 1. (superseded) — original finding below
+
+## 1b. SERVER-SIDE PRICING VALIDATION — original gap (now fixed above)
 - `/api/payments/checkout/cart` (the ONLY path the storefront uses — CheckoutPage.js:1016) computes
   `unit_price = max(client_price, _catalog_price_for(item))`. But `_catalog_price_for` only matches when
   the cart item carries an EXACT `PRODUCTS` key or SKU. The storefront sends composite hyphenated ids

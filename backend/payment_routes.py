@@ -12,8 +12,17 @@ from emergentintegrations.payments.stripe.checkout import (
     CheckoutSessionRequest
 )
 from datetime import datetime, timedelta, timezone
+import logging
+from price_catalog import catalog_price as _pc_catalog_price, is_dynamic_allowed as _pc_is_dynamic_allowed
 
 load_dotenv()
+
+logger = logging.getLogger("payments.pricing")
+
+# Launch-critical pricing integrity rollout flag.
+# Phase 1 (default false): floor to catalog when resolved, LOG anything unresolved (no block).
+# Phase 2 (true): reject checkout for any priced item that cannot be resolved (fail-closed).
+PRICING_FAIL_CLOSED = os.environ.get('PRICING_FAIL_CLOSED', 'false').lower() == 'true'
 
 router = APIRouter(prefix="/api/payments", tags=["payments"])
 
@@ -2506,8 +2515,13 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
     _today_iso = _date.today().isoformat()
 
     def _catalog_price_for(it):
-        """Return the promo-aware effective price for a cart item if it maps to a
-        canonical PRODUCTS entry (by product_id / id / sku); else None (dynamic SKU)."""
+        """Return the promo-aware authoritative price for a cart item.
+        Consults the server PRICE_CATALOG first (covers storefront cart-ids +
+        composite series/format variants), then falls back to the canonical
+        PRODUCTS catalog (by product_id / id / sku). None => unresolved."""
+        pc = _pc_catalog_price(it)
+        if pc is not None:
+            return float(pc)
         keys = {str(it.get('product_id') or '').strip(),
                 str(it.get('id') or '').strip(),
                 str(it.get('sku') or '').strip()}
@@ -2527,6 +2541,7 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
     total_qty = 0
     item_names = []
     resolved_pids = []
+    unresolved_items = []  # priced items the server could not authoritatively price
 
     for item in request.items:
         try:
@@ -2538,6 +2553,15 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         client_price = float(item.get('salePrice', item.get('price', 0)) or 0)
         auth_price = _catalog_price_for(item)
         unit_price = max(client_price, auth_price) if auth_price is not None else max(0.0, client_price)
+        # Pricing integrity: a priced item that resolves to NO authoritative price
+        # (and is not a legitimately dynamic gift certificate) is a catalog gap /
+        # tamper risk. Phase 1 logs it; phase 2 (PRICING_FAIL_CLOSED) rejects it.
+        if auth_price is None and client_price > 0 and not _pc_is_dynamic_allowed(item):
+            ident = item.get('product_id') or item.get('id') or item.get('sku') or item.get('name')
+            unresolved_items.append({"id": str(ident), "name": item.get('name'),
+                                     "client_price": client_price, "qty": item_qty})
+            logger.warning("[pricing] UNRESOLVED cart item id=%s name=%r client_price=%.2f qty=%d",
+                           ident, item.get('name'), client_price, item_qty)
         item['_server_unit_price'] = unit_price
         item['_server_qty'] = item_qty
         subtotal += unit_price * item_qty
@@ -2546,6 +2570,23 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         for k in (item.get('product_id'), item.get('id'), item.get('sku')):
             if k:
                 resolved_pids.append(str(k))
+
+    # Best-effort persistence of catalog gaps for pre-launch triage (never blocks).
+    if unresolved_items:
+        try:
+            await db.pricing_unresolved.insert_one({
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "fail_closed": PRICING_FAIL_CLOSED,
+                "items": unresolved_items,
+            })
+        except Exception:
+            pass
+        if PRICING_FAIL_CLOSED:
+            raise HTTPException(status_code=400, detail={
+                "error": "unpriced_item",
+                "message": "One or more items could not be priced. Please refresh your cart or contact support.",
+                "items": [u["id"] for u in unresolved_items],
+            })
 
     subtotal = round(subtotal, 2)
 

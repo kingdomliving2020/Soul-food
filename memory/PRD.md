@@ -1,5 +1,19 @@
 # Soul Food - Product Requirements Document
 
+## Launch-Critical: Server-Authoritative Pricing + Game/Audio Audit (July 24, 2026)
+- **Pricing integrity FIXED (two-phase):** `backend/price_catalog.py` mirrors the storefront; wired into
+  `/checkout/cart`; floors `max(client, auth)`. Flag `PRICING_FAIL_CLOSED` (default false = phase 1 floor+log
+  to `db.pricing_unresolved`; true = reject unresolved). Verified 24/24 ids + live tamper floored + fake-SKU
+  logged. Tests `tests/test_price_catalog.py`. NEXT: review pricing_unresolved from real traffic, then flip phase 2.
+- **eval() finding:** FALSE POSITIVE (only `ast.literal_eval`). Closed.
+- **Game ecosystem + IHI + Audio classification:** recorded in `memory/game_audio_ecosystem_audit.md`
+  (offline games/merch vs online games vs access passes; IHI physical/digital/hybrid + Kingdom TTT;
+  Audio Companion = included entitlement, wording fixed "Exclusive Audio Companion", no standalone launch sales).
+- **Admin visibility:** all admins share ROLES['admin'] (`*`); "blank admin" = stale JWT → fixed by role-probe.
+  Prod admins re-login to refresh. See `memory/launch_critical_review_2026-07-24.md`.
+
+
+
 ## Launch Validation — Entitlement / Library / Buyer-vs-Recipient (July 24, 2026) — 17/17 PASS on live preview endpoints
 Verified via `scripts/validate_entitlements.py` (seeds VAL- txns, hits live `/api/payments/my-purchases`, `/my-orders`, `/download-links`, cleans up):
 - Library (`my-purchases`) shows ONLY active owned entitlements: includes paid self; EXCLUDES refunded, cancelled, test-tagged, and gift-sent (buyer never owns a gift they sent).
