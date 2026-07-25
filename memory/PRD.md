@@ -1,5 +1,12 @@
 # Soul Food - Product Requirements Document
 
+## 25 Days of Freedom (FREEDOM25) — Legacy FREEDOM10 Cleanup (July 25, 2026) — verified iteration_55.json (5/5 PASS)
+- Removed the last two user-facing legacy FREEDOM10 references in `SoulFoodApp.js`: (1) hero campaign callout (~line 638-640) now reads "🇺🇸 25 Days of Freedom" + "Use code FREEDOM25 for 25% off orders $100+" (was "Independence Day Campaign" / "Use code FREEDOM10"); (2) "Soul Food Is LIVE!" notice (~line 2065) now reads "🎮 25 Days of Freedom — Use code FREEDOM25 for 25% off orders $100+." (was "Game Passes — Use code FREEDOM10 for 10% off through July 6.").
+- Also cleaned stale FREEDOM10 code comments in `SoulFoodApp.js` (~265) and `QuickOrder.js` (~579-580, ~1979).
+- Verified (testing_agent, Playwright body.innerText scan on preview): homepage FREEDOM10=0 / FREEDOM25=3; /quick-order FREEDOM10=0 / FREEDOM25=2. July4Banner + hero callout + LIVE notice all consistent. One campaign, one code, one message.
+- ⚠️ PREVIEW only — production (kingdom-soul.com) requires user **Save to GitHub + Redeploy** to go live.
+
+
 ## Launch-Critical: Server-Authoritative Pricing + Game/Audio Audit (July 24, 2026)
 - **Pricing integrity FIXED (two-phase):** `backend/price_catalog.py` mirrors the storefront; wired into
   `/checkout/cart`; floors `max(client, auth)`. Flag `PRICING_FAIL_CLOSED` (default false = phase 1 floor+log
