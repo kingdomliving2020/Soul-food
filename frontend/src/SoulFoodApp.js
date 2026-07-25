@@ -262,7 +262,7 @@ const GameAddToCartButton = () => {
 };
 
 // ResurrectionCountdown / Juneteenth Sale component — RETIRED (June 21, 2026)
-// The July 4 / FREEDOM10 campaign is now the single active promotion.
+// The "25 Days of Freedom" / FREEDOM25 campaign is now the single active promotion.
 // Component def removed; if you need a future countdown, add a fresh one.
 
 const SoulFoodLanding = () => {
@@ -636,8 +636,8 @@ const SoulFoodLanding = () => {
               {/* Active campaign callout */}
               <div className="mt-5 flex flex-col items-center sm:items-start gap-2 bg-white/10 backdrop-blur-sm px-4 py-3 rounded-2xl border border-white/20 max-w-md">
                 <div className="flex flex-col leading-tight">
-                  <span className="text-amber-400 text-sm font-semibold">🇺🇸 Independence Day Campaign</span>
-                  <span className="text-amber-300/90 text-xs">Use code FREEDOM10 — auto-applies via promo links</span>
+                  <span className="text-amber-400 text-sm font-semibold">🇺🇸 25 Days of Freedom</span>
+                  <span className="text-amber-300/90 text-xs">Use code FREEDOM25 for 25% off orders $100+</span>
                 </div>
               </div>
             </div>
@@ -2062,7 +2062,7 @@ const SoulFoodLanding = () => {
                     <p><strong>4 C&apos;s of Christianity:</strong> All editions available now — digital downloads + physical books (ships 5–10 business days · rates vary by region).</p>
                     <p><strong><span className="whitespace-nowrap">Foundation in Christ</span> Pre-Order ($5 off student / $10 off Instructor):</strong> Month 1 &quot;Prayer the First Resort&quot; nibbles &amp; snack packs available now. Full workbooks ship soon!</p>
                     <p><strong>Lunch Pre-Order:</strong> Ships in 5–10 business days · rates vary by region.</p>
-                    <p><strong>🎮 Game Passes — Use code FREEDOM10 for 10% off through July 6.</strong></p>
+                    <p><strong>🎮 25 Days of Freedom — Use code FREEDOM25 for 25% off orders $100+.</strong></p>
                     <p className="font-semibold text-emerald-700 bg-emerald-100 px-3 py-2 rounded-lg mt-3">Get started today — Holiday digital downloads available instantly!</p>
                   </div>
                 </div>

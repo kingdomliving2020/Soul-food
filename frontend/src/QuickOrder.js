@@ -576,8 +576,8 @@ const QuickOrder = () => {
     }
   ];
 
-  // Gaming passes — Juneteenth early-bird promo RETIRED. July 4 / FREEDOM10 is the
-  // sole active campaign. List price applies; FREEDOM10 stacks 10% off through July 6.
+  // Gaming passes — Juneteenth early-bird promo RETIRED. "25 Days of Freedom" /
+  // FREEDOM25 is the sole active campaign (25% off orders $100+).
   const isGameSaleActive = false;
   
   const gamingPasses = [
@@ -1976,7 +1976,7 @@ const QuickOrder = () => {
               </Card>
             ))}
           </div>
-          {/* Juneteenth game-pass promo retired — July 4 / FREEDOM10 is the sole active campaign */}
+          {/* Juneteenth game-pass promo retired — "25 Days of Freedom" / FREEDOM25 is the sole active campaign */}
         </section>
 
         {/* ===================== PRE-ORDER SECTION DIVIDER ===================== */}
