@@ -18,7 +18,7 @@ import pytest
 
 sys.path.insert(0, "/app/backend")
 
-BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://soul-food-mvp.preview.emergentagent.com").rstrip("/")
+BASE_URL = os.environ.get("REACT_APP_BACKEND_URL", "https://entitlement-hub-8.preview.emergentagent.com").rstrip("/")
 
 CASES = [
     ("offline-game-master-bkft-bm1-all-digital",    "SOFU_BKFT_BM1_GM_v9.pdf",  4055139),

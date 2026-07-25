@@ -22,7 +22,7 @@ from playwright.sync_api import sync_playwright
 
 FRONTEND_URL = (
     os.environ.get("FRONTEND_URL")
-    or "https://soul-food-mvp.preview.emergentagent.com"
+    or "https://entitlement-hub-8.preview.emergentagent.com"
 )
 SRC = "/app/frontend/src"
 

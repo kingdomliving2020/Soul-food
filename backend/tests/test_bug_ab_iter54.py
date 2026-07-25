@@ -32,7 +32,7 @@ DB_NAME = ENV["DB_NAME"]
 
 BASE_URL = os.environ.get(
     "REACT_APP_BACKEND_URL",
-    "https://soul-food-mvp.preview.emergentagent.com",
+    "https://entitlement-hub-8.preview.emergentagent.com",
 ).rstrip("/")
 
 GIFT_ORDER = "QA-GIFT-DL2"

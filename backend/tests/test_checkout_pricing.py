@@ -38,7 +38,7 @@ def _run(cart_kwargs):
         captured["line_items"] = kwargs["line_items"]
         return _FakeSession()
 
-    req = CartCheckoutRequest(origin_url="https://soul-food-mvp.preview.emergentagent.com", **cart_kwargs)
+    req = CartCheckoutRequest(origin_url="https://entitlement-hub-8.preview.emergentagent.com", **cart_kwargs)
     with patch.object(stripe.checkout.Session, "create", _fake_create), \
          patch.object(payment_routes.db.payment_transactions, "insert_one", new=AsyncMock()):
         _LOOP.run_until_complete(create_cart_checkout_session(req, _FakeReq()))
