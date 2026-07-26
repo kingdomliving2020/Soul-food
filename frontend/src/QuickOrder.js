@@ -1646,6 +1646,14 @@ const QuickOrder = () => {
                               <span className="text-xs text-slate-500 ml-2">({pkgData.note})</span>
                             )}
                           </div>
+
+                          {/* Foundation in Christ full workbook (Print/POD or Digital Workbook) — Audio Companion Month 1 Voucher */}
+                          {meal.id === 'breakfast' && selectedPkg === 'meal' && (selectedFormat === 'physical' || selectedFormat === 'ipdf') && (
+                            <p className="text-xs text-purple-600 mt-1.5 italic" data-testid="foundation-audio-voucher-note">
+                              🎧 Includes Audio Companion Month 1 Voucher · additional modules available separately
+                            </p>
+                          )}
+
                           
                           {/* Action Buttons with Quantity */}
                           <div className="flex gap-2 items-center">
