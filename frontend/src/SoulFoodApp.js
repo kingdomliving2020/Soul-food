@@ -951,8 +951,8 @@ const SoulFoodLanding = () => {
                       <span className="bg-white px-2 py-1 rounded border border-purple-200 text-purple-700">1 lesson: $2.49</span>
                       <span className="bg-purple-600 text-white px-2 py-1 rounded font-semibold">All 4: $7.99 (Save 20%!)</span>
                     </div>
-                    <p className="text-xs text-purple-500 mt-2 italic">📦 Paperbacks include Exclusive Audio Companion Access</p>
-                    <p className="text-xs text-purple-400 mt-1 italic">IE includes the Audio Companion at no extra cost</p>
+                    <p className="text-xs text-purple-500 mt-2 italic">📦 Every 4 C&apos;s full workbook (Print or Digital) includes Exclusive Audio Companion Access</p>
+                    <p className="text-xs text-purple-400 mt-1 italic">IE includes the Exclusive Audio Companion at no extra cost</p>
                   </div>
                 </div>
                 
