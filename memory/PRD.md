@@ -1,5 +1,13 @@
 # Soul Food - Product Requirements Document
 
+## Foundation Month-1 Audio Auto-Grant + Snack-Pack Over-Delivery Fix (June 2026) — verified iteration_61/62 + pytest 5/5
+- **Foundation Month-1 Audio Companion = STANDARD entitlement** (option A). `_grant_audio_access_for_items` now grants `series_access: "foundation-month1"` for Foundation FULL workbook in Print/POD (physical) or Digital Workbook (ipdf/digital). EXCLUDED: eBook (epub), Snack Pack, Nibble/eLesson (interactive). Independent of the 4 C's/holiday grant. Verified by integration + `backend/tests/test_foundation_audio_and_snackpack.py` (5/5).
+- **Snack-Pack over-delivery FIXED.** `PRODUCT_FILES` now maps `bkft-sp-ae/ye-m1/m2/m3` → `breakfast-*-monthN-snackpack.pdf` (exact match). Previously these fell through to `breakfast_ae/ye_digital` (full-workbook over-delivery). Delivery verified retrievable, no failures.
+- **Voucher note** condition broadened to `['physical','ipdf','digital']` to match backend grant scope — shows on Foundation Meal Bundle Print AND Digital Workbook; hidden on eBook/Snack/Nibble and the 4 C's card (iteration_62 100%).
+- **HOLD:** bulk-pricing (%-off vs flat bundles) — awaiting your separate pricing decision.
+- **CONTINUE:** IE inclusions reconciliation (Full Game Suite representation) — see `ie_inclusions_and_audits_2026-06.md`.
+
+
 ## Foundation Audio Companion Month-1 Voucher — DISPLAY added (June 2026) — verified iteration_60.json (100%)
 - Added note "🎧 Includes Audio Companion Month 1 Voucher · additional modules available separately" to the Foundation in Christ card, gated to Meal Bundle + (Workbook Print OR Digital Workbook). HIDDEN for eBook, Snack Pack, Nibble, and the 4 C's card. testid `foundation-audio-voucher-note`.
 - ⚠️ DISPLAY ONLY. Backend does NOT currently grant/deliver a Foundation Month-1 audio voucher (audio grant covers 4 C's/holiday keys only; no voucher-code mechanism exists). Fulfillment of the voucher is NOT wired — needs user decision (auto-grant a Month-1 audio entitlement/code on Foundation full-workbook purchase, or handle manually).
