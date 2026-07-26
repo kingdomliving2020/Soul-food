@@ -747,7 +747,7 @@ const GamingCentral = () => {
                   <Shield className={`w-8 h-8 mx-auto mb-2 ${entitlements.has_instructor ? 'text-indigo-400' : 'text-gray-400'}`} />
                   <h3 className="text-white font-bold">Game Duration</h3>
                   <p className={`text-sm ${entitlements.has_instructor ? 'text-indigo-300' : 'text-purple-300'}`}>
-                    {entitlements.has_instructor ? '3-Hour Pass (Instructor)' : entitlements.access_level === 'full' ? '1-Hour Pass' : '30 min/day (Free)'}
+                    {entitlements.has_instructor ? '3-Hour Online Game Pass' : entitlements.access_level === 'full' ? 'Day Pass / 90-Day' : 'Free — 5 questions · 1 game'}
                   </p>
                 </CardContent>
               </Card>
@@ -765,10 +765,10 @@ const GamingCentral = () => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { name: 'Free/Beta', time: '30 min/day', idle: '10 min', color: 'gray' },
-                { name: '1-Hour Pass', time: '1 hr/session', idle: '20 min', color: 'blue', price: 'With purchase' },
-                { name: '3-Hour Pass', time: '3 hrs/session', idle: '30 min', color: 'purple', price: 'Instructor Bundle' },
-                { name: 'Ministry', time: '6 hrs/day', idle: '40 min', color: 'amber', price: '$24.99/mo' },
+                { name: 'Free', time: '5 questions · 1 game', idle: '10 min', color: 'gray' },
+                { name: 'Day Pass', time: '24-Hour Access', idle: 'All games', color: 'blue', price: '$29.99' },
+                { name: '3-Hour Pass', time: '3 hrs / session', idle: 'Instructor', color: 'purple', price: 'Instructor Bundle' },
+                { name: '90-Day Pass', time: '90-Day Access', idle: 'All games', color: 'amber', price: '$75.00' },
               ].map((tier) => (
                 <Card key={tier.name} className={`bg-${tier.color}-500/10 border-${tier.color}-500/30`}>
                   <CardContent className="p-4 text-center">

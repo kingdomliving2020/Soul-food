@@ -582,25 +582,14 @@ const QuickOrder = () => {
   
   const gamingPasses = [
     {
-      id: 'gaming-pass-30',
-      name: 'Game Night Lite (30-Day)',
-      subtitle: '30-Day Single-Game Access',
-      description: 'Perfect for a single study session or family game night. 30-day access to one game mode.',
-      restrictions: '4 hrs/day limit • 20 min idle timeout',
-      icon: '🎲',
-      listPrice: 7.99,
-      price: isGameSaleActive ? 6.39 : 7.99,
-      editions: ['adult', 'youth']
-    },
-    {
       id: 'gaming-pass-90',
-      name: 'Game Pass Full (90-Day)',
+      name: '90-Day Game Pass',
       subtitle: '90-Day All-Access — Best Value!',
-      description: '90-day access to ALL game modes for churches, small groups, and quarterly study cycles',
-      restrictions: '5 hrs/day limit • 30 min idle timeout',
+      description: '90-day access to ALL online game modes for churches, small groups, and quarterly study cycles',
+      restrictions: 'All games • 90-day access',
       icon: '🎮',
-      listPrice: 24.99,
-      price: isGameSaleActive ? 19.99 : 24.99,
+      listPrice: 75.00,
+      price: 75.00,
       editions: ['adult', 'youth', 'instructor'],
       badge: 'Best Value'
     }
@@ -1223,17 +1212,17 @@ const QuickOrder = () => {
                   </li>
                 </ul>
                 <div className="mb-3">
-                  <span className="text-2xl font-bold text-emerald-600">$8.49</span>
+                  <span className="text-2xl font-bold text-emerald-600">$9.99</span>
                 </div>
                 <Button
                   onClick={() => {
-                    addToCart({ id: 'holiday-ae-full-epub', name: "4 C's of Christianity – Adult eBook", price: 8.49, quantity: 1 });
+                    addToCart({ id: 'holiday-ae-full-epub', name: "4 C's of Christianity – Adult eBook", price: 9.99, quantity: 1 });
                     toast.success("4 C's Adult eBook added!");
                   }}
                   className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
                   data-testid="add-hol-epub-btn"
                 >
-                  Add to Cart — $8.49
+                  Add to Cart — $9.99
                 </Button>
               </CardContent>
             </Card>

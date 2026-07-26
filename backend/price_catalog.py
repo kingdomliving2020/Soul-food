@@ -23,7 +23,7 @@ FLAT_PRICES = {
 
     # eBook (ePub) full-workbook SKUs — direct exact-attachment cart ids
     # (deliver the real .epub, priced $1.50 under the Digital Workbook).
-    "holiday-ae-full-epub": 8.49, "holiday-ye-full-epub": 8.49, "holiday-ie-full-epub": 33.49,
+    "holiday-ae-full-epub": 9.99, "holiday-ye-full-epub": 9.99, "holiday-ie-full-epub": 33.49,
     "breakfast-ae-full-epub": 13.49, "breakfast-ye-full-epub": 13.49,
 
     # Instructor Edition packages
@@ -41,7 +41,7 @@ FLAT_PRICES = {
     "medallion-teacher-pack": 24.99, "medallion-ministry-pack": 69.99, "medallion-church-bundle": 149.99,
 
     # Game / Day passes (access entitlements)
-    "gaming-pass-30": 7.99, "gaming-pass-90": 24.99, "gaming_day_pass": 29.99,
+    "gaming-pass-30": 7.99, "gaming-pass-90": 75.00, "gaming_day_pass": 29.99,
 
     # Merchandise (base ids; a color suffix like "-black" is stripped in resolver)
     "study-kit": 9.99, "pen-lighted": 9.99, "pen-standard": 7.99,

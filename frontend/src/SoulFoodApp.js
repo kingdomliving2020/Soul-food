@@ -228,7 +228,7 @@ const SOUL_FOOD_SERIES = [
       "4 seasonal lessons + 2 FREE bonus",
       "Instant digital + paperback options",
       "Adult, Youth & Instructor editions",
-      "Includes 8-Hour Game Pass certificate",
+      "Includes 4-Hour Online Game Pass certificate",
       "Pairs with Pastor Mike Edwards audio"
     ],
     themes: [
@@ -1209,7 +1209,7 @@ const SoulFoodLanding = () => {
                 <div className="bg-amber-50 border-2 border-amber-300 rounded-lg p-4">
                   <p className="text-amber-900 font-semibold flex items-center">
                     <span className="text-2xl mr-2">🎮</span>
-                    <span>Includes Gift Certificate for 8-Hour Game Pass!</span>
+                    <span>Includes Gift Certificate for 4-Hour Online Game Pass!</span>
                   </p>
                   <p className="text-sm text-amber-700 mt-1 ml-9">
                     Perfect for testing your knowledge while celebrating the season
@@ -1698,9 +1698,8 @@ const SoulFoodLanding = () => {
                 <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm border-2 border-yellow-400">
                   <div className="text-4xl mb-2">🎟️</div>
                   <div className="font-bold text-lg mb-1">Gaming Day Pass</div>
-                  <div className="text-xs line-through text-purple-200">$40.00</div>
                   <div className="text-2xl font-bold text-yellow-400 mb-2">$29.99</div>
-                  <div className="text-sm text-purple-200 mb-4">24 hours • All games • Unlimited</div>
+                  <div className="text-sm text-purple-200 mb-4">24-Hour Access • All online games</div>
                   <GameAddToCartButton />
                 </div>
                 <div className="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
@@ -1914,7 +1913,7 @@ const SoulFoodLanding = () => {
                 </div>
 
                 <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded text-sm text-slate-700">
-                  <p className="font-semibold">📦 Ships Easter - Resurrection Sunday</p>
+                  <p className="font-semibold">📦 Ships in 5–10 Business Days</p>
                   <p className="text-xs mt-1">Perfect for personal or group Bible study!</p>
                   <p className="text-xs mt-1 text-purple-600 font-medium">🎧 Instructor Edition bundles available by Tuesday</p>
                 </div>
