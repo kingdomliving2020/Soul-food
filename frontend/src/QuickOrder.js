@@ -262,7 +262,7 @@ const QuickOrder = () => {
     {
       id: 'holiday',
       name: '4 C\'s of Christianity',
-      tagline: 'Holiday Season Studies + 2 FREE Bonus Lessons',
+      tagline: 'The 4 C\'s: Covenant · Cradle · Cross · Comforter + 2 FREE Bonus Lessons',
       description: 'Covenant, Cradle, Cross, Comforter - celebrating faith through the seasons',
       available: true,
       editions: ['adult', 'youth', 'instructor'],
@@ -299,11 +299,11 @@ const QuickOrder = () => {
       description: '48 lessons across 12 months of spiritual growth',
       available: true,
       editions: ['adult', 'youth'],
-      formats: ['interactive', 'ipdf', 'epub'],
+      formats: ['interactive', 'ipdf', 'epub', 'physical'],
       packages: [
         { id: 'nibble', name: 'Nibble (1 Lesson)', lessons: 1, selectLesson: true, available: true },
         { id: 'snack', name: 'Snack Pack (4 Lessons)', lessons: 4, selectMonth: true, available: true, note: 'Includes Prayer Month 1 (available now). Additional content in future updates.' },
-        { id: 'meal', name: 'Meal Bundle (12 Lessons)', lessons: 12, available: true, note: 'Full 12-lesson Break*fast set' }
+        { id: 'meal', name: 'Meal Bundle (12 Lessons)', lessons: 12, available: true, note: 'Full 12-lesson Foundation in Christ set' }
       ],
       pricing: {
         nibble: {
@@ -315,8 +315,8 @@ const QuickOrder = () => {
           prices: { adult: { interactive: 8.99, ipdf: 8.99, epub: 8.99 }, youth: { interactive: 8.99, ipdf: 8.99, epub: 8.99 } }
         },
         meal: {
-          listPrices: { adult: { interactive: 19.99, ipdf: 19.99, epub: 18.49 }, youth: { interactive: 19.99, ipdf: 19.99, epub: 18.49 } },
-          prices: { adult: { interactive: 14.99, ipdf: 14.99, epub: 13.49 }, youth: { interactive: 14.99, ipdf: 14.99, epub: 13.49 } }
+          listPrices: { adult: { interactive: 19.99, ipdf: 19.99, epub: 18.49, physical: 29.99 }, youth: { interactive: 19.99, ipdf: 19.99, epub: 18.49, physical: 29.99 } },
+          prices: { adult: { interactive: 14.99, ipdf: 14.99, epub: 13.49, physical: 29.99 }, youth: { interactive: 14.99, ipdf: 14.99, epub: 13.49, physical: 29.99 } }
         }
       },
       monthOptions: breakfastMonths,
@@ -361,9 +361,9 @@ const QuickOrder = () => {
       editions: ['instructor'],
       formats: ['digital', 'physical'],
       packages: [
-        { id: 'holiday-ie', name: 'Holiday IE (Workbook)', price: 34.99, format: 'physical', available: true },
-        { id: 'breakfast-digital', name: 'Break*fast IE (Digital)', price: 49.99, format: 'digital', available: true },
-        { id: 'breakfast-paperback', name: 'Break*fast IE (Paperback)', price: 49.99, format: 'physical', available: true },
+        { id: 'holiday-ie', name: "4 C's of Christianity IE (Workbook · Print)", price: 34.99, format: 'physical', available: true },
+        { id: 'breakfast-digital', name: "Foundation in Christ IE (Digital Workbook)", price: 49.99, format: 'digital', available: true },
+        { id: 'breakfast-paperback', name: "Foundation in Christ IE (Workbook · Print)", price: 49.99, format: 'physical', available: true },
         { id: 'lunch-ie-preorder', name: 'Lunch IE — Pre-order — Available Aug 2026', price: 26.99, format: 'physical', available: true, preOrder: true }
       ],
       salePercent: 0
@@ -377,16 +377,16 @@ const QuickOrder = () => {
       editions: ['adult', 'youth'],
       formats: ['digital', 'physical'],
       packages: [
-        { id: 'holiday-ae-digital', name: 'Holiday Digital (Adult)', price: 9.99, edition: 'adult', format: 'digital', available: true },
-        { id: 'holiday-ae-paperback', name: 'Holiday Paperback (Adult)', price: 19.99, edition: 'adult', format: 'physical', available: true, note: 'Ships 5–10 business days' },
-        { id: 'holiday-ye-digital', name: 'Holiday Digital (Youth)', price: 9.99, edition: 'youth', format: 'digital', available: true },
-        { id: 'holiday-ye-paperback', name: 'Holiday Paperback (Youth)', price: 19.99, edition: 'youth', format: 'physical', available: true, note: 'Ships 5–10 business days' },
-        { id: 'holiday-ie-digital', name: 'Holiday Digital (Instructor)', price: 34.99, edition: 'instructor', format: 'digital', available: true },
-        { id: 'holiday-ie-paperback', name: 'Holiday Paperback (Instructor)', price: 34.99, edition: 'instructor', format: 'physical', available: true, note: 'Ships 5–10 business days' },
-        { id: 'breakfast-ae-digital', name: 'Break*fast Digital (Adult)', price: 14.99, edition: 'adult', format: 'digital', available: true },
-        { id: 'breakfast-ae-paperback', name: 'Break*fast Paperback (Adult)', price: 29.99, edition: 'adult', format: 'physical', available: true, note: 'Ships 5–10 business days' },
-        { id: 'breakfast-ye-digital', name: 'Break*fast Digital (Youth)', price: 14.99, edition: 'youth', format: 'digital', available: true },
-        { id: 'breakfast-ye-paperback', name: 'Break*fast Paperback (Youth)', price: 29.99, edition: 'youth', format: 'physical', available: true, note: 'Ships 5–10 business days' }
+        { id: 'holiday-ae-digital', name: "4 C's of Christianity — Digital Workbook (Adult)", price: 9.99, edition: 'adult', format: 'digital', available: true },
+        { id: 'holiday-ae-paperback', name: "4 C's of Christianity — Workbook · Print (Adult)", price: 19.99, edition: 'adult', format: 'physical', available: true, note: 'Ships 5–10 business days' },
+        { id: 'holiday-ye-digital', name: "4 C's of Christianity — Digital Workbook (Youth)", price: 9.99, edition: 'youth', format: 'digital', available: true },
+        { id: 'holiday-ye-paperback', name: "4 C's of Christianity — Workbook · Print (Youth)", price: 19.99, edition: 'youth', format: 'physical', available: true, note: 'Ships 5–10 business days' },
+        { id: 'holiday-ie-digital', name: "4 C's of Christianity — Digital Workbook (Instructor)", price: 34.99, edition: 'instructor', format: 'digital', available: true },
+        { id: 'holiday-ie-paperback', name: "4 C's of Christianity — Workbook · Print (Instructor)", price: 34.99, edition: 'instructor', format: 'physical', available: true, note: 'Ships 5–10 business days' },
+        { id: 'breakfast-ae-digital', name: "Foundation in Christ — Digital Workbook (Adult)", price: 14.99, edition: 'adult', format: 'digital', available: true },
+        { id: 'breakfast-ae-paperback', name: "Foundation in Christ — Workbook · Print (Adult)", price: 29.99, edition: 'adult', format: 'physical', available: true, note: 'Ships 5–10 business days' },
+        { id: 'breakfast-ye-digital', name: "Foundation in Christ — Digital Workbook (Youth)", price: 14.99, edition: 'youth', format: 'digital', available: true },
+        { id: 'breakfast-ye-paperback', name: "Foundation in Christ — Workbook · Print (Youth)", price: 29.99, edition: 'youth', format: 'physical', available: true, note: 'Ships 5–10 business days' }
       ],
       salePercent: 0
     },
@@ -394,7 +394,7 @@ const QuickOrder = () => {
       id: 'offline-game-master-bkft',
       name: 'Offline Game Master — Breakfast Edition',
       tagline: 'Instructor & Facilitator Game Resource',
-      description: 'Print-and-play OR physical game pack for the Break*fast series — GRinCH Grid Iron Challenge + Passport Trek, 96 total bingo cards. Choose a module (BM1–BM3) or the full 3-module set.',
+      description: 'Print-and-play OR physical game pack for the Foundation in Christ series — GRinCH Grid Iron Challenge + Passport Trek, 96 total bingo cards. Choose a module (BM1–BM3) or the full 3-module set.',
       available: true,
       preOrder: true,
       comingSoon: 'Ships next week',
@@ -1045,7 +1045,7 @@ const QuickOrder = () => {
               </div>
               <CardContent className="p-5">
                 <Badge className="mb-3 bg-purple-600 text-white text-xs">Collection · Save $4</Badge>
-                <h4 className="text-lg font-bold text-slate-800 mb-2">Holiday Table Bundle</h4>
+                <h4 className="text-lg font-bold text-slate-800 mb-2">4 C's of Christianity Table Bundle</h4>
                 <ul className="space-y-1 mb-3" data-testid="holiday-bundle-features">
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
@@ -1094,7 +1094,7 @@ const QuickOrder = () => {
                     }
                     const edLabel = quickBundleEdition === 'ae' ? 'Adult' : 'Youth';
                     addToCart({ id: `holiday-table-bundle-${quickBundleEdition}`, name: `Holiday Table Bundle (${edLabel}) (eBook + Snack Pack)`, price: 19.99, quantity: 1, isBundle: true, edition: quickBundleEdition });
-                    toast.success('Holiday Table Bundle added!');
+                    toast.success('4 C\'s Table Bundle added!');
                   }}
                   disabled={!quickBundleEdition}
                   className={`w-full ${quickBundleEdition ? 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700' : 'bg-slate-300 text-slate-500 cursor-not-allowed'}`}
@@ -1370,12 +1370,15 @@ const QuickOrder = () => {
 
               // Available formats per package (customer-facing, de-duplicated):
               //  • Nibble / single lesson  → eLesson (online) only
-              //  • Full Workbook / Snack Pack → Digital Workbook + eBook (+ Workbook print) — NO duplicate interactive PDF
+              //  • Snack Pack              → Digital Workbook + eBook (no print)
+              //  • Full Workbook / Meal    → Digital Workbook + eBook + Workbook (Print)
               const availableFormats = pkgData?.isSubscription 
                 ? ['subscription_monthly', 'subscription_annual']
                 : pkgData?.selectLesson
                   ? ['interactive']
-                  : meal.formats.filter(f => !f.includes('subscription') && f !== 'interactive');
+                  : pkgData?.selectMonth
+                    ? meal.formats.filter(f => !f.includes('subscription') && f !== 'interactive' && f !== 'physical')
+                    : meal.formats.filter(f => !f.includes('subscription') && f !== 'interactive');
 
               return (
                 <Card key={meal.id} className="shadow-lg hover:shadow-xl transition-shadow">

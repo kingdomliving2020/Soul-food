@@ -216,7 +216,7 @@ const SOUL_FOOD_SERIES = [
   {
     id: "holiday",
     name: "4 C's of Christianity",
-    theme: "Holiday Season Studies",
+    theme: "4 C's of Christianity",
     icon: "✡️",
     gradient: "from-emerald-400 via-green-500 to-lime-500",
     bgColor: "bg-gradient-to-br from-emerald-50 to-green-50",
@@ -1194,7 +1194,7 @@ const SoulFoodLanding = () => {
                   </div>
                   <div>
                     <h4 className="text-2xl font-bold text-slate-800">4 C&apos;s of Christianity</h4>
-                    <p className="text-slate-600">Holiday Season Studies · Covenant · Cradle · Cross · Comforter</p>
+                    <p className="text-slate-600">4 C's of Christianity · Covenant · Cradle · Cross · Comforter</p>
                   </div>
                 </div>
                 <Badge className="bg-emerald-600 text-white px-6 py-3 text-base font-bold">
@@ -1272,7 +1272,7 @@ const SoulFoodLanding = () => {
                 <div className="flex-1">
                   <Badge className="bg-amber-100 text-amber-800 mb-3 text-xs font-semibold">Starter Collection</Badge>
                   <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2" data-testid="bundle-title">
-                    4C's + Break*fast Starter Bundle
+                    4 C's + Foundation Starter Bundle
                   </h3>
                   <p className="text-slate-500 mb-5 text-sm sm:text-base">Everything you need to launch your first two Soul Food study seasons.</p>
                   
@@ -1283,7 +1283,7 @@ const SoulFoodLanding = () => {
                         <Check className="w-3.5 h-3.5 text-purple-700" />
                       </div>
                       <div>
-                        <p className="font-semibold text-slate-800 text-sm">Holiday 4C's — Full Digital Workbook</p>
+                        <p className="font-semibold text-slate-800 text-sm">4 C's of Christianity — Full Digital Workbook</p>
                         <p className="text-xs text-slate-500">Covenant, Cradle, Cross, Comforter — 12 interactive lessons</p>
                       </div>
                     </div>
@@ -1396,10 +1396,10 @@ const SoulFoodLanding = () => {
                     <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Order Summary</p>
                     <div className="space-y-1.5 text-sm text-slate-700">
                       <div className="flex justify-between">
-                        <span>Holiday Bundle – {bundleEdition ? (bundleEdition === 'ae' ? 'Adult Edition (AE)' : 'Youth Edition (YE)') : <span className="text-amber-600 italic">Select edition above</span>} – ePub</span>
+                        <span>4 C's of Christianity Bundle – {bundleEdition ? (bundleEdition === 'ae' ? 'Adult Edition (AE)' : 'Youth Edition (YE)') : <span className="text-amber-600 italic">Select edition above</span>} – eBook</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Break*fast Bundle – {bundleEdition ? (bundleEdition === 'ae' ? 'Adult Edition (AE)' : 'Youth Edition (YE)') : <span className="text-amber-600 italic">Select edition above</span>} – ePub</span>
+                        <span>Foundation in Christ Bundle – {bundleEdition ? (bundleEdition === 'ae' ? 'Adult Edition (AE)' : 'Youth Edition (YE)') : <span className="text-amber-600 italic">Select edition above</span>} – eBook</span>
                       </div>
                       <div className="flex justify-between text-slate-500 text-xs pt-1 border-t border-slate-200 mt-1">
                         <span>{bundleInstructorUpgrade ? '3-Hour Online Game Pass' : '1-Hour Online Game Pass'}</span>
@@ -1440,8 +1440,8 @@ const SoulFoodLanding = () => {
                         const price = bundleInstructorUpgrade ? 28.99 : 21.99;
                         const edLabel = bundleEdition === 'ae' ? 'Adult' : 'Youth';
                         const name = bundleInstructorUpgrade
-                          ? `4C's + Break*fast Starter Bundle (${edLabel} + Instructor)`
-                          : `4C's + Break*fast Starter Bundle (${edLabel})`;
+                          ? `4 C's + Foundation Starter Bundle (${edLabel} + Instructor)`
+                          : `4 C's + Foundation Starter Bundle (${edLabel})`;
                         addToCart({
                           id: `starter-bundle-4cs-bkft-${bundleEdition}${bundleInstructorUpgrade ? '-ie' : ''}`,
                           name,
@@ -1842,7 +1842,7 @@ const SoulFoodLanding = () => {
                 <div className="text-center py-4">
                   <div className="flex items-center justify-center gap-4 mb-2">
                     <div className="text-center">
-                      <p className="text-xs text-slate-500 uppercase">ePub</p>
+                      <p className="text-xs text-slate-500 uppercase">eBook</p>
                       <div className="text-2xl font-bold text-indigo-600">${selectedSeries?.available ? '14.99' : '24.99'}</div>
                     </div>
                     <div className="text-slate-400">or</div>
@@ -2062,7 +2062,7 @@ const SoulFoodLanding = () => {
                     <p><strong><span className="whitespace-nowrap">Foundation in Christ</span> Pre-Order ($5 off student / $10 off Instructor):</strong> Month 1 &quot;Prayer the First Resort&quot; nibbles &amp; snack packs available now. Full workbooks ship soon!</p>
                     <p><strong>Lunch Pre-Order:</strong> Ships in 5–10 business days · rates vary by region.</p>
                     <p><strong>🎮 25 Days of Freedom — Use code FREEDOM25 for 25% off orders $100+.</strong></p>
-                    <p className="font-semibold text-emerald-700 bg-emerald-100 px-3 py-2 rounded-lg mt-3">Get started today — Holiday digital downloads available instantly!</p>
+                    <p className="font-semibold text-emerald-700 bg-emerald-100 px-3 py-2 rounded-lg mt-3">Get started today — 4 C's of Christianity digital downloads available instantly!</p>
                   </div>
                 </div>
               </div>

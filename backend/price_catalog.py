@@ -25,6 +25,7 @@ FLAT_PRICES = {
     # (deliver the real .epub, priced $1.50 under the Digital Workbook).
     "holiday-ae-full-epub": 9.99, "holiday-ye-full-epub": 9.99, "holiday-ie-full-epub": 33.49,
     "breakfast-ae-full-epub": 13.49, "breakfast-ye-full-epub": 13.49,
+    "breakfast-meal-adult-physical": 29.99, "breakfast-meal-youth-physical": 29.99,
 
     # Instructor Edition packages
     "holiday-ie": 34.99, "breakfast-digital": 49.99,
