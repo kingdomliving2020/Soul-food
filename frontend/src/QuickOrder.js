@@ -1181,22 +1181,22 @@ const QuickOrder = () => {
               <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden flex items-center justify-center">
                 <img
                   src="/covers/holiday-ae-front-new.png"
-                  alt="Holiday ePub — 4 C's of Christianity Adult Edition"
+                  alt="4 C's of Christianity — Adult eBook"
                   className="max-w-[88%] max-h-[92%] object-contain"
                   loading="lazy"
                 />
               </div>
               <CardContent className="p-5">
                 <Badge className="mb-3 bg-emerald-500 text-white text-xs">Instant Access</Badge>
-                <h4 className="text-lg font-bold text-slate-800 mb-2">Holiday ePub (AE)</h4>
+                <h4 className="text-lg font-bold text-slate-800 mb-2">4 C's of Christianity – Adult eBook</h4>
                 <ul className="space-y-1 mb-3" data-testid="quick-pick-features">
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>Complete Holiday Adult Edition</span>
+                    <span>Complete 4 C's Adult Edition</span>
                   </li>
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>Downloadable PDF workbook</span>
+                    <span>eBook — read-only ebook (ePub)</span>
                   </li>
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
@@ -1208,17 +1208,17 @@ const QuickOrder = () => {
                   </li>
                 </ul>
                 <div className="mb-3">
-                  <span className="text-2xl font-bold text-emerald-600">$14.99</span>
+                  <span className="text-2xl font-bold text-emerald-600">$8.49</span>
                 </div>
                 <Button
                   onClick={() => {
-                    addToCart({ id: 'holiday-ae-digital', name: 'Holiday AE (ePub)', price: 9.99, quantity: 1 });
-                    toast.success('Holiday AE ePub added!');
+                    addToCart({ id: 'holiday-ae-full-epub', name: "4 C's of Christianity – Adult eBook", price: 8.49, quantity: 1 });
+                    toast.success("4 C's Adult eBook added!");
                   }}
                   className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700"
                   data-testid="add-hol-epub-btn"
                 >
-                  Add to Cart — $14.99
+                  Add to Cart — $8.49
                 </Button>
               </CardContent>
             </Card>

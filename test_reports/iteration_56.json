@@ -1,0 +1,21 @@
+{
+  "summary": "Verified Holiday eBook price consistency fix. Tile 'quick-pick-hol' on /quick-order displays curriculum-first name '4 C's of Christianity – Adult eBook', price $8.49, and button 'Add to Cart — $8.49'. Adding to cart and navigating to /checkout shows subtotal $8.49 (1 item). No trace of stale $14.99 or $9.99 anywhere on tile or checkout. Regression tiles verified: 'Holiday Table Bundle' shows $19.99 and 'Full Table Experience' shows $34.99 with Adult/Youth edition selectors. Backend /api/payments/products returns 200. Backend unit tests test_price_catalog.py + test_email_reliability.py = 8/8 pass. No Stripe payment attempted (preview key revoked, per instructions). Backend PRODUCT_FILES verified: no gaming-pass-*-digital -> holiday-*-full.pdf mappings (game passes are access entitlements only).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {"ui_bugs": [], "integration_issues": [], "design_issues": []},
+  "test_report_links": [
+    "/app/backend/tests/test_price_catalog.py",
+    "/app/backend/tests/test_email_reliability.py"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "QuickOrder.js is 2310 lines — large file; consider splitting per-section components for maintainability (non-blocking).",
+    "Cart drawer / cart-open button has no data-testid; testing agents had to navigate directly to /checkout to verify subtotal. Adding data-testid='open-cart' would improve future testability (non-blocking)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "test_credentials": "Not required (guest checkout).",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Price consistency for holiday-ae-full-epub ($8.49) validated end-to-end (tile → button → checkout subtotal). Backend catalog FLAT_PRICES includes holiday-ae-full-epub=8.49, ye=8.49, ie=33.49. Game-pass -> holiday.pdf PRODUCT_FILES mappings confirmed removed at payment_routes.py:240. Recipient gift email retry logic covered by backend/tests/test_email_reliability.py (4/4 pass) and cannot be e2e tested in preview due to revoked Stripe key."
+}

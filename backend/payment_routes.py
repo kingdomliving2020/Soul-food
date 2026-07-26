@@ -234,12 +234,11 @@ PRODUCT_FILES = {
     "instructor-breakfast-digital-instructor-digital": "breakfast-ie-full.pdf",
     "instructor-breakfast-paperback-instructor-physical": "breakfast-ie-full.pdf",
     "instructor-lunch-ie-preorder-instructor-physical": "holiday-ie-full.pdf",
-    # Direct product IDs (from handleAddToCart for gaming/products grid)
-    "gaming-pass-30-adult-digital": "holiday-ae-full.pdf",
-    "gaming-pass-30-youth-digital": "holiday-ye-full.pdf",
-    "gaming-pass-90-adult-digital": "holiday-ae-full.pdf",
-    "gaming-pass-90-youth-digital": "holiday-ye-full.pdf",
-    "gaming-pass-90-instructor-digital": "holiday-ie-full.pdf",
+    # NOTE: Game/Day Passes are ACCESS ENTITLEMENTS only — they unlock timed game
+    # access via _grant_game_pass_for_items and must NEVER deliver a curriculum file
+    # (workbook / Digital Workbook / eBook / eLesson). The former
+    # gaming-pass-*-digital -> holiday-*-full.pdf mappings were removed (2026-06)
+    # to keep access products and curriculum products strictly distinct.
     # Breakfast direct IDs
     "breakfast-ae-digital": "breakfast-ae-full.pdf",
     "breakfast-ye-digital": "breakfast-ye-full.pdf",
@@ -2793,6 +2792,90 @@ async def create_cart_checkout_session(request: CartCheckoutRequest, http_reques
         raise HTTPException(status_code=500, detail=f"Failed to create checkout: {str(e)}")
 
 
+async def _send_order_emails(transaction: dict, download_links: list, *, only_unsent: bool = False) -> dict:
+    """Send buyer receipt + (for gifts) recipient access email INDEPENDENTLY.
+
+    Each send is isolated in its own try/except so a failure in one never blocks
+    the other. Per-email sent flags (`buyer_email_sent`, `recipient_email_sent`)
+    are persisted on the transaction so any unsent email can be re-attempted on a
+    later status poll — this removes the need for a manual admin resend when the
+    first attempt partially fails. `only_unsent=True` skips emails already sent.
+    """
+    from email_service import send_order_confirmation
+
+    session_id = transaction.get("session_id")
+    order_number = transaction.get("order_number", session_id)
+    customer_email = (transaction.get("customer_email") or "").strip()
+    customer_name = transaction.get("customer_name", "")
+    items = transaction.get("items", []) or []
+    total = transaction.get("total_amount", 0)
+    purchase_type = (transaction.get("purchase_type") or "self").lower()
+    recipient_email = (transaction.get("digital_recipient_email") or "").strip()
+    is_gift = bool(purchase_type == "gift" and recipient_email)
+
+    dl_payload = [
+        {"token": d.get("token"), "product_name": d.get("name") or d.get("product_name", "")}
+        for d in (download_links or [])
+    ] or None
+
+    buyer_sent = bool(transaction.get("buyer_email_sent"))
+    recipient_sent = bool(transaction.get("recipient_email_sent"))
+    updates = {}
+
+    # 1) BUYER receipt — isolated. For a gift the buyer gets a receipt only (no tokens).
+    if customer_email and not (only_unsent and buyer_sent):
+        try:
+            await send_order_confirmation(
+                to_email=customer_email,
+                order_id=order_number,
+                items=items,
+                total=total,
+                download_links=None if is_gift else dl_payload,
+                customer_name=customer_name,
+                recipient_email=recipient_email if is_gift else None,
+                is_buyer_receipt_only=is_gift,
+            )
+            buyer_sent = True
+            updates["buyer_email_sent"] = True
+            updates["buyer_email_sent_at"] = datetime.utcnow().isoformat()
+            print(f"[Emails] Buyer receipt sent to {customer_email} (order {order_number})")
+        except Exception as e:
+            updates["buyer_email_error"] = str(e)[:300]
+            print(f"[Emails] BUYER receipt FAILED for {customer_email}: {e}")
+
+    # 2) RECIPIENT access — gifts only, independent of the buyer result above.
+    if is_gift and not (only_unsent and recipient_sent):
+        try:
+            await send_order_confirmation(
+                to_email=recipient_email,
+                order_id=order_number,
+                items=items,
+                total=total,
+                download_links=dl_payload,  # may be None for online-access items
+                customer_name="",
+                gifted_by_email=customer_email,
+                is_recipient_access=True,
+            )
+            recipient_sent = True
+            updates["recipient_email_sent"] = True
+            updates["recipient_email_sent_at"] = datetime.utcnow().isoformat()
+            print(f"[Emails] Recipient access sent to {recipient_email} (order {order_number})")
+        except Exception as e:
+            updates["recipient_email_error"] = str(e)[:300]
+            print(f"[Emails] RECIPIENT access FAILED for {recipient_email}: {e}")
+
+    if not is_gift:
+        # Self-purchase has no separate recipient email → mark satisfied so
+        # the retry path doesn't keep looking for one.
+        recipient_sent = True
+        updates.setdefault("recipient_email_sent", True)
+
+    if updates and session_id:
+        await db.payment_transactions.update_one({"session_id": session_id}, {"$set": updates})
+
+    return {"buyer_email_sent": buyer_sent, "recipient_email_sent": recipient_sent}
+
+
 @router.get("/checkout/status/{session_id}")
 async def get_checkout_status(session_id: str):
     """Check the status of a checkout session"""
@@ -3014,6 +3097,9 @@ async def get_checkout_status(session_id: str):
                 "download_links_generated": len(download_links_created) > 0,
                 "downloads_count": len(download_links_created),
                 "fulfillment_completed_at": datetime.utcnow().isoformat(),
+                "email_dl_payload": [
+                    {"token": d["token"], "name": d["name"]} for d in download_links_created
+                ] if download_links_created else [],
                 "fulfillment_verification_failures": [
                     {k: v for k, v in f.items() if k in ("file_key", "product_id", "name", "pdf_path", "reason", "error")}
                     for f in verification_failures
@@ -3050,58 +3136,21 @@ async def get_checkout_status(session_id: str):
             #                       recipient gets ACCESS ONLY (download links + spam note)
             if customer_email:
                 try:
-                    from email_service import send_order_confirmation, send_preorder_confirmation, send_game_pass_access
-                    
+                    from email_service import send_preorder_confirmation, send_game_pass_access
+
                     # Classify items by type
                     has_preorder = any(item.get("preorder") or "Pre-Order" in item.get("name", "") or "preorder" in item.get("id", "").lower() for item in items)
                     has_game_pass = any("gaming-pass" in item.get("id", "").lower() or "game" in item.get("name", "").lower() for item in items)
                     customer_name = transaction.get("customer_name", "")
                     total = transaction.get("total_amount", 0)
                     is_gift_purchase = (purchase_type == "gift" and digital_recipient_email)
-                    dl_payload = [{"token": dl["token"], "product_name": dl["name"]} for dl in download_links_created] if download_links_created else None
-                    
-                    if is_gift_purchase:
-                        # 1) BUYER → receipt only (no download links). Includes attribution.
-                        await send_order_confirmation(
-                            to_email=customer_email,
-                            order_id=order_number,
-                            items=items,
-                            total=total,
-                            download_links=None,  # buyer never gets download links on a gift purchase
-                            customer_name=customer_name,
-                            recipient_email=digital_recipient_email,
-                            is_buyer_receipt_only=True,
-                        )
-                        # 2) RECIPIENT → ALWAYS notified, with or without file
-                        #    download links. Entitlement/online items (e.g. IHI
-                        #    interactive lessons) generate NO download links, but
-                        #    the recipient still must receive the gift notification
-                        #    + access instructions (Redeem → My Library). Previously
-                        #    this was gated behind `if dl_payload`, so recipients of
-                        #    online-access gifts never got an email.
-                        await send_order_confirmation(
-                            to_email=digital_recipient_email,
-                            order_id=order_number,
-                            items=items,
-                            total=total,
-                            download_links=dl_payload,  # may be None for online-access items
-                            customer_name="",
-                            gifted_by_email=customer_email,
-                            is_recipient_access=True,
-                        )
-                        print(f"[Status Check] Gift purchase emails sent — receipt to {customer_email}, access to {digital_recipient_email} (download_links={len(dl_payload) if dl_payload else 0})")
-                    else:
-                        # Self-purchase — single combined email to buyer.
-                        await send_order_confirmation(
-                            to_email=customer_email,
-                            order_id=order_number,
-                            items=items,
-                            total=total,
-                            download_links=dl_payload,
-                            customer_name=customer_name,
-                        )
-                        print(f"[Status Check] Order confirmation email sent to {customer_email}")
-                    
+
+                    # BUYER receipt + (for gifts) RECIPIENT access — sent INDEPENDENTLY
+                    # and retryable. Re-read the transaction so the helper sees the
+                    # freshly-persisted email_dl_payload / flags.
+                    tx_now = await db.payment_transactions.find_one({"session_id": session_id}, {"_id": 0}) or transaction
+                    await _send_order_emails(tx_now, download_links_created)
+
                     # Send preorder confirmation if applicable (always to digital_email)
                     if has_preorder:
                         preorder_items = [i for i in items if i.get("preorder") or "Pre-Order" in i.get("name", "")]
@@ -3117,7 +3166,7 @@ async def get_checkout_status(session_id: str):
                             )
                         except Exception as pe:
                             print(f"[Status Check] Error sending preorder email: {pe}")
-                    
+
                     # Send game pass email if applicable (always to digital_email)
                     if has_game_pass:
                         pass_type = "90-Day" if any("90" in i.get("name", "") for i in items if "game" in i.get("name", "").lower()) else "30-Day"
@@ -3143,6 +3192,24 @@ async def get_checkout_status(session_id: str):
                     }
                 }
             )
+
+        elif checkout_status.payment_status == "paid":
+            # Already-paid order: fail-safe RETRY of any unsent order email. If the
+            # first attempt partially failed (e.g. the recipient access email errored
+            # while the buyer receipt succeeded), the success page keeps polling this
+            # endpoint and we re-send only what's missing — no manual admin resend.
+            try:
+                purchase_type = (transaction.get("purchase_type") or "self").lower()
+                recipient_email = (transaction.get("digital_recipient_email") or "").strip()
+                is_gift = bool(purchase_type == "gift" and recipient_email)
+                needs_retry = (not transaction.get("buyer_email_sent")) or (is_gift and not transaction.get("recipient_email_sent"))
+                if needs_retry:
+                    dl = transaction.get("email_dl_payload") or []
+                    dl_links = [{"token": d.get("token"), "name": d.get("name") or d.get("product_name", "")} for d in dl]
+                    result = await _send_order_emails(transaction, dl_links, only_unsent=True)
+                    print(f"[Status Check] Email retry for order {transaction.get('order_number')}: {result}")
+            except Exception as retry_err:
+                print(f"[Status Check] Email retry error: {retry_err}")
         
         return {
             "session_id": session_id,

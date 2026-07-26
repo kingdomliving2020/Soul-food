@@ -21,6 +21,11 @@ FLAT_PRICES = {
     "breakfast-ae-digital": 14.99, "breakfast-ae-paperback": 29.99,
     "breakfast-ye-digital": 14.99, "breakfast-ye-paperback": 29.99,
 
+    # eBook (ePub) full-workbook SKUs — direct exact-attachment cart ids
+    # (deliver the real .epub, priced $1.50 under the Digital Workbook).
+    "holiday-ae-full-epub": 8.49, "holiday-ye-full-epub": 8.49, "holiday-ie-full-epub": 33.49,
+    "breakfast-ae-full-epub": 13.49, "breakfast-ye-full-epub": 13.49,
+
     # Instructor Edition packages
     "holiday-ie": 34.99, "breakfast-digital": 49.99,
     "breakfast-paperback": 49.99, "lunch-ie-preorder": 26.99,
