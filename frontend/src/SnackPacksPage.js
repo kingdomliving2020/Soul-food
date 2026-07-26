@@ -106,7 +106,7 @@ const SnackPacksPage = () => {
             Interactive Bible Studies
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Bite-sized interactive lessons designed for your spiritual growth. 
+            Bite-sized online lessons (eLessons) designed for your spiritual growth. 
             Each "Nibble" is a standalone lesson with scripture, teaching, reflection questions, and activities.
           </p>
         </div>
@@ -262,7 +262,7 @@ const SnackPacksPage = () => {
                       ) : (
                         <>
                           <span className="text-slate-500">PDF: <span className="font-semibold text-slate-700">${nibble.price_download}</span></span>
-                          <span className="text-amber-600">Interactive: <span className="font-semibold">${nibble.price_interactive}</span></span>
+                          <span className="text-amber-600">eLesson: <span className="font-semibold">${nibble.price_interactive}</span></span>
                         </>
                       )}
                     </div>
@@ -338,7 +338,7 @@ const SnackPacksPage = () => {
           <div className="text-center py-12">
             <div className="text-6xl mb-4">📚</div>
             <h3 className="text-xl font-bold text-slate-800 mb-2">No Lessons Available Yet</h3>
-            <p className="text-slate-600 mb-6">Check back soon for new interactive lessons!</p>
+            <p className="text-slate-600 mb-6">Check back soon for new online lessons!</p>
             <Button onClick={() => navigate('/')} className="bg-indigo-600 hover:bg-indigo-700">
               Back to Home
             </Button>

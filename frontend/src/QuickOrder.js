@@ -436,18 +436,18 @@ const QuickOrder = () => {
           note: '3 lessons + group worksheets · companion to AE',
         },
         {
-          id: 'ihi-ae-pro-ipdf', name: 'AE-Pro Leader Guide (iPDF)',
+          id: 'ihi-ae-pro-ipdf', name: 'AE-Pro Leader Guide (Digital Workbook)',
           price: 11.99, edition: 'pro', format: 'digital',
           deliverKey: 'ihi-ae-pro-ipdf',
           available: true, image: '/covers/ihi-ae-pro.png',
           note: 'Fillable PDF · digital download',
         },
         {
-          id: 'ihi-ae-pro-epub', name: 'AE-Pro Leader Guide (ePub)',
+          id: 'ihi-ae-pro-epub', name: 'AE-Pro Leader Guide (eBook)',
           price: 10.49, edition: 'pro', format: 'digital',
           deliverKey: 'ihi-ae-pro-epub',
           available: true, image: '/covers/ihi-ae-pro.png',
-          note: 'Ebook (ePub) · digital download',
+          note: 'eBook · digital download',
         },
         {
           id: 'ihi-ae-pro-pod', name: 'AE-Pro Leader Guide (Print)',
@@ -784,6 +784,21 @@ const QuickOrder = () => {
     return product.listPrices[edition]?.[format] || null;
   };
 
+  // Customer-facing FORMAT terminology (internal SKU keys stay unchanged).
+  // Workbook=Print/POD · Digital Workbook=fillable(ipdf) · eBook=epub · eLesson=online lesson(interactive).
+  const FORMAT_LABELS = {
+    physical: 'Workbook (Print)',
+    ipdf: 'Digital Workbook',
+    epub: 'eBook',
+    ebook: 'eBook',
+    interactive: 'eLesson',
+    digital: 'Digital',
+    pdf: 'Digital Workbook',
+    subscription_monthly: 'Monthly',
+    subscription_annual: 'Annual',
+  };
+  const formatLabel = (fmt) => FORMAT_LABELS[fmt] || fmt;
+
   const handleAddToCart = (product) => {
     const selection = selections[product.id] || {};
     const edition = selection.edition || product.editions[0];
@@ -793,7 +808,7 @@ const QuickOrder = () => {
 
     addToCart({
       id: `${product.id}-${edition}-${format}`,
-      name: `${product.name} - ${edition.toUpperCase()} - ${format.toUpperCase()}`,
+      name: `${product.name} - ${edition.toUpperCase()} - ${formatLabel(format)}`,
       price: price,
       quantity: quantity,
       image: getCoverImage(product, 'front')
@@ -1089,7 +1104,7 @@ const QuickOrder = () => {
                       return;
                     }
                     const edLabel = quickBundleEdition === 'ae' ? 'Adult' : 'Youth';
-                    addToCart({ id: `holiday-table-bundle-${quickBundleEdition}`, name: `Holiday Table Bundle (${edLabel}) (ePub + SP)`, price: 19.99, quantity: 1, isBundle: true, edition: quickBundleEdition });
+                    addToCart({ id: `holiday-table-bundle-${quickBundleEdition}`, name: `Holiday Table Bundle (${edLabel}) (eBook + Snack Pack)`, price: 19.99, quantity: 1, isBundle: true, edition: quickBundleEdition });
                     toast.success('Holiday Table Bundle added!');
                   }}
                   disabled={!quickBundleEdition}
@@ -1164,7 +1179,7 @@ const QuickOrder = () => {
                       return;
                     }
                     const edLabel = quickBundleEdition === 'ae' ? 'Adult' : 'Youth';
-                    addToCart({ id: `full-table-experience-${quickBundleEdition}`, name: `Full Table Experience (${edLabel}) (ePub + SP + Game Pass)`, price: 34.99, quantity: 1, isBundle: true, edition: quickBundleEdition });
+                    addToCart({ id: `full-table-experience-${quickBundleEdition}`, name: `Full Table Experience (${edLabel}) (eBook + Snack Pack + Game Pass)`, price: 34.99, quantity: 1, isBundle: true, edition: quickBundleEdition });
                     toast.success('Full Table Experience added!');
                   }}
                   disabled={!quickBundleEdition}
@@ -1196,7 +1211,7 @@ const QuickOrder = () => {
                   </li>
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
-                    <span>eBook — read-only ebook (ePub)</span>
+                    <span>eBook — read-only ebook (no fill fields)</span>
                   </li>
                   <li className="flex items-start gap-2 text-xs text-slate-700">
                     <Check className="w-3.5 h-3.5 mt-0.5 text-emerald-600 flex-shrink-0" />
@@ -1364,10 +1379,14 @@ const QuickOrder = () => {
               const isGameMasterDigitalNow = meal.id === 'offline-game-master-bkft' && selectedFormat === 'digital';
               const effectivePreOrder = (meal.preOrder || pkgData?.preOrder) && !isGameMasterDigitalNow;
 
-              // Available formats for selected package
+              // Available formats per package (customer-facing, de-duplicated):
+              //  • Nibble / single lesson  → eLesson (online) only
+              //  • Full Workbook / Snack Pack → Digital Workbook + eBook (+ Workbook print) — NO duplicate interactive PDF
               const availableFormats = pkgData?.isSubscription 
                 ? ['subscription_monthly', 'subscription_annual']
-                : meal.formats.filter(f => !f.includes('subscription'));
+                : pkgData?.selectLesson
+                  ? ['interactive']
+                  : meal.formats.filter(f => !f.includes('subscription') && f !== 'interactive');
 
               return (
                 <Card key={meal.id} className="shadow-lg hover:shadow-xl transition-shadow">
@@ -1605,15 +1624,8 @@ const QuickOrder = () => {
                                 onChange={(e) => updateSelection(meal.id, 'format', e.target.value)}
                               >
                                 {availableFormats.map(fmt => (
-                                  <option key={fmt} value={fmt} disabled={fmt === 'ipdf' && pkgData?.selectLesson}>
-                                    {meal.formatLabels?.[fmt] ? meal.formatLabels[fmt] :
-                                     fmt === 'physical' ? 'Paperback' :
-                                     fmt === 'interactive' ? 'i-PDF' :
-                                     fmt === 'ipdf' ? (pkgData?.selectLesson ? 'iPDF (n/a for Nibbles)' : 'iPDF') :
-                                     fmt === 'epub' ? 'ePub' :
-                                     fmt === 'digital' ? 'Digital' :
-                                     fmt === 'subscription_monthly' ? 'Monthly' :
-                                     fmt === 'subscription_annual' ? 'Annual' : fmt}
+                                  <option key={fmt} value={fmt}>
+                                    {meal.formatLabels?.[fmt] ? meal.formatLabels[fmt] : formatLabel(fmt)}
                                   </option>
                                 ))}
                               </select>
@@ -1820,14 +1832,7 @@ const QuickOrder = () => {
                         >
                           {product.formats.map(fmt => (
                             <option key={fmt} value={fmt}>
-                              {fmt === 'subscription_monthly' ? 'Monthly Sub' :
-                               fmt === 'subscription_annual' ? 'Annual Sub' :
-                               fmt === 'ebook' ? 'eBook' :
-                               fmt === 'physical' ? 'Paperback' :
-                               fmt === 'interactive' ? 'i-PDF' :
-                               fmt === 'ipdf' ? 'iPDF' :
-                               fmt === 'pdf' ? 'Interactive PDF' :
-                               fmt === 'epub' ? 'ePub' : fmt}
+                              {formatLabel(fmt)}
                             </option>
                           ))}
                         </select>

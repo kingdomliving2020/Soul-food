@@ -133,8 +133,8 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
   };
 
   const mediumLabels = {
-    digital: 'PDF Download (Interactive)',
-    paperback: 'Paperback (Print on Demand)'
+    digital: 'Digital Workbook',
+    paperback: 'Workbook (Print / POD)'
   };
 
   // Determine available mediums based on series
@@ -265,7 +265,7 @@ const ProductSelectionModal = ({ isOpen, onClose, seriesData, products, onAddToC
           {seriesData?.id === 'holiday' && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
               <p className="text-blue-700 text-sm">
-                📥 <strong>Digital Download Only</strong> - The 4 C&apos;s of Christianity is available as an interactive PDF download.
+                📥 <strong>Digital Download Only</strong> - The 4 C&apos;s of Christianity is available as a Digital Workbook (instant download).
               </p>
             </div>
           )}
