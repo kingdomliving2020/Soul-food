@@ -66,6 +66,15 @@ PRODUCT_FILES = {
     "snack_pack_ye_m1": "breakfast-ye-month1-snackpack.pdf",
     "snack_pack_ye_m2": "breakfast-ye-month2-snackpack.pdf",
     "snack_pack_ye_m3": "breakfast-ye-month3-snackpack.pdf",
+    # Admin Snack-Pack SKUs (BKFT-SP-*) — MUST deliver the month Snack Pack, NOT the full
+    # workbook. Previously these fell through to breakfast_ae/ye_digital (full-workbook
+    # OVER-DELIVERY); exact-match here stops that (fix 2026-06).
+    "bkft-sp-ae-m1": "breakfast-ae-month1-snackpack.pdf",
+    "bkft-sp-ae-m2": "breakfast-ae-month2-snackpack.pdf",
+    "bkft-sp-ae-m3": "breakfast-ae-month3-snackpack.pdf",
+    "bkft-sp-ye-m1": "breakfast-ye-month1-snackpack.pdf",
+    "bkft-sp-ye-m2": "breakfast-ye-month2-snackpack.pdf",
+    "bkft-sp-ye-m3": "breakfast-ye-month3-snackpack.pdf",
     # Full Workbooks - with underscore format
     "breakfast_ae_digital": "breakfast-ae-full.pdf",
     "breakfast_ye_digital": "breakfast-ye-full.pdf",
@@ -4157,6 +4166,7 @@ async def _grant_audio_access_for_items(items: list, customer_email: str):
         return
     grant_holiday_audio = False
     specific_lessons = []
+    grant_foundation_m1 = False  # Foundation in Christ Month-1 Audio Companion voucher
     
     for item in items:
         file_entries = await resolve_item_to_file_entries_async(item)
@@ -4182,28 +4192,62 @@ async def _grant_audio_access_for_items(items: list, customer_email: str):
             for lesson in HOLIDAY_AUDIO_LESSONS:
                 if lesson in name:
                     specific_lessons.append(lesson)
+
+        # --- Foundation in Christ FULL WORKBOOK → standard Month-1 Audio Companion voucher ---
+        # Applies ONLY to Print/POD (physical) or Digital Workbook (ipdf/digital).
+        # Excluded: eBook (epub), Snack Pack, Nibble/eLesson (interactive).
+        pid = (item.get("id") or item.get("product_id") or "").lower().strip()
+        fmt = (item.get("format") or "").lower().strip()
+        is_foundation = ("breakfast" in pid) or ("foundation in christ" in name)
+        excluded = (
+            fmt in ("epub", "interactive")
+            or any(x in pid for x in ("epub", "snack", "nibble", "month", "-sp-", "sp-"))
+            or any(x in name for x in ("ebook", "snack", "nibble", "elesson"))
+        )
+        is_full_workbook = any(m in pid for m in (
+            "breakfast-meal", "breakfast-ae-paperback", "breakfast-ye-paperback",
+            "breakfast-ae-digital", "breakfast-ye-digital", "breakfast-digital", "breakfast-paperback"
+        ))
+        fmt_ok = (fmt in ("physical", "ipdf", "digital")) or (fmt == "" and is_full_workbook)
+        if is_foundation and is_full_workbook and fmt_ok and not excluded:
+            grant_foundation_m1 = True
     
-    if not grant_holiday_audio and not specific_lessons:
+    if not grant_holiday_audio and not specific_lessons and not grant_foundation_m1:
         return
     
-    lessons_to_grant = HOLIDAY_AUDIO_LESSONS if grant_holiday_audio else list(set(specific_lessons))
-    
-    await db.audio_access.update_one(
-        {"email": customer_email.lower()},
-        {
-            "$addToSet": {
-                "series_access": "holiday",
-                "lessons_access": {"$each": lessons_to_grant}
+    if grant_holiday_audio or specific_lessons:
+        lessons_to_grant = HOLIDAY_AUDIO_LESSONS if grant_holiday_audio else list(set(specific_lessons))
+        await db.audio_access.update_one(
+            {"email": customer_email.lower()},
+            {
+                "$addToSet": {
+                    "series_access": "holiday",
+                    "lessons_access": {"$each": lessons_to_grant}
+                },
+                "$set": {"updated_at": datetime.utcnow().isoformat()},
+                "$setOnInsert": {
+                    "email": customer_email.lower(),
+                    "created_at": datetime.utcnow().isoformat()
+                }
             },
-            "$set": {"updated_at": datetime.utcnow().isoformat()},
-            "$setOnInsert": {
-                "email": customer_email.lower(),
-                "created_at": datetime.utcnow().isoformat()
-            }
-        },
-        upsert=True
-    )
-    print(f"[Fulfillment] Audio access granted for {customer_email}: holiday/{lessons_to_grant}")
+            upsert=True
+        )
+        print(f"[Fulfillment] Audio access granted for {customer_email}: holiday/{lessons_to_grant}")
+
+    if grant_foundation_m1:
+        await db.audio_access.update_one(
+            {"email": customer_email.lower()},
+            {
+                "$addToSet": {"series_access": "foundation-month1"},
+                "$set": {"updated_at": datetime.utcnow().isoformat()},
+                "$setOnInsert": {
+                    "email": customer_email.lower(),
+                    "created_at": datetime.utcnow().isoformat()
+                }
+            },
+            upsert=True
+        )
+        print(f"[Fulfillment] Foundation Month-1 Audio Companion voucher granted for {customer_email}")
 
 
 # =============================================================================

@@ -1,0 +1,33 @@
+{
+  "summary": "Regression testing after payment_routes.py changes (Foundation Month-1 audio auto-grant + snack-pack fulfillment remap). Backend: /api/payments/products returns 200; existing pytest suite backend/tests/test_foundation_audio_and_snackpack.py -> 5/5 PASS confirming grant + snack remap logic. Frontend: /quick-order and / homepage load with no JS/page errors. 4 C's Adult eBook Featured tile shows $9.99. Foundation-audio-voucher-note testid renders correctly for Meal Bundle + Workbook(Print) and is hidden for eBook, Snack Pack, and Nibble. Checkout subtotals validated: Foundation Meal Bundle (Workbook Print) = $29.99; 4C's Adult eBook = $9.99 (no Stripe payment submitted). One inconsistency observed: voucher note is NOT shown on Meal Bundle + Digital Workbook (ipdf) even though backend fulfillment DOES grant Foundation Month-1 audio for the digital workbook (ipdf) SKU per _grant_audio_access_for_items. This creates a UX mismatch with the user-approved scope which said 'Print/POD + Digital Workbook'.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "QuickOrder Foundation card", "issue": "Audio-voucher note (foundation-audio-voucher-note) does NOT display for Meal Bundle + Digital Workbook (ipdf). Backend grants Month-1 audio on ipdf too, so the note should also appear for Digital Workbook (currently only shows on Workbook Print).", "selector": "[data-testid='foundation-audio-voucher-note']", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_foundation_audio_and_snackpack.py"
+  ],
+  "action_items": [
+    "In QuickOrder.js, extend the condition that renders foundation-audio-voucher-note to include Meal Bundle + Digital Workbook (format='ipdf') in addition to Workbook Print, so UI matches backend grant scope (print/ipdf/digital) and matches the user-approved scope."
+  ],
+  "critical_code_review_comments": [
+    "payment_routes.py PRODUCT_FILES remap for bkft-sp-* -> breakfast-*-monthN-snackpack.pdf correctly stops full-workbook over-delivery; validated by pytest.",
+    "_grant_audio_access_for_items grants 'foundation-month1' series_access only for full-workbook print/ipdf/digital (excludes epub/snack/nibble/interactive) — verified in tests.",
+    "QuickOrder card's voucher-note gating logic is narrower than the backend grant scope (Print-only vs Print+iPDF+Digital), leading to inconsistent user expectations."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "95%"},
+  "test_credentials": "None required (guest flow)",
+  "seed_data_creation": "None (cart cleared via localStorage between tests)",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Regression complete for payment_routes.py + Foundation voucher note. If QuickOrder.js voucher-note gating is broadened to include Digital Workbook, re-verify voucher-note visibility across Nibble/Snack/Meal x eBook/Digital Workbook/Print combinations. Backend tests file: /app/backend/tests/test_foundation_audio_and_snackpack.py (run from /app/backend). Stripe live checkout is revoked in preview — do NOT submit payment; verify subtotal on /checkout only."
+}
