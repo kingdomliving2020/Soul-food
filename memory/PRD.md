@@ -1,5 +1,11 @@
 # Soul Food - Product Requirements Document
 
+## Static-Analysis Findings — eval() & Circular Import — REVIEWED & CLOSED (June 2026)
+No code change (review-only, per user: no refactor/cleanup). Full detail: `/app/memory/static_analysis_review_2026-06.md`.
+- **eval():** FALSE POSITIVE. Only `ast.literal_eval` (safe literal parser, NOT eval) on a slice of the trusted local `payment_routes.py` PRODUCTS dict — not user input. No injection. Not a launch risk. CLOSED.
+- **Circular import:** NOT a real risk. Only potential cycle (`email_service` ↔ `payment_routes`) is intentionally broken by function-level lazy imports on both sides. All core modules import cleanly in order; backend runs fine. CLOSED.
+
+
 ## Final MVP Cleanup — Correctness Pass (June 2026) — verified iteration_56.json (100%) + unit tests 8/8
 Priority: correctness first (pricing, email, game classification), clarity next.
 - [x] **#5 Pricing consistency (Holiday eBook tile).** Root cause: Featured tile `quick-pick-hol` showed $14.99 (Holiday full *interactive LIST* price), added to cart at $9.99 (digital-interactive SALE price via SKU `holiday-ae-digital`), while the true ePub price is $8.49 — three prices, and it was mislabeled "ePub" but wired to the non-ePub digital SKU. Fix: retitled **"4 C's of Christianity – Adult eBook"** (curriculum-first), wired addToCart to **`holiday-ae-full-epub`** (delivers the real `HOL_4C_AE_FullWorkbook.epub`, verified retrievable), price **$8.49** everywhere (tile display = button = cart = checkout subtotal), fixed contradictory "Downloadable PDF workbook" bullet. Added catalog FLAT_PRICES `holiday-ae/ye-full-epub=8.49`, `holiday-ie-full-epub=33.49`, `breakfast-ae/ye-full-epub=13.49` so the server floors to the exact eBook price (no pricing_unresolved). PRICE TRACE (final): Displayed $8.49 → Cart $8.49 → Discount none (not on sale; $100+ FREEDOM25 not applicable) → Charged $8.49.
