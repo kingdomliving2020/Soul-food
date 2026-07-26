@@ -1,5 +1,15 @@
 # Soul Food - Product Requirements Document
 
+## Sales-Readiness Pass 2 — Naming, Foundation Print, IE/Bulk/Snack Audits (June 2026) — verified iteration_59.json (100%)
+- **C. Customer-facing naming relabel** (internal SKUs/keys unchanged): "Holiday"→"4 C's of Christianity", "Break*fast"→"Foundation in Christ" across package selectors, IE dropdown, Featured bundle, taglines, homepage bundle rows, Game Master edition name. Remaining "ePub" label → "eBook".
+- **E. Foundation in Christ PRINT ($29.99)** added to the PRIMARY Foundation card (Meal Bundle only; print correctly hidden on Nibble→eLesson-only and Snack Pack→Digital Workbook+eBook). Catalog `breakfast-meal-adult/youth-physical=29.99`; resolves as POD/shippable (pending-fulfillment path).
+- **Audits (report-only, `/app/memory/ie_inclusions_and_audits_2026-06.md`):**
+  - IE inclusions matrix built. DISCREPANCIES vs bulk sheet: Audio Companion advertised for 4 C's only (Foundation shows none); "Full Game Suite" per sheet NOT shown on standalone IE workbook (games sold separately / via Instructor Bundle). → needs user decision on intended IE inclusion set (do not add/remove yet).
+  - Bulk discount MISMATCH: sheet = 5/10/15%-off ladder; site = flat-priced named bundles (Family $24.99 / Church $49.99 / Ministry $89.99) with no %-off logic. Reconcile before pricing change.
+  - Snack pack `bkft-sp-ae-m1` → resolves to `breakfast_ae_digital` (FULL workbook) = OVER-DELIVERY (not missing file). Recommend remap; awaiting go-ahead before changing fulfillment.
+- **Still OPEN (user decisions):** IE inclusion set; bulk %-off vs flat bundles; snack-pack remap; optional rename of "Holiday Bonus" free-lesson tiles (distinct seasonal content — left as-is pending owner call).
+
+
 ## Sales-Readiness Pass 1 — Value Ladder, eBook Price, Stale Wording (June 2026) — verified iteration_58.json
 Full detail: `/app/memory/sales_readiness_audit_2026-06.md`.
 - Standardized the game-pass ladder (Free 5Q/1game · Instructor 3-Hour · Certificate 4-Hour $9.99 · Day Pass 24hr $29.99 · 90-Day $75.00); removed 30-Day pass, "8-Hour" certificate, unexplained $40 strike, "1-Hour/Ministry/30-min" refs. Catalog: gaming-pass-90 → 75.00.

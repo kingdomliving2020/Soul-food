@@ -392,7 +392,7 @@ const QuickOrder = () => {
     },
     {
       id: 'offline-game-master-bkft',
-      name: 'Offline Game Master — Breakfast Edition',
+      name: 'Offline Game Master — Foundation in Christ Edition',
       tagline: 'Instructor & Facilitator Game Resource',
       description: 'Print-and-play OR physical game pack for the Foundation in Christ series — GRinCH Grid Iron Challenge + Passport Trek, 96 total bingo cards. Choose a module (BM1–BM3) or the full 3-module set.',
       available: true,
