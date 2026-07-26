@@ -1,0 +1,27 @@
+{
+  "summary": "Re-verified voucher-note visibility matrix on Foundation in Christ card at /quick-order after condition broadened to ['physical','ipdf','digital']. All 5 required cases pass.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_results_matrix": {
+    "Foundation + Meal Bundle + Workbook (Print) [physical]": "VISIBLE ✅",
+    "Foundation + Meal Bundle + Digital Workbook [ipdf]": "VISIBLE ✅",
+    "Foundation + Meal Bundle + eBook [epub]": "HIDDEN ✅",
+    "Foundation + Snack Pack (any format)": "HIDDEN ✅ (count=0)",
+    "Foundation + Nibble (eLesson)": "HIDDEN ✅ (count=0)",
+    "4 C's of Christianity card": "No foundation-audio-voucher-note node observed anywhere except on Foundation card"
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": ["Foundation card Meal format values are ['ipdf','epub','physical'] — condition `['physical','ipdf','digital'].includes(selectedFormat)` includes 'digital' which is not actually a valid format value on this card. Not a bug for current requirement (Digital Workbook = 'ipdf'), but the extraneous 'digital' entry in the includes-list is dead code. Consider trimming to ['physical','ipdf']."],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Foundation card = data-testid 'package-select-breakfast'. Package values: nibble, snack, meal. Format select is the last <select> in the card. Format values for Meal package: 'ipdf' (Digital Workbook), 'epub' (eBook), 'physical' (Workbook Print). Voucher note testid: foundation-audio-voucher-note. Condition works correctly.",
+  "rca of the issue": "Prior iteration_61 flagged missing note on Digital Workbook because the condition only checked 'physical'. Main agent broadened to ['physical','ipdf','digital']. Verified: note now shows for both Print (physical) and Digital Workbook (ipdf), stays hidden for eBook (epub), Snack, and Nibble."
+}

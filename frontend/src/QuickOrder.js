@@ -1647,8 +1647,8 @@ const QuickOrder = () => {
                             )}
                           </div>
 
-                          {/* Foundation in Christ full workbook (Print/POD or Digital Workbook) — Audio Companion Month 1 Voucher */}
-                          {meal.id === 'breakfast' && selectedPkg === 'meal' && (selectedFormat === 'physical' || selectedFormat === 'ipdf') && (
+                          {/* Foundation in Christ full workbook (Print/POD or Digital Workbook) — Audio Companion Month 1 Voucher. Scope matches backend grant: physical/ipdf/digital (NOT eBook). */}
+                          {meal.id === 'breakfast' && selectedPkg === 'meal' && ['physical', 'ipdf', 'digital'].includes(selectedFormat) && (
                             <p className="text-xs text-purple-600 mt-1.5 italic" data-testid="foundation-audio-voucher-note">
                               🎧 Includes Audio Companion Month 1 Voucher · additional modules available separately
                             </p>
