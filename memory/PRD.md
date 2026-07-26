@@ -1,5 +1,10 @@
 # Soul Food - Product Requirements Document
 
+## Foundation Audio Companion Month-1 Voucher — DISPLAY added (June 2026) — verified iteration_60.json (100%)
+- Added note "🎧 Includes Audio Companion Month 1 Voucher · additional modules available separately" to the Foundation in Christ card, gated to Meal Bundle + (Workbook Print OR Digital Workbook). HIDDEN for eBook, Snack Pack, Nibble, and the 4 C's card. testid `foundation-audio-voucher-note`.
+- ⚠️ DISPLAY ONLY. Backend does NOT currently grant/deliver a Foundation Month-1 audio voucher (audio grant covers 4 C's/holiday keys only; no voucher-code mechanism exists). Fulfillment of the voucher is NOT wired — needs user decision (auto-grant a Month-1 audio entitlement/code on Foundation full-workbook purchase, or handle manually).
+
+
 ## Sales-Readiness Pass 2 — Naming, Foundation Print, IE/Bulk/Snack Audits (June 2026) — verified iteration_59.json (100%)
 - **C. Customer-facing naming relabel** (internal SKUs/keys unchanged): "Holiday"→"4 C's of Christianity", "Break*fast"→"Foundation in Christ" across package selectors, IE dropdown, Featured bundle, taglines, homepage bundle rows, Game Master edition name. Remaining "ePub" label → "eBook".
 - **E. Foundation in Christ PRINT ($29.99)** added to the PRIMARY Foundation card (Meal Bundle only; print correctly hidden on Nibble→eLesson-only and Snack Pack→Digital Workbook+eBook). Catalog `breakfast-meal-adult/youth-physical=29.99`; resolves as POD/shippable (pending-fulfillment path).
