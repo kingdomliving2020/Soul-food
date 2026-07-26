@@ -1865,10 +1865,10 @@ const SoulFoodLanding = () => {
               </CardContent>
             </Card>
 
-            {/* Print - Ships Easter to Resurrection Sunday */}
+            {/* Print Workbook Bundle — ships in 5–10 business days */}
             <Card className="border-4 border-amber-300 shadow-2xl overflow-hidden hover:scale-105 transition-all relative">
               <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 text-sm font-bold z-10 shadow-xl rotate-12">
-                Ships by Resurrection Sunday
+                Ships in 5–10 Business Days
               </Badge>
               <CardHeader className="bg-gradient-to-br from-amber-50 to-orange-100 p-6">
                 <div className="flex items-center justify-between mb-4">

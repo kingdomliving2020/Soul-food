@@ -1,5 +1,13 @@
 # Soul Food - Product Requirements Document
 
+## Sales-Readiness Pass 1 — Value Ladder, eBook Price, Stale Wording (June 2026) — verified iteration_58.json
+Full detail: `/app/memory/sales_readiness_audit_2026-06.md`.
+- Standardized the game-pass ladder (Free 5Q/1game · Instructor 3-Hour · Certificate 4-Hour $9.99 · Day Pass 24hr $29.99 · 90-Day $75.00); removed 30-Day pass, "8-Hour" certificate, unexplained $40 strike, "1-Hour/Ministry/30-min" refs. Catalog: gaming-pass-90 → 75.00.
+- eBook (4 C's Adult) → non-discounted **$9.99** (tile=cart=checkout=catalog); the prior $8.49 was a config sale artifact.
+- Removed stale "Ships Easter / Resurrection Sunday" → "Ships in 5–10 Business Days".
+- DEFERRED (approved, next batch): C) naming Holiday→"4 C's of Christianity" & Break*fast→"Foundation in Christ"; E) Foundation PRINT $29.99 in primary flow. OPEN report items: bulk discount tiers (5/10/15%), IE inclusions completeness, snack-pack `bkft-sp-ae-m1` delivery path.
+
+
 ## Static-Analysis Findings — eval() & Circular Import — REVIEWED & CLOSED (June 2026)
 No code change (review-only, per user: no refactor/cleanup). Full detail: `/app/memory/static_analysis_review_2026-06.md`.
 - **eval():** FALSE POSITIVE. Only `ast.literal_eval` (safe literal parser, NOT eval) on a slice of the trusted local `payment_routes.py` PRODUCTS dict — not user input. No injection. Not a launch risk. CLOSED.
